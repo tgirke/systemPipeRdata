@@ -8,6 +8,15 @@ opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.path='figure/system
 options(formatR.arrow=TRUE, width=95)
 unlink("test.db")
 
+## ----eval=FALSE------------------------------------------------------------------------------
+#  source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script
+#  biocLite("systemPipeR") # Installs systemPipeR from Bioconductor
+#  biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
+
+## ----eval=FALSE------------------------------------------------------------------------------
+#  genWorkenvir(workflow="varseq")
+#  setwd("varseq")
+
 ## ----sessionInfo, results='asis'-------------------------------------------------------------
 toLatex(sessionInfo())
 
