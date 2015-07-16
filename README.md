@@ -7,10 +7,10 @@ such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. An important feature is
 support for running command-line software, such as NGS aligners, on both single
 machines or compute clusters. This includes both interactive job submissions or
 batch submissions to queuing systems of clusters.  Efficient handling of
-complex sample sets and experimental designs is facilitated by a well-defined
-sample annotation infrastructure which improves reproducibility and
+complex sample sets and experimental designs is facilitated by a consistently
+designed sample annotation infrastructure which improves reproducibility and
 user-friendliness of many typical analysis workflows in the NGS area. The
-input data for _systemPipeR's_ sample workflows are provided here.
+input data for _systemPipeR's_ sample workflows are provided by _systemPipeRdata_.
 
 #### Installation 
 The easiest way to install _systemPipeRdata_ is via the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
