@@ -24,5 +24,5 @@ To install _systemPipeR_ itself, please use the _biocLite_ method as instructed
 [_here_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
 
 #### Usage
-The data provided by _systemPipeRdata_ are explained in the overview
+The data provided by _systemPipeRdata_ are explained in the _systemPipeR's_ overview
 [_vignette_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) (manual).
