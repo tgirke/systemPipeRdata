@@ -1,0 +1,15 @@
+Package: systemPipeRdata
+Title: Sample data for workflows of systemPipeR package
+Version: 0.99.1
+Date: 2015-15-07
+Author: Thomas Girke
+Maintainer: Thomas Girke <thomas.girke@ucr.edu>
+biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq, ChIPSeq, MethylSeq, SNP, GeneExpression, Coverage, GeneSetEnrichment, Alignment, QualityControl
+Description: Sample data used by sytemPipeR package for a variety of workflows including RNA-Seq, ChIP-Seq, VAR-Seq and Ribo-Seq. 
+Depends: systemPipeR
+Imports: BiocGenerics
+Suggests: RUnit, BiocStyle, knitr
+VignetteBuilder: knitr
+License: Artistic-2.0
+NeedsCompilation: no
+URL: https://github.com/tgirke/systemPipeR

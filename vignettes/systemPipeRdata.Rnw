@@ -1,0 +1,74 @@
+%\VignetteIndexEntry{Vignette for systemPipeRdata}
+%\VignetteDepends{systemPipeR}
+%\VignetteKeywords{compute cluster, pipeline, reports}
+%\VignetteEngine{knitr::knitr}
+%\VignettePackage{systemPipeRdata}
+
+% Generate vignette with knitr
+% R CMD Sweave --engine=knitr::knitr --pdf systemPipeRdata.Rnw
+
+\documentclass{article}
+%<<style, eval=TRUE, echo=FALSE, results=tex>>=
+%BiocStyle::latex(use.unsrturl=FALSE)
+%@
+<<style-knitr, eval=TRUE, echo=FALSE, results="asis">>=
+BiocStyle::latex(use.unsrturl=FALSE)
+@
+
+\usepackage[authoryear,round]{natbib}
+\bibliographystyle{plainnat}
+\def\bibsection{\section{References}}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{float}
+
+%\newcommand{\comment}[1]{}
+%\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+%\newcommand{\Robject}[1]{{\texttt{#1}}}
+%\newcommand{\Rpackage}[1]{{\textit{#1}}}
+%\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+%\newcommand{\Rclass}[1]{{\textit{#1}}}
+	
+% Define header and footer area with fandyhdr package (see: http://www.ctan.org/tex-archive/macros/latex/contrib/fancyhdr/fancyhdr.pdf)
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\rhead{\nouppercase{\leftmark}}
+\lhead{\textit{systemPipeRdata}}
+\rfoot{\thepage}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+# set global chunk options for knitr
+opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.path='figure/systemPipeR-')
+options(formatR.arrow=TRUE, width=95)
+unlink("test.db")
+@
+
+\title{\Rpackage{systemPipeRdata}: sample data for NGS workflows}
+\author{Thomas Girke}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+This package provides sample data for running the NGS workflows of the \Rpackage{systemPipeR} package \citep{Girke2014-oy}. The source and usage of the data is described in the overview vignette \href{http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html}{\textcolor{blue}{here}}.
+
+\section{Version Information}
+<<sessionInfo, results='asis'>>=
+toLatex(sessionInfo())
+@
+
+\section{Funding}
+This project was supported by funds from the National Institutes of Health (NIH).
+
+\bibliography{bibtex}
+
+\end{document}

@@ -1,0 +1,21 @@
+\name{pathlist}
+\alias{pathlist}
+\title{
+Returns targets file path
+}
+\description{
+Function to return path to sample targets file(s) provided by \code{sytemPipeRdata} package.
+}
+\usage{
+pathlist()
+}
+\value{
+\code{list}
+}
+\author{
+Thomas Girke
+}
+\examples{
+targetspath <- pathlist()
+}
+\keyword{ utilities }
