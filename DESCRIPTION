@@ -12,7 +12,7 @@ Suggests: ape, RUnit, BiocStyle, knitr, biomaRt, GenomicFeatures, BiocParallel, 
 VignetteBuilder: knitr
 License: Artistic-2.0
 NeedsCompilation: no
-URL: https://github.com/tgirke/systemPipeR
+URL: https://github.com/tgirke/systemPipeRdata
 
 
 
