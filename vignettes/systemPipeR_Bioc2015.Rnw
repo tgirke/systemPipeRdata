@@ -5,7 +5,7 @@
 %\VignettePackage{systemPipeR}
 
 % Generate vignette with knitr
-% R CMD Sweave --engine=knitr::knitr --pdf systemPipeR_Bioc2014.Rnw
+% R CMD Sweave --engine=knitr::knitr --pdf systemPipeR_Bioc2015.Rnw
 
 \documentclass{article}
 %<<style, eval=TRUE, echo=FALSE, results=tex>>=
@@ -52,7 +52,7 @@ options(formatR.arrow=TRUE, width=95)
 unlink("test.db")
 @
 
-\title{VAR-Seq Workflow Report for Single Computer}
+\title{BioC 2015: VAR-Seq Workflow Report for Single Computer}
 \author{Project ID: VARseq\_PI\_Name\_Organism\_July2015 \\
         Author of Report: Thomas Girke (thomas.girke@ucr.edu)}
 \maketitle
@@ -71,7 +71,7 @@ To run this sample report, mini sample FASTQ and reference genome files can be d
 
 \subsection{Required packages and resources}
 The \Rpackage{systemPipeR} package needs to be loaded to perform the analysis steps shown in this report \citep{Girke2014-oy}. 
-<<eval=TRUE>>=
+<<eval=FALSE>>=
 library(systemPipeR)
 @
 
