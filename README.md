@@ -13,8 +13,8 @@ user-friendliness of many typical analysis workflows in the NGS area. The
 input data for _systemPipeR's_ sample workflows are provided here.
 
 #### Installation 
-The easiest way to install _systemPipeRdata_ is via the _devtools_ package from
-CRAN.
+The easiest way to install _systemPipeRdata_ is via the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
+package from CRAN.
 ```s
 devtools::install_github("tgirke/systemPipeRdata")
 ```
