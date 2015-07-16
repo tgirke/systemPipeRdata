@@ -9,7 +9,8 @@ machines or compute clusters. This includes both interactive job submissions or
 batch submissions to queuing systems of clusters.  Efficient handling of
 complex sample sets and experimental designs is facilitated by a well-defined
 sample annotation infrastructure which improves reproducibility and
-user-friendliness of many typical analysis workflows in the NGS area.
+user-friendliness of many typical analysis workflows in the NGS area. The sample
+input data for most workflows are provided by _systemPipeRdata_.
 
 #### Installation 
 The easiest way to install _systemPipeRdata_ is via the _devtools_ package from
