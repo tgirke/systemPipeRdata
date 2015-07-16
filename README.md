@@ -1,4 +1,4 @@
-### systemPipeR: NGS workflow and report generation environment 
+### systemPipeRdata: sample data for systemPipeR's NGS workflows
 
 [_systemPipeR_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html)
 is an R/Bioconductor package for building *end-to-end* analysis pipelines with
