@@ -52,10 +52,9 @@ options(formatR.arrow=TRUE, width=95)
 unlink("test.db")
 @
 
-\title{VAR-Seq project report template: Some Descriptive Title}
-\author{Project ID: VARseq\_PI\_Name\_Organism\_Mar2015 \\
-	Project PI: First Last (first.last@inst.edu)\\
-        Author of Report: First Last (first.last@inst.edu)}
+\title{VAR-Seq Workflow Report for Compute Cluster: BioC 2015}
+\author{Project ID: VARseq\_PI\_Name\_Organism\_July2015 \\
+        Author of Report: Thomas Girke (thomas.girke@ucr.edu)}
 \maketitle
 
 \tableofcontents
@@ -294,7 +293,6 @@ The function \Rfunction{variantReport} generates a variant report using utilitie
 <<eval=TRUE, messages=FALSE, warnings=FALSE>>=
 library("GenomicFeatures")
 args <- systemArgs(sysma="param/annotate_vars.param", mytargets="targets_gatk_filtered.txt")
-
 txdb <- loadDb("./data/tair10.sqlite")
 fa <- FaFile(systemPipeR::reference(args))
 suppressAll(variantReport(args=args, txdb=txdb, fa=fa, organism="A. thaliana"))

@@ -1,10 +1,4 @@
-## IMPORTS
-## S4 Classes
-## Methods
 ## Functions
 export(
-    ## Data sets
-    ## Import/exports
-    ## Utilities
     "pathlist"
 ) 
