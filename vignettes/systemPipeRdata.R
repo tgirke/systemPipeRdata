@@ -17,6 +17,9 @@ unlink("test.db")
 #  genWorkenvir(workflow="varseq")
 #  setwd("varseq")
 
+## ----eval=FALSE------------------------------------------------------------------------------
+#  vignette("systemPipeR_Bioc2015", package = "systemPipeRdata")
+
 ## ----sessionInfo, results='asis'-------------------------------------------------------------
 toLatex(sessionInfo())
 
