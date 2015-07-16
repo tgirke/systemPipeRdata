@@ -79,7 +79,7 @@ setwd("varseq")
 @
 
 \subsection{Run workflow}
-Next, run the chosen sample workflow by executing from command-line \Rfunction{'make -B'} within \Robject{'varseq'} directory. Alternatively, one can run the code from the provided \Robject{*.Rnw} template file from within R interactively. Much more detailed information is provided in \Rpackage{systemPipeR's} overview and workflow vignettes available \href{http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html}{\textcolor{blue}{here}}.
+Next, run the chosen sample workflow by executing from the command-line \Rfunction{'make -B'} within the \Robject{'varseq'} directory. Alternatively, one can run the code from the provided \Robject{*.Rnw} template file from within R interactively. Much more detailed information is available in \Rpackage{systemPipeR's} overview and workflow vignettes available \href{http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html}{\textcolor{blue}{here}}.
 
 \section{Version Information}
 <<sessionInfo, results='asis'>>=
