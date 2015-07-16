@@ -1,13 +1,13 @@
-\name{pathlist}
-\alias{pathlist}
+\name{pathList}
+\alias{pathList}
 \title{
-Returns targets file path
+Return location of sample data 
 }
 \description{
-Function to return path to sample targets file(s) provided by \code{sytemPipeRdata} package.
+Function to return paths to sample data provided by \code{sytemPipeRdata} package.
 }
 \usage{
-pathlist()
+pathList()
 }
 \value{
 \code{list}
@@ -16,6 +16,6 @@ pathlist()
 Thomas Girke
 }
 \examples{
-targetspath <- pathlist()
+samplepaths <- pathList()
 }
 \keyword{ utilities }

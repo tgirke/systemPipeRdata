@@ -1,4 +1,7 @@
-pathlist <- function() {
+#################################
+## Obtain paths to sample data ##
+#################################
+pathList <- function() {
     list(
         targets=system.file("extdata/param", "targets.txt", package="systemPipeRdata", mustWork=TRUE),
         targetsPE=system.file("extdata/param", "targetsPE.txt", package="systemPipeRdata", mustWork=TRUE),
@@ -12,3 +15,37 @@ pathlist <- function() {
     )
 }
 
+#########################################
+## Generate environments for workflows ##
+#########################################
+genWorkenvir <- function(workflow) {
+    if(workflow=="varseq") {
+        file.copy(pathList()$varseq, ".", recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "varseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "varseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(pathList()$paramdir, "varseq/", recursive=TRUE)
+        file.copy(c("varseq/param/torque.tmpl", "varseq/param/.BatchJobs.R"), "./varseq")
+        file.copy(c("varseq/param/gatk_run.sh", "varseq/param/sambcf_run.sh"), "./varseq")
+        file.copy(c("varseq/param/targetsPE.txt", "varseq/param/targets.txt"), "./varseq")
+        file.copy(c("varseq/param/Makefile"), "./varseq")
+    } else if(workflow=="rnaseq") {
+        file.copy(pathList()$rnaseq, ".", recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(pathList()$paramdir, "rnaseq/", recursive=TRUE)
+        file.copy(c("rnaseq/param/torque.tmpl", "rnaseq/param/.BatchJobs.R"), "./rnaseq")
+        file.copy(c("rnaseq/param/targetsPE.txt", "rnaseq/param/targets.txt"), "./rnaseq")
+        file.copy(c("varseq/param/Makefile"), "./rnaseq")
+    } else if(workflow=="chipseq") {
+        file.copy(pathList()$chipseq, ".", recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(pathList()$paramdir, "chipseq/", recursive=TRUE)
+        file.copy(c("chipseq/param/torque.tmpl", "chipseq/param/.BatchJobs.R"), "./chipseq")
+        file.copy(c("chipseq/param/targetsPE.txt", "chipseq/param/targets.txt"), "./chipseq")
+        file.copy(c("varseq/param/Makefile"), "./chipseq")
+    } else {
+        stop("workflow can only be assigned one of: 'varseq', 'rnaseq' or 'chipseq'")
+    }
+    print(paste("Generated", workflow, "directory. Next run from command-line 'make -B' within", workflow, "directory, or run R code from *.Rnw template file interactively."))
+}
