@@ -11,6 +11,7 @@ complex sample sets and experimental designs is facilitated by a consistently
 designed sample annotation infrastructure which improves reproducibility and
 user-friendliness of many typical analysis workflows in the NGS area. The
 input data for _systemPipeR's_ sample workflows are provided by _systemPipeRdata_.
+Its vignette is available [_here_](https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.pdf?raw=true)
 
 #### Installation 
 The easiest way to install _systemPipeRdata_ is via the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
