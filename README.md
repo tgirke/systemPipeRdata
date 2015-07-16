@@ -12,7 +12,8 @@ sample annotation infrastructure which improves reproducibility and
 user-friendliness of many typical analysis workflows in the NGS area.
 
 #### Installation 
-The easiest way to install _systemPipeRdata_ is to use the [devtools] package.
+The easiest way to install _systemPipeRdata_ is to use the _devtools_ package from
+CRAN.
 ```s
 devtools::install_github("tgirke/systemPipeRdata")
 ```
