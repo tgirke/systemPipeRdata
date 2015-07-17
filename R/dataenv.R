@@ -27,7 +27,8 @@ genWorkenvir <- function(workflow) {
         file.copy(c("varseq/param/torque.tmpl", "varseq/param/.BatchJobs.R"), "./varseq")
         file.copy(c("varseq/param/gatk_run.sh", "varseq/param/sambcf_run.sh"), "./varseq")
         file.copy(c("varseq/param/targetsPE.txt", "varseq/param/targets.txt"), "./varseq")
-        file.copy(c("varseq/param/Makefile"), "./varseq")
+        file.copy(c("varseq/param/Makefile_varseq"), "./varseq/Makefile")
+        file.copy(c("varseq/param/bibtex.bib"), "./varseq/bibtex.bib")
     } else if(workflow=="rnaseq") {
         file.copy(pathList()$rnaseq, ".", recursive=TRUE)
         file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
@@ -35,7 +36,8 @@ genWorkenvir <- function(workflow) {
         file.copy(pathList()$paramdir, "rnaseq/", recursive=TRUE)
         file.copy(c("rnaseq/param/torque.tmpl", "rnaseq/param/.BatchJobs.R"), "./rnaseq")
         file.copy(c("rnaseq/param/targetsPE.txt", "rnaseq/param/targets.txt"), "./rnaseq")
-        file.copy(c("rnaseq/param/Makefile"), "./rnaseq")
+        file.copy(c("rnaseq/param/Makefile_rnaseq"), "./rnaseq/Makefile")
+        file.copy(c("rnaseq/param/bibtex.bib"), "./rnaseq/bibtex.bib")
     } else if(workflow=="chipseq") {
         file.copy(pathList()$chipseq, ".", recursive=TRUE)
         file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
@@ -43,7 +45,8 @@ genWorkenvir <- function(workflow) {
         file.copy(pathList()$paramdir, "chipseq/", recursive=TRUE)
         file.copy(c("chipseq/param/torque.tmpl", "chipseq/param/.BatchJobs.R"), "./chipseq")
         file.copy(c("chipseq/param/targetsPE.txt", "chipseq/param/targets.txt"), "./chipseq")
-        file.copy(c("chipseq/param/Makefile"), "./chipseq")
+        file.copy(c("chipseq/param/Makefile_chipseq"), "./chipseq/Makefile")
+        file.copy(c("chipseq/param/bibtex.bib"), "./chipseq/bibtex.bib")
     } else {
         stop("workflow can only be assigned one of: 'varseq', 'rnaseq' or 'chipseq'")
     }
