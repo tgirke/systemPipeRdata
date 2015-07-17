@@ -35,7 +35,7 @@ genWorkenvir <- function(workflow) {
         file.copy(pathList()$paramdir, "rnaseq/", recursive=TRUE)
         file.copy(c("rnaseq/param/torque.tmpl", "rnaseq/param/.BatchJobs.R"), "./rnaseq")
         file.copy(c("rnaseq/param/targetsPE.txt", "rnaseq/param/targets.txt"), "./rnaseq")
-        file.copy(c("varseq/param/Makefile"), "./rnaseq")
+        file.copy(c("rnaseq/param/Makefile"), "./rnaseq")
     } else if(workflow=="chipseq") {
         file.copy(pathList()$chipseq, ".", recursive=TRUE)
         file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
@@ -43,7 +43,7 @@ genWorkenvir <- function(workflow) {
         file.copy(pathList()$paramdir, "chipseq/", recursive=TRUE)
         file.copy(c("chipseq/param/torque.tmpl", "chipseq/param/.BatchJobs.R"), "./chipseq")
         file.copy(c("chipseq/param/targetsPE.txt", "chipseq/param/targets.txt"), "./chipseq")
-        file.copy(c("varseq/param/Makefile"), "./chipseq")
+        file.copy(c("chipseq/param/Makefile"), "./chipseq")
     } else {
         stop("workflow can only be assigned one of: 'varseq', 'rnaseq' or 'chipseq'")
     }
