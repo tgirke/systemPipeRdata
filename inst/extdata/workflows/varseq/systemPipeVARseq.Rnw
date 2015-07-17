@@ -232,7 +232,7 @@ writeTargetsout(x=args, file="targets_sambcf.txt", overwrite=TRUE)
 @
 
 \subsection{Variant calling with \Rpackage{VariantTools}}
-<<eval=FALSE, cache=TRUE>>=
+<<eval=TRUE, cache=TRUE>>=
 library(gmapR); library(BiocParallel); library(BatchJobs)
 args <- systemArgs(sysma="param/vartools.param", mytargets="targets_gsnap_bam.txt")
 f <- function(x) {
