@@ -183,7 +183,7 @@ targets
 #  varlist <- sapply(names(outpaths(args))[1:4], function(x) as.character(read.delim(outpaths(args)[x])$VARID))
 #  vennset_vartools <- overLapper(varlist, type="vennsets")
 #  pdf("./results/vennplot_var.pdf")
-#  vennPlot(list(vennset_gatk, vennset_bcf, vennset_vartools), mymain="", mysub="GATK: red; BCFtools: blue; VariantTools: green", colmode=2, ccol=c("blue", "red", "green"))
+#  vennPlot(list(vennset_gatk, vennset_bcf, vennset_vartools), mymain="", mysub="GATK: red; BCFtools: blue; VariantTools: green", colmode=2, ccol=c("red", "blue", "green"))
 #  dev.off()
 
 ## ----sessionInfo, results='asis'-------------------------------------------------------------
