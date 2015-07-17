@@ -33,7 +33,7 @@ targets
 #  dev.off()
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  args <- systemArgs(sysma="param/bwa.param", mytargets="targetsPE.txt")
+#  args <- systemArgs(sysma="param/bwa.param", mytargets="targets_PEtrim.txt")
 #  sysargs(args)[1] # Command-line parameters for first FASTQ file
 
 ## ----eval=FALSE------------------------------------------------------------------------------
@@ -76,15 +76,16 @@ targets
 #              urlfile="./results/IGVurl.txt")
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  #system("java -jar CreateSequenceDictionary.jar R=./data/tair10.fasta O=./data/tair10.dict")
 #  system("java -jar /opt/picard/1.81/CreateSequenceDictionary.jar R=./data/tair10.fasta O=./data/tair10.dict")
 #  args <- systemArgs(sysma="param/gatk.param", mytargets="targets_bam.txt")
 #  gatkpaths <- runCommandline(args=args)
+#  unlink(outfile1(args), recursive = TRUE, force = TRUE)
 #  writeTargetsout(x=args, file="targets_gatk.txt", overwrite=TRUE)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  args <- systemArgs(sysma="param/sambcf.param", mytargets="targets_bam.txt")
 #  sambcfpaths <- runCommandline(args=args)
+#  unlink(outfile1(args), recursive = TRUE, force = TRUE)
 #  writeTargetsout(x=args, file="targets_sambcf.txt", overwrite=TRUE)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
@@ -178,8 +179,11 @@ targets
 #  args <- systemArgs(sysma="param/annotate_vars.param", mytargets="targets_sambcf_filtered.txt")
 #  varlist <- sapply(names(outpaths(args))[1:4], function(x) as.character(read.delim(outpaths(args)[x])$VARID))
 #  vennset_bcf <- overLapper(varlist, type="vennsets")
+#  args <- systemArgs(sysma="param/annotate_vars.param", mytargets="targets_vartools_filtered.txt")
+#  varlist <- sapply(names(outpaths(args))[1:4], function(x) as.character(read.delim(outpaths(args)[x])$VARID))
+#  vennset_vartools <- overLapper(varlist, type="vennsets")
 #  pdf("./results/vennplot_var.pdf")
-#  vennPlot(list(vennset_gatk, vennset_bcf), mymain="", mysub="GATK: red; BCFtools: blue", colmode=2, ccol=c("blue", "red"))
+#  vennPlot(list(vennset_gatk, vennset_bcf, vennset_vartools), mymain="", mysub="GATK: red; BCFtools: blue; VariantTools: green", colmode=2, ccol=c("blue", "red", "green"))
 #  dev.off()
 
 ## ----sessionInfo, results='asis'-------------------------------------------------------------

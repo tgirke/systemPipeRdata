@@ -124,7 +124,7 @@ dev.off()
 \subsection{Read mapping with \Rfunction{BWA}}
 The NGS reads of this project are aligned against the reference genome sequence using the highly variant tolerant short read aligner \Robject{BWA} \citep{Li2013-oy, Li2009-oc}. The parameter settings of the aligner are defined in the \Robject{bwa.param} file.
 <<eval=FALSE>>=
-args <- systemArgs(sysma="param/bwa.param", mytargets="targetsPE.txt")
+args <- systemArgs(sysma="param/bwa.param", mytargets="targets_PEtrim.txt")
 sysargs(args)[1] # Command-line parameters for first FASTQ file
 @
 
@@ -185,10 +185,10 @@ The following performs variant calling with \Robject{GATK}, \Robject{BCFtools} a
 \subsection{Variant calling with GATK}
 The following creates in the inital step a new targets file (\Robject{targets\_bam.txt}). The first column of this file gives the paths to the BAM files created in the alignment step. The new targets file and the parameter file \Robject{gatk.param} are used to create a new \Robject{SYSargs} instance for running GATK. Since GATK involves many processing steps, it is executed by a bash script \Robject{gatk\_run.sh} where the user can specify the detailed run parameters. All three files are expected to be located in the current working directory. Samples files for \Robject{gatk.param} and \Robject{gatk\_run.sh} are available in the subdirectory \Robject{./inst/extdata/} of the source file of the \Rpackage{systemPipeR} package. Alternatively, they can be downloaded directly from \href{https://github.com/tgirke/systemPipeR/tree/master/inst/extdata}{here}.
 <<eval=FALSE>>=
-#system("java -jar CreateSequenceDictionary.jar R=./data/tair10.fasta O=./data/tair10.dict")
 system("java -jar /opt/picard/1.81/CreateSequenceDictionary.jar R=./data/tair10.fasta O=./data/tair10.dict")
 args <- systemArgs(sysma="param/gatk.param", mytargets="targets_bam.txt")
 gatkpaths <- runCommandline(args=args)
+unlink(outfile1(args), recursive = TRUE, force = TRUE)
 writeTargetsout(x=args, file="targets_gatk.txt", overwrite=TRUE)
 @
 
@@ -197,6 +197,7 @@ The following runs the variant calling with BCFtools. This step requires in the 
 <<eval=FALSE>>=
 args <- systemArgs(sysma="param/sambcf.param", mytargets="targets_bam.txt")
 sambcfpaths <- runCommandline(args=args)
+unlink(outfile1(args), recursive = TRUE, force = TRUE)
 writeTargetsout(x=args, file="targets_sambcf.txt", overwrite=TRUE)
 @
 
@@ -334,8 +335,11 @@ vennset_gatk <- overLapper(varlist, type="vennsets")
 args <- systemArgs(sysma="param/annotate_vars.param", mytargets="targets_sambcf_filtered.txt")
 varlist <- sapply(names(outpaths(args))[1:4], function(x) as.character(read.delim(outpaths(args)[x])$VARID))
 vennset_bcf <- overLapper(varlist, type="vennsets")
+args <- systemArgs(sysma="param/annotate_vars.param", mytargets="targets_vartools_filtered.txt")
+varlist <- sapply(names(outpaths(args))[1:4], function(x) as.character(read.delim(outpaths(args)[x])$VARID))
+vennset_vartools <- overLapper(varlist, type="vennsets")
 pdf("./results/vennplot_var.pdf")
-vennPlot(list(vennset_gatk, vennset_bcf), mymain="", mysub="GATK: red; BCFtools: blue", colmode=2, ccol=c("blue", "red"))
+vennPlot(list(vennset_gatk, vennset_bcf, vennset_vartools), mymain="", mysub="GATK: red; BCFtools: blue; VariantTools: green", colmode=2, ccol=c("blue", "red", "green"))
 dev.off()
 @
 
