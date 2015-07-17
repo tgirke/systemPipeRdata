@@ -52,7 +52,7 @@ options(formatR.arrow=TRUE, width=95)
 unlink("test.db")
 @
 
-\title{VAR-Seq Workflow Report for Compute Cluster: BioC 2015}
+\title{VAR-Seq Workflow Report for Compute Cluster}
 \author{Project ID: VARseq\_PI\_Name\_Organism\_July2015 \\
         Author of Report: Thomas Girke (thomas.girke@ucr.edu)}
 \maketitle
