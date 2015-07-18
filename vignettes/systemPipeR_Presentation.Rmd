@@ -350,6 +350,17 @@ d <- bplapply(seq(along=args), f)
 ```
 # VAR-Seq workflow on single machine
 
+## Generate workflow template
+Load one of the available NGS workflows into your current working directory (here for varseq).
+```{r genVar_workflow_single, eval=FALSE}
+genWorkenvir(workflow="varseq")
+setwd("varseq")
+```
+
+## Run workflow
+Next, run the chosen sample workflow by executing from the command-line _`make -B`_ within the _`varseq`_ directory. Alternatively, one can run the code from the provided _`*.Rnw`_ template file from within R interactively. Much more detailed information is available in _`systemPipeR`_'s overview and workflow vignettes available [here](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
+
+
 # VAR-Seq workflow on computer cluster (demo)
 
 # _`sessionInfo()`_

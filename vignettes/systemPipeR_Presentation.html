@@ -81,7 +81,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#alignment-with-gsnap"><span class="toc-section-number">3.7.4</span> Alignment with <em><code>gsnap</code></em></a></li>
 </ul></li>
 </ul></li>
-<li><a href="#var-seq-workflow-on-single-machine"><span class="toc-section-number">4</span> VAR-Seq workflow on single machine</a></li>
+<li><a href="#var-seq-workflow-on-single-machine"><span class="toc-section-number">4</span> VAR-Seq workflow on single machine</a><ul>
+<li><a href="#generate-workflow-template"><span class="toc-section-number">4.1</span> Generate workflow template</a></li>
+<li><a href="#run-workflow"><span class="toc-section-number">4.2</span> Run workflow</a></li>
+</ul></li>
 <li><a href="#var-seq-workflow-on-computer-cluster-demo"><span class="toc-section-number">5</span> VAR-Seq workflow on computer cluster (demo)</a></li>
 <li><a href="#sessioninfo"><span class="toc-section-number">6</span> <em><code>sessionInfo()</code></em></a></li>
 </ul>
@@ -380,6 +383,16 @@ d &lt;- bplapply(seq(along=args), f)</code></pre>
 </div>
 <div id="var-seq-workflow-on-single-machine" class="section level1">
 <h1><span class="header-section-number">4</span> VAR-Seq workflow on single machine</h1>
+<div id="generate-workflow-template" class="section level2">
+<h2><span class="header-section-number">4.1</span> Generate workflow template</h2>
+<p>Load one of the available NGS workflows into your current working directory (here for varseq).</p>
+<pre class="r"><code>genWorkenvir(workflow=&quot;varseq&quot;)
+setwd(&quot;varseq&quot;)</code></pre>
+</div>
+<div id="run-workflow" class="section level2">
+<h2><span class="header-section-number">4.2</span> Run workflow</h2>
+<p>Next, run the chosen sample workflow by executing from the command-line <em><code>make -B</code></em> within the <em><code>varseq</code></em> directory. Alternatively, one can run the code from the provided <em><code>*.Rnw</code></em> template file from within R interactively. Much more detailed information is available in <em><code>systemPipeR</code></em>’s overview and workflow vignettes available <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html">here</a>.</p>
+</div>
 </div>
 <div id="var-seq-workflow-on-computer-cluster-demo" class="section level1">
 <h1><span class="header-section-number">5</span> VAR-Seq workflow on computer cluster (demo)</h1>

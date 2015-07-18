@@ -81,9 +81,9 @@ setwd("varseq")
 \subsection{Run workflow}
 Next, run the chosen sample workflow by executing from the command-line \Rfunction{'make -B'} within the \Robject{'varseq'} directory. Alternatively, one can run the code from the provided \Robject{*.Rnw} template file from within R interactively. Much more detailed information is available in \Rpackage{systemPipeR's} overview and workflow vignettes available \href{http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html}{\textcolor{blue}{here}}.
 
-The BioC 2015 vignette is available \href{https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeR_Bioc2015.pdf}{\textcolor{blue}{here}}. It also can be opened with the following command. 
+The BioC 2015 vignette is available \href{https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeR_Presentation.html}{\textcolor{blue}{here}}. It also can be opened with the following command. 
 <<eval=FALSE>>=
-vignette("systemPipeR_Bioc2015", package = "systemPipeRdata")
+vignette("systemPipeR_Presentation", package = "systemPipeRdata")
 @
 
 \section{Version Information}

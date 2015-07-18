@@ -190,6 +190,10 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## register(param)
 ## d <- bplapply(seq(along=args), f)
 
+## ----genVar_workflow_single, eval=FALSE----------------------------------
+## genWorkenvir(workflow="varseq")
+## setwd("varseq")
+
 ## ----sessionInfo---------------------------------------------------------
 sessionInfo()
 

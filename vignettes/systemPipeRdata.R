@@ -18,7 +18,7 @@ unlink("test.db")
 #  setwd("varseq")
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  vignette("systemPipeR_Bioc2015", package = "systemPipeRdata")
+#  vignette("systemPipeR_Presentation", package = "systemPipeRdata")
 
 ## ----sessionInfo, results='asis'-------------------------------------------------------------
 toLatex(sessionInfo())
