@@ -13,6 +13,8 @@ user-friendliness of many typical analysis workflows in the NGS area. The
 input data for _systemPipeR's_ sample workflows are provided by _systemPipeRdata_.
 Its vignette is available [_here_](https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.pdf?raw=true).
 
+The presentation for the Bioc2015 event is available [_here_](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeR_Presentation.html).
+
 #### Installation 
 The easiest way to install _systemPipeRdata_ is via the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
 package from CRAN.
