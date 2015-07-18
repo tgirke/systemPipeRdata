@@ -73,8 +73,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#fastq-quality-report"><span class="toc-section-number">3.3</span> FASTQ quality report</a></li>
 <li><a href="#alignment-with-tophat2"><span class="toc-section-number">3.4</span> Alignment with <em><code>Tophat2</code></em></a></li>
 <li><a href="#read-and-alignment-count-stats"><span class="toc-section-number">3.5</span> Read and alignment count stats</a></li>
-<li><a href="#sessioninfo"><span class="toc-section-number">3.6</span> <code>sessionInfo()</code></a></li>
 </ul></li>
+<li><a href="#sessioninfo"><span class="toc-section-number">4</span> <em><code>sessionInfo()</code></em></a></li>
 </ul>
 </div>
 
@@ -269,9 +269,9 @@ seeFastqPlot(unlist(fqlist, recursive=FALSE))</code></pre>
 <pre class="r"><code>args &lt;- systemArgs(sysma=&quot;tophat.param&quot;, mytargets=&quot;targets.txt&quot;)
 moduleload(modules(args)) # Skip if module system is not available
 system(&quot;bowtie2-build ./data/tair10.fasta ./data/tair10.fasta&quot;)</code></pre>
-<p>Execute <em><code>SYSargs</code></em> on a single machine without submitting to a queuing system of a compute cluster. This way the input FASTQ files will be processed sequentially. If available, multiple CPU cores can be used for processing each file. The number of CPU cores (here 4) to use for each process is defined in the  file. With  one can return this value from the  object. Note, if a module system is not installed or used, then the corresponding  file needs to be edited accordingly by either providing an empty field in the line(s) starting with  or by deleting these lines.</p>
+<p>Execute <em><code>SYSargs</code></em> on a single machine without submitting to a queuing system of a compute cluster. This way the input FASTQ files will be processed sequentially. If available, multiple CPU cores can be used for processing each file. The number of CPU cores (here 4) to use for each process is defined in the <em><code>*.param</code></em> file. With <em><code>cores(args)</code></em> one can return this value from the <em><code>SYSargs</code></em> object. Note, if a module system is not installed or used, then the corresponding <em><code>*.param</code></em> file needs to be edited accordingly by either providing an empty field in the line(s) starting with <em><code>module</code></em> or by deleting these lines.</p>
 <pre class="r"><code>bampaths &lt;- runCommandline(args=args)</code></pre>
-<p>Alternatively, the computation can be greatly accelerated by processing many files in parallel using several compute nodes of a cluster, where a scheduling/queuing system is used for load balancing. To avoid over-subscription of CPU cores on the compute nodes, the value from  is passed on to the submission command, here  in the  list object. The number of independent parallel cluster processes is defined under the  argument. The following example will run 18 processes in parallel using for each 4 CPU cores. If the resources available on a cluster allow to run all 18 processes at the same time then the shown sample submission will utilize in total 72 CPU cores. Note,  can be used with most queueing systems as it is based on utilities from the  package which supports the use of template files () for defining the run parameters of different schedulers. To run the following code, one needs to have both a conf file (see  samples ) and a template file (see  samples ) for the queueing available on a system. The following example uses the sample conf and template files for the Torque scheduler provided by this package.</p>
+<p>Alternatively, the computation can be greatly accelerated by processing many files in parallel using several compute nodes of a cluster, where a scheduling/queuing system is used for load balancing. To avoid over-subscription of CPU cores on the compute nodes, the value from <em><code>cores(args)</code></em> is passed on to the submission command, here <em><code>nodes</code></em> in the <em><code>resources</code></em> list object. The number of independent parallel cluster processes is defined under the <em><code>Njobs</code></em> argument. The following example will run 18 processes in parallel using for each 4 CPU cores. If the resources available on a cluster allow to run all 18 processes at the same time then the shown sample submission will utilize in total 72 CPU cores. Note, <em><code>runCluster</code></em> can be used with most queueing systems as it is based on utilities from the  package which supports the use of template files () for defining the run parameters of different schedulers. To run the following code, one needs to have both a conf file (see <em><code>.BatchJob</code></em> samples <a href="\href{https://code.google.com/p/batchjobs/wiki/DortmundUsage">here</a>) and a template file (see <em><code>*.tmpl</code></em> samples <a href="\href{https://github.com/tudo-r/BatchJobs/tree/master/examples">here</a>) for the queueing available on a system. The following example uses the sample conf and template files for the Torque scheduler provided by this package.</p>
 <pre class="r"><code>file.copy(system.file(&quot;extdata&quot;, &quot;.BatchJobs.R&quot;, package=&quot;systemPipeR&quot;), &quot;.&quot;)
 file.copy(system.file(&quot;extdata&quot;, &quot;torque.tmpl&quot;, package=&quot;systemPipeR&quot;), &quot;.&quot;)
 resources &lt;- list(walltime=&quot;20:00:00&quot;, nodes=paste0(&quot;1:ppn=&quot;, cores(args)), memory=&quot;10gb&quot;)
@@ -288,7 +288,7 @@ sapply(1:length(args), function(x) loadResult(reg, x)) # Works after job complet
 <p>Generate table of read and alignment counts for all samples.</p>
 <pre class="r"><code>read_statsDF &lt;- alignStats(args) 
 write.table(read_statsDF, &quot;results/alignStats.xls&quot;, row.names=FALSE, quote=FALSE, sep=&quot;\t&quot;)</code></pre>
-<p>The following shows the first four lines of the sample alignment stats file provided by the  package. For simplicity the number of PE reads is multiplied here by 2 to approximate proper alignment frequencies where each read in a pair is counted.</p>
+<p>The following shows the first four lines of the sample alignment stats file provided by the <em><code>systemPipeR</code></em> package. For simplicity the number of PE reads is multiplied here by 2 to approximate proper alignment frequencies where each read in a pair is counted.</p>
 <pre class="r"><code>read.table(system.file(&quot;extdata&quot;, &quot;alignStats.xls&quot;, package=&quot;systemPipeR&quot;), header=TRUE)[1:4,]</code></pre>
 <pre><code>##   FileName Nreads2x Nalign Perc_Aligned Nalign_Primary Perc_Aligned_Primary
 ## 1      M1A   192918 177961     92.24697         177961             92.24697
@@ -299,7 +299,7 @@ write.table(read_statsDF, &quot;results/alignStats.xls&quot;, row.names=FALSE, q
 <pre class="r"><code>f &lt;- function(x) alignStats(args[x])
 read_statsList &lt;- bplapply(seq(along=args), f, BPPARAM = MulticoreParam(workers=8))
 read_statsDF &lt;- do.call(&quot;rbind&quot;, read_statsList)</code></pre>
-<p>Parallelization of read/alignment stats via scheduler (e.g. Torque) across several compute nodes</p>
+<p>Parallelization of read/alignment stats via scheduler (<em>e.g.</em> Torque) across several compute nodes</p>
 <pre class="r"><code>library(BiocParallel); library(BatchJobs)
 f &lt;- function(x) {
     library(systemPipeR)
@@ -312,8 +312,9 @@ register(param)
 read_statsList &lt;- bplapply(seq(along=args), f)
 read_statsDF &lt;- do.call(&quot;rbind&quot;, read_statsList)</code></pre>
 </div>
-<div id="sessioninfo" class="section level2">
-<h2><span class="header-section-number">3.6</span> <code>sessionInfo()</code></h2>
+</div>
+<div id="sessioninfo" class="section level1">
+<h1><span class="header-section-number">4</span> <em><code>sessionInfo()</code></em></h1>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>## R version 3.2.1 (2015-06-18)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
@@ -364,7 +365,6 @@ read_statsDF &lt;- do.call(&quot;rbind&quot;, read_statsList)</code></pre>
 <p>Li, Heng. 2013. “Aligning Sequence Reads, Clone Sequences and Assembly Contigs with BWA-MEM.” <em>ArXiv [Q-Bio.GN]</em>. <a href="http://arxiv.org/abs/1303.3997" class="uri">http://arxiv.org/abs/1303.3997</a>.</p>
 <p>Liao, Yang, Gordon K Smyth, and Wei Shi. 2013. “The Subread Aligner: Fast, Accurate and Scalable Read Mapping by Seed-and-Vote.” <em>Nucleic Acids Res.</em> 41 (10): e108. doi:<a href="http://dx.doi.org/10.1093/nar/gkt214">10.1093/nar/gkt214</a>.</p>
 <p>Wu, T D, and S Nacu. 2010. “Fast and SNP-tolerant Detection of Complex Variants and Splicing in Short Reads.” <em>Bioinformatics</em> 26 (7): 873–81. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btq057">10.1093/bioinformatics/btq057</a>.</p>
-</div>
 </div>
 </div>
 

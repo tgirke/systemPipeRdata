@@ -226,13 +226,13 @@ moduleload(modules(args)) # Skip if module system is not available
 system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
 ```
 
-Execute _`SYSargs`_ on a single machine without submitting to a queuing system of a compute cluster. This way the input FASTQ files will be processed sequentially. If available, multiple CPU cores can be used for processing each file. The number of CPU cores (here 4) to use for each process is defined in the \Robject{*.param} file. With \Rfunction{cores(args)} one can return this value from the \Robject{SYSargs} object. Note, if a module system is not installed or used, then the corresponding \Robject{*.param} file needs to be edited accordingly by either providing an empty field in the line(s) starting with \Robject{module} or by deleting these lines.
+Execute _`SYSargs`_ on a single machine without submitting to a queuing system of a compute cluster. This way the input FASTQ files will be processed sequentially. If available, multiple CPU cores can be used for processing each file. The number of CPU cores (here 4) to use for each process is defined in the _`*.param`_ file. With _`cores(args)`_ one can return this value from the _`SYSargs`_ object. Note, if a module system is not installed or used, then the corresponding _`*.param`_ file needs to be edited accordingly by either providing an empty field in the line(s) starting with _`module`_ or by deleting these lines.
 
 ```{r run_bowtie_single, eval=FALSE}
 bampaths <- runCommandline(args=args)
 ```
 
-Alternatively, the computation can be greatly accelerated by processing many files in parallel using several compute nodes of a cluster, where a scheduling/queuing system is used for load balancing. To avoid over-subscription of CPU cores on the compute nodes, the value from \Rfunction{cores(args)} is passed on to the submission command, here \Rfunarg{nodes} in the \Rfunction{resources} list object. The number of independent parallel cluster processes is defined under the \Rfunarg{Njobs} argument. The following example will run 18 processes in parallel using for each 4 CPU cores. If the resources available on a cluster allow to run all 18 processes at the same time then the shown sample submission will utilize in total 72 CPU cores. Note, \Rfunction{runCluster} can be used with most queueing systems as it is based on utilities from the \Rfunction{BatchJobs} package which supports the use of template files (\Rfunarg{*.tmpl}) for defining the run parameters of different schedulers. To run the following code, one needs to have both a conf file (see \Rfunarg{.BatchJob} samples \href{https://code.google.com/p/batchjobs/wiki/DortmundUsage}{{\textcolor{blue}{here}}}) and a template file (see \Rfunarg{*.tmpl} samples \href{https://github.com/tudo-r/BatchJobs/tree/master/examples}{{\textcolor{blue}{here}}}) for the queueing available on a system. The following example uses the sample conf and template files for the Torque scheduler provided by this package.  
+Alternatively, the computation can be greatly accelerated by processing many files in parallel using several compute nodes of a cluster, where a scheduling/queuing system is used for load balancing. To avoid over-subscription of CPU cores on the compute nodes, the value from _`cores(args)`_ is passed on to the submission command, here _`nodes`_ in the _`resources`_ list object. The number of independent parallel cluster processes is defined under the _`Njobs`_ argument. The following example will run 18 processes in parallel using for each 4 CPU cores. If the resources available on a cluster allow to run all 18 processes at the same time then the shown sample submission will utilize in total 72 CPU cores. Note, _`runCluster`_ can be used with most queueing systems as it is based on utilities from the \Rfunction{BatchJobs} package which supports the use of template files (\Rfunarg{*.tmpl}) for defining the run parameters of different schedulers. To run the following code, one needs to have both a conf file (see _`.BatchJob`_ samples [here](\href{https://code.google.com/p/batchjobs/wiki/DortmundUsage)) and a template file (see _`*.tmpl`_ samples [here](\href{https://github.com/tudo-r/BatchJobs/tree/master/examples)) for the queueing available on a system. The following example uses the sample conf and template files for the Torque scheduler provided by this package.  
 
 ```{r run_bowtie_parallel, eval=FALSE}
 file.copy(system.file("extdata", ".BatchJobs.R", package="systemPipeR"), ".")
@@ -257,7 +257,7 @@ read_statsDF <- alignStats(args)
 write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 ```
 
-The following shows the first four lines of the sample alignment stats file provided by the \Rpackage{systemPipeR} package. For simplicity the number of PE reads is multiplied here by 2 to approximate proper alignment frequencies where each read in a pair is counted. 
+The following shows the first four lines of the sample alignment stats file provided by the _`systemPipeR`_ package. For simplicity the number of PE reads is multiplied here by 2 to approximate proper alignment frequencies where each read in a pair is counted. 
 ```{r align_stats2, eval=TRUE}
 read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), header=TRUE)[1:4,]
 ```
@@ -269,7 +269,7 @@ read_statsList <- bplapply(seq(along=args), f, BPPARAM = MulticoreParam(workers=
 read_statsDF <- do.call("rbind", read_statsList)
 ```
 
-Parallelization of read/alignment stats via scheduler (e.g. Torque) across several compute nodes 
+Parallelization of read/alignment stats via scheduler (_e.g._ Torque) across several compute nodes 
 ```{r align_stats_parallel_cluster, eval=FALSE}
 library(BiocParallel); library(BatchJobs)
 f <- function(x) {
@@ -285,7 +285,7 @@ read_statsDF <- do.call("rbind", read_statsList)
 ```
 
 
-# `sessionInfo()`
+# _`sessionInfo()`_
 
 ```{r sessionInfo}
 sessionInfo()
