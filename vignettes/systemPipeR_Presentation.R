@@ -15,7 +15,7 @@ suppressPackageStartupMessages({
     library(GenomicRanges)
     library(ggplot2)
     library(GenomicAlignments)
-    library(DESeq2)
+    library(ShortRead)
 })
 
 ## ----install, eval=FALSE-------------------------------------------------
@@ -65,6 +65,21 @@ sysargs(args)[1]
 ## preprocessReads(args=args, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA', subject=fq)",
 ##                 batchsize=100000, overwrite=TRUE, compress=TRUE)
 ## writeTargetsout(x=args, file="targets_trim.txt")
+
+## ----custom_preprocessing, eval=FALSE------------------------------------
+## args <- systemArgs(sysma="trimPE.param", mytargets="targetsPE.txt")
+## filterFct <- function(fq, cutoff=20, Nexceptions=0) {
+##     qcount <- rowSums(as(quality(fq), "matrix") <= cutoff)
+##     fq[qcount <= Nexceptions] # Retains reads where Phred scores are >= cutoff with N exceptions
+## }
+## preprocessReads(args=args, Fct="filterFct(fq, cutoff=20, Nexceptions=0)", batchsize=100000)
+## writeTargetsout(x=args, file="targets_PEtrim.txt")
+
+## ----fastq_quality, eval=FALSE-------------------------------------------
+## fqlist <- seeFastq(fastq=infile1(args), batchsize=10000, klength=8)
+## pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
+## seeFastqPlot(fqlist)
+## dev.off()
 
 ## ----sessionInfo---------------------------------------------------------
 sessionInfo()

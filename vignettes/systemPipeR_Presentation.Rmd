@@ -18,7 +18,7 @@ bibliography: bibtex.bib
 - Compile from command-line
 echo "rmarkdown::render('systemPipeR_Presentation.Rmd')" | R --slave; R CMD Stangle systemPipeR_Presentation.Rmd
 
-- To customize font size, add this line to output: 
+- To customize font size and other style features, add this line to output section in preamble:  
     css: style.css
 -->
 
@@ -40,7 +40,7 @@ suppressPackageStartupMessages({
     library(GenomicRanges)
     library(ggplot2)
     library(GenomicAlignments)
-    library(DESeq2)
+    library(ShortRead)
 })
 ```
 
@@ -68,7 +68,7 @@ biocLite("systemPipeR") # Installs systemPipeR from Bioconductor
 biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
 ```
 
-## Loading the package and documentation
+## Loading package and documentation
 
 ```{r documentation, eval=FALSE}
 library("systemPipeR") # Loads the package
@@ -163,6 +163,34 @@ preprocessReads(args=args, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA', subject=fq
                 batchsize=100000, overwrite=TRUE, compress=TRUE)
 writeTargetsout(x=args, file="targets_trim.txt")
 ```
+
+The following example shows how one can design a custom read preprocessing function 
+using utilities provided by the _`ShortRead`_ package, and then run it
+in batch mode with the _'preprocessReads'_ function (here on paired-end reads).
+```{r custom_preprocessing, eval=FALSE}
+args <- systemArgs(sysma="trimPE.param", mytargets="targetsPE.txt")
+filterFct <- function(fq, cutoff=20, Nexceptions=0) {
+    qcount <- rowSums(as(quality(fq), "matrix") <= cutoff)
+    fq[qcount <= Nexceptions] # Retains reads where Phred scores are >= cutoff with N exceptions
+}
+preprocessReads(args=args, Fct="filterFct(fq, cutoff=20, Nexceptions=0)", batchsize=100000)
+writeTargetsout(x=args, file="targets_PEtrim.txt")
+```
+
+## FASTQ quality report
+The following _`seeFastq`_ and _`seeFastqPlot`_ functions generate and plot a series of
+useful quality statistics for a set of FASTQ files including per cycle quality
+box plots, base proportions, base-level quality trends, relative k-mer
+diversity, length and occurrence distribution of reads, number of reads above
+quality cutoffs and mean quality distribution.  
+```{r fastq_quality, eval=FALSE}
+fqlist <- seeFastq(fastq=infile1(args), batchsize=10000, klength=8)
+pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
+seeFastqPlot(fqlist)
+dev.off()
+```
+![fastqReport](figures/fastqReport.png)
+
 
 
 ## `sessionInfo()`
