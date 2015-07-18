@@ -1,7 +1,7 @@
 Package: systemPipeRdata
 Title: Sample data for workflows of systemPipeR package
-Version: 0.99.1
-Date: 2015-15-07
+Version: 0.99.2
+Date: 2015-18-07
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
 biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq, ChIPSeq, MethylSeq, SNP, GeneExpression, Coverage, GeneSetEnrichment, Alignment, QualityControl
