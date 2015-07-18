@@ -116,6 +116,36 @@ sysargs(args)[1]
 ##                   resourceList=resources)
 ## waitForJobs(reg)
 
+## ----process_monitoring, eval=FALSE--------------------------------------
+## showStatus(reg)
+## file.exists(outpaths(args))
+## sapply(1:length(args), function(x) loadResult(reg, x)) # Works after job completion
+
+## ----align_stats1, eval=FALSE--------------------------------------------
+## read_statsDF <- alignStats(args)
+## write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+
+## ----align_stats2, eval=TRUE---------------------------------------------
+read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), header=TRUE)[1:4,]
+
+## ----align_stats_parallel, eval=FALSE------------------------------------
+## f <- function(x) alignStats(args[x])
+## read_statsList <- bplapply(seq(along=args), f, BPPARAM = MulticoreParam(workers=8))
+## read_statsDF <- do.call("rbind", read_statsList)
+
+## ----align_stats_parallel_cluster, eval=FALSE----------------------------
+## library(BiocParallel); library(BatchJobs)
+## f <- function(x) {
+##     library(systemPipeR)
+##     args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+##     alignStats(args[x])
+## }
+## funs <- makeClusterFunctionsTorque("torque.tmpl")
+## param <- BatchJobsParam(length(args), resources=list(walltime="20:00:00", nodes="1:ppn=1", memory="6gb"), cluster.functions=funs)
+## register(param)
+## read_statsList <- bplapply(seq(along=args), f)
+## read_statsDF <- do.call("rbind", read_statsList)
+
 ## ----sessionInfo---------------------------------------------------------
 sessionInfo()
 

@@ -72,7 +72,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#read-preprocessing"><span class="toc-section-number">3.2</span> Read Preprocessing</a></li>
 <li><a href="#fastq-quality-report"><span class="toc-section-number">3.3</span> FASTQ quality report</a></li>
 <li><a href="#alignment-with-tophat2"><span class="toc-section-number">3.4</span> Alignment with <em><code>Tophat2</code></em></a></li>
-<li><a href="#sessioninfo"><span class="toc-section-number">3.5</span> <code>sessionInfo()</code></a></li>
+<li><a href="#read-and-alignment-count-stats"><span class="toc-section-number">3.5</span> Read and alignment count stats</a></li>
+<li><a href="#sessioninfo"><span class="toc-section-number">3.6</span> <code>sessionInfo()</code></a></li>
 </ul></li>
 </ul>
 </div>
@@ -100,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>Note: the most recent version of this tutorial can be found <a href="https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeR_Presentation.html">here</a>.</p>
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
-<p><a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> provides utilities for building  analysis workflows with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq and many others <span class="citation">(Girke 2014)</span>. An important feature is support for running command-line software, such as NGS aligners, on both single machines or compute clusters. This includes both interactive job submissions or batch submissions to queuing systems of clusters. For instance, <em><code>systemPipeR</code></em> can be used with most command-line aligners such as <code>BWA</code> <span class="citation">(Heng Li 2013; H Li and Durbin 2009)</span>, <code>TopHat2</code> <span class="citation">(Kim et al. 2013)</span> and <code>Bowtie2</code> <span class="citation">(Langmead and Salzberg 2012)</span>, as well as the R-based NGS aligners <a href="http://www.bioconductor.org/packages/devel/bioc/html/Rsubread.html"><em><code>Rsubread</code></em></a> <span class="citation">(Liao, Smyth, and Shi 2013)</span> and <a href="http://www.bioconductor.org/packages/devel/bioc/html/gmapR.html"><em><code>gsnap (gmapR)</code></em></a> <span class="citation">(<span class="citeproc-not-found" data-reference-id="Wu2010-iq"><strong>???</strong></span>)</span>. Efficient handling of complex sample sets and experimental designs is facilitated by a well-defined sample annotation infrastructure which improves reproducibility and user-friendliness of many typical analysis workflows in the NGS area <span class="citation">(Lawrence et al. 2013)</span>.</p>
+<p><a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> provides utilities for building  analysis workflows with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq and many others <span class="citation">(Girke 2014)</span>. An important feature is support for running command-line software, such as NGS aligners, on both single machines or compute clusters. This includes both interactive job submissions or batch submissions to queuing systems of clusters. For instance, <em><code>systemPipeR</code></em> can be used with most command-line aligners such as <code>BWA</code> <span class="citation">(Heng Li 2013; H Li and Durbin 2009)</span>, <code>TopHat2</code> <span class="citation">(Kim et al. 2013)</span> and <code>Bowtie2</code> <span class="citation">(Langmead and Salzberg 2012)</span>, as well as the R-based NGS aligners <a href="http://www.bioconductor.org/packages/devel/bioc/html/Rsubread.html"><em><code>Rsubread</code></em></a> <span class="citation">(Liao, Smyth, and Shi 2013)</span> and <a href="http://www.bioconductor.org/packages/devel/bioc/html/gmapR.html"><em><code>gsnap (gmapR)</code></em></a> <span class="citation">(Wu and Nacu 2010)</span>. Efficient handling of complex sample sets and experimental designs is facilitated by a well-defined sample annotation infrastructure which improves reproducibility and user-friendliness of many typical analysis workflows in the NGS area <span class="citation">(Lawrence et al. 2013)</span>.</p>
 <p>A central concept for designing workflows within the <em><code>sytemPipeR</code></em> environment is the use of sample management containers called <em><code>SYSargs</code></em>. Instances of this S4 object class are constructed by the <em><code>systemArgs</code></em> function from two simple tablular files: a <em><code>targets</code></em> file and a <em><code>param</code></em> file. The latter is optional for workflow steps lacking command-line software. Typically, a <em><code>SYSargs</code></em> instance stores all sample-level inputs as well as the paths to the corresponding outputs generated by command-line- or R-based software generating sample-level output files, such as read preprocessors (trimmed/filtered FASTQ files), aligners (SAM/BAM files), variant callers (VCF/BCF files) or peak callers (BED/WIG files). Each sample level input/outfile operation uses its own <em><code>SYSargs</code></em> instance. The outpaths of <em><code>SYSargs</code></em> usually define the sample inputs for the next <em><code>SYSargs</code></em> instance. This connectivity is established by writing the outpaths with the <em><code>writeTargetsout</code></em> function to a new targets file that serves as input to the next <em><code>systemArgs</code></em> call. By chaining several <em><code>SYSargs</code></em> steps together one can construct complex workflows involving many sample-level input/output file operations with any combinaton of command-line or R-based software.</p>
 <p>The intended way of running <em><code>sytemPipeR</code></em> workflows is via <em><code>*.Rnw</code></em> or <em><code>*.Rmd</code></em> files, which can be executed either line-wise in interactive mode or with a single command from R or the command-line using a <a href="https://github.com/tgirke/systemPipeR/blob/master/inst/extdata/Makefile"><em><code>Makefile</code></em></a>. This way comprehensive and reproducible analysis reports in PDF or HTML format can be generated in a fully automated manner. Templates for setting up custom project reports are provided as <em><code>*.Rnw</code></em> files in the <code>vignettes</code> subdirectory of this package. The corresponding PDFs of these report templates are linked here: <a href="https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeRNAseq.pdf?raw=true"><em><code>systemPipeRNAseq</code></em></a>, <a href="https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeChIPseq.pdf?raw=true"><em><code>systemPipeChIPseq</code></em></a> and <a href="https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeVARseq.pdf?raw=true"><em><code>systemPipeVARseq</code></em></a>. To work with <em><code>*.Rnw</code></em> or <em><code>*.Rmd</code></em> files efficiently, basic knowledge of <a href="https://www.stat.uni-muenchen.de/~leisch/Sweave/"><em><code>Sweave</code></em></a> or <a href="http://yihui.name/knitr/"><em><code>knitr</code></em></a> and <a href="http://www.latex-project.org/"><em><code>Latex</code></em></a> or <a href="http://rmarkdown.rstudio.com/"><em><code>R Markdown v2</code></em></a> is required.</p>
 </div>
@@ -277,9 +278,42 @@ resources &lt;- list(walltime=&quot;20:00:00&quot;, nodes=paste0(&quot;1:ppn=&qu
 reg &lt;- clusterRun(args, conffile=&quot;.BatchJobs.R&quot;, template=&quot;torque.tmpl&quot;, Njobs=18, runid=&quot;01&quot;, 
                   resourceList=resources)
 waitForJobs(reg)</code></pre>
+<p>Useful commands for monitoring progress of submitted jobs</p>
+<pre class="r"><code>showStatus(reg)
+file.exists(outpaths(args))
+sapply(1:length(args), function(x) loadResult(reg, x)) # Works after job completion</code></pre>
+</div>
+<div id="read-and-alignment-count-stats" class="section level2">
+<h2><span class="header-section-number">3.5</span> Read and alignment count stats</h2>
+<p>Generate table of read and alignment counts for all samples.</p>
+<pre class="r"><code>read_statsDF &lt;- alignStats(args) 
+write.table(read_statsDF, &quot;results/alignStats.xls&quot;, row.names=FALSE, quote=FALSE, sep=&quot;\t&quot;)</code></pre>
+<p>The following shows the first four lines of the sample alignment stats file provided by the  package. For simplicity the number of PE reads is multiplied here by 2 to approximate proper alignment frequencies where each read in a pair is counted.</p>
+<pre class="r"><code>read.table(system.file(&quot;extdata&quot;, &quot;alignStats.xls&quot;, package=&quot;systemPipeR&quot;), header=TRUE)[1:4,]</code></pre>
+<pre><code>##   FileName Nreads2x Nalign Perc_Aligned Nalign_Primary Perc_Aligned_Primary
+## 1      M1A   192918 177961     92.24697         177961             92.24697
+## 2      M1B   197484 159378     80.70426         159378             80.70426
+## 3      A1A   189870 176055     92.72397         176055             92.72397
+## 4      A1B   188854 147768     78.24457         147768             78.24457</code></pre>
+<p>Parallelization of read/alignment stats on single machine with multiple cores</p>
+<pre class="r"><code>f &lt;- function(x) alignStats(args[x])
+read_statsList &lt;- bplapply(seq(along=args), f, BPPARAM = MulticoreParam(workers=8))
+read_statsDF &lt;- do.call(&quot;rbind&quot;, read_statsList)</code></pre>
+<p>Parallelization of read/alignment stats via scheduler (e.g. Torque) across several compute nodes</p>
+<pre class="r"><code>library(BiocParallel); library(BatchJobs)
+f &lt;- function(x) {
+    library(systemPipeR)
+    args &lt;- systemArgs(sysma=&quot;tophat.param&quot;, mytargets=&quot;targets.txt&quot;)
+    alignStats(args[x])
+}
+funs &lt;- makeClusterFunctionsTorque(&quot;torque.tmpl&quot;)
+param &lt;- BatchJobsParam(length(args), resources=list(walltime=&quot;20:00:00&quot;, nodes=&quot;1:ppn=1&quot;, memory=&quot;6gb&quot;), cluster.functions=funs)
+register(param)
+read_statsList &lt;- bplapply(seq(along=args), f)
+read_statsDF &lt;- do.call(&quot;rbind&quot;, read_statsList)</code></pre>
 </div>
 <div id="sessioninfo" class="section level2">
-<h2><span class="header-section-number">3.5</span> <code>sessionInfo()</code></h2>
+<h2><span class="header-section-number">3.6</span> <code>sessionInfo()</code></h2>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>## R version 3.2.1 (2015-06-18)
 ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
@@ -329,6 +363,7 @@ waitForJobs(reg)</code></pre>
 <p>Li, H, and R Durbin. 2009. “Fast and Accurate Short Read Alignment with Burrows-Wheeler Transform.” <em>Bioinformatics</em> 25 (14): 1754–60. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btp324">10.1093/bioinformatics/btp324</a>.</p>
 <p>Li, Heng. 2013. “Aligning Sequence Reads, Clone Sequences and Assembly Contigs with BWA-MEM.” <em>ArXiv [Q-Bio.GN]</em>. <a href="http://arxiv.org/abs/1303.3997" class="uri">http://arxiv.org/abs/1303.3997</a>.</p>
 <p>Liao, Yang, Gordon K Smyth, and Wei Shi. 2013. “The Subread Aligner: Fast, Accurate and Scalable Read Mapping by Seed-and-Vote.” <em>Nucleic Acids Res.</em> 41 (10): e108. doi:<a href="http://dx.doi.org/10.1093/nar/gkt214">10.1093/nar/gkt214</a>.</p>
+<p>Wu, T D, and S Nacu. 2010. “Fast and SNP-tolerant Detection of Complex Variants and Splicing in Short Reads.” <em>Bioinformatics</em> 26 (7): 873–81. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btq057">10.1093/bioinformatics/btq057</a>.</p>
 </div>
 </div>
 </div>
