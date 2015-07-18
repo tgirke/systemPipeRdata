@@ -308,7 +308,7 @@ qsubargs <- getQsubargs(queue="batch", cores=cores(args), memory="mem=10gb", tim
 (joblist <- qsubRun(args=args, qsubargs=qsubargs, Nqsubs=18, package="systemPipeR"))
 ```
 
-Alignment with BWA-MEM (_e.g._ for VAR-Seq)
+### Alignment with BWA-MEM (_e.g._ for VAR-Seq)
 The following example runs BWA-MEM as a single process without submitting it to a cluster.
 ```{r bwamem_cluster, eval=FALSE}
 args <- systemArgs(sysma="bwa.param", mytargets="targets.txt")
