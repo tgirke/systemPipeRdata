@@ -348,7 +348,9 @@ param <- BatchJobsParam(length(args), resources=list(walltime="20:00:00", nodes=
 register(param)
 d <- bplapply(seq(along=args), f)
 ```
+# VAR-Seq workflow on single machine
 
+# VAR-Seq workflow on computer cluster (demo)
 
 # _`sessionInfo()`_
 
