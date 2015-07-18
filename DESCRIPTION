@@ -8,7 +8,7 @@ biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq, ChIPSeq, Me
 Description: Sample data used by sytemPipeR workflows including RNA-Seq, ChIP-Seq, VAR-Seq and Ribo-Seq. 
 Depends: systemPipeR, Rsamtools, Biostrings, ShortRead, methods
 Imports: BiocGenerics, GenomicRanges, VariantAnnotation, rjson, grid, ggplot2, limma, edgeR, DESeq2, GOstats, GO.db, annotate, pheatmap, BatchJobs
-Suggests: ape, RUnit, BiocStyle, knitr, biomaRt, GenomicFeatures, BiocParallel, VariantTools, gmapR, BBmisc, GenomicAlignments, rtracklayer
+Suggests: ape, RUnit, BiocStyle, knitr, rmarkdown, biomaRt, GenomicFeatures, BiocParallel, VariantTools, gmapR, BBmisc, GenomicAlignments, rtracklayer
 VignetteBuilder: knitr
 License: Artistic-2.0
 NeedsCompilation: no
