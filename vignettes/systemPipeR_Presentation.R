@@ -81,6 +81,41 @@ sysargs(args)[1]
 ## seeFastqPlot(fqlist)
 ## dev.off()
 
+## ----fastq_quality_parallel_single, eval=FALSE---------------------------
+## args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+## f <- function(x) seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
+## fqlist <- bplapply(seq(along=args), f, BPPARAM = MulticoreParam(workers=8))
+## seeFastqPlot(unlist(fqlist, recursive=FALSE))
+
+## ----fastq_quality_parallel_cluster, eval=FALSE--------------------------
+## library(BiocParallel); library(BatchJobs)
+## f <- function(x) {
+##     library(systemPipeR)
+##     args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+##     seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
+## }
+## funs <- makeClusterFunctionsTorque("torque.tmpl")
+## param <- BatchJobsParam(length(args), resources=list(walltime="20:00:00", nodes="1:ppn=1", memory="6gb"), cluster.functions=funs)
+## register(param)
+## fqlist <- bplapply(seq(along=args), f)
+## seeFastqPlot(unlist(fqlist, recursive=FALSE))
+
+## ----bowtie_index, eval=FALSE--------------------------------------------
+## args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+## moduleload(modules(args)) # Skip if module system is not available
+## system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
+
+## ----run_bowtie_single, eval=FALSE---------------------------------------
+## bampaths <- runCommandline(args=args)
+
+## ----run_bowtie_parallel, eval=FALSE-------------------------------------
+## file.copy(system.file("extdata", ".BatchJobs.R", package="systemPipeR"), ".")
+## file.copy(system.file("extdata", "torque.tmpl", package="systemPipeR"), ".")
+## resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memory="10gb")
+## reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01",
+##                   resourceList=resources)
+## waitForJobs(reg)
+
 ## ----sessionInfo---------------------------------------------------------
 sessionInfo()
 
