@@ -146,6 +146,50 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## read_statsList <- bplapply(seq(along=args), f)
 ## read_statsDF <- do.call("rbind", read_statsList)
 
+## ----igv, eval=FALSE-----------------------------------------------------
+## symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"),
+##             urlbase="http://myserver.edu/~username/",
+##         urlfile="IGVurl.txt")
+
+## ----bowtie2, eval=FALSE-------------------------------------------------
+## args <- systemArgs(sysma="bowtieSE.param", mytargets="targets.txt")
+## moduleload(modules(args)) # Skip if module system is not available
+## bampaths <- runCommandline(args=args)
+
+## ----bowtie2_cluster, eval=FALSE-----------------------------------------
+## qsubargs <- getQsubargs(queue="batch", cores=cores(args), memory="mem=10gb", time="walltime=20:00:00")
+## (joblist <- qsubRun(args=args, qsubargs=qsubargs, Nqsubs=18, package="systemPipeR"))
+
+## ----bwamem_cluster, eval=FALSE------------------------------------------
+## args <- systemArgs(sysma="bwa.param", mytargets="targets.txt")
+## moduleload(modules(args)) # Skip if module system is not available
+## system("bwa index -a bwtsw ./data/tair10.fasta") # Indexes reference genome
+## bampaths <- runCommandline(args=args)
+
+## ----rsubread, eval=FALSE------------------------------------------------
+## library(Rsubread)
+## args <- systemArgs(sysma="rsubread.param", mytargets="targets.txt")
+## buildindex(basename=reference(args), reference=reference(args)) # Build indexed reference genome
+## align(index=reference(args), readfile1=infile1(args), input_format="FASTQ",
+##       output_file=outfile1(args), output_format="SAM", nthreads=8, indels=1, TH1=2)
+## for(i in seq(along=outfile1(args))) asBam(file=outfile1(args)[i], destination=gsub(".sam", "", outfile1(args)[i]), overwrite=TRUE, indexDestination=TRUE)
+
+## ----gsnap, eval=FALSE---------------------------------------------------
+## library(gmapR); library(BiocParallel); library(BatchJobs)
+## gmapGenome <- GmapGenome(reference(args), directory="data", name="gmap_tair10chr/", create=TRUE)
+## args <- systemArgs(sysma="gsnap.param", mytargets="targetsPE.txt")
+## f <- function(x) {
+##     library(gmapR); library(systemPipeR)
+##     args <- systemArgs(sysma="gsnap.param", mytargets="targetsPE.txt")
+##     gmapGenome <- GmapGenome(reference(args), directory="data", name="gmap_tair10chr/", create=FALSE)
+##     p <- GsnapParam(genome=gmapGenome, unique_only=TRUE, molecule="DNA", max_mismatches=3)
+##     o <- gsnap(input_a=infile1(args)[x], input_b=infile2(args)[x], params=p, output=outfile1(args)[x])
+## }
+## funs <- makeClusterFunctionsTorque("torque.tmpl")
+## param <- BatchJobsParam(length(args), resources=list(walltime="20:00:00", nodes="1:ppn=1", memory="6gb"), cluster.functions=funs)
+## register(param)
+## d <- bplapply(seq(along=args), f)
+
 ## ----sessionInfo---------------------------------------------------------
 sessionInfo()
 

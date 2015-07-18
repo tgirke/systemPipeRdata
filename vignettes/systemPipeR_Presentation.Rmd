@@ -284,6 +284,71 @@ read_statsList <- bplapply(seq(along=args), f)
 read_statsDF <- do.call("rbind", read_statsList)
 ```
 
+## Create symbolic links for viewing BAM files in IGV
+The genome browser IGV supports reading of indexed/sorted BAM files via web URLs. This way it can be avoided to create unnecessary copies of these large files. To enable this approach, an HTML directory with http access needs to be available in the user account (_e.g._ _`home/publichtml`_) of a system. If this is not the case then the BAM files need to be moved or copied to the system where IGV runs. In the following, _`htmldir`_ defines the path to the HTML directory with http access where the symbolic links to the BAM files will be stored. The corresponding URLs will be written to a text file specified under the `_urlfile`_ argument. 
+```{r igv, eval=FALSE}
+symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"), 
+            urlbase="http://myserver.edu/~username/", 
+        urlfile="IGVurl.txt")
+```
+
+## Alternative NGS Aligners
+
+### Alignment with _`Bowtie2`_ (_e.g._ for miRNA profiling)
+The following example runs _`Bowtie2`_ as a single process without submitting it to a cluster.
+```{r bowtie2, eval=FALSE}
+args <- systemArgs(sysma="bowtieSE.param", mytargets="targets.txt")
+moduleload(modules(args)) # Skip if module system is not available
+bampaths <- runCommandline(args=args)
+```
+
+Alternatively, submit the job to compute nodes.
+```{r bowtie2_cluster, eval=FALSE}
+qsubargs <- getQsubargs(queue="batch", cores=cores(args), memory="mem=10gb", time="walltime=20:00:00")
+(joblist <- qsubRun(args=args, qsubargs=qsubargs, Nqsubs=18, package="systemPipeR"))
+```
+
+Alignment with BWA-MEM (_e.g._ for VAR-Seq)
+The following example runs BWA-MEM as a single process without submitting it to a cluster.
+```{r bwamem_cluster, eval=FALSE}
+args <- systemArgs(sysma="bwa.param", mytargets="targets.txt")
+moduleload(modules(args)) # Skip if module system is not available
+system("bwa index -a bwtsw ./data/tair10.fasta") # Indexes reference genome
+bampaths <- runCommandline(args=args)
+```
+
+### Alignment with Rsubread (_e.g._ for RNA-Seq)
+The following example shows how one can use within the \Rpackage{systemPipeR} environment the R-based 
+aligner \Rpackage{Rsubread} or other R-based functions that read from input files and write to output files.
+```{r rsubread, eval=FALSE}
+library(Rsubread)
+args <- systemArgs(sysma="rsubread.param", mytargets="targets.txt")
+buildindex(basename=reference(args), reference=reference(args)) # Build indexed reference genome
+align(index=reference(args), readfile1=infile1(args), input_format="FASTQ", 
+      output_file=outfile1(args), output_format="SAM", nthreads=8, indels=1, TH1=2)
+for(i in seq(along=outfile1(args))) asBam(file=outfile1(args)[i], destination=gsub(".sam", "", outfile1(args)[i]), overwrite=TRUE, indexDestination=TRUE)
+```
+
+### Alignment with _`gsnap`_
+Another R-based short read aligner is _`gsnap`_ from the _`gmapR`_ package [@Wu2010-iq]. 
+The code sample below introduces how to run this aligner on multiple nodes of a compute cluster. 
+```{r gsnap, eval=FALSE}
+library(gmapR); library(BiocParallel); library(BatchJobs)
+gmapGenome <- GmapGenome(reference(args), directory="data", name="gmap_tair10chr/", create=TRUE)
+args <- systemArgs(sysma="gsnap.param", mytargets="targetsPE.txt")
+f <- function(x) {
+    library(gmapR); library(systemPipeR)
+    args <- systemArgs(sysma="gsnap.param", mytargets="targetsPE.txt")
+    gmapGenome <- GmapGenome(reference(args), directory="data", name="gmap_tair10chr/", create=FALSE)
+    p <- GsnapParam(genome=gmapGenome, unique_only=TRUE, molecule="DNA", max_mismatches=3)
+    o <- gsnap(input_a=infile1(args)[x], input_b=infile2(args)[x], params=p, output=outfile1(args)[x])
+}
+funs <- makeClusterFunctionsTorque("torque.tmpl")
+param <- BatchJobsParam(length(args), resources=list(walltime="20:00:00", nodes="1:ppn=1", memory="6gb"), cluster.functions=funs)
+register(param)
+d <- bplapply(seq(along=args), f)
+```
+
 
 # _`sessionInfo()`_
 

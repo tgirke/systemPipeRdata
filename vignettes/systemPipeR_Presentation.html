@@ -73,6 +73,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#fastq-quality-report"><span class="toc-section-number">3.3</span> FASTQ quality report</a></li>
 <li><a href="#alignment-with-tophat2"><span class="toc-section-number">3.4</span> Alignment with <em><code>Tophat2</code></em></a></li>
 <li><a href="#read-and-alignment-count-stats"><span class="toc-section-number">3.5</span> Read and alignment count stats</a></li>
+<li><a href="#create-symbolic-links-for-viewing-bam-files-in-igv"><span class="toc-section-number">3.6</span> Create symbolic links for viewing BAM files in IGV</a></li>
+<li><a href="#alternative-ngs-aligners"><span class="toc-section-number">3.7</span> Alternative NGS Aligners</a><ul>
+<li><a href="#alignment-with-bowtie2-e.g.-for-mirna-profiling"><span class="toc-section-number">3.7.1</span> Alignment with <em><code>Bowtie2</code></em> (<em>e.g.</em> for miRNA profiling)</a></li>
+<li><a href="#alignment-with-rsubread-e.g.-for-rna-seq"><span class="toc-section-number">3.7.2</span> Alignment with Rsubread (<em>e.g.</em> for RNA-Seq)</a></li>
+<li><a href="#alignment-with-gsnap"><span class="toc-section-number">3.7.3</span> Alignment with <em><code>gsnap</code></em></a></li>
+</ul></li>
 </ul></li>
 <li><a href="#sessioninfo"><span class="toc-section-number">4</span> <em><code>sessionInfo()</code></em></a></li>
 </ul>
@@ -311,6 +317,59 @@ param &lt;- BatchJobsParam(length(args), resources=list(walltime=&quot;20:00:00&
 register(param)
 read_statsList &lt;- bplapply(seq(along=args), f)
 read_statsDF &lt;- do.call(&quot;rbind&quot;, read_statsList)</code></pre>
+</div>
+<div id="create-symbolic-links-for-viewing-bam-files-in-igv" class="section level2">
+<h2><span class="header-section-number">3.6</span> Create symbolic links for viewing BAM files in IGV</h2>
+<p>The genome browser IGV supports reading of indexed/sorted BAM files via web URLs. This way it can be avoided to create unnecessary copies of these large files. To enable this approach, an HTML directory with http access needs to be available in the user account (<em>e.g.</em> <em><code>home/publichtml</code></em>) of a system. If this is not the case then the BAM files need to be moved or copied to the system where IGV runs. In the following, <em><code>htmldir</code></em> defines the path to the HTML directory with http access where the symbolic links to the BAM files will be stored. The corresponding URLs will be written to a text file specified under the <code>_urlfile</code>_ argument.</p>
+<pre class="r"><code>symLink2bam(sysargs=args, htmldir=c(&quot;~/.html/&quot;, &quot;somedir/&quot;), 
+            urlbase=&quot;http://myserver.edu/~username/&quot;, 
+        urlfile=&quot;IGVurl.txt&quot;)</code></pre>
+</div>
+<div id="alternative-ngs-aligners" class="section level2">
+<h2><span class="header-section-number">3.7</span> Alternative NGS Aligners</h2>
+<div id="alignment-with-bowtie2-e.g.-for-mirna-profiling" class="section level3">
+<h3><span class="header-section-number">3.7.1</span> Alignment with <em><code>Bowtie2</code></em> (<em>e.g.</em> for miRNA profiling)</h3>
+<p>The following example runs <em><code>Bowtie2</code></em> as a single process without submitting it to a cluster.</p>
+<pre class="r"><code>args &lt;- systemArgs(sysma=&quot;bowtieSE.param&quot;, mytargets=&quot;targets.txt&quot;)
+moduleload(modules(args)) # Skip if module system is not available
+bampaths &lt;- runCommandline(args=args)</code></pre>
+<p>Alternatively, submit the job to compute nodes.</p>
+<pre class="r"><code>qsubargs &lt;- getQsubargs(queue=&quot;batch&quot;, cores=cores(args), memory=&quot;mem=10gb&quot;, time=&quot;walltime=20:00:00&quot;)
+(joblist &lt;- qsubRun(args=args, qsubargs=qsubargs, Nqsubs=18, package=&quot;systemPipeR&quot;))</code></pre>
+<p>Alignment with BWA-MEM (<em>e.g.</em> for VAR-Seq) The following example runs BWA-MEM as a single process without submitting it to a cluster.</p>
+<pre class="r"><code>args &lt;- systemArgs(sysma=&quot;bwa.param&quot;, mytargets=&quot;targets.txt&quot;)
+moduleload(modules(args)) # Skip if module system is not available
+system(&quot;bwa index -a bwtsw ./data/tair10.fasta&quot;) # Indexes reference genome
+bampaths &lt;- runCommandline(args=args)</code></pre>
+</div>
+<div id="alignment-with-rsubread-e.g.-for-rna-seq" class="section level3">
+<h3><span class="header-section-number">3.7.2</span> Alignment with Rsubread (<em>e.g.</em> for RNA-Seq)</h3>
+<p>The following example shows how one can use within the  environment the R-based aligner  or other R-based functions that read from input files and write to output files.</p>
+<pre class="r"><code>library(Rsubread)
+args &lt;- systemArgs(sysma=&quot;rsubread.param&quot;, mytargets=&quot;targets.txt&quot;)
+buildindex(basename=reference(args), reference=reference(args)) # Build indexed reference genome
+align(index=reference(args), readfile1=infile1(args), input_format=&quot;FASTQ&quot;, 
+      output_file=outfile1(args), output_format=&quot;SAM&quot;, nthreads=8, indels=1, TH1=2)
+for(i in seq(along=outfile1(args))) asBam(file=outfile1(args)[i], destination=gsub(&quot;.sam&quot;, &quot;&quot;, outfile1(args)[i]), overwrite=TRUE, indexDestination=TRUE)</code></pre>
+</div>
+<div id="alignment-with-gsnap" class="section level3">
+<h3><span class="header-section-number">3.7.3</span> Alignment with <em><code>gsnap</code></em></h3>
+<p>Another R-based short read aligner is <em><code>gsnap</code></em> from the <em><code>gmapR</code></em> package <span class="citation">(Wu and Nacu 2010)</span>. The code sample below introduces how to run this aligner on multiple nodes of a compute cluster.</p>
+<pre class="r"><code>library(gmapR); library(BiocParallel); library(BatchJobs)
+gmapGenome &lt;- GmapGenome(reference(args), directory=&quot;data&quot;, name=&quot;gmap_tair10chr/&quot;, create=TRUE)
+args &lt;- systemArgs(sysma=&quot;gsnap.param&quot;, mytargets=&quot;targetsPE.txt&quot;)
+f &lt;- function(x) {
+    library(gmapR); library(systemPipeR)
+    args &lt;- systemArgs(sysma=&quot;gsnap.param&quot;, mytargets=&quot;targetsPE.txt&quot;)
+    gmapGenome &lt;- GmapGenome(reference(args), directory=&quot;data&quot;, name=&quot;gmap_tair10chr/&quot;, create=FALSE)
+    p &lt;- GsnapParam(genome=gmapGenome, unique_only=TRUE, molecule=&quot;DNA&quot;, max_mismatches=3)
+    o &lt;- gsnap(input_a=infile1(args)[x], input_b=infile2(args)[x], params=p, output=outfile1(args)[x])
+}
+funs &lt;- makeClusterFunctionsTorque(&quot;torque.tmpl&quot;)
+param &lt;- BatchJobsParam(length(args), resources=list(walltime=&quot;20:00:00&quot;, nodes=&quot;1:ppn=1&quot;, memory=&quot;6gb&quot;), cluster.functions=funs)
+register(param)
+d &lt;- bplapply(seq(along=args), f)</code></pre>
+</div>
 </div>
 </div>
 <div id="sessioninfo" class="section level1">
