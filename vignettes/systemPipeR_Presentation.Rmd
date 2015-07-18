@@ -358,11 +358,11 @@ setwd("varseq")
 ```
 
 ## Run workflow
-Next, run the chosen sample workflow [_`systemPipeVARseq_single.Rnw`_](https://github.com/tgirke/systemPipeRdata/tree/master/inst/extdata/workflows/varseq) by executing from the command-line _`make -B`_ within the _`varseq`_ directory. Alternatively, one can run the code from the provided _`*.Rnw`_ template file from within R interactively. Much more detailed information is available in _`systemPipeR`_'s overview and workflow vignettes available [here](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
+Next, run the chosen sample workflow _`systemPipeVARseq_single`_ ([PDF](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq_single.pdf?raw=true), [Rnw](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq_single.Rnw)) by executing from the command-line _`make -B`_ within the _`varseq`_ directory. Alternatively, one can run the code from the provided _`*.Rnw`_ template file from within R interactively. Much more detailed information is available in _`systemPipeR`_'s overview and workflow vignettes available [here](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
 
 
 # VAR-Seq workflow for computer cluster (demo)
-This demonstration will run the above VAR-Seq workflow in parallel on multiple computer nodes of IIGB's HPC cluster. The workflow template provided for this is called [_`systemPipeVARseq.Rnw`_](https://github.com/tgirke/systemPipeRdata/tree/master/inst/extdata/workflows/varseq).
+This demonstration will run the above VAR-Seq workflow in parallel on multiple computer nodes of IIGB's HPC cluster. The workflow template provided for this is called _`systemPipeVARseq.Rnw`_ ([PDF](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.pdf?raw=true), [Rnw](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.Rnw)) .
 
 
 # _`sessionInfo()`_
