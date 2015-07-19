@@ -142,7 +142,7 @@ library(systemPipeR)
 
 Construct _`SYSargs`_ object from _`param`_ and _`targets`_ files.
 ```{r construct_sysargs, eval=FALSE}
-args <- systemArgs(sysma="trim.param", mytargets="targets.txt")
+zzargs <- systemArgs(sysma="trim.param", mytargets="targets.txt")
 ```
 
 ## Read Preprocessing

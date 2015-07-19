@@ -59,7 +59,7 @@ sysargs(args)[1]
 ## library(systemPipeR)
 
 ## ----construct_sysargs, eval=FALSE---------------------------------------
-## args <- systemArgs(sysma="trim.param", mytargets="targets.txt")
+## zzargs <- systemArgs(sysma="trim.param", mytargets="targets.txt")
 
 ## ----preprocessing, eval=FALSE-------------------------------------------
 ## preprocessReads(args=args, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA', subject=fq)",
