@@ -1,5 +1,5 @@
 ---
-title: "_szzystemPipeR_: NGS Workflow and Reporting Environment" 
+title: "_systemPipeR_: NGS Workflow and Reporting Environment" 
 subtitle: "Running on Single Machines and Compute Clusters. -- Today's Focus: VAR-seq"
 author: "Author: Thomas Girke"
 date: "Date: July 22, 2015"
