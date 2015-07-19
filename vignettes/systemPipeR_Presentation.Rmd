@@ -1,5 +1,5 @@
 ---
-title: "_szystemPipeR_: NGS Workflow and Reporting Environment" 
+title: "_szzystemPipeR_: NGS Workflow and Reporting Environment" 
 subtitle: "Running on Single Machines and Compute Clusters. -- Today's Focus: VAR-seq"
 author: "Author: Thomas Girke"
 date: "Date: July 22, 2015"
@@ -17,6 +17,9 @@ bibliography: bibtex.bib
 <!---
 - Compile from command-line
 echo "rmarkdown::render('systemPipeR_Presentation.Rmd')" | R --slave; R CMD Stangle systemPipeR_Presentation.Rmd
+
+- Commit to github
+git commit -am "some edits"; git push -u origin master
 
 - To customize font size and other style features, add this line to output section in preamble:  
     css: style.css
