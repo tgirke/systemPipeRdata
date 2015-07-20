@@ -28,6 +28,11 @@ suppressPackageStartupMessages({
 ## library(help="systemPipeR") # Lists package info
 ## vignette("systemPipeR") # Opens vignette
 
+## ----genRna_workflow, eval=FALSE-----------------------------------------
+## library(systemPipeRdata)
+## genWorkenvir(workflow="rnaseq")
+## setwd("rnaseq")
+
 ## ----targetsSE, eval=TRUE------------------------------------------------
 library(systemPipeR)
 targetspath <- system.file("extdata", "targets.txt", package="systemPipeR")
