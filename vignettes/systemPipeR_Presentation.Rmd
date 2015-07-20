@@ -16,7 +16,7 @@ bibliography: bibtex.bib
 
 <!---
 - Compile from command-line
-echo "rmarkdown::render('systemPipeR_Presentation.Rmd')" | R --slave; R CMD Stangle systemPipeR_Presentation.Rmd
+echo "rmarkdown::render('systemPipeR_Presentation.Rmd')" | R -slave; R CMD Stangle systemPipeR_Presentation.Rmd
 
 - Commit to github
 git commit -am "some edits"; git push -u origin master

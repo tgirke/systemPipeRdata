@@ -91,12 +91,16 @@ document.addEventListener("DOMContentLoaded", function() {
 </ul>
 </div>
 
-<p>&lt;!— - Compile from command-line echo “rmarkdown::render(‘systemPipeR_Presentation.Rmd’)” | R –slave; R CMD Stangle systemPipeR_Presentation.Rmd</p>
-<ul>
-<li><p>Commit to github git commit -am “some edits”; git push -u origin master</p></li>
-<li><p>To customize font size and other style features, add this line to output section in preamble:<br />
-css: style.css –&gt;</p></li>
-</ul>
+<!---
+- Compile from command-line
+echo "rmarkdown::render('systemPipeR_Presentation.Rmd')" | R -slave; R CMD Stangle systemPipeR_Presentation.Rmd
+
+- Commit to github
+git commit -am "some edits"; git push -u origin master
+
+- To customize font size and other style features, add this line to output section in preamble:  
+    css: style.css
+-->
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
   document.querySelector("h1").className = "title";
