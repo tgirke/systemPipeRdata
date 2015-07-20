@@ -90,9 +90,8 @@ targets
 \section{Read preprocessing}
 \subsection{Read quality filtering and trimming}
 <<eval=TRUE, messages=FALSE, warning=FALSE, cache=TRUE>>=
-args <- systemArgs(sysma="param/trimPE.param", mytargets="targetsPE.txt")
 source("systemPipeVARseq_Fct.R")
-args <- systemArgs(sysma="param/trimPE.param", mytargets="targetsPE.txt")
+args <- systemArgs(sysma="param/trimPE.param", mytargets="targetsPE.txt")[1:4] # Note: subsetting!
 preprocessReads(args=args, Fct="filterFct(fq, cutoff=20, Nexceptions=0)", batchsize=100000)
 writeTargetsout(x=args, file="targets_PEtrim.txt", overwrite=TRUE)
 @
@@ -105,7 +104,7 @@ diversity, length and occurrence distribution of reads, number of reads above
 quality cutoffs and mean quality distribution. The results are written to a PDF file named 
 \href{run:./results/fastqReport.pdf}{\Robject{fastqReport.pdf}}.
 
-<<eval=FALSE, cache=TRUE>>=
+<<eval=TRUE, cache=TRUE>>=
 args <- systemArgs(sysma="param/bwa.param", mytargets="targets_PEtrim.txt")
 fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
 pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
@@ -129,7 +128,7 @@ sysargs(args)[1] # Command-line parameters for first FASTQ file
 @
 
 Runs the alignments sequentially (\textit{e.g.} on a single machine)
-<<eval=TRUE, cache=TRUE>>=
+<<eval=FALSE, cache=TRUE>>=
 moduleload(modules(args))
 system("bwa index -a bwtsw ./data/tair10.fasta")
 bampaths <- runCommandline(args=args)
@@ -145,7 +144,7 @@ waitForJobs(reg)
 writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
 @
 Check whether all BAM files have been created
-<<eval=TRUE, cache=TRUE>>=
+<<eval=FALSE, cache=TRUE>>=
 file.exists(outpaths(args))
 @
 
@@ -166,7 +165,7 @@ file.exists(outpaths(args))
 \subsection{Read and alignment stats}
 The following generates a summary table of the number of reads in each sample and how many of them aligned to the reference.
 <<eval=TRUE, cache=TRUE>>=
-args <- systemArgs(sysma="param/bwa.param", mytargets="targets_PEtrim.txt")
+args <- systemArgs(sysma="param/gsnap.param", mytargets="targets_PEtrim.txt")
 read_statsDF <- alignStats(args=args) 
 write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 read_statsDF[1:4,]
@@ -174,7 +173,7 @@ read_statsDF[1:4,]
 
 \subsection{Create symbolic links for viewing BAM files in IGV}
 The \Rfunction{symLink2bam} function creates symbolic links to view the BAM alignment files in a genome browser such as IGV. The corresponding URLs are written to a file with a path specified under \Robject{urlfile}, here \href{run:./results/IGVurl.txt}{IGVurl.txt}.
-<<eval=TRUE, cache=TRUE>>=
+<<eval=FALSE, cache=TRUE>>=
 symLink2bam(sysargs=args, htmldir=c("~/.html/", "projects/workshop/July2015/"), 
             urlbase="http://biocluster.ucr.edu/~tgirke/",
             urlfile="./results/IGVurl.txt")
@@ -184,7 +183,7 @@ symLink2bam(sysargs=args, htmldir=c("~/.html/", "projects/workshop/July2015/"),
 The following performs variant calling with \Robject{GATK}, \Robject{BCFtools} and \Rpackage{VariantTools} in parallel mode on a compute cluster \citep{McKenna2010-ql, Li2011-ll}. If a cluster is not available, the \Rfunction{runCommandline()} function can be used to run the variant calling with \Robject{GATK} and \Robject{BCFtools} for each sample sequentially on a single machine, or \Rfunction{callVariants} in case of \Rpackage{VariantTools}. Typically, the user would choose here only one variant caller rather than running several ones.   
 \subsection{Variant calling with GATK}
 The following creates in the inital step a new targets file (\Robject{targets\_bam.txt}). The first column of this file gives the paths to the BAM files created in the alignment step. The new targets file and the parameter file \Robject{gatk.param} are used to create a new \Robject{SYSargs} instance for running GATK. Since GATK involves many processing steps, it is executed by a bash script \Robject{gatk\_run.sh} where the user can specify the detailed run parameters. All three files are expected to be located in the current working directory. Samples files for \Robject{gatk.param} and \Robject{gatk\_run.sh} are available in the subdirectory \Robject{./inst/extdata/} of the source file of the \Rpackage{systemPipeR} package. Alternatively, they can be downloaded directly from \href{https://github.com/tgirke/systemPipeR/tree/master/inst/extdata}{here}.
-<<eval=TRUE, cache=TRUE>>=
+<<eval=FALSE, cache=TRUE>>=
 system("java -jar /opt/picard/1.81/CreateSequenceDictionary.jar R=./data/tair10.fasta O=./data/tair10.dict")
 args <- systemArgs(sysma="param/gatk.param", mytargets="targets_bam.txt")
 gatkpaths <- runCommandline(args=args)
@@ -194,7 +193,7 @@ writeTargetsout(x=args, file="targets_gatk.txt", overwrite=TRUE)
 
 \subsection{Variant calling with BCFtools}
 The following runs the variant calling with BCFtools. This step requires in the current working directory the parameter file \Robject{sambcf.param} and the bash script \Robject{sambcf\_run.sh}.  
-<<eval=TRUE, cache=TRUE>>=
+<<eval=FALSE, cache=TRUE>>=
 args <- systemArgs(sysma="param/sambcf.param", mytargets="targets_bam.txt")
 sambcfpaths <- runCommandline(args=args)
 unlink(outfile1(args), recursive = TRUE, force = TRUE)
@@ -202,7 +201,7 @@ writeTargetsout(x=args, file="targets_sambcf.txt", overwrite=TRUE)
 @
 
 \subsection{Variant calling with \Rpackage{VariantTools}}
-<<eval=FALSE, cache=TRUE>>=
+<<eval=TRUE, cache=TRUE>>=
 library(gmapR); library(VariantTools)
 args <- systemArgs(sysma="param/vartools.param", mytargets="targets_gsnap_bam.txt")
 gmapGenome <- GmapGenome(systemPipeR::reference(args), directory="data", name="gmap_tair10chr", create=FALSE)
@@ -226,7 +225,7 @@ The below example filters for variants that are supported by $\ge$\texttt{x} rea
 <<eval=TRUE, cache=TRUE>>=
 library(VariantAnnotation)
 library(BBmisc) # Defines suppressAll()
-args <- systemArgs(sysma="param/filter_gatk.param", mytargets="targets_gatk.txt")
+args <- systemArgs(sysma="param/filter_gatk.param", mytargets="targets_gatk.txt")[1:4]
 filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8) & rowSums(softFilterMatrix(vr))>=1"
 # filter <- "totalDepth(vr) >= 20 & (altDepth(vr) / totalDepth(vr) >= 0.8) & rowSums(softFilterMatrix(vr))==6"
 suppressAll(filterVars(args, filter, varcaller="gatk", organism="A. thaliana"))
@@ -236,7 +235,7 @@ writeTargetsout(x=args, file="targets_gatk_filtered.txt", overwrite=TRUE)
 \subsection{Filter variants called by \Rpackage{BCFtools}}
 The following shows how to filter the VCF files generated by \Rpackage{BCFtools} using similar parameter settings as in the previous filtering of the GATK results.
 <<eval=TRUE, cache=TRUE>>=
-args <- systemArgs(sysma="param/filter_sambcf.param", mytargets="targets_sambcf.txt")
+args <- systemArgs(sysma="param/filter_sambcf.param", mytargets="targets_sambcf.txt")[1:4]
 filter <- "rowSums(vr) >= 2 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
 # filter <- "rowSums(vr) >= 20 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
 suppressAll(filterVars(args, filter, varcaller="bcftools", organism="A. thaliana"))
@@ -246,11 +245,19 @@ writeTargetsout(x=args, file="targets_sambcf_filtered.txt", overwrite=TRUE)
 \subsection{Filter variants called by \Rpackage{VariantTools}}
 The following shows how to filter the VCF files generated by \Rpackage{VariantTools} using similar parameter settings as in the previous filtering of the GATK results.
 <<eval=TRUE, messages=FALSE, warnings=FALSE, cache=TRUE>>=
+library(VariantAnnotation)
+library(BBmisc) # Defines suppressAll()
 args <- systemArgs(sysma="param/filter_vartools.param", mytargets="targets_vartools.txt")
 filter <- "(values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 2 & (values(vr)$n.read.pos / (values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 0.8)"
 # filter <- "(values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 20 & (values(vr)$n.read.pos / (values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 0.8)"
-suppressAll(filterVars(args, filter, varcaller="vartools", organism="A. thaliana"))
+filterVars(args, filter, varcaller="vartools", organism="A. thaliana")
 writeTargetsout(x=args, file="targets_vartools_filtered.txt", overwrite=TRUE)
+@
+
+Check filtering outcome for one sample
+<<eval=TRUE, messages=FALSE, warnings=FALSE, cache=TRUE>>=
+length(as(readVcf(infile1(args)[1], genome="Ath"), "VRanges")[,1])
+length(as(readVcf(outpaths(args)[1], genome="Ath"), "VRanges")[,1])
 @
 
 \section{Annotate filtered variants}
@@ -282,6 +289,11 @@ fa <- FaFile(systemPipeR::reference(args))
 suppressAll(variantReport(args=args, txdb=txdb, fa=fa, organism="A. thaliana"))
 @
 
+View annotation result for single sample
+<<eval=TRUE, messages=FALSE, warnings=FALSE, cache=TRUE>>=
+read.delim(outpaths(args)[1])[38:40,]
+@
+
 \section{Combine annotation results among samples}
 To simplify comparisons among samples, the \Rfunction{combineVarReports} function combines all variant annotation reports referenced in a \Robject{SYSargs} instance (here \Robject{args}). At the same time the function allows to consider only certain feature types of interest. For instance, the below setting \Rfunarg{filtercol=c(Consequence="nonsynonymous")} will include only nonsysynonymous variances listed in the \Rfunarg{Consequence} column of the annotation reports. To omit filtering, one can use the setting \Rfunarg{filtercol="All"}
 
@@ -304,6 +316,7 @@ write.table(combineDF, "./results/combineDF_nonsyn_sambcf.xls", quote=FALSE, row
 args <- systemArgs(sysma="param/annotate_vars.param", mytargets="targets_vartools_filtered.txt")
 combineDF <- combineVarReports(args, filtercol=c(Consequence="nonsynonymous"))
 write.table(combineDF, "./results/combineDF_nonsyn_vartools.xls", quote=FALSE, row.names=FALSE, sep="\t")
+combineDF[2:4,] 
 @
 
 \section{Summary statistics of variants}
@@ -324,6 +337,7 @@ write.table(varSummary(args), "./results/variantStats_sambcf.xls", quote=FALSE, 
 <<eval=TRUE, cache=TRUE>>=
 args <- systemArgs(sysma="param/annotate_vars.param", mytargets="targets_vartools_filtered.txt")
 write.table(varSummary(args), "./results/variantStats_vartools.xls", quote=FALSE, col.names = NA, sep="\t")
+read.delim("results/variantStats_vartools.xls", row.names=1)
 @
 
 \section{Venn diagram of variants}
