@@ -374,7 +374,7 @@ Next, run the chosen sample workflow _`systemPipeVARseq_single`_ ([PDF](https://
 
 
 # VAR-Seq workflow for computer cluster (demo)
-This demonstration will run the above VAR-Seq workflow in parallel on multiple computer nodes of IIGB's HPC cluster. The workflow template provided for this is called _`systemPipeVARseq.Rnw`_ ([PDF](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.pdf?raw=true), [Rnw](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.Rnw)) .
+This demonstration will run the above VAR-Seq workflow in parallel on multiple computer nodes of IIGB's HPC cluster. The workflow template provided for this step is called _`systemPipeVARseq.Rnw`_ ([PDF](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.pdf?raw=true), [Rnw](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.Rnw)) .
 
 
 # _`sessionInfo()`_
