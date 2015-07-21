@@ -162,8 +162,10 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## bampaths <- runCommandline(args=args)
 
 ## ----bowtie2_cluster, eval=FALSE-----------------------------------------
-## qsubargs <- getQsubargs(queue="batch", cores=cores(args), memory="mem=10gb", time="walltime=20:00:00")
-## (joblist <- qsubRun(args=args, qsubargs=qsubargs, Nqsubs=18, package="systemPipeR"))
+## resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memory="10gb")
+## reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01",
+##                   resourceList=resources)
+## waitForJobs(reg)
 
 ## ----bwamem_cluster, eval=FALSE------------------------------------------
 ## args <- systemArgs(sysma="bwa.param", mytargets="targets.txt")

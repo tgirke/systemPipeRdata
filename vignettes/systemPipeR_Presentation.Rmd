@@ -60,6 +60,15 @@ A central concept for designing workflows within the _`sytemPipeR`_ environment 
 
 The intended way of running _`sytemPipeR`_ workflows is via _`*.Rnw`_ or _`*.Rmd`_ files, which can be executed either line-wise in interactive mode or with a single command from R or the command-line using a [_`Makefile`_](https://github.com/tgirke/systemPipeR/blob/master/inst/extdata/Makefile). This way comprehensive and reproducible analysis reports in PDF or HTML format can be generated in a fully automated manner. Templates for setting up custom project reports are provided as _`*.Rnw`_ files in the `vignettes` subdirectory of this package. The corresponding PDFs of these report templates are linked here: [_`systemPipeRNAseq`_](https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeRNAseq.pdf?raw=true), [_`systemPipeChIPseq`_](https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeChIPseq.pdf?raw=true) and [_`systemPipeVARseq`_](https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeVARseq.pdf?raw=true). To work with _`*.Rnw`_ or _`*.Rmd`_ files efficiently, basic knowledge of [_`Sweave`_](https://www.stat.uni-muenchen.de/~leisch/Sweave/) or [_`knitr`_](http://yihui.name/knitr/) and [_`Latex`_](http://www.latex-project.org/) or [_`R Markdown v2`_](http://rmarkdown.rstudio.com/) is required. 
 
+Relevant workflow environment files 
+
+1. _`targets.txt`_: initial one provided by user; downstream _`targets_*.txt`_ files are generated automatically
+2. _`*.param`_: defines parameter for input/output file operations, _e.g._ _`trim.param`_, _`bwa.param`_, _`vartools.parm`_, ...
+3. Compute cluster environment (skip on single machine):
+    + _`.BatchJobs`_: defines scheduler type for _`BatchJobs`_
+    + _`*.tmpl`_: specifies scheduler parameters, _e.g._ Torque, SGE, StarCluster, Slurm, etc.
+
+
 # Getting Started
 
 ## Installation
@@ -316,8 +325,10 @@ bampaths <- runCommandline(args=args)
 
 Alternatively, submit the job to compute nodes.
 ```{r bowtie2_cluster, eval=FALSE}
-qsubargs <- getQsubargs(queue="batch", cores=cores(args), memory="mem=10gb", time="walltime=20:00:00")
-(joblist <- qsubRun(args=args, qsubargs=qsubargs, Nqsubs=18, package="systemPipeR"))
+resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memory="10gb")
+reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01", 
+                  resourceList=resources)
+waitForJobs(reg)
 ```
 
 ### Alignment with BWA-MEM (_e.g._ for VAR-Seq)
@@ -372,9 +383,22 @@ setwd("varseq")
 ## Run workflow
 Next, run the chosen sample workflow _`systemPipeVARseq_single`_ ([PDF](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq_single.pdf?raw=true), [Rnw](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq_single.Rnw)) by executing from the command-line _`make -B`_ within the _`varseq`_ directory. Alternatively, one can run the code from the provided _`*.Rnw`_ template file from within R interactively. Much more detailed information is available in _`systemPipeR`_'s overview and workflow vignettes available [here](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
 
+Workflow includes following steps:
+
+1. Read preprocessing
+    + Quality filtering (trimming)
+    + FASTQ quality report
+2. Alignments: gsnap, bwa`*`
+3. Variant calling: VariantTools, GATK`*`, BCFtools`*`
+4. Variant filtering: VariantTools and VariantAnnotation
+5. Variant annotation: VariantAnnotation
+6. Combine results from many samples
+7. Summary statistics of samples
+
+`*`not evaluated because required software is not available on all systems.
 
 # VAR-Seq workflow for computer cluster (demo)
-This demonstration will run the above VAR-Seq workflow in parallel on multiple computer nodes of IIGB's HPC cluster. The workflow template provided for this step is called _`systemPipeVARseq.Rnw`_ ([PDF](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.pdf?raw=true), [Rnw](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.Rnw)) .
+This demonstration will run the above VAR-Seq workflow in parallel on multiple computer nodes of a HPC system using Torque and Maui as scheduler and load balancing system. The workflow template provided for this step is called _`systemPipeVARseq.Rnw`_ ([PDF](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.pdf?raw=true), [Rnw](https://github.com/tgirke/systemPipeRdata/blob/master/inst/extdata/workflows/varseq/systemPipeVARseq.Rnw)) .
 
 
 # _`sessionInfo()`_
