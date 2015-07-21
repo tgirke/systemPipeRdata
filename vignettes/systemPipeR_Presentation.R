@@ -18,6 +18,12 @@ suppressPackageStartupMessages({
     library(ShortRead)
 })
 
+## ----update_teaching_material, eval=FALSE--------------------------------
+## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Presentation.Rmd", "systemPipeR_Presentation.Rmd", method="libcurl")
+## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Presentation.html", "systemPipeR_Presentation.html", method="libcurl")
+## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/varseq/systemPipeVARseq_single.Rnw", "systemPipeVARseq_single.Rnw", method="libcurl")
+## download.file("https://github.com/tgirke/systemPipeRdata/raw/master/inst/extdata/workflows/varseq/systemPipeVARseq_single.pdf", "systemPipeVARseq_single.pdf", method="libcurl")
+
 ## ----install, eval=FALSE-------------------------------------------------
 ## source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script
 ## biocLite("systemPipeR") # Installs systemPipeR from Bioconductor
