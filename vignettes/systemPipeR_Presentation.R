@@ -41,19 +41,16 @@ suppressPackageStartupMessages({
 
 ## ----targetsSE, eval=TRUE------------------------------------------------
 library(systemPipeR)
-targetspath <- system.file("extdata", "targets.txt", package="systemPipeR")
-read.delim(targetspath, comment.char = "#")
+read.delim("targets.txt", comment.char = "#")
 
 ## ----targetsPE, eval=TRUE------------------------------------------------
-targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
-read.delim(targetspath, comment.char = "#")[1:2,1:6]
+read.delim("targetsPE.txt", comment.char = "#")[1:2,1:6]
 
 ## ----targetscomp, eval=TRUE----------------------------------------------
-readComp(file=targetspath, format="vector", delim="-")
+readComp(file="targets.txt", format="vector", delim="-")
 
 ## ----param_structure, eval=TRUE------------------------------------------
-parampath <- system.file("extdata", "tophat.param", package="systemPipeR")
-read.delim(parampath, comment.char = "#")
+read.delim(tophat.param, comment.char = "#")
 
 ## ----param_import, eval=TRUE---------------------------------------------
 args <- suppressWarnings(systemArgs(sysma=parampath, mytargets=targetspath))
@@ -70,7 +67,7 @@ sysargs(args)[1]
 ## library(systemPipeR)
 
 ## ----construct_sysargs, eval=FALSE---------------------------------------
-## args <- systemArgs(sysma="trim.param", mytargets="targets.txt")
+## args <- systemArgs(sysma="param/trim.param", mytargets="targets.txt")
 
 ## ----preprocessing, eval=FALSE-------------------------------------------
 ## preprocessReads(args=args, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA', subject=fq)",
@@ -78,7 +75,7 @@ sysargs(args)[1]
 ## writeTargetsout(x=args, file="targets_trim.txt")
 
 ## ----custom_preprocessing, eval=FALSE------------------------------------
-## args <- systemArgs(sysma="trimPE.param", mytargets="targetsPE.txt")
+## args <- systemArgs(sysma="param/trimPE.param", mytargets="targetsPE.txt")
 ## filterFct <- function(fq, cutoff=20, Nexceptions=0) {
 ##     qcount <- rowSums(as(quality(fq), "matrix") <= cutoff)
 ##     fq[qcount <= Nexceptions] # Retains reads where Phred scores are >= cutoff with N exceptions
@@ -93,7 +90,7 @@ sysargs(args)[1]
 ## dev.off()
 
 ## ----fastq_quality_parallel_single, eval=FALSE---------------------------
-## args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+## args <- systemArgs(sysma="param/tophat.param", mytargets="targets.txt")
 ## f <- function(x) seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
 ## fqlist <- bplapply(seq(along=args), f, BPPARAM = MulticoreParam(workers=8))
 ## seeFastqPlot(unlist(fqlist, recursive=FALSE))
@@ -112,7 +109,7 @@ sysargs(args)[1]
 ## seeFastqPlot(unlist(fqlist, recursive=FALSE))
 
 ## ----bowtie_index, eval=FALSE--------------------------------------------
-## args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+## args <- systemArgs(sysma="param/tophat.param", mytargets="targets.txt")
 ## moduleload(modules(args)) # Skip if module system is not available
 ## system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
 
@@ -120,8 +117,6 @@ sysargs(args)[1]
 ## bampaths <- runCommandline(args=args)
 
 ## ----run_bowtie_parallel, eval=FALSE-------------------------------------
-## file.copy(system.file("extdata", ".BatchJobs.R", package="systemPipeR"), ".")
-## file.copy(system.file("extdata", "torque.tmpl", package="systemPipeR"), ".")
 ## resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memory="10gb")
 ## reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01",
 ##                   resourceList=resources)
@@ -174,23 +169,23 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## waitForJobs(reg)
 
 ## ----bwamem_cluster, eval=FALSE------------------------------------------
-## args <- systemArgs(sysma="bwa.param", mytargets="targets.txt")
+## args <- systemArgs(sysma="param/bwa.param", mytargets="targets.txt")
 ## moduleload(modules(args)) # Skip if module system is not available
 ## system("bwa index -a bwtsw ./data/tair10.fasta") # Indexes reference genome
-## bampaths <- runCommandline(args=args)
+## bampaths <- runCommandline(args=args[1:2])
 
 ## ----rsubread, eval=FALSE------------------------------------------------
 ## library(Rsubread)
-## args <- systemArgs(sysma="rsubread.param", mytargets="targets.txt")
+## args <- systemArgs(sysma="param/rsubread.param", mytargets="targets.txt")
 ## buildindex(basename=reference(args), reference=reference(args)) # Build indexed reference genome
-## align(index=reference(args), readfile1=infile1(args), input_format="FASTQ",
-##       output_file=outfile1(args), output_format="SAM", nthreads=8, indels=1, TH1=2)
+## align(index=reference(args), readfile1=infile1(args)[1:4], input_format="FASTQ",
+##       output_file=outfile1(args)[1:4], output_format="SAM", nthreads=8, indels=1, TH1=2)
 ## for(i in seq(along=outfile1(args))) asBam(file=outfile1(args)[i], destination=gsub(".sam", "", outfile1(args)[i]), overwrite=TRUE, indexDestination=TRUE)
 
 ## ----gsnap, eval=FALSE---------------------------------------------------
 ## library(gmapR); library(BiocParallel); library(BatchJobs)
+## args <- systemArgs(sysma="param/gsnap.param", mytargets="targetsPE.txt")
 ## gmapGenome <- GmapGenome(reference(args), directory="data", name="gmap_tair10chr/", create=TRUE)
-## args <- systemArgs(sysma="gsnap.param", mytargets="targetsPE.txt")
 ## f <- function(x) {
 ##     library(gmapR); library(systemPipeR)
 ##     args <- systemArgs(sysma="gsnap.param", mytargets="targetsPE.txt")
@@ -204,6 +199,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## d <- bplapply(seq(along=args), f)
 
 ## ----genVar_workflow_single, eval=FALSE----------------------------------
+## setwd("../")
 ## genWorkenvir(workflow="varseq")
 ## setwd("varseq")
 
