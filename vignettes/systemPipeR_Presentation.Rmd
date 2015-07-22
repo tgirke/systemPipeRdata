@@ -60,11 +60,12 @@ A central concept for designing workflows within the _`sytemPipeR`_ environment 
 
 The intended way of running _`sytemPipeR`_ workflows is via _`*.Rnw`_ or _`*.Rmd`_ files, which can be executed either line-wise in interactive mode or with a single command from R or the command-line using a [_`Makefile`_](https://github.com/tgirke/systemPipeR/blob/master/inst/extdata/Makefile). This way comprehensive and reproducible analysis reports in PDF or HTML format can be generated in a fully automated manner. Templates for setting up custom project reports are provided as _`*.Rnw`_ files in the `vignettes` subdirectory of this package. The corresponding PDFs of these report templates are linked here: [_`systemPipeRNAseq`_](https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeRNAseq.pdf?raw=true), [_`systemPipeChIPseq`_](https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeChIPseq.pdf?raw=true) and [_`systemPipeVARseq`_](https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeVARseq.pdf?raw=true). To work with _`*.Rnw`_ or _`*.Rmd`_ files efficiently, basic knowledge of [_`Sweave`_](https://www.stat.uni-muenchen.de/~leisch/Sweave/) or [_`knitr`_](http://yihui.name/knitr/) and [_`Latex`_](http://www.latex-project.org/) or [_`R Markdown v2`_](http://rmarkdown.rstudio.com/) is required. 
 
-Relevant workflow environment files 
+Relevant workflow parameter files 
 
 1. _`targets.txt`_: initial one provided by user; downstream _`targets_*.txt`_ files are generated automatically
 2. _`*.param`_: defines parameter for input/output file operations, _e.g._ _`trim.param`_, _`bwa.param`_, _`vartools.parm`_, ...
-3. Compute cluster environment (skip on single machine):
+3. _`*.run.sh`_: optional bash script, _e.g._: _`gatk.run.sh`_
+4. Compute cluster environment (skip on single machine):
     + _`.BatchJobs`_: defines scheduler type for _`BatchJobs`_
     + _`*.tmpl`_: specifies scheduler parameters, _e.g._ Torque, SGE, StarCluster, Slurm, etc.
 
