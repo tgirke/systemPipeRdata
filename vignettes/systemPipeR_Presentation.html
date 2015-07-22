@@ -241,11 +241,11 @@ args</code></pre>
 <pre class="r"><code>cores(args)</code></pre>
 <pre><code>## [1] 4</code></pre>
 <pre class="r"><code>outpaths(args)[1]</code></pre>
-<pre><code>##                                                                                                                M1A 
-## &quot;/home/tgirke/Dropbox/Bioc2015/systemPipeRdata_tests/varseq/results/SRR446027_1.fastq.gz.tophat/accepted_hits.bam&quot;</code></pre>
+<pre><code>##                                                                                                             M1A 
+## &quot;/home/tgirke/Dropbox/Bioc2015/systemPipeRdata/vignettes/results/SRR446027_1.fastq.gz.tophat/accepted_hits.bam&quot;</code></pre>
 <pre class="r"><code>sysargs(args)[1]</code></pre>
-<pre><code>##                                                                                                                                                                                                                                                                                                                       M1A 
-## &quot;tophat -p 4 -g 1 --segment-length 25 -i 30 -I 3000 -o /home/tgirke/Dropbox/Bioc2015/systemPipeRdata_tests/varseq/results/SRR446027_1.fastq.gz.tophat /home/tgirke/Dropbox/Bioc2015/systemPipeRdata_tests/varseq/data/tair10.fasta /home/tgirke/Dropbox/Bioc2015/systemPipeRdata_tests/varseq/data/SRR446027_1.fastq.gz &quot;</code></pre>
+<pre><code>##                                                                                                                                                                                                                                                        M1A 
+## &quot;tophat -p 4 -g 1 --segment-length 25 -i 30 -I 3000 -o /home/tgirke/Dropbox/Bioc2015/systemPipeRdata/vignettes/results/SRR446027_1.fastq.gz.tophat /home/tgirke/Dropbox/Bioc2015/systemPipeRdata/vignettes/data/tair10.fasta ./data/SRR446027_1.fastq.gz &quot;</code></pre>
 </div>
 </div>
 <div id="workflow-overview" class="section level1">
@@ -289,7 +289,7 @@ seeFastqPlot(unlist(fqlist, recursive=FALSE))</code></pre>
 <pre class="r"><code>library(BiocParallel); library(BatchJobs)
 f &lt;- function(x) {
     library(systemPipeR)
-    args &lt;- systemArgs(sysma=&quot;tophat.param&quot;, mytargets=&quot;targets.txt&quot;)
+    args &lt;- systemArgs(sysma=&quot;param/tophat.param&quot;, mytargets=&quot;targets.txt&quot;)
     seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
 }
 funs &lt;- makeClusterFunctionsTorque(&quot;torque.tmpl&quot;)

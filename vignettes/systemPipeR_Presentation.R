@@ -99,7 +99,7 @@ sysargs(args)[1]
 ## library(BiocParallel); library(BatchJobs)
 ## f <- function(x) {
 ##     library(systemPipeR)
-##     args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+##     args <- systemArgs(sysma="param/tophat.param", mytargets="targets.txt")
 ##     seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
 ## }
 ## funs <- makeClusterFunctionsTorque("torque.tmpl")
