@@ -50,10 +50,10 @@ read.delim("targetsPE.txt", comment.char = "#")[1:2,1:6]
 readComp(file="targets.txt", format="vector", delim="-")
 
 ## ----param_structure, eval=TRUE------------------------------------------
-read.delim(tophat.param, comment.char = "#")
+read.delim("param/tophat.param", comment.char = "#")
 
 ## ----param_import, eval=TRUE---------------------------------------------
-args <- suppressWarnings(systemArgs(sysma=parampath, mytargets=targetspath))
+args <- suppressWarnings(systemArgs(sysma="param/tophat.param", mytargets="targets.txt"))
 args
 
 ## ----sysarg_access, eval=TRUE--------------------------------------------
