@@ -18,12 +18,89 @@ source("systemPipeVARseq_Fct.R")
 targets <- read.delim("targetsPE.txt", comment.char = "#")[,1:5]
 targets
 
+## ----eval=TRUE, messages=FALSE, warning=FALSE, cache=TRUE------------------------------------
+source("systemPipeVARseq_Fct.R")
+args <- systemArgs(sysma="param/trimPE.param", mytargets="targetsPE.txt")[1:4] # Note: subsetting!
+preprocessReads(args=args, Fct="filterFct(fq, cutoff=20, Nexceptions=0)", batchsize=100000)
+writeTargetsout(x=args, file="targets_PEtrim.txt", overwrite=TRUE)
+
 ## ----eval=TRUE, cache=TRUE-------------------------------------------------------------------
 args <- systemArgs(sysma="param/bwa.param", mytargets="targets_PEtrim.txt")
 fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
 pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
 seeFastqPlot(fqlist)
 dev.off()
+
+## ----eval=TRUE, cache=TRUE-------------------------------------------------------------------
+args <- systemArgs(sysma="param/bwa.param", mytargets="targets_PEtrim.txt")
+sysargs(args)[1] # Command-line parameters for first FASTQ file
+
+## ----eval=FALSE, cache=TRUE------------------------------------------------------------------
+#  moduleload(modules(args))
+#  system("bwa index -a bwtsw ./data/tair10.fasta")
+#  bampaths <- runCommandline(args=args)
+#  writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
+
+## ----eval=FALSE, cache=TRUE------------------------------------------------------------------
+#  resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memory="4gb")
+#  reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01",
+#                    resourceList=resources)
+#  waitForJobs(reg)
+#  writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
+
+## ----eval=FALSE, cache=TRUE------------------------------------------------------------------
+#  file.exists(outpaths(args))
+
+## ----eval=TRUE, cache=TRUE-------------------------------------------------------------------
+library(gmapR); library(BiocParallel); library(BatchJobs)
+gmapGenome <- GmapGenome(reference(args), directory="data", name="gmap_tair10chr", create=TRUE)
+args <- systemArgs(sysma="param/gsnap.param", mytargets="targets_PEtrim.txt")
+p <- GsnapParam(genome=gmapGenome, unique_only=TRUE, molecule="DNA", max_mismatches=3)
+for(i in seq(along=args)) {
+    o <- gsnap(input_a=infile1(args)[i], input_b=infile2(args)[i], params=p, output=outfile1(args)[i])
+    print(c(infile1(args)[i], infile2(args)[i]))
+}
+writeTargetsout(x=args, file="targets_gsnap_bam.txt", overwrite=TRUE)
+file.exists(outpaths(args))
+
+## ----eval=TRUE, cache=TRUE-------------------------------------------------------------------
+args <- systemArgs(sysma="param/gsnap.param", mytargets="targets_PEtrim.txt")
+read_statsDF <- alignStats(args=args) 
+write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+read_statsDF[1:4,]
+
+## ----eval=FALSE, cache=TRUE------------------------------------------------------------------
+#  symLink2bam(sysargs=args, htmldir=c("public_html/", "projects/"),
+#              urlbase="http://biocluster.ucr.edu/~tgirke/",
+#              urlfile="./results/IGVurl.txt")
+
+## ----eval=FALSE, cache=TRUE------------------------------------------------------------------
+#  system("java -jar /opt/picard/1.81/CreateSequenceDictionary.jar R=./data/tair10.fasta O=./data/tair10.dict")
+#  args <- systemArgs(sysma="param/gatk.param", mytargets="targets_bam.txt")
+#  gatkpaths <- runCommandline(args=args)
+#  unlink(outfile1(args), recursive = TRUE, force = TRUE)
+#  writeTargetsout(x=args, file="targets_gatk.txt", overwrite=TRUE)
+
+## ----eval=FALSE, cache=TRUE------------------------------------------------------------------
+#  args <- systemArgs(sysma="param/sambcf.param", mytargets="targets_bam.txt")
+#  sambcfpaths <- runCommandline(args=args)
+#  unlink(outfile1(args), recursive = TRUE, force = TRUE)
+#  writeTargetsout(x=args, file="targets_sambcf.txt", overwrite=TRUE)
+
+## ----eval=TRUE, cache=TRUE-------------------------------------------------------------------
+library(gmapR); library(VariantTools)
+args <- systemArgs(sysma="param/vartools.param", mytargets="targets_gsnap_bam.txt")
+gmapGenome <- GmapGenome(systemPipeR::reference(args), directory="data", name="gmap_tair10chr", create=FALSE)
+tally.param <- TallyVariantsParam(gmapGenome, high_base_quality = 23L, indels = TRUE)
+for(x in seq(along=args)) {
+    bfl <- BamFileList(infile1(args)[x], index=character())
+    var <- callVariants(bfl[[1]], tally.param)
+    sampleNames(var) <- names(bfl)
+    writeVcf(asVCF(var), outfile1(args)[x], index = TRUE)
+    print(outfile1(args)[x])
+}
+file.exists(outpaths(args))
+writeTargetsout(x=args, file="targets_vartools.txt", overwrite=TRUE)
 
 ## ----eval=TRUE, cache=TRUE-------------------------------------------------------------------
 library(VariantAnnotation)
@@ -40,6 +117,19 @@ filter <- "rowSums(vr) >= 2 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
 # filter <- "rowSums(vr) >= 20 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
 suppressAll(filterVars(args, filter, varcaller="bcftools", organism="A. thaliana"))
 writeTargetsout(x=args, file="targets_sambcf_filtered.txt", overwrite=TRUE)
+
+## ----eval=TRUE, messages=FALSE, warnings=FALSE, cache=TRUE-----------------------------------
+library(VariantAnnotation)
+library(BBmisc) # Defines suppressAll()
+args <- systemArgs(sysma="param/filter_vartools.param", mytargets="targets_vartools.txt")
+filter <- "(values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 2 & (values(vr)$n.read.pos / (values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 0.8)"
+# filter <- "(values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 20 & (values(vr)$n.read.pos / (values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 0.8)"
+filterVars(args, filter, varcaller="vartools", organism="A. thaliana")
+writeTargetsout(x=args, file="targets_vartools_filtered.txt", overwrite=TRUE)
+
+## ----eval=TRUE, messages=FALSE, warnings=FALSE, cache=TRUE-----------------------------------
+length(as(readVcf(infile1(args)[1], genome="Ath"), "VRanges")[,1])
+length(as(readVcf(outpaths(args)[1], genome="Ath"), "VRanges")[,1])
 
 ## ----eval=TRUE, messages=FALSE, warnings=FALSE, cache=TRUE-----------------------------------
 library("GenomicFeatures")
