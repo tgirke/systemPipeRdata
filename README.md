@@ -13,7 +13,8 @@ user-friendliness of many typical analysis workflows in the NGS area. The
 input data for _systemPipeR's_ sample workflows are provided by _systemPipeRdata_.
 Its vignette describing the download functionality is available [_here_](https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.pdf?raw=true).
 
-The Overview Vignette describing the main functionalities of _systemPipeR_  is available 
+The Overview Vignette describing the main functionalities of the _systemPipeR_ workflow
+environment is available 
 [_here_](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeR_Presentation.html).
 
 #### Installation 
