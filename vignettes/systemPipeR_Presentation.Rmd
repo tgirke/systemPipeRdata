@@ -103,7 +103,7 @@ vignette("systemPipeR") # Opens vignette
 ```
 <div align="right">[Back to Table of Contents]()</div>
 
-## Preconfigured workflows and sample FASTQ files
+## Load preconfigured workflows and sample FASTQ files
 The mini sample FASTQ files used by this overview vignette as well as the associated workflow reporting vignettes can be downloaded from [`here`](http://biocluster.ucr.edu/~tgirke/projects/systemPipeR_test_data.zip). Alternatively, they can be loaded from the _`systemPipeRdata`_ package as shown below. The chosen data set [`SRP010938`](http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938) contains 18 paired-end (PE) read sets from _Arabidposis thaliana_ [@Howard2013-fq]. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the _A. thalina_ genome. The corresponding reference genome sequence (FASTA) and its GFF annotion files (provided in the same download) have been truncated accordingly. This way the entire test sample data set is less than 200MB in storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single end) reads or PE reads. 
 
 Load one of the available NGS workflows into your current working directory (here for rnaseq).
