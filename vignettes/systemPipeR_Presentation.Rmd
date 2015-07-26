@@ -148,7 +148,7 @@ read.delim("targets.txt", comment.char = "#")
 ```
 <div align="right">[Back to Table of Contents]()</div>
 
-## Structure of _`targets`_ file for paired end (PE) samples
+Structure of _`targets`_ file for paired end (PE) samples
 
 ```{r targetsPE, eval=TRUE}
 read.delim("targetsPE.txt", comment.char = "#")[1:2,1:6]
