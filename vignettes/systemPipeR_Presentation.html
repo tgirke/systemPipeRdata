@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#getting-started"><span class="toc-section-number">2</span> Getting Started</a><ul>
 <li><a href="#installation"><span class="toc-section-number">2.1</span> Installation</a></li>
 <li><a href="#loading-package-and-documentation"><span class="toc-section-number">2.2</span> Loading package and documentation</a></li>
-<li><a href="#preconfigured-workflows-and-sample-fastq-files"><span class="toc-section-number">2.3</span> Preconfigured workflows and sample FASTQ files</a></li>
+<li><a href="#load-sample-data-and-workflow-environment"><span class="toc-section-number">2.3</span> Load sample data and workflow environment</a></li>
 <li><a href="#structure-of-targets-file"><span class="toc-section-number">2.4</span> Structure of <em><code>targets</code></em> file</a></li>
 <li><a href="#structure-of-targets-file-for-paired-end-pe-samples"><span class="toc-section-number">2.5</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</a></li>
 <li><a href="#sample-comparisons"><span class="toc-section-number">2.6</span> Sample comparisons</a></li>
@@ -168,9 +168,9 @@ vignette(&quot;systemPipeR&quot;) # Opens vignette</code></pre>
 <a href>Back to Table of Contents</a>
 </div>
 </div>
-<div id="preconfigured-workflows-and-sample-fastq-files" class="section level2">
-<h2><span class="header-section-number">2.3</span> Preconfigured workflows and sample FASTQ files</h2>
-<p>The mini sample FASTQ files used by this overview vignette as well as the associated workflow reporting vignettes can be downloaded from <a href="http://biocluster.ucr.edu/~tgirke/projects/systemPipeR_test_data.zip"><code>here</code></a>. Alternatively, they can be loaded from the <em><code>systemPipeRdata</code></em> package as shown below. The chosen data set <a href="http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938"><code>SRP010938</code></a> contains 18 paired-end (PE) read sets from <em>Arabidposis thaliana</em> <span class="citation">(Howard et al. 2013)</span>. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the <em>A. thalina</em> genome. The corresponding reference genome sequence (FASTA) and its GFF annotion files (provided in the same download) have been truncated accordingly. This way the entire test sample data set is less than 200MB in storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single end) reads or PE reads.</p>
+<div id="load-sample-data-and-workflow-environment" class="section level2">
+<h2><span class="header-section-number">2.3</span> Load sample data and workflow environment</h2>
+<p>The mini sample FASTQ files used by this overview vignette as well as the associated workflow reporting vignettes can be downloaded from <a href="http://biocluster.ucr.edu/~tgirke/projects/systemPipeR_test_data.zip"><code>here</code></a>. Preferentially, they should be loaded from the <em><code>systemPipeRdata</code></em> package as shown below. The chosen data set <a href="http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938"><code>SRP010938</code></a> contains 18 paired-end (PE) read sets from <em>Arabidposis thaliana</em> <span class="citation">(Howard et al. 2013)</span>. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the <em>A. thalina</em> genome. The corresponding reference genome sequence (FASTA) and its GFF annotion files (provided in the same download) have been truncated accordingly. This way the entire test sample data set requires less than 200MB disk storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single end) reads or PE reads.</p>
 <p>Load one of the available NGS workflows into your current working directory (here for rnaseq).</p>
 <pre class="r"><code>library(systemPipeRdata)
 genWorkenvir(workflow=&quot;rnaseq&quot;)
