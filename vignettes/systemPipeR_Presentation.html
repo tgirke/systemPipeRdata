@@ -61,11 +61,13 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#getting-started"><span class="toc-section-number">2</span> Getting Started</a><ul>
 <li><a href="#installation"><span class="toc-section-number">2.1</span> Installation</a></li>
 <li><a href="#loading-package-and-documentation"><span class="toc-section-number">2.2</span> Loading package and documentation</a></li>
-<li><a href="#load-sample-data-and-workflow-environment"><span class="toc-section-number">2.3</span> Load sample data and workflow environment</a></li>
-<li><a href="#structure-of-targets-file"><span class="toc-section-number">2.4</span> Structure of <em><code>targets</code></em> file</a></li>
-<li><a href="#structure-of-targets-file-for-paired-end-pe-samples"><span class="toc-section-number">2.5</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</a></li>
-<li><a href="#sample-comparisons"><span class="toc-section-number">2.6</span> Sample comparisons</a></li>
-<li><a href="#structure-of-param-file-and-sysargs-container"><span class="toc-section-number">2.7</span> Structure of <em><code>param</code></em> file and <em><code>SYSargs</code></em> container</a></li>
+<li><a href="#load-sample-data-and-workflow-template"><span class="toc-section-number">2.3</span> Load sample data and workflow template</a></li>
+<li><a href="#structure-of-targets-file"><span class="toc-section-number">2.4</span> Structure of <em><code>targets</code></em> file</a><ul>
+<li><a href="#structure-of-targets-file-for-single-end-pe-samples"><span class="toc-section-number">2.4.1</span> Structure of <em><code>targets</code></em> file for single end (PE) samples</a></li>
+<li><a href="#structure-of-targets-file-for-paired-end-pe-samples"><span class="toc-section-number">2.4.2</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</a></li>
+<li><a href="#sample-comparisons"><span class="toc-section-number">2.4.3</span> Sample comparisons</a></li>
+</ul></li>
+<li><a href="#structure-of-param-file-and-sysargs-container"><span class="toc-section-number">2.5</span> Structure of <em><code>param</code></em> file and <em><code>SYSargs</code></em> container</a></li>
 </ul></li>
 <li><a href="#workflow-overview"><span class="toc-section-number">3</span> Workflow overview</a><ul>
 <li><a href="#define-environment-settings-and-samples"><span class="toc-section-number">3.1</span> Define environment settings and samples</a></li>
@@ -168,10 +170,10 @@ vignette(&quot;systemPipeR&quot;) # Opens vignette</code></pre>
 <a href>Back to Table of Contents</a>
 </div>
 </div>
-<div id="load-sample-data-and-workflow-environment" class="section level2">
-<h2><span class="header-section-number">2.3</span> Load sample data and workflow environment</h2>
+<div id="load-sample-data-and-workflow-template" class="section level2">
+<h2><span class="header-section-number">2.3</span> Load sample data and workflow template</h2>
 <p>The mini sample FASTQ files used by this overview vignette as well as the associated workflow reporting vignettes can be downloaded from <a href="http://biocluster.ucr.edu/~tgirke/projects/systemPipeR_test_data.zip"><code>here</code></a>. Preferentially, they should be loaded from the <em><code>systemPipeRdata</code></em> package as shown below. The chosen data set <a href="http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938"><code>SRP010938</code></a> contains 18 paired-end (PE) read sets from <em>Arabidposis thaliana</em> <span class="citation">(Howard et al. 2013)</span>. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the <em>A. thalina</em> genome. The corresponding reference genome sequence (FASTA) and its GFF annotion files (provided in the same download) have been truncated accordingly. This way the entire test sample data set requires less than 200MB disk storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single end) reads or PE reads.</p>
-<p>Load one of the available NGS workflows into your current working directory (here for rnaseq).</p>
+<p>Load one of the available NGS workflow templates into your current working directory (here for <em>rnaseq</em>).</p>
 <pre class="r"><code>library(systemPipeRdata)
 genWorkenvir(workflow=&quot;rnaseq&quot;)
 setwd(&quot;rnaseq&quot;)</code></pre>
@@ -213,6 +215,8 @@ setwd(&quot;rnaseq&quot;)</code></pre>
 <div id="structure-of-targets-file" class="section level2">
 <h2><span class="header-section-number">2.4</span> Structure of <em><code>targets</code></em> file</h2>
 <p>The <em><code>targets</code></em> file defines all input files (<em>e.g.</em> FASTQ, BAM, BCF) and sample comparisons of an analysis workflow. The following shows the format of a sample <em><code>targets</code></em> file provided by this package. In a target file with a single type of input files, here FASTQ files of single end (SE) reads, the first three columns are mandatory including their column names, while it is four mandatory columns for FASTQ files for PE reads. All subsequent columns are optional and any number of additional columns can be added as needed.</p>
+<div id="structure-of-targets-file-for-single-end-pe-samples" class="section level3">
+<h3><span class="header-section-number">2.4.1</span> Structure of <em><code>targets</code></em> file for single end (PE) samples</h3>
 <pre class="r"><code>library(systemPipeR)
 read.delim(&quot;targets.txt&quot;, comment.char = &quot;#&quot;)</code></pre>
 <pre><code>##                       FileName SampleName Factor SampleLong Experiment        Date
@@ -238,8 +242,8 @@ read.delim(&quot;targets.txt&quot;, comment.char = &quot;#&quot;)</code></pre>
 <a href>Back to Table of Contents</a>
 </div>
 </div>
-<div id="structure-of-targets-file-for-paired-end-pe-samples" class="section level2">
-<h2><span class="header-section-number">2.5</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</h2>
+<div id="structure-of-targets-file-for-paired-end-pe-samples" class="section level3">
+<h3><span class="header-section-number">2.4.2</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</h3>
 <pre class="r"><code>read.delim(&quot;targetsPE.txt&quot;, comment.char = &quot;#&quot;)[1:2,1:6]</code></pre>
 <pre><code>##                     FileName1                   FileName2 SampleName Factor SampleLong Experiment
 ## 1 ./data/SRR446027_1.fastq.gz ./data/SRR446027_2.fastq.gz        M1A     M1  Mock.1h.A          1
@@ -248,9 +252,15 @@ read.delim(&quot;targets.txt&quot;, comment.char = &quot;#&quot;)</code></pre>
 <a href>Back to Table of Contents</a>
 </div>
 </div>
-<div id="sample-comparisons" class="section level2">
-<h2><span class="header-section-number">2.6</span> Sample comparisons</h2>
-<p>Sample comparisons are defined in the header lines of the <em><code>targets</code></em> file starting with ‘<code># &lt;CMP&gt;</code>’. The function <em><code>readComp</code></em> imports the comparison and stores them in a <em><code>list</code></em>. Alternatively, <em><code>readComp</code></em> can obtain the comparison information from the corresponding <em><code>SYSargs</code></em> object (see below). Note, the header lines are optional. They are mainly useful for controlling comparative analysis according to certain biological expectations, such as simple pairwise comparisons in RNA-Seq experiments.</p>
+<div id="sample-comparisons" class="section level3">
+<h3><span class="header-section-number">2.4.3</span> Sample comparisons</h3>
+<p>Sample comparisons are defined in the header lines of the <em><code>targets</code></em> file starting with ‘<code># &lt;CMP&gt;</code>’.</p>
+<pre class="r"><code>readLines(&quot;targets.txt&quot;)[1:4]</code></pre>
+<pre><code>## [1] &quot;# Project ID: Arabidopsis - Pseudomonas alternative splicing study (SRA: SRP010938; PMID: 24098335)&quot;                                                                              
+## [2] &quot;# The following line(s) allow to specify the contrasts needed for comparative analyses, such as DEG identification. All possible comparisons can be specified with 'CMPset: ALL'.&quot;
+## [3] &quot;# &lt;CMP&gt; CMPset1: M1-A1, M1-V1, A1-V1, M6-A6, M6-V6, A6-V6, M12-A12, M12-V12, A12-V12&quot;                                                                                             
+## [4] &quot;# &lt;CMP&gt; CMPset2: ALL&quot;</code></pre>
+<p>The function <em><code>readComp</code></em> imports the comparison and stores them in a <em><code>list</code></em>. Alternatively, <em><code>readComp</code></em> can obtain the comparison information from the corresponding <em><code>SYSargs</code></em> object (see below). Note, the header lines are optional. They are mainly useful for controlling comparative analysis according to certain biological expectations, such as simple pairwise comparisons in RNA-Seq experiments.</p>
 <pre class="r"><code>readComp(file=&quot;targets.txt&quot;, format=&quot;vector&quot;, delim=&quot;-&quot;)</code></pre>
 <pre><code>## $CMPset1
 ## [1] &quot;M1-A1&quot;   &quot;M1-V1&quot;   &quot;A1-V1&quot;   &quot;M6-A6&quot;   &quot;M6-V6&quot;   &quot;A6-V6&quot;   &quot;M12-A12&quot; &quot;M12-V12&quot; &quot;A12-V12&quot;
@@ -264,8 +274,9 @@ read.delim(&quot;targets.txt&quot;, comment.char = &quot;#&quot;)</code></pre>
 <a href>Back to Table of Contents</a>
 </div>
 </div>
+</div>
 <div id="structure-of-param-file-and-sysargs-container" class="section level2">
-<h2><span class="header-section-number">2.7</span> Structure of <em><code>param</code></em> file and <em><code>SYSargs</code></em> container</h2>
+<h2><span class="header-section-number">2.5</span> Structure of <em><code>param</code></em> file and <em><code>SYSargs</code></em> container</h2>
 <p>The <em><code>param</code></em> file defines the parameters of the command-line software. The following shows the format of a sample <em><code>param</code></em> file provided by this package.</p>
 <pre class="r"><code>read.delim(&quot;param/tophat.param&quot;, comment.char = &quot;#&quot;)</code></pre>
 <pre><code>##      PairSet         Name                                  Value

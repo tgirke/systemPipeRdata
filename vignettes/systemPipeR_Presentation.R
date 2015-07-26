@@ -46,6 +46,9 @@ read.delim("targets.txt", comment.char = "#")
 ## ----targetsPE, eval=TRUE------------------------------------------------
 read.delim("targetsPE.txt", comment.char = "#")[1:2,1:6]
 
+## ----comment_lines, eval=TRUE--------------------------------------------
+readLines("targets.txt")[1:4]
+
 ## ----targetscomp, eval=TRUE----------------------------------------------
 readComp(file="targets.txt", format="vector", delim="-")
 

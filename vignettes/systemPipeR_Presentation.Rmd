@@ -103,10 +103,10 @@ vignette("systemPipeR") # Opens vignette
 ```
 <div align="right">[Back to Table of Contents]()</div>
 
-## Load sample data and workflow environment
+## Load sample data and workflow template
 The mini sample FASTQ files used by this overview vignette as well as the associated workflow reporting vignettes can be downloaded from [`here`](http://biocluster.ucr.edu/~tgirke/projects/systemPipeR_test_data.zip). Preferentially, they should be loaded from the _`systemPipeRdata`_ package as shown below. The chosen data set [`SRP010938`](http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938) contains 18 paired-end (PE) read sets from _Arabidposis thaliana_ [@Howard2013-fq]. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the _A. thalina_ genome. The corresponding reference genome sequence (FASTA) and its GFF annotion files (provided in the same download) have been truncated accordingly. This way the entire test sample data set requires less than 200MB disk storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single end) reads or PE reads. 
 
-Load one of the available NGS workflows into your current working directory (here for rnaseq).
+Load one of the available NGS workflow templates into your current working directory (here for _rnaseq_).
 ```{r genRna_workflow, eval=FALSE}
 library(systemPipeRdata)
 genWorkenvir(workflow="rnaseq")
@@ -142,21 +142,28 @@ Users can change this structure as needed, but need to adjust the code in their 
 
 The _`targets`_ file defines all input files (_e.g._ FASTQ, BAM, BCF) and sample comparisons of an analysis workflow. The following shows the format of a sample _`targets`_ file provided by this package. In a target file with a single type of input files, here FASTQ files of single end (SE) reads, the first three columns are mandatory including their column names, while it is four mandatory columns for FASTQ files for PE reads. All subsequent columns are optional and any number of additional columns can be added as needed.
 
+### Structure of _`targets`_ file for single end (PE) samples
 ```{r targetsSE, eval=TRUE}
 library(systemPipeR)
 read.delim("targets.txt", comment.char = "#")
 ```
 <div align="right">[Back to Table of Contents]()</div>
 
-Structure of _`targets`_ file for paired end (PE) samples
+### Structure of _`targets`_ file for paired end (PE) samples
 
 ```{r targetsPE, eval=TRUE}
 read.delim("targetsPE.txt", comment.char = "#")[1:2,1:6]
 ```
 <div align="right">[Back to Table of Contents]()</div>
 
-## Sample comparisons
-Sample comparisons are defined in the header lines of the _`targets`_ file starting with '``# <CMP>``'. The function _`readComp`_ imports the comparison and stores them in a _`list`_. Alternatively, _`readComp`_ can obtain the comparison information from the corresponding _`SYSargs`_ object (see below). 
+### Sample comparisons
+Sample comparisons are defined in the header lines of the _`targets`_ file starting with '``# <CMP>``'. 
+
+```{r comment_lines, eval=TRUE}
+readLines("targets.txt")[1:4]
+```
+
+The function _`readComp`_ imports the comparison and stores them in a _`list`_. Alternatively, _`readComp`_ can obtain the comparison information from the corresponding _`SYSargs`_ object (see below). 
 Note, the header lines are optional. They are mainly useful for controlling comparative analysis according to certain biological expectations, such as simple pairwise comparisons in RNA-Seq experiments.
  
 ```{r targetscomp, eval=TRUE}
