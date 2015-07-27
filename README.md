@@ -16,7 +16,7 @@ available [_here_](https://github.com/tgirke/systemPipeRdata/blob/master/vignett
 
 The overview vignette describing the main functionalities of the _systemPipeR_ workflow
 environment is available 
-[_here_](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeR_Presentation.html).
+[_here_](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html).
 
 #### Installation 
 The easiest way to install _systemPipeRdata_ is via the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
