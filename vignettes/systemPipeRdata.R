@@ -8,6 +8,7 @@ knitr::opts_chunk$set(
 ## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE-------------------
 suppressPackageStartupMessages({
     library(systemPipeR)
+    library(BiocGenerics)
 })
 
 ## ----install, eval=FALSE-------------------------------------------------
