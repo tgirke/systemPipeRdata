@@ -29,6 +29,10 @@ suppressPackageStartupMessages({
 ## library("systemPipeR") # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor
 ## vignette("systemPipeR", package = "systemPipeR")
 
+## ----return_samplepaths, eval=TRUE---------------------------------------
+library(systemPipeRdata)
+pathList()
+
 ## ----sessionInfo---------------------------------------------------------
 sessionInfo()
 

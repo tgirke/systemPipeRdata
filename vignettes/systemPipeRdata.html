@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#loading-package-and-documentation"><span class="toc-section-number">2.2</span> Loading package and documentation</a></li>
 <li><a href="#generate-workflow-template"><span class="toc-section-number">2.3</span> Generate workflow template</a></li>
 <li><a href="#run-workflows"><span class="toc-section-number">2.4</span> Run workflows</a></li>
+<li><a href="#return-paths-to-sample-data"><span class="toc-section-number">2.5</span> Return paths to sample data</a></li>
 </ul></li>
 <li><a href="#version-information"><span class="toc-section-number">3</span> Version information</a></li>
 <li><a href="#funding"><span class="toc-section-number">4</span> Funding</a></li>
@@ -142,6 +143,41 @@ setwd(&quot;varseq&quot;)</code></pre>
 <p>Next, run from within R the chosen sample workflow by executing the code provided in the corresponding <em><code>*.Rnw</code></em> template file. If preferred the corresponding <em><code>*.Rmd</code></em> or <em><code>*.R</code></em> versions can be used instead. Alternatively, one can run an entire workflow from start to finish with a single command by executing from the command-line <em><code>'make -B'</code></em> within the workflow directory (here <em><code>'varseq'</code></em>). Much more detailed information on running and customizing <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> workflows is available in its overview vignette <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">here</a>. This vignette can also be opened from R with the following command.</p>
 <pre class="r"><code>library(&quot;systemPipeR&quot;) # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
 vignette(&quot;systemPipeR&quot;, package = &quot;systemPipeR&quot;)</code></pre>
+<div align="right">
+<a href>Back to Table of Contents</a>
+</div>
+</div>
+<div id="return-paths-to-sample-data" class="section level2">
+<h2><span class="header-section-number">2.5</span> Return paths to sample data</h2>
+<p>To access individual components of the sample data provided by <em><code>systemPipeRdata</code></em>, one can return the paths to their individual components as a <em><code>list</code></em>.</p>
+<pre class="r"><code>library(systemPipeRdata)
+pathList()</code></pre>
+<pre><code>## $targets
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/param/targets.txt&quot;
+## 
+## $targetsPE
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/param/targetsPE.txt&quot;
+## 
+## $annotationdir
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/annotation/&quot;
+## 
+## $fastqdir
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/fastq/&quot;
+## 
+## $paramdir
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/param/&quot;
+## 
+## $workflows
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/workflows/&quot;
+## 
+## $chipseq
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/workflows/chipseq/&quot;
+## 
+## $rnaseq
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/workflows/rnaseq/&quot;
+## 
+## $varseq
+## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/workflows/varseq/&quot;</code></pre>
 <div align="right">
 <a href>Back to Table of Contents</a>
 </div>
