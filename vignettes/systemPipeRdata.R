@@ -9,7 +9,6 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages({
     library(systemPipeR)
     library(BiocGenerics)
-    library(S4Vectors)
 })
 
 ## ----install, eval=FALSE-------------------------------------------------
@@ -18,6 +17,7 @@ suppressPackageStartupMessages({
 ## biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
 
 ## ----generate_workenvir, eval=FALSE--------------------------------------
+## library(systemPipeRdata)
 ## genWorkenvir(workflow="varseq")
 ## setwd("varseq")
 

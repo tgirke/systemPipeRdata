@@ -42,7 +42,6 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages({
     library(systemPipeR)
     library(BiocGenerics)
-    library(S4Vectors)
 })
 ```
 
@@ -65,6 +64,7 @@ biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # Fr
 ## Generate workflow template
 Load one of the available NGS workflows into your current working directory. The following does this for the _`varseq`_ template.
 ```{r generate_workenvir, eval=FALSE}
+library(systemPipeRdata)
 genWorkenvir(workflow="varseq")
 setwd("varseq")
 ```
