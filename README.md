@@ -18,7 +18,7 @@ package from CRAN.
 devtools::install_github("tgirke/systemPipeRdata")
 ```
 
-Alternatively, one can install the package via _biocLite_.
+Alternatively, one can install the package using the _biocLite_ command for Bioconductor.
 ```s
 source("http://bioconductor.org/biocLite.R")
 biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)
