@@ -12,7 +12,7 @@ and the main manual for _systemPipeR_ is available
 [_here_](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html).
 
 #### Installation 
-_systemPipeRdata_ can be installed directly from GitHub using the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
+_systemPipeRdata_ can be installed directly from GitHub with help of the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
 package from CRAN.
 ```s
 devtools::install_github("tgirke/systemPipeRdata")
