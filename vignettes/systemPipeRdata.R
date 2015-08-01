@@ -9,6 +9,7 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages({
     library(systemPipeR)
     library(BiocGenerics)
+    library(S4Vectors)
 })
 
 ## ----install, eval=FALSE-------------------------------------------------
