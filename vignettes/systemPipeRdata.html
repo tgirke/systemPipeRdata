@@ -113,7 +113,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2><span class="header-section-number">2.1</span> Installation</h2>
 <p>The R software for running <em><code>systemPipeR</code></em> and <em><code>systemPipeRdata</code></em> can be downloaded from <a href="http://cran.at.r-project.org">CRAN</a>. The <em><code>systemPipeR</code></em> environment can be installed from R using the <em><code>biocLite</code></em> install command.</p>
 <pre class="r"><code>source(&quot;http://bioconductor.org/biocLite.R&quot;) # Sources the biocLite.R installation script 
-biocLite(&quot;tgirke/systemPipeRdata&quot;, build_vignettes=TRUE, dependencies=TRUE) # From github</code></pre>
+biocLite(&quot;systemPipeRdata&quot;) # Installs from Bioconductor once available there
+biocLite(&quot;tgirke/systemPipeRdata&quot;, build_vignettes=TRUE, dependencies=TRUE) # Installs from github</code></pre>
 <div align="right">
 <a href>Back to Table of Contents</a>
 </div>
@@ -130,8 +131,7 @@ vignette(&quot;systemPipeRdata&quot;) # Opens vignette</code></pre>
 <div id="generate-workflow-template" class="section level2">
 <h2><span class="header-section-number">2.3</span> Generate workflow template</h2>
 <p>Load one of the available NGS workflows into your current working directory. The following does this for the <em><code>varseq</code></em> template.</p>
-<pre class="r"><code>library(systemPipeRdata)
-genWorkenvir(workflow=&quot;varseq&quot;)
+<pre class="r"><code>genWorkenvir(workflow=&quot;varseq&quot;)
 setwd(&quot;varseq&quot;)</code></pre>
 <div align="right">
 <a href>Back to Table of Contents</a>
@@ -139,7 +139,7 @@ setwd(&quot;varseq&quot;)</code></pre>
 </div>
 <div id="run-workflow" class="section level2">
 <h2><span class="header-section-number">2.4</span> Run workflow</h2>
-<p>Next, run the chosen sample workflow by executing from the command-line <em><code>'make -B'</code></em> within the <em><code>'varseq'</code></em> directory. Alternatively, one can run the code from the provided <em><code>*.Rnw</code></em> template file from within R interactively. Much more detailed information is available in <em><code>systemPipeR</code></em>’s overview and workflow vignettes available <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html">here</a>. The overview vignette is available <a href="https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html">here</a>. The latter can also be opened with the following command.</p>
+<p>Next, run from within R the chosen sample workflow by executing the code provided in the <em><code>*.Rnw</code></em> template file. Alternatively, one can run an entire workflow from start-to-finish with a single command by executing from the command-line <em><code>'make -B'</code></em> within the <em><code>'varseq'</code></em> directory. Much more detailed information <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> workflows is available its overview vignette <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">here</a>. The latter vignette can also be opened from R with the following command.</p>
 <pre class="r"><code>library(&quot;systemPipeR&quot;) # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
 vignette(&quot;systemPipeR&quot;, package = &quot;systemPipeR&quot;)</code></pre>
 <div align="right">
