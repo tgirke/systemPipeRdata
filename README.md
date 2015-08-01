@@ -2,13 +2,13 @@
 
 [_systemPipeRdata_](https://github.com/tgirke/systemPipeRdata) is an
 R/Bioconductor data package that facilitates the generation of NGS workflow
-templates expected by the main
+templates for the main
 [_systemPipeR_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html)
 package. The latter is an environment for building *end-to-end* analysis pipelines with
 automated report generation for next generation sequence (NGS) applications
 such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. A short manual (vignette) for _systemPipeRdata_ 
 is available [_here_](https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.pdf?raw=true),
-and the main manual for the core package _systemPipeR_ is available
+and the main manual for the core _systemPipeR_ package is available
 [_here_](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html).
 
 #### Installation 
