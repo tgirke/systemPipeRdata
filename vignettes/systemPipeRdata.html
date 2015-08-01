@@ -122,8 +122,8 @@ biocLite(&quot;systemPipeRdata&quot;) # Installs from Bioconductor once availabl
 </div>
 <div id="loading-package-and-documentation" class="section level2">
 <h2><span class="header-section-number">2.2</span> Loading package and documentation</h2>
-<pre class="r"><code>library(&quot;systemPipeRdata&quot;) # Loads the package
-library(help=&quot;systemPipeRdata&quot;) # Lists package info
+<pre class="r"><code>library(&quot;systemPipeRdata&quot;) # Loads the package</code></pre>
+<pre class="r"><code>library(help=&quot;systemPipeRdata&quot;) # Lists package info
 vignette(&quot;systemPipeRdata&quot;) # Opens vignette</code></pre>
 <div align="right">
 <a href>Back to Table of Contents</a>
@@ -141,8 +141,8 @@ setwd(&quot;varseq&quot;)</code></pre>
 <div id="run-workflows" class="section level2">
 <h2><span class="header-section-number">2.4</span> Run workflows</h2>
 <p>Next, run from within R the chosen sample workflow by executing the code provided in the corresponding <em><code>*.Rnw</code></em> template file. If preferred the corresponding <em><code>*.Rmd</code></em> or <em><code>*.R</code></em> versions can be used instead. Alternatively, one can run an entire workflow from start to finish with a single command by executing from the command-line <em><code>'make -B'</code></em> within the workflow directory (here <em><code>'varseq'</code></em>). Much more detailed information on running and customizing <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> workflows is available in its overview vignette <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">here</a>. This vignette can also be opened from R with the following command.</p>
-<pre class="r"><code>library(&quot;systemPipeR&quot;) # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
-vignette(&quot;systemPipeR&quot;, package = &quot;systemPipeR&quot;)</code></pre>
+<pre class="r"><code>library(&quot;systemPipeR&quot;) # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor </code></pre>
+<pre class="r"><code>vignette(&quot;systemPipeR&quot;, package = &quot;systemPipeR&quot;)</code></pre>
 <div align="right">
 <a href>Back to Table of Contents</a>
 </div>
@@ -150,8 +150,7 @@ vignette(&quot;systemPipeR&quot;, package = &quot;systemPipeR&quot;)</code></pre
 <div id="return-paths-to-sample-data" class="section level2">
 <h2><span class="header-section-number">2.5</span> Return paths to sample data</h2>
 <p>To access individual components of the sample data provided by <em><code>systemPipeRdata</code></em>, one can return the paths to their individual components as a <em><code>list</code></em>.</p>
-<pre class="r"><code>library(systemPipeRdata)
-pathList()</code></pre>
+<pre class="r"><code>pathList()</code></pre>
 <pre><code>## $targets
 ## [1] &quot;/home/tgirke/R/x86_64-pc-linux-gnu-library/3.2/systemPipeRdata/extdata/param/targets.txt&quot;
 ## 
