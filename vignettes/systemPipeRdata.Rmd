@@ -1,0 +1,91 @@
+---
+title: "_systemPipeRdata_: NGS workflow templates and sample data" 
+author: "Author: Thomas Girke (thomas.girke@ucr.edu)"
+date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 3
+    fig_caption: yes
+
+fontsize: 14pt
+bibliography: bibtex.bib
+---
+<!--
+%% \VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{Overview Vignette}
+%% \VignetteDepends{systemPipeR}
+%% \VignetteKeywords{compute cluster, pipeline, reports}
+%% \VignettePackage{systemPipeRdata}
+-->
+
+<!---
+- Compile from command-line
+echo "rmarkdown::render('systemPipeRdata.Rmd')" | R -slave; R CMD Stangle systemPipeRdata.Rmd
+
+- Commit to github
+git commit -am "some edits"; git push -u origin master
+
+- To customize font size and other style features, add this line to output section in preamble:  
+    css: style.css
+-->
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+options(width=100, max.print=1000)
+knitr::opts_chunk$set(
+    eval=as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
+    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")))
+```
+
+```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE}
+suppressPackageStartupMessages({
+    library(systemPipeR)
+})
+```
+
+Note: the most recent version of this tutorial can be found <a href="https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html">here</a>.
+
+# Introduction
+
+This package provides sample data for running the NGS workflows of the _`systemPipeR`_ package [@Girke2014-oy]. The source and usage of the data is described in the overview vignette [here](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
+
+# Getting Started
+
+## Installation
+The R software for running _`systemPipeR`_ and _`systemPipeRdata`_ can be downloaded from [CRAN](http://cran.at.r-project.org). The _`systemPipeR`_ environment can be installed from R using the _`biocLite`_ install command. 
+```{r install, eval=FALSE}
+source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script 
+biocLite("systemPipeR") # Installs systemPipeR from Bioconductor 
+biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
+```
+<div align="right">[Back to Table of Contents]()</div>
+
+## Generate workflow template
+Load one of the available NGS workflows into your current working directory (here for varseq).
+```{r generate_workenvir, eval=FALSE}
+genWorkenvir(workflow="varseq")
+setwd("varseq")
+```
+<div align="right">[Back to Table of Contents]()</div>
+
+## Run workflow
+Next, run the chosen sample workflow by executing from the command-line _`'make -B'`_ within the _`'varseq'`_ directory. Alternatively, one can run the code from the provided _`*.Rnw`_ template file from within R interactively. Much more detailed information is available in _`systemPipeR`_'s overview and workflow vignettes available [here](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html). The overview vignette is available [here](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html). It also can be opened with the following command. 
+```{r run_workflow, eval=FALSE}
+vignette("systemPipeR", package = "systemPipeR")
+```
+<div align="right">[Back to Table of Contents]()</div>
+
+# Version information
+
+```{r sessionInfo}
+sessionInfo()
+```
+<div align="right">[Back to Table of Contents]()</div>
+
+# Funding
+This project was supported by funds from the National Institutes of Health (NIH) and the National Science Foundation (NSF).
+
+<div align="right">[Back to Table of Contents]()</div>
+
+# References
