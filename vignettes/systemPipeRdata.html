@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#installation"><span class="toc-section-number">2.1</span> Installation</a></li>
 <li><a href="#loading-package-and-documentation"><span class="toc-section-number">2.2</span> Loading package and documentation</a></li>
 <li><a href="#generate-workflow-template"><span class="toc-section-number">2.3</span> Generate workflow template</a></li>
-<li><a href="#run-workflow"><span class="toc-section-number">2.4</span> Run workflow</a></li>
+<li><a href="#run-workflows"><span class="toc-section-number">2.4</span> Run workflows</a></li>
 </ul></li>
 <li><a href="#version-information"><span class="toc-section-number">3</span> Version information</a></li>
 <li><a href="#funding"><span class="toc-section-number">4</span> Funding</a></li>
@@ -137,9 +137,9 @@ setwd(&quot;varseq&quot;)</code></pre>
 <a href>Back to Table of Contents</a>
 </div>
 </div>
-<div id="run-workflow" class="section level2">
-<h2><span class="header-section-number">2.4</span> Run workflow</h2>
-<p>Next, run from within R the chosen sample workflow by executing the code provided in the <em><code>*.Rnw</code></em> template file. Alternatively, one can run an entire workflow from start-to-finish with a single command by executing from the command-line <em><code>'make -B'</code></em> within the workflow directory (here <em><code>'varseq'</code></em>). Much more detailed information on running and customizing <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> workflows is available in its overview vignette <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">here</a>. This vignette can also be opened from R with the following command.</p>
+<div id="run-workflows" class="section level2">
+<h2><span class="header-section-number">2.4</span> Run workflows</h2>
+<p>Next, run from within R the chosen sample workflow by executing the code provided in the corresponding <em><code>*.Rnw</code></em> template file (or use <em><code>*.Rmd</code></em> or <em><code>*.R</code></em> versions). Alternatively, one can run an entire workflow from start to finish with a single command by executing from the command-line <em><code>'make -B'</code></em> within the workflow directory (here <em><code>'varseq'</code></em>). Much more detailed information on running and customizing <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> workflows is available in its overview vignette <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">here</a>. This vignette can also be opened from R with the following command.</p>
 <pre class="r"><code>library(&quot;systemPipeR&quot;) # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
 vignette(&quot;systemPipeR&quot;, package = &quot;systemPipeR&quot;)</code></pre>
 <div align="right">
@@ -164,12 +164,12 @@ vignette(&quot;systemPipeR&quot;, package = &quot;systemPipeR&quot;)</code></pre
 ## [1] parallel  stats4    stats     graphics  utils     datasets  grDevices methods   base     
 ## 
 ## other attached packages:
-##  [1] systemPipeR_1.3.17         RSQLite_1.0.0              DBI_0.3.1                 
+##  [1] systemPipeR_1.3.19         RSQLite_1.0.0              DBI_0.3.1                 
 ##  [4] ShortRead_1.27.5           GenomicAlignments_1.5.12   SummarizedExperiment_0.3.2
-##  [7] Biobase_2.29.1             BiocParallel_1.3.41        Rsamtools_1.21.14         
+##  [7] Biobase_2.29.1             BiocParallel_1.3.47        Rsamtools_1.21.14         
 ## [10] Biostrings_2.37.2          XVector_0.9.1              GenomicRanges_1.21.17     
-## [13] GenomeInfoDb_1.5.9         IRanges_2.3.15             S4Vectors_0.7.10          
-## [16] BiocGenerics_0.15.3        BiocStyle_1.7.4           
+## [13] GenomeInfoDb_1.5.9         IRanges_2.3.17             S4Vectors_0.7.12          
+## [16] BiocGenerics_0.15.5        BiocStyle_1.7.6           
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_0.12.0             lattice_0.20-33         GO.db_3.1.2             digest_0.6.8           
