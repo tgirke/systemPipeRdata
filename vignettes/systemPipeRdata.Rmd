@@ -14,7 +14,7 @@ bibliography: bibtex.bib
 <!--
 %\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{Overview Vignette}
-%\VignetteDepends{systemPipeR}
+%\VignetteDepends{methods}
 %\VignetteKeywords{compute cluster, pipeline, reports}
 %\VignettePackage{systemPipeRdata}
 -->
@@ -48,18 +48,18 @@ suppressPackageStartupMessages({
 Note: the most recent version of this vignette can be found <a href="https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.html">here</a>.
 
 # Introduction
-[_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) is a helper package to generate with a single command NGS workflow templates for the parent package [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@Girke2014-oy]. The latter is an environment for building *end-to-end* analysis pipelines with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. The directory structure of the workflow templates and the sample data used by _`systemPipeRdata`_ are described [here](http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
+[_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) is a helper package to generate with a single command NGS workflow templates that are intended to be used by its parent package [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@Girke2014-oy]. The latter is an environment for building *end-to-end* analysis pipelines with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. The directory structure of the workflow templates and the sample data used by _`systemPipeRdata`_ are described [here](http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
 
 <div align="right">[Back to Table of Contents]()</div>
 
 # Getting Started
 
 ## Installation
-The R software for running _`systemPipeR`_ and _`systemPipeRdata`_ can be downloaded from [CRAN](http://cran.at.r-project.org). The _`systemPipeR`_ environment can be installed from R using the _`biocLite`_ install command. 
+The R software for using _`systemPipeRdata`_ can be downloaded from [CRAN](http://cran.at.r-project.org). The _`systemPipeRdata`_ package can be installed from within R as follows: 
 ```{r install, eval=FALSE}
 source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script 
-biocLite("systemPipeRdata") # Installs from Bioconductor once available there
 biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # Installs from github
+biocLite("systemPipeRdata") # Installs from Bioconductor once available there
 ```
 <div align="right">[Back to Table of Contents]()</div>
 
@@ -81,7 +81,7 @@ setwd("varseq")
 <div align="right">[Back to Table of Contents]()</div>
 
 ## Run workflows
-Next, run from within R the chosen sample workflow by executing the code provided in the corresponding _`*.Rnw`_ template file (or use _`*.Rmd`_ or _`*.R`_ versions). Alternatively, one can run an entire workflow from start to finish with a single command by executing from the command-line _`'make -B'`_ within the workflow directory (here _`'varseq'`_). Much more detailed information on running and customizing [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) workflows is available in its overview vignette [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html). This vignette can also be opened from R with the following command. 
+Next, run from within R the chosen sample workflow by executing the code provided in the corresponding _`*.Rnw`_ template file. If preferred the corresponding _`*.Rmd`_ or _`*.R`_ versions can be used instead. Alternatively, one can run an entire workflow from start to finish with a single command by executing from the command-line _`'make -B'`_ within the workflow directory (here _`'varseq'`_). Much more detailed information on running and customizing [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) workflows is available in its overview vignette [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html). This vignette can also be opened from R with the following command. 
 ```{r run_workflow, eval=FALSE}
 library("systemPipeR") # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
 vignette("systemPipeR", package = "systemPipeR")
