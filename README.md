@@ -30,5 +30,5 @@ To install the parent package _systemPipeR_ itself, please use the _biocLite_ me
 [_here_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
 
 #### Usage
-Examples for using _systemPipeRdata_ are given in _systemPipeR's_ overview
+Detailed examples for using _systemPipeRdata_ are given in _systemPipeR's_ overview
 [_vignette_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
