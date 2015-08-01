@@ -13,7 +13,6 @@ suppressPackageStartupMessages({
 
 ## ----install, eval=FALSE-------------------------------------------------
 ## source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script
-## biocLite("systemPipeR") # Installs systemPipeR from Bioconductor
 ## biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
 
 ## ----documentation, eval=FALSE-------------------------------------------
@@ -27,6 +26,7 @@ suppressPackageStartupMessages({
 ## setwd("varseq")
 
 ## ----run_workflow, eval=FALSE--------------------------------------------
+## library("systemPipeR") # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor
 ## vignette("systemPipeR", package = "systemPipeR")
 
 ## ----sessionInfo---------------------------------------------------------

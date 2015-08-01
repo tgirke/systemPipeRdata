@@ -58,7 +58,6 @@ Note: the most recent version of this tutorial can be found <a href="https://htm
 The R software for running _`systemPipeR`_ and _`systemPipeRdata`_ can be downloaded from [CRAN](http://cran.at.r-project.org). The _`systemPipeR`_ environment can be installed from R using the _`biocLite`_ install command. 
 ```{r install, eval=FALSE}
 source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script 
-biocLite("systemPipeR") # Installs systemPipeR from Bioconductor 
 biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
 ```
 <div align="right">[Back to Table of Contents]()</div>
@@ -84,6 +83,7 @@ setwd("varseq")
 ## Run workflow
 Next, run the chosen sample workflow by executing from the command-line _`'make -B'`_ within the _`'varseq'`_ directory. Alternatively, one can run the code from the provided _`*.Rnw`_ template file from within R interactively. Much more detailed information is available in _`systemPipeR`_'s overview and workflow vignettes available [here](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html). The overview vignette is available [here](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html). The latter can also be opened with the following command. 
 ```{r run_workflow, eval=FALSE}
+library("systemPipeR") # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
 vignette("systemPipeR", package = "systemPipeR")
 ```
 <div align="right">[Back to Table of Contents]()</div>
