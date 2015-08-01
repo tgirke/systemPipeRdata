@@ -63,6 +63,15 @@ biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # Fr
 ```
 <div align="right">[Back to Table of Contents]()</div>
 
+## Loading package and documentation
+
+```{r documentation, eval=FALSE}
+library("systemPipeRdata") # Loads the package
+library(help="systemPipeRdata") # Lists package info
+vignette("systemPipeRdata") # Opens vignette
+```
+<div align="right">[Back to Table of Contents]()</div>
+
 ## Generate workflow template
 Load one of the available NGS workflows into your current working directory. The following does this for the _`varseq`_ template.
 ```{r generate_workenvir, eval=FALSE}

@@ -16,6 +16,11 @@ suppressPackageStartupMessages({
 ## biocLite("systemPipeR") # Installs systemPipeR from Bioconductor
 ## biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
 
+## ----documentation, eval=FALSE-------------------------------------------
+## library("systemPipeRdata") # Loads the package
+## library(help="systemPipeRdata") # Lists package info
+## vignette("systemPipeRdata") # Opens vignette
+
 ## ----generate_workenvir, eval=FALSE--------------------------------------
 ## library(systemPipeRdata)
 ## genWorkenvir(workflow="varseq")
