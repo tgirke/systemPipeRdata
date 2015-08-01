@@ -1,21 +1,14 @@
 ### systemPipeRdata: NGS workflow templates and sample data
 
+[_systemPipeRdata_](https://github.com/tgirke/systemPipeRdata) is an
+R/Bioconductor data package that facilitates the generation of NGS workflow
+templates for the
 [_systemPipeR_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html)
-is an R/Bioconductor package for building *end-to-end* analysis pipelines with
+package. The latter is an environment for building *end-to-end* analysis pipelines with
 automated report generation for next generation sequence (NGS) applications
-such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. An important feature is
-support for running command-line software, such as NGS aligners, on both single
-machines or compute clusters. This includes both interactive job submissions or
-batch submissions to queuing systems of clusters.  Efficient handling of
-complex sample sets and experimental designs is facilitated by a consistently
-designed sample annotation infrastructure which improves reproducibility and
-user-friendliness of many typical analysis workflows in the NGS area. The
-input data for _systemPipeR's_ sample workflows are provided by _systemPipeRdata_.
-A short vignette describing the download functionality of this package is 
-available [_here_](https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.pdf?raw=true).
-
-The overview vignette describing the main functionalities of the _systemPipeR_ workflow
-environment is available 
+such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. A short manual (vignette) for _systemPipeRdata_ 
+is available [_here_](https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.pdf?raw=true),
+and the main manual for the core package _systemPipeR_ is available
 [_here_](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html).
 
 #### Installation 
