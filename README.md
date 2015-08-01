@@ -1,7 +1,7 @@
 ### systemPipeRdata: NGS workflow templates and sample data
 
-[_systemPipeRdata_](https://github.com/tgirke/systemPipeRdata) is an
-R/Bioconductor data package that facilitates the generation of NGS workflow
+[_systemPipeRdata_](https://github.com/tgirke/systemPipeRdata) is a helper 
+package that facilitates the generation of NGS workflow
 templates for its parent package 
 [_systemPipeR_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html). 
 The latter is an environment for building *end-to-end* analysis pipelines with
