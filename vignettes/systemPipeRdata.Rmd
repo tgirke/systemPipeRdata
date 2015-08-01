@@ -50,6 +50,8 @@ Note: the most recent version of this tutorial can be found <a href="https://htm
 # Introduction
 [_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) is a helper package to generate with a single command NGS workflow templates for the parent package [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@Girke2014-oy]. The latter is an environment for building *end-to-end* analysis pipelines with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. The directory structure of the workflow templates and the sample data used by _`systemPipeRdata`_ are described [here](http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
 
+<div align="right">[Back to Table of Contents]()</div>
+
 # Getting Started
 
 ## Installation
