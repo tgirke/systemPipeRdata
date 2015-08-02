@@ -80,6 +80,14 @@ Load one of the available NGS workflows into your current working directory. The
 genWorkenvir(workflow="varseq", mydirname=NULL)
 setwd("varseq")
 ```
+
+On Linux and OS X environments the same can be achieved from the command-line of a terminal with the following commands.
+```{.sh generate_workenvir_from_shell, eval=FALSE}
+$ echo 'library(systemPipeRdata); genWorkenvir(workflow="varseq", mydirname=NULL)' | R --slave
+$ cd varseq
+$ R
+```
+
 <div align="right">[Back to Table of Contents]()</div>
 
 ## Run workflows

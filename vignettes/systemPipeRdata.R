@@ -27,6 +27,11 @@ library("systemPipeRdata") # Loads the package
 ## genWorkenvir(workflow="varseq", mydirname=NULL)
 ## setwd("varseq")
 
+## ----generate_workenvir_from_shell, eval=FALSE, engine="sh"--------------
+## $ echo 'library(systemPipeRdata); genWorkenvir(workflow="varseq", mydirname=NULL)' | R --slave
+## $ cd varseq
+## $ R
+
 ## ----load_systemPipeR, eval=TRUE-----------------------------------------
 library("systemPipeR") # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
 
