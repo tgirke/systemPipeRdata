@@ -134,7 +134,7 @@ vignette(&quot;systemPipeRdata&quot;) # Opens vignette</code></pre>
 <p>Load one of the available NGS workflows into your current working directory. The following does this for the <em><code>varseq</code></em> template. The name of the resulting workflow directory can be specified under the <em><code>mydirname</code></em> argument. The default <em><code>NULL</code></em> uses the name of the chosen workflow. An error is issued if a directory of the same name and path exists already.</p>
 <pre class="r"><code>genWorkenvir(workflow=&quot;varseq&quot;, mydirname=NULL)
 setwd(&quot;varseq&quot;)</code></pre>
-<p>On Linux and OS X environments the same can be achieved from the command-line of a terminal with the following commands.</p>
+<p>On Linux and OS X systems the same can be achieved from the command-line of a terminal with the following commands.</p>
 <pre class="sh"><code>$ echo 'library(systemPipeRdata); genWorkenvir(workflow=&quot;varseq&quot;, mydirname=NULL)' | R --slave
 $ cd varseq
 $ R</code></pre>
