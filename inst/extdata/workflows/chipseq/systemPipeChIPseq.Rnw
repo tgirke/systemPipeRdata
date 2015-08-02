@@ -107,7 +107,7 @@ dev.off()
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=18cm]{fastqReport.pdf}
+   \includegraphics[width=18cm]{./results/fastqReport.pdf}
    \caption{QC report for 18 FASTQ files.}
    \label{fig:fastqreport}
 \end{figure}

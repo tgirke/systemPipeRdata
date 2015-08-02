@@ -107,7 +107,7 @@ dev.off()
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=18cm]{fastqReport.pdf}
+   \includegraphics[width=18cm]{./results/fastqReport.pdf}
    \caption{QC report for 18 FASTQ files.}
    \label{fig:fastqreport}
 \end{figure}
@@ -193,7 +193,7 @@ dev.off()
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=10cm]{sample_tree.pdf}
+   \includegraphics[width=10cm]{./results/sample_tree.pdf}
    \caption{Correlation dendrogram of samples.}
    \label{fig:sample_tree}
 \end{figure}
@@ -227,7 +227,7 @@ write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", 
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=10cm]{DEGcounts.pdf}
+   \includegraphics[width=10cm]{./results/DEGcounts.pdf}
    \caption{Up and down regulated DEGs with FDR of 1\%.}
    \label{fig:DEGcounts}
 \end{figure}
@@ -242,7 +242,7 @@ dev.off()
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=14cm]{vennplot.pdf}
+   \includegraphics[width=14cm]{./results/vennplot.pdf}
    \caption{Venn Diagram for 4 Up and Down DEG Sets.}
    \label{fig:vennplot}
 \end{figure}
@@ -294,7 +294,7 @@ goBarplot(gos, gocat="CC")
 
 \begin{figure}[H]
   \centering
-   \includegraphics[width=20cm]{GOslimbarplotMF.pdf}
+   \includegraphics[width=20cm]{./results/GOslimbarplotMF.pdf}
    \caption{GO Slim Barplot for MF Ontology.}
    \label{fig:GOMF}
 \end{figure}
@@ -313,7 +313,7 @@ dev.off()
 
 \begin{figure}[H]
   \centering
-   \includegraphics[width=12cm]{heatmap1.pdf}
+   \includegraphics[width=12cm]{./results/heatmap1.pdf}
    \caption{Heat map with hierarchical clustering dendrograms of DEGs.}
    \label{fig:heatmap}
 \end{figure}
