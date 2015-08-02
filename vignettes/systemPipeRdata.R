@@ -24,7 +24,7 @@ library("systemPipeRdata") # Loads the package
 ## vignette("systemPipeRdata") # Opens vignette
 
 ## ----generate_workenvir, eval=FALSE--------------------------------------
-## genWorkenvir(workflow="varseq")
+## genWorkenvir(workflow="varseq", mydirname=NULL)
 ## setwd("varseq")
 
 ## ----load_systemPipeR, eval=TRUE-----------------------------------------

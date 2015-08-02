@@ -131,8 +131,8 @@ vignette(&quot;systemPipeRdata&quot;) # Opens vignette</code></pre>
 </div>
 <div id="generate-workflow-template" class="section level2">
 <h2><span class="header-section-number">2.3</span> Generate workflow template</h2>
-<p>Load one of the available NGS workflows into your current working directory. The following does this for the <em><code>varseq</code></em> template.</p>
-<pre class="r"><code>genWorkenvir(workflow=&quot;varseq&quot;)
+<p>Load one of the available NGS workflows into your current working directory. The following does this for the <em><code>varseq</code></em> template. The name of the resulting workflow directory can be specified under the <em><code>mydirname</code></em> argument. The default <em><code>NULL</code></em> uses the name of the chosen workflow. An error is issued if a directory of the same name and path exists already.</p>
+<pre class="r"><code>genWorkenvir(workflow=&quot;varseq&quot;, mydirname=NULL)
 setwd(&quot;varseq&quot;)</code></pre>
 <div align="right">
 <a href>Back to Table of Contents</a>
@@ -199,12 +199,12 @@ setwd(&quot;varseq&quot;)</code></pre>
 ## [1] parallel  stats4    stats     graphics  utils     datasets  grDevices methods   base     
 ## 
 ## other attached packages:
-##  [1] systemPipeR_1.3.19         RSQLite_1.0.0              DBI_0.3.1                 
-##  [4] ShortRead_1.27.5           GenomicAlignments_1.5.12   SummarizedExperiment_0.3.2
-##  [7] Biobase_2.29.1             BiocParallel_1.3.47        Rsamtools_1.21.14         
-## [10] Biostrings_2.37.2          XVector_0.9.1              GenomicRanges_1.21.17     
-## [13] GenomeInfoDb_1.5.9         IRanges_2.3.17             S4Vectors_0.7.12          
-## [16] BiocGenerics_0.15.5        BiocStyle_1.7.6           
+##  [1] systemPipeRdata_0.99.1     systemPipeR_1.3.19         RSQLite_1.0.0             
+##  [4] DBI_0.3.1                  ShortRead_1.27.5           GenomicAlignments_1.5.12  
+##  [7] SummarizedExperiment_0.3.2 Biobase_2.29.1             BiocParallel_1.3.47       
+## [10] Rsamtools_1.21.14          Biostrings_2.37.2          XVector_0.9.1             
+## [13] GenomicRanges_1.21.17      GenomeInfoDb_1.5.9         IRanges_2.3.17            
+## [16] S4Vectors_0.7.12           BiocGenerics_0.15.5        BiocStyle_1.7.6           
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_0.12.0             lattice_0.20-33         GO.db_3.1.2             digest_0.6.8           
