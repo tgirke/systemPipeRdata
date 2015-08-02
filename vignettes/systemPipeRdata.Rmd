@@ -101,7 +101,7 @@ vignette("systemPipeR", package = "systemPipeR")
 <div align="right">[Back to Table of Contents]()</div>
 
 ## Return paths to sample data
-To access individual components of the sample data provided by _`systemPipeRdata`_, one can return the paths to their individual components as a _`list`_.
+The location of the sample data provided by _`systemPipeRdata`_ can be returned as a _`list`_.
 ```{r return_samplepaths, eval=TRUE}
 pathList()
 ```
