@@ -31,10 +31,10 @@ For more details, please consult the Overview Vignette (HTML) of the systemPipeR
 Thomas Girke
 }
 \examples{
+## Return location of sample data
+samplepaths <- pathList()
 \dontrun{
 ## Generate varseq workflow environment
-library(systemPipeR)
-library(systemPipeRdata)
 genWorkenvir(workflow="varseq", mydirname=NULL)
 setwd("varseq")
 }

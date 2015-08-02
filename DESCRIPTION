@@ -1,6 +1,6 @@
 Package: systemPipeRdata
 Title: Sample data for workflows of systemPipeR package
-Version: 0.99.1
+Version: 0.99.0
 Date: 2015-08-01
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
@@ -13,6 +13,3 @@ VignetteBuilder: knitr
 License: Artistic-2.0
 NeedsCompilation: no
 URL: https://github.com/tgirke/systemPipeRdata
-
-
-

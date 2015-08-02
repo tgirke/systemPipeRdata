@@ -1,3 +1,6 @@
+## Imports
+import(BiocGenerics)
+
 ## Functions
 export(
     "pathList", "genWorkenvir"
