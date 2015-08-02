@@ -11,7 +11,7 @@
 ## Define suffixes used for file interconversions
 .SUFFIXES: .tex .pdf .Rnw .R
 
-MAIN = systemPipeVARseq
+MAIN = systemPipeVARseq_single
 
 #######################################
 ## Build PDF report with knitr/Latex ##
