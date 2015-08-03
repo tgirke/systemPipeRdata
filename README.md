@@ -8,7 +8,7 @@ automated report generation for next generation sequence (NGS) applications
 such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. 
 
 #### Slides
-+ Overview Slide Show
++ [Overview Slide Show](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeR/master/inst/extdata/slides/systemPipeRslides.html)
 
 #### Installation 
 _systemPipeRdata_ can be installed directly from GitHub using the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
