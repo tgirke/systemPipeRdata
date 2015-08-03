@@ -30,5 +30,5 @@ Detailed manuals are available here:
 + [_systemPipeRdata_ Vignette](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.html)
 + [_systemPipeR_ Vignette](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html)
 
-Additional information can be found on the corresponding Bioconductor package overview page
-[_here_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
+Additional information can be found on the corresponding Bioconductor package overview 
+[_page_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
