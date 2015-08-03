@@ -31,20 +31,12 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </script>
 
 
-<link href="data:text/css,body%2C%20td%20%7B%0A%20%20%20font%2Dfamily%3A%20sans%2Dserif%3B%0A%20%20%20background%2Dcolor%3A%20white%3B%0A%20%20%20font%2Dsize%3A%2013px%3B%0A%7D%0A%0Abody%20%7B%0A%20%20max%2Dwidth%3A%20800px%3B%0A%20%20margin%3A%200%20auto%3B%0A%20%20padding%3A%201em%201em%202em%3B%0A%20%20line%2Dheight%3A%2020px%3B%0A%7D%0A%0A%2F%2A%20Table%20of%20contents%20style%20%2A%2F%0A%0Adiv%23TOC%20li%20%7B%0A%20%20%20%20list%2Dstyle%3Anone%3B%0A%20%20%20%20background%2Dimage%3Anone%3B%0A%20%20%20%20background%2Drepeat%3Anone%3B%0A%20%20%20%20background%2Dposition%3A0%3B%0A%7D%0A%0A%2F%2A%20element%20spacing%20%2A%2F%0A%0Ap%2C%20pre%20%7B%20%0A%20%20margin%3A%200em%200em%201em%3B%0A%7D%0A%0A%2F%2A%20center%20images%20and%20tables%20%2A%2F%0Aimg%2C%20table%20%7B%0A%20%20margin%3A%200em%20auto%201em%3B%0A%7D%0A%0Ap%20%7B%0A%20%20text%2Dalign%3A%20justify%3B%0A%7D%0A%0Att%2C%20code%2C%20pre%20%7B%0A%20%20%20font%2Dfamily%3A%20%27DejaVu%20Sans%20Mono%27%2C%20%27Droid%20Sans%20Mono%27%2C%20%27Lucida%20Console%27%2C%20Consolas%2C%20Monaco%2C%20monospace%3B%0A%7D%0A%0Ah1%2C%20h2%2C%20h3%2C%20h4%2C%20h5%2C%20h6%20%7B%20%0A%20%20font%2Dfamily%3A%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20margin%3A%201%2E2em%200em%200%2E6em%200em%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0Ah1%2Etitle%20%7B%0A%20%20font%2Dsize%3A%20250%25%3B%0A%20%20font%2Dweight%3A%20normal%3B%0A%20%20color%3A%20%2387b13f%3B%0A%20%20line%2Dheight%3A%201%2E1em%3B%0A%20%20margin%2Dtop%3A%200px%3B%0A%20%20border%2Dbottom%3A%200px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20font%2Dsize%3A%20160%25%3B%0A%20%20font%2Dweight%3A%20normal%3B%0A%20%20line%2Dheight%3A%201%2E4em%3B%0A%20%20border%2Dbottom%3A%201px%20%231a81c2%20solid%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20font%2Dsize%3A%20130%25%3B%20%20%0A%7D%0A%0Ah1%2C%20h2%2C%20h3%20%7B%0A%20%20color%3A%20%231a81c2%3B%0A%7D%0A%0Ah3%2C%20h4%2C%20h5%2C%20h6%20%7B%0A%20%20font%2Dsize%3A115%25%3B%0A%7D%20%2F%2A%20not%20expecting%20to%20dive%20deeper%20than%20four%20levels%20on%20a%20single%20page%20%2A%2F%0A%0A%2F%2A%20links%20are%20simply%20blue%2C%20hovering%20slightly%20less%20blue%20%2A%2F%0Aa%20%7B%20color%3A%20%231a81c2%3B%20%7D%0Aa%3Aactive%20%7B%20outline%3A%20none%3B%20%7D%0Aa%3Avisited%20%7B%20color%3A%20%231a81c2%3B%20%7D%0Aa%3Ahover%20%7B%20color%3A%20%234c94c2%3B%20%7D%0A%0Apre%2C%20img%20%7B%0A%20%20max%2Dwidth%3A%20100%25%3B%0A%20%20display%3A%20block%3B%0A%7D%0A%0Apre%20%7B%0A%20%20border%3A%200px%20none%3B%0A%20%20background%2Dcolor%3A%20%23F8F8F8%3B%0A%20%20white%2Dspace%3A%20pre%3B%0A%20%20overflow%2Dx%3A%20auto%3B%0A%7D%0A%0Apre%20code%20%7B%0A%20%20border%3A%201px%20%23aaa%20dashed%3B%0A%20%20background%2Dcolor%3A%20white%3B%0A%20%20display%3A%20block%3B%0A%20%20padding%3A%201em%3B%20%20%0A%20%20color%3A%20%23111%3B%0A%20%20overflow%2Dx%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20markdown%20v1%20%2A%2F%0Apre%20code%5Bclass%5D%20%7B%0A%20%20background%2Dcolor%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20markdown%20v2%20%2A%2F%0Apre%5Bclass%5D%20code%20%7B%0A%20%20background%2Dcolor%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20formatting%20of%20inline%20code%20%2A%2F%0Acode%20%7B%20%0A%20%20background%2Dcolor%3A%20transparent%3B%0A%20%20color%3A%20%2387b13f%3B%0A%20%20font%2Dsize%3A%2092%25%3B%0A%7D%0A%0A%2F%2A%20formatting%20of%20tables%20%2A%2F%0A%0Atable%2C%20td%2C%20th%20%7B%0A%20%20border%3A%20none%3B%0A%20%20padding%3A%200%200%2E5em%3B%0A%7D%0A%0A%2F%2A%20alternating%20row%20colors%20%2A%2F%0Atbody%20tr%3Anth%2Dchild%28odd%29%20td%20%7B%0A%20%20background%2Dcolor%3A%20%23F8F8F8%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20%20color%3A%23666666%3B%0A%20%20%20margin%3A0%3B%0A%20%20%20padding%2Dleft%3A%201em%3B%0A%20%20%20border%2Dleft%3A%200%2E5em%20%23EEE%20solid%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20%20height%3A%200px%3B%0A%20%20%20border%2Dbottom%3A%20none%3B%0A%20%20%20border%2Dtop%2Dwidth%3A%20thin%3B%0A%20%20%20border%2Dtop%2Dstyle%3A%20dotted%3B%0A%20%20%20border%2Dtop%2Dcolor%3A%20%23999999%3B%0A%7D%0A%0Aspan%2Eheader%2Dsection%2Dnumber%2C%20span%2Etoc%2Dsection%2Dnumber%20%7B%0A%20%20padding%2Dright%3A%201em%3B%0A%7D%0A%0A%40media%20print%20%7B%0A%20%20%20%2A%20%7B%0A%20%20%20%20%20%20background%3A%20transparent%20%21important%3B%0A%20%20%20%20%20%20color%3A%20black%20%21important%3B%0A%20%20%20%20%20%20filter%3Anone%20%21important%3B%0A%20%20%20%20%20%20%2Dms%2Dfilter%3A%20none%20%21important%3B%0A%20%20%20%7D%0A%0A%20%20%20body%20%7B%0A%20%20%20%20%20%20font%2Dsize%3A12pt%3B%0A%20%20%20%20%20%20max%2Dwidth%3A100%25%3B%0A%20%20%20%7D%0A%0A%20%20%20a%2C%20a%3Avisited%20%7B%0A%20%20%20%20%20%20text%2Ddecoration%3A%20underline%3B%0A%20%20%20%7D%0A%0A%20%20%20hr%20%7B%0A%20%20%20%20%20%20visibility%3A%20hidden%3B%0A%20%20%20%20%20%20page%2Dbreak%2Dbefore%3A%20always%3B%0A%20%20%20%7D%0A%0A%20%20%20pre%2C%20blockquote%20%7B%0A%20%20%20%20%20%20padding%2Dright%3A%201em%3B%0A%20%20%20%20%20%20page%2Dbreak%2Dinside%3A%20avoid%3B%0A%20%20%20%7D%0A%0A%20%20%20tr%2C%20img%20%7B%0A%20%20%20%20%20%20page%2Dbreak%2Dinside%3A%20avoid%3B%0A%20%20%20%7D%0A%0A%20%20%20img%20%7B%0A%20%20%20%20%20%20max%2Dwidth%3A%20100%25%20%21important%3B%0A%20%20%20%7D%0A%0A%20%20%20%40page%20%3Aleft%20%7B%0A%20%20%20%20%20%20margin%3A%2015mm%2020mm%2015mm%2010mm%3B%0A%20%20%20%7D%0A%0A%20%20%20%40page%20%3Aright%20%7B%0A%20%20%20%20%20%20margin%3A%2015mm%2010mm%2015mm%2020mm%3B%0A%20%20%20%7D%0A%0A%20%20%20p%2C%20h2%2C%20h3%20%7B%0A%20%20%20%20%20%20orphans%3A%203%3B%20widows%3A%203%3B%0A%20%20%20%7D%0A%0A%20%20%20h2%2C%20h3%20%7B%0A%20%20%20%20%20%20page%2Dbreak%2Dafter%3A%20avoid%3B%0A%20%20%20%7D%0A%7D%0A" rel="stylesheet" type="text/css" />
-
-<script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function() {
-  var links = document.links;  
-  for (var i = 0, linksLength = links.length; i < linksLength; i++)
-    if(links[i].hostname != window.location.hostname)
-      links[i].target = '_blank';
-});
-</script>
+<link href="data:text/css,body%2C%20td%20%7B%0A%20%20%20font%2Dfamily%3A%20sans%2Dserif%3B%0A%20%20%20background%2Dcolor%3A%20white%3B%0A%20%20%20font%2Dsize%3A%2013px%3B%0A%7D%0A%0Abody%20%7B%0A%20%20max%2Dwidth%3A%20800px%3B%0A%20%20margin%3A%200%20auto%3B%0A%20%20padding%3A%201em%201em%202em%3B%0A%20%20line%2Dheight%3A%2020px%3B%0A%7D%0A%0A%2F%2A%20element%20spacing%20%2A%2F%0A%0Ap%2C%20pre%20%7B%20%0A%20%20margin%3A%200em%200em%201em%3B%0A%7D%0A%0A%2F%2A%20center%20images%20and%20tables%20%2A%2F%0Aimg%2C%20table%20%7B%0A%20%20margin%3A%200em%20auto%201em%3B%0A%7D%0A%0Ap%20%7B%0A%20%20text%2Dalign%3A%20justify%3B%0A%7D%0A%0Att%2C%20code%2C%20pre%20%7B%0A%20%20%20font%2Dfamily%3A%20%27DejaVu%20Sans%20Mono%27%2C%20%27Droid%20Sans%20Mono%27%2C%20%27Lucida%20Console%27%2C%20Consolas%2C%20Monaco%2C%20monospace%3B%0A%7D%0A%0Ah1%2C%20h2%2C%20h3%2C%20h4%2C%20h5%2C%20h6%20%7B%20%0A%20%20font%2Dfamily%3A%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20margin%3A%201%2E2em%200em%200%2E6em%200em%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20font%2Dsize%3A%20250%25%3B%0A%20%20font%2Dweight%3A%20normal%3B%0A%20%20color%3A%20%2387b13f%3B%0A%20%20line%2Dheight%3A%201%2E1em%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20font%2Dsize%3A%20160%25%3B%0A%20%20font%2Dweight%3A%20normal%3B%0A%20%20line%2Dheight%3A%201%2E4em%3B%0A%20%20border%2Dbottom%3A%201px%20%231a81c2%20solid%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20font%2Dsize%3A%20130%25%3B%20%20%0A%7D%0A%0Ah2%2C%20h3%20%7B%0A%20%20color%3A%20%231a81c2%3B%0A%7D%0A%0Ah4%2C%20h5%2C%20h6%20%7B%0A%20%20font%2Dsize%3A115%25%3B%0A%7D%20%2F%2A%20not%20expecting%20to%20dive%20deeper%20than%20four%20levels%20on%20a%20single%20page%20%2A%2F%0A%0A%2F%2A%20links%20are%20simply%20blue%2C%20hovering%20slightly%20less%20blue%20%2A%2F%0Aa%20%7B%20color%3A%20%231a81c2%3B%20%7D%0Aa%3Aactive%20%7B%20outline%3A%20none%3B%20%7D%0Aa%3Avisited%20%7B%20color%3A%20%231a81c2%3B%20%7D%0Aa%3Ahover%20%7B%20color%3A%20%234c94c2%3B%20%7D%0A%0Apre%2C%20img%20%7B%0A%20%20max%2Dwidth%3A%20100%25%3B%0A%20%20display%3A%20block%3B%0A%7D%0A%0Apre%20%7B%0A%20%20border%3A%200px%20none%3B%0A%20%20background%2Dcolor%3A%20%23F8F8F8%3B%0A%20%20white%2Dspace%3A%20pre%3B%0A%20%20overflow%2Dx%3A%20auto%3B%0A%7D%0A%0Apre%20code%20%7B%0A%20%20border%3A%201px%20%23aaa%20dashed%3B%0A%20%20background%2Dcolor%3A%20white%3B%0A%20%20display%3A%20block%3B%0A%20%20padding%3A%201em%3B%20%20%0A%20%20color%3A%20%23111%3B%0A%20%20overflow%2Dx%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20markdown%20v1%20%2A%2F%0Apre%20code%5Bclass%5D%20%7B%0A%20%20background%2Dcolor%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20markdown%20v2%20%2A%2F%0Apre%5Bclass%5D%20code%20%7B%0A%20%20background%2Dcolor%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20formatting%20of%20inline%20code%20%2A%2F%0Acode%20%7B%20%0A%20%20background%2Dcolor%3A%20transparent%3B%0A%20%20color%3A%20%2387b13f%3B%0A%20%20font%2Dsize%3A%2092%25%3B%0A%7D%0A%0A%2F%2A%20formatting%20of%20tables%20%2A%2F%0A%0Atable%2C%20td%2C%20th%20%7B%0A%20%20border%3A%20none%3B%0A%20%20padding%3A%200%200%2E5em%3B%0A%7D%0A%0A%2F%2A%20alternating%20row%20colors%20%2A%2F%0Atbody%20tr%3Anth%2Dchild%28odd%29%20td%20%7B%0A%20%20background%2Dcolor%3A%20%23F8F8F8%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20%20color%3A%23666666%3B%0A%20%20%20margin%3A0%3B%0A%20%20%20padding%2Dleft%3A%201em%3B%0A%20%20%20border%2Dleft%3A%200%2E5em%20%23EEE%20solid%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20%20height%3A%200px%3B%0A%20%20%20border%2Dbottom%3A%20none%3B%0A%20%20%20border%2Dtop%2Dwidth%3A%20thin%3B%0A%20%20%20border%2Dtop%2Dstyle%3A%20dotted%3B%0A%20%20%20border%2Dtop%2Dcolor%3A%20%23999999%3B%0A%7D%0A%0A%40media%20print%20%7B%0A%20%20%20%2A%20%7B%0A%20%20%20%20%20%20background%3A%20transparent%20%21important%3B%0A%20%20%20%20%20%20color%3A%20black%20%21important%3B%0A%20%20%20%20%20%20filter%3Anone%20%21important%3B%0A%20%20%20%20%20%20%2Dms%2Dfilter%3A%20none%20%21important%3B%0A%20%20%20%7D%0A%0A%20%20%20body%20%7B%0A%20%20%20%20%20%20font%2Dsize%3A12pt%3B%0A%20%20%20%20%20%20max%2Dwidth%3A100%25%3B%0A%20%20%20%7D%0A%0A%20%20%20a%2C%20a%3Avisited%20%7B%0A%20%20%20%20%20%20text%2Ddecoration%3A%20underline%3B%0A%20%20%20%7D%0A%0A%20%20%20hr%20%7B%0A%20%20%20%20%20%20visibility%3A%20hidden%3B%0A%20%20%20%20%20%20page%2Dbreak%2Dbefore%3A%20always%3B%0A%20%20%20%7D%0A%0A%20%20%20pre%2C%20blockquote%20%7B%0A%20%20%20%20%20%20padding%2Dright%3A%201em%3B%0A%20%20%20%20%20%20page%2Dbreak%2Dinside%3A%20avoid%3B%0A%20%20%20%7D%0A%0A%20%20%20tr%2C%20img%20%7B%0A%20%20%20%20%20%20page%2Dbreak%2Dinside%3A%20avoid%3B%0A%20%20%20%7D%0A%0A%20%20%20img%20%7B%0A%20%20%20%20%20%20max%2Dwidth%3A%20100%25%20%21important%3B%0A%20%20%20%7D%0A%0A%20%20%20%40page%20%3Aleft%20%7B%0A%20%20%20%20%20%20margin%3A%2015mm%2020mm%2015mm%2010mm%3B%0A%20%20%20%7D%0A%0A%20%20%20%40page%20%3Aright%20%7B%0A%20%20%20%20%20%20margin%3A%2015mm%2010mm%2015mm%2020mm%3B%0A%20%20%20%7D%0A%0A%20%20%20p%2C%20h2%2C%20h3%20%7B%0A%20%20%20%20%20%20orphans%3A%203%3B%20widows%3A%203%3B%0A%20%20%20%7D%0A%0A%20%20%20h2%2C%20h3%20%7B%0A%20%20%20%20%20%20page%2Dbreak%2Dafter%3A%20avoid%3B%0A%20%20%20%7D%0A%7D%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
 <body>
+
 
 
 <div id="header">
@@ -53,19 +45,18 @@ document.addEventListener("DOMContentLoaded", function() {
 <h4 class="date"><em>Last update: 03 August, 2015</em></h4>
 </div>
 
-<h1>Contents</h1>
 <div id="TOC">
 <ul>
-<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a></li>
-<li><a href="#getting-started"><span class="toc-section-number">2</span> Getting Started</a><ul>
-<li><a href="#installation"><span class="toc-section-number">2.1</span> Installation</a></li>
-<li><a href="#loading-package-and-documentation"><span class="toc-section-number">2.2</span> Loading package and documentation</a></li>
-<li><a href="#generate-workflow-template"><span class="toc-section-number">2.3</span> Generate workflow template</a></li>
-<li><a href="#run-workflows"><span class="toc-section-number">2.4</span> Run workflows</a></li>
-<li><a href="#return-paths-to-sample-data"><span class="toc-section-number">2.5</span> Return paths to sample data</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#getting-started">Getting Started</a><ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#loading-package-and-documentation">Loading package and documentation</a></li>
+<li><a href="#generate-workflow-template">Generate workflow template</a></li>
+<li><a href="#run-workflows">Run workflows</a></li>
+<li><a href="#return-paths-to-sample-data">Return paths to sample data</a></li>
 </ul></li>
-<li><a href="#version-information"><span class="toc-section-number">3</span> Version information</a></li>
-<li><a href="#funding"><span class="toc-section-number">4</span> Funding</a></li>
+<li><a href="#version-information">Version information</a></li>
+<li><a href="#funding">Funding</a></li>
 </ul>
 </div>
 
@@ -90,7 +81,7 @@ git commit -am "some edits"; git push -u origin master
 
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
-  document.querySelector("h1").className = "title";
+  document.querySelector("h1").style.marginTop = "0";
 });
 </script>
 <script type="text/javascript">
@@ -103,22 +94,18 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 
-<pre><code>## Warning in .recacheSubclasses(def@className, def, doSubclasses, env): undefined subclass
-## &quot;externalRefMethod&quot; of class &quot;expressionORfunction&quot;; definition not updated</code></pre>
-<pre><code>## Warning in .recacheSubclasses(def@className, def, doSubclasses, env): undefined subclass
-## &quot;externalRefMethod&quot; of class &quot;functionORNULL&quot;; definition not updated</code></pre>
 <p>Note: the most recent version of this vignette can be found <a href="https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.html">here</a> and a short overview slide show <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeR/master/inst/extdata/slides/systemPipeRslides.html">here</a>.</p>
 <div id="introduction" class="section level1">
-<h1><span class="header-section-number">1</span> Introduction</h1>
+<h1>Introduction</h1>
 <p><a href="https://github.com/tgirke/systemPipeRdata"><em><code>systemPipeRdata</code></em></a> is a helper package to generate with a single command NGS workflow templates that are intended to be used by its parent package <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> <span class="citation">(Girke 2014)</span>. The latter is an environment for building <em>end-to-end</em> analysis pipelines with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. The directory structure of the workflow templates and the sample data used by <em><code>systemPipeRdata</code></em> are described <a href="http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates">here</a>.</p>
 <div align="right">
 <a href>Back to Table of Contents</a>
 </div>
 </div>
 <div id="getting-started" class="section level1">
-<h1><span class="header-section-number">2</span> Getting Started</h1>
+<h1>Getting Started</h1>
 <div id="installation" class="section level2">
-<h2><span class="header-section-number">2.1</span> Installation</h2>
+<h2>Installation</h2>
 <p>The R software for using <em><code>systemPipeRdata</code></em> can be downloaded from <a href="http://cran.at.r-project.org">CRAN</a>. The <em><code>systemPipeRdata</code></em> package can be installed from within R as follows:</p>
 <pre class="r"><code>source(&quot;http://bioconductor.org/biocLite.R&quot;) # Sources the biocLite.R installation script 
 biocLite(&quot;tgirke/systemPipeRdata&quot;, build_vignettes=TRUE, dependencies=TRUE) # Installs from github
@@ -128,7 +115,7 @@ biocLite(&quot;systemPipeRdata&quot;) # Installs from Bioconductor once availabl
 </div>
 </div>
 <div id="loading-package-and-documentation" class="section level2">
-<h2><span class="header-section-number">2.2</span> Loading package and documentation</h2>
+<h2>Loading package and documentation</h2>
 <pre class="r"><code>library(&quot;systemPipeRdata&quot;) # Loads the package</code></pre>
 <pre class="r"><code>library(help=&quot;systemPipeRdata&quot;) # Lists package info
 vignette(&quot;systemPipeRdata&quot;) # Opens vignette</code></pre>
@@ -137,7 +124,7 @@ vignette(&quot;systemPipeRdata&quot;) # Opens vignette</code></pre>
 </div>
 </div>
 <div id="generate-workflow-template" class="section level2">
-<h2><span class="header-section-number">2.3</span> Generate workflow template</h2>
+<h2>Generate workflow template</h2>
 <p>Load one of the available NGS workflows into your current working directory. The following does this for the <em><code>varseq</code></em> template. The name of the resulting workflow directory can be specified under the <em><code>mydirname</code></em> argument. The default <em><code>NULL</code></em> uses the name of the chosen workflow. An error is issued if a directory of the same name and path exists already.</p>
 <pre class="r"><code>genWorkenvir(workflow=&quot;varseq&quot;, mydirname=NULL)
 setwd(&quot;varseq&quot;)</code></pre>
@@ -150,7 +137,7 @@ $ R</code></pre>
 </div>
 </div>
 <div id="run-workflows" class="section level2">
-<h2><span class="header-section-number">2.4</span> Run workflows</h2>
+<h2>Run workflows</h2>
 <p>Next, run from within R the chosen sample workflow by executing the code provided in the corresponding <em><code>*.Rnw</code></em> template file. If preferred the corresponding <em><code>*.Rmd</code></em> or <em><code>*.R</code></em> versions can be used instead. Alternatively, one can run an entire workflow from start to finish with a single command by executing from the command-line <em><code>'make -B'</code></em> within the workflow directory (here <em><code>'varseq'</code></em>). Much more detailed information on running and customizing <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> workflows is available in its overview vignette <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">here</a>. This vignette can also be opened from R with the following command.</p>
 <pre class="r"><code>library(&quot;systemPipeR&quot;) # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor </code></pre>
 <pre class="r"><code>vignette(&quot;systemPipeR&quot;, package = &quot;systemPipeR&quot;)</code></pre>
@@ -159,92 +146,88 @@ $ R</code></pre>
 </div>
 </div>
 <div id="return-paths-to-sample-data" class="section level2">
-<h2><span class="header-section-number">2.5</span> Return paths to sample data</h2>
+<h2>Return paths to sample data</h2>
 <p>The location of the sample data provided by <em><code>systemPipeRdata</code></em> can be returned as a <em><code>list</code></em>.</p>
 <pre class="r"><code>pathList()</code></pre>
 <pre><code>## $targets
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/param/targets.txt&quot;
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/param/targets.txt&quot;
 ## 
 ## $targetsPE
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/param/targetsPE.txt&quot;
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/param/targetsPE.txt&quot;
 ## 
 ## $annotationdir
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/annotation/&quot;
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/annotation/&quot;
 ## 
 ## $fastqdir
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/fastq/&quot;
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/fastq/&quot;
 ## 
 ## $paramdir
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/param/&quot;
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/param/&quot;
 ## 
 ## $workflows
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/workflows/&quot;
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/workflows/&quot;
 ## 
 ## $chipseq
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/workflows/chipseq/&quot;
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/workflows/chipseq/&quot;
 ## 
 ## $rnaseq
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/workflows/rnaseq/&quot;
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/workflows/rnaseq/&quot;
 ## 
 ## $varseq
-## [1] &quot;/Library/Frameworks/R.framework/Versions/3.2/Resources/library/systemPipeRdata/extdata/workflows/varseq/&quot;</code></pre>
+## [1] &quot;/opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/lib64/R/library/systemPipeRdata/extdata/workflows/varseq/&quot;</code></pre>
 <div align="right">
 <a href>Back to Table of Contents</a>
 </div>
 </div>
 </div>
 <div id="version-information" class="section level1">
-<h1><span class="header-section-number">3</span> Version information</h1>
+<h1>Version information</h1>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 3.2.1 (2015-06-18)
-## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.10.2 (Yosemite)
+<pre><code>## R version 3.2.0 (2015-04-16)
+## Platform: x86_64-unknown-linux-gnu (64-bit)
+## Running under: CentOS Linux 7 (Core)
 ## 
 ## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## [1] C
 ## 
 ## attached base packages:
-## [1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base     
+## [1] parallel  stats4    stats     graphics  utils     datasets  grDevices methods   base     
 ## 
 ## other attached packages:
-##  [1] systemPipeRdata_0.99.2     systemPipeR_1.3.19         RSQLite_1.0.0             
-##  [4] DBI_0.3.1                  ShortRead_1.27.5           GenomicAlignments_1.5.12  
-##  [7] SummarizedExperiment_0.3.2 Biobase_2.29.1             BiocParallel_1.3.47       
-## [10] Rsamtools_1.21.14          Biostrings_2.37.2          XVector_0.9.1             
-## [13] GenomicRanges_1.21.17      GenomeInfoDb_1.5.9         IRanges_2.3.17            
-## [16] S4Vectors_0.7.12           BiocGenerics_0.15.5        BiocStyle_1.7.6           
+##  [1] systemPipeRdata_0.99.0  systemPipeR_1.2.15      RSQLite_1.0.0           DBI_0.3.1              
+##  [5] ShortRead_1.26.0        GenomicAlignments_1.4.1 BiocParallel_1.2.9      Rsamtools_1.20.4       
+##  [9] Biostrings_2.36.1       XVector_0.8.0           GenomicRanges_1.20.5    GenomeInfoDb_1.4.1     
+## [13] IRanges_2.2.5           S4Vectors_0.6.2         BiocGenerics_0.14.0     BiocStyle_1.6.0        
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.0             lattice_0.20-33         GO.db_3.1.2             digest_0.6.8           
-##  [5] plyr_1.8.3              futile.options_1.0.0    BatchJobs_1.6           evaluate_0.7           
-##  [9] ggplot2_1.0.1           zlibbioc_1.15.0         annotate_1.47.4         Matrix_1.2-2           
-## [13] checkmate_1.6.2         rmarkdown_0.7           proto_0.3-10            GOstats_2.35.1         
-## [17] splines_3.2.1           stringr_1.0.0           pheatmap_1.0.7          munsell_0.4.2          
-## [21] sendmailR_1.2-1         base64enc_0.1-3         BBmisc_1.9              htmltools_0.2.6        
-## [25] fail_1.2                edgeR_3.11.2            codetools_0.2-14        XML_3.98-1.3           
-## [29] AnnotationForge_1.11.15 MASS_7.3-43             bitops_1.0-6            grid_3.2.1             
-## [33] RBGL_1.45.1             xtable_1.7-4            GSEABase_1.31.3         gtable_0.1.2           
-## [37] magrittr_1.5            formatR_1.2             scales_0.2.5            graph_1.47.2           
-## [41] stringi_0.5-5           hwriter_1.3.2           reshape2_1.4.1          genefilter_1.51.0      
-## [45] limma_3.25.14           latticeExtra_0.6-26     futile.logger_1.4.1     brew_1.0-6             
-## [49] rjson_0.2.15            lambda.r_1.1.7          RColorBrewer_1.1-2      tools_3.2.1            
-## [53] Category_2.35.1         survival_2.38-3         yaml_2.1.13             AnnotationDbi_1.31.17  
-## [57] colorspace_1.2-6        knitr_1.10.5</code></pre>
+##  [1] Rcpp_0.12.0            lattice_0.20-33        GO.db_3.1.2            digest_0.6.8          
+##  [5] plyr_1.8.3             futile.options_1.0.0   BatchJobs_1.6          evaluate_0.7          
+##  [9] ggplot2_1.0.1          zlibbioc_1.14.0        annotate_1.46.1        Matrix_1.2-2          
+## [13] checkmate_1.6.2        rmarkdown_0.7          proto_0.3-10           GOstats_2.34.0        
+## [17] splines_3.2.0          stringr_1.0.0          pheatmap_1.0.7         munsell_0.4.2         
+## [21] sendmailR_1.2-1        base64enc_0.1-3        BBmisc_1.9             htmltools_0.2.6       
+## [25] fail_1.2               edgeR_3.10.2           codetools_0.2-14       XML_3.98-1.3          
+## [29] AnnotationForge_1.10.1 MASS_7.3-43            bitops_1.0-6           grid_3.2.0            
+## [33] RBGL_1.44.0            xtable_1.7-4           GSEABase_1.30.2        gtable_0.1.2          
+## [37] magrittr_1.5           formatR_1.2            scales_0.2.5           graph_1.46.0          
+## [41] stringi_0.5-5          hwriter_1.3.2          reshape2_1.4.1         genefilter_1.50.0     
+## [45] limma_3.24.14          latticeExtra_0.6-26    futile.logger_1.4.1    brew_1.0-6            
+## [49] rjson_0.2.15           lambda.r_1.1.7         RColorBrewer_1.1-2     tools_3.2.0           
+## [53] Biobase_2.28.0         Category_2.34.2        survival_2.38-3        yaml_2.1.13           
+## [57] AnnotationDbi_1.30.1   colorspace_1.2-6       knitr_1.10.5</code></pre>
 <div align="right">
 <a href>Back to Table of Contents</a>
 </div>
 </div>
 <div id="funding" class="section level1">
-<h1><span class="header-section-number">4</span> Funding</h1>
+<h1>Funding</h1>
 <p>This project was supported by funds from the National Institutes of Health (NIH) and the National Science Foundation (NSF).</p>
 <div align="right">
 <a href>Back to Table of Contents</a>
 </div>
 <div class="references">
 <h1>References</h1>
-<div id="ref-Girke2014-oy">
 <p>Girke, Thomas. 2014. “systemPipeR: NGS Workflow and Report Generation Environment.” UC Riverside. <a href="https://github.com/tgirke/systemPipeR">https://github.com/tgirke/systemPipeR</a>.</p>
-</div>
 </div>
 </div>
 
