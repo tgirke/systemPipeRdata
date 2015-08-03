@@ -1,5 +1,5 @@
 ## Imports
-import(BiocGenerics)
+import(BiocGenerics, methods)
 
 ## Functions
 export(
