@@ -26,7 +26,7 @@ To install the parent package _systemPipeR_ itself, please use the _biocLite_ me
 [_here_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
 
 #### Usage
-Detailed manuals are available here: 
+Detailed user manuals are available here: 
 + [_systemPipeRdata_ Vignette](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.html)
 + [_systemPipeR_ Vignette](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html)
 
