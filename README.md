@@ -7,6 +7,9 @@ The latter is an environment for building *end-to-end* analysis pipelines with
 automated report generation for next generation sequence (NGS) applications
 such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. 
 
+#### Slides
++ Overview Slide Show
+
 #### Installation 
 _systemPipeRdata_ can be installed directly from GitHub using the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
 package from CRAN.
