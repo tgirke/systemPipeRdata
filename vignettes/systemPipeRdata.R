@@ -33,6 +33,12 @@ library("systemPipeRdata") # Loads the package
 ## $ cd varseq
 ## $ R
 
+## ----workflow_template_structure, eval=FALSE-----------------------------
+## workflow_name/            # *.Rnw/*.Rmd scripts and targets file
+##                 param/    # parameter files for command-line software
+##                 data/     # inputs e.g. FASTQ, reference, annotations
+##                 results/  # analysis result files
+
 ## ----load_systemPipeR, eval=TRUE-----------------------------------------
 library("systemPipeR") # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
 
