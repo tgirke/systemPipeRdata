@@ -68,7 +68,7 @@ genWorkenvir <- function(workflow, mydirname=NULL) {
         file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
         file.copy(pathList()$paramdir, "chipseq/", recursive=TRUE)
         file.copy(c("chipseq/param/torque.tmpl", "chipseq/param/.BatchJobs.R"), "./chipseq")
-        file.copy(c("chipseq/param/targetsPE.txt", "chipseq/param/targets.txt"), "./chipseq")
+        file.copy(c("chipseq/param/targetsPE_chip.txt", "chipseq/param/targets_chip.txt"), "./chipseq")
         file.copy(c("chipseq/param/Makefile_chipseq"), "./chipseq/Makefile")
         file.copy(c("chipseq/param/bibtex.bib"), "./chipseq/bibtex.bib")
     } else {
