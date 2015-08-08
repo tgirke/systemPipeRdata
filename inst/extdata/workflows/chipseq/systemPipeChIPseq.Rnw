@@ -126,6 +126,7 @@ resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memo
 reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01", 
                   resourceList=resources)
 runCommandline(args)
+writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
 @
 Check whether all BAM files have been created
 <<eval=FALSE>>=
@@ -150,23 +151,33 @@ symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"),
 	    urlfile="./results/IGVurl.txt")
 @
 
-\section{Peak calling with MACS2 without input sample}
+\section{Peak calling with MACS2} 
+
+\subsection{Merge BAM files of replicates prior to peak calling}
+Merging BAM files of technical and/or biological replicates can improve the sensitivity of the peak calling by increasing the depth of read coverage. The \Rfunction{mergeBamByFactor} function merges BAM files based on grouping information specified by a \Rfunction{factor}, here the \Rfunarg{Factor} column of the imported targets file. It also returns an updated \Rfunarg{SYSargs} object containing the paths to the merged BAM files as well as to any unmerged files without replicates. This step can be skipped if merging of BAM files of replicated samples is not desired. 
 <<eval=FALSE>>=
-writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
-args <- systemArgs(sysma="param/macs2_noinput.param", mytargets="targets_bam.txt")
+args <- systemArgs(sysma=NULL, mytargets="targets_bam.txt")
+args_merge <- mergeBamByFactor(args, overwrite=TRUE)
+writeTargetsout(x=args_merge, file="targets_mergeBamByFactor.txt", overwrite=TRUE)
+@
+
+\subsection{Without input/reference sample}
+<<eval=FALSE>>=
+args <- systemArgs(sysma="param/macs2_noinput.param", mytargets="targets_mergeBamByFactor.txt")
 sysargs(args)[1] # Command-line parameters for first FASTQ file
 runCommandline(args)
 file.exists(outpaths(args))
+writeTargetsout(x=args, file="targets_macs.txt", overwrite=TRUE)
 @
 
-\section{Peak calling with MACS2 with input sample}
+\subsection{With input/reference sample}
 <<eval=FALSE>>=
-writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
-writeTargetsRef(infile="targets_bam.txt", outfile="targets_bam_ref.txt", silent=FALSE, overwrite=FALSE)
+writeTargetsRef(infile="targets_bam.txt", outfile="targets_bam_ref.txt", silent=FALSE, overwrite=TRUE)
 args <- systemArgs(sysma="param/macs2.param", mytargets="targets_bam_ref.txt")
 sysargs(args)[1] # Command-line parameters for first FASTQ file
 runCommandline(args)
 file.exists(outpaths(args))
+writeTargetsout(x=args, file="targets_macs.txt", overwrite=TRUE)
 @
 
 \section{Annotate peaks with genomic context}

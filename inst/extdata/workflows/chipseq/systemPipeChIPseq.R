@@ -36,6 +36,7 @@ targets
 #  reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01",
 #                    resourceList=resources)
 #  runCommandline(args)
+#  writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  file.exists(outpaths(args))
@@ -53,19 +54,24 @@ targets
 #  	    urlfile="./results/IGVurl.txt")
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
-#  args <- systemArgs(sysma="param/macs2_noinput.param", mytargets="targets_bam.txt")
+#  args <- systemArgs(sysma=NULL, mytargets="targets_bam.txt")
+#  args_merge <- mergeBamByFactor(args, overwrite=TRUE)
+#  writeTargetsout(x=args_merge, file="targets_mergeBamByFactor.txt", overwrite=TRUE)
+
+## ----eval=FALSE------------------------------------------------------------------------------
+#  args <- systemArgs(sysma="param/macs2_noinput.param", mytargets="targets_mergeBamByFactor.txt")
 #  sysargs(args)[1] # Command-line parameters for first FASTQ file
 #  runCommandline(args)
 #  file.exists(outpaths(args))
+#  writeTargetsout(x=args, file="targets_macs.txt", overwrite=TRUE)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
-#  writeTargetsRef(infile="targets_bam.txt", outfile="targets_bam_ref.txt", silent=FALSE, overwrite=FALSE)
+#  writeTargetsRef(infile="targets_bam.txt", outfile="targets_bam_ref.txt", silent=FALSE, overwrite=TRUE)
 #  args <- systemArgs(sysma="param/macs2.param", mytargets="targets_bam_ref.txt")
 #  sysargs(args)[1] # Command-line parameters for first FASTQ file
 #  runCommandline(args)
 #  file.exists(outpaths(args))
+#  writeTargetsout(x=args, file="targets_macs.txt", overwrite=TRUE)
 
 ## ----sessionInfo, results='asis'-------------------------------------------------------------
 toLatex(sessionInfo())
