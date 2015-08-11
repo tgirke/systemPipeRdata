@@ -75,15 +75,16 @@ targets
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  library(ChIPpeakAnno); library(GenomicFeatures)
-#  args <- systemArgs(sysma="param/macs2.param", mytargets="targets_bam_ref.txt")
+#  args <- systemArgs(sysma="param/annotate_peaks.param", mytargets="targets_macs.txt")
 #  txdb <- loadDb("./data/tair10.sqlite")
 #  ge <- genes(txdb, columns=c("tx_name", "gene_id", "tx_type"))
 #  for(i in seq(along=args)) {
-#      peaksGR <- toGRanges(outpaths(args)[i], format="MACS")
+#      peaksGR <- as(read.delim(infile1(args)[i], comment="#"), "GRanges")
 #      annotatedPeak <- annotatePeakInBatch(peaksGR, AnnotationData=genes(txdb))
 #      df <- data.frame(as.data.frame(annotatedPeak), as.data.frame(values(ge[values(annotatedPeak)$feature,])))
-#      write.table(df, paste0(outpaths(args[i]), ".annotated.xls"), quote=FALSE, row.names=FALSE, sep="\t")
+#      write.table(df, outpaths(args[i]), quote=FALSE, row.names=FALSE, sep="\t")
 #  }
+#  writeTargetsout(x=args, file="targets_peakanno.txt", overwrite=TRUE)
 #  ## Perform previous step with full genome annotation from Biomart
 #  # txdb <- makeTxDbFromBiomart(biomart="ENSEMBL_MART_PLANT", dataset="athaliana_eg_gene")
 #  # tx <- transcripts(txdb, columns=c("tx_name", "gene_id", "tx_type"))
@@ -97,10 +98,11 @@ targets
 #  library(ChIPseeker)
 #  txdb <- loadDb("./data/tair10.sqlite")
 #  for(i in seq(along=args)) {
-#      peakAnno <- annotatePeak(outpaths(args)[i], TxDb=txdb, verbose=FALSE)
+#      peakAnno <- annotatePeak(infile1(args)[i], TxDb=txdb, verbose=FALSE)
 #      df <- as.data.frame(peakAnno)
-#      write.table(df, paste0(outpaths(args[i]), ".annotated2.xls"), quote=FALSE, row.names=FALSE, sep="\t")
+#      write.table(df, outpaths(args[i]), quote=FALSE, row.names=FALSE, sep="\t")
 #  }
+#  writeTargetsout(x=args, file="targets_peakanno.txt", overwrite=TRUE)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  peak <- readPeakFile(outpaths(args)[1])
@@ -110,11 +112,11 @@ targets
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  library(GenomicRanges)
+#  args <- systemArgs(sysma="param/count_rangesets.param", mytargets="targets_macs.txt")
 #  args_bam <- systemArgs(sysma=NULL, mytargets="targets_bam.txt")
 #  bfl <- BamFileList(outpaths(args_bam), yieldSize=50000, index=character())
-#  args_peak <- systemArgs(sysma="param/macs2_noinput.param", mytargets="targets_mergeBamByFactor.txt")
-#  rangefiles <- outpaths(args_peak)
-#  countDFnames <- countRangeset(bfl, rangefiles, extension="_countDF.xls", mode="Union", ignore.strand=TRUE)
+#  countDFnames <- countRangeset(bfl, args, mode="Union", ignore.strand=TRUE)
+#  writeTargetsout(x=args, file="targets_countDF.txt", overwrite=TRUE)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  args_bam <- systemArgs(sysma=NULL, mytargets="targets_bam.txt")
@@ -123,6 +125,7 @@ targets
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  args <- systemArgs(sysma="param/macs2.param", mytargets="targets_bam_ref.txt")
+#  args_anno <- systemArgs(sysma="param/annotate_peaks.param", mytargets="targets_chip_anno.txt")
 #  annofiles <- paste0(outpaths(args), ".annotated.xls"); names(annofiles) <- names(outpaths(args))
 #  gene_ids <- sapply(names(annofiles), function(x) unique(as.character(read.delim(annofiles[x])[,"gene_id"])))
 #  load("data/GO/catdb.RData")
