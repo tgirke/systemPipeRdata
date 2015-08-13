@@ -44,8 +44,6 @@ targets[1:4,-c(5,6)]
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  read_statsDF <- alignStats(args=args)
 #  write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
-
-## ----eval=FALSE------------------------------------------------------------------------------
 #  read.delim("results/alignStats.xls")
 
 ## ----eval=FALSE------------------------------------------------------------------------------
@@ -123,7 +121,8 @@ targets[1:4,-c(5,6)]
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  args_diff <- systemArgs(sysma="param/rundiff.param", mytargets="targets_countDF.txt")
 #  cmp <- readComp(file=args_bam, format="matrix")
-#  dbrlist <- runDiff(args=args_diff, diffFct=run_edgeR, targets=targetsin(args_bam), cmp=cmp[[1]], independent=TRUE, dbrfilter=c(Fold=2, FDR=1))
+#  dbrlist <- runDiff(args=args_diff, diffFct=run_edgeR, targets=targetsin(args_bam),
+#                      cmp=cmp[[1]], independent=TRUE, dbrfilter=c(Fold=2, FDR=1))
 #  writeTargetsout(x=args_diff, file="targets_rundiff.txt", overwrite=TRUE)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
