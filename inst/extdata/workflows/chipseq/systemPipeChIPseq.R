@@ -12,29 +12,29 @@ unlink("test.db")
 library(systemPipeR)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
+#  library(systemPipeRdata)
+#  genWorkenvir(workflow="chipseq")
+#  setwd("chipseq")
+
+## ----eval=FALSE------------------------------------------------------------------------------
 #  source("systemPipeChIPseq_Fct.R")
 
 ## ----eval=TRUE-------------------------------------------------------------------------------
-targets <- read.delim("targets_chip.txt", comment.char = "#")[,1:4]
-targets
+targets <- read.delim("targets_chip.txt", comment.char = "#")
+targets[1:4,-c(5,6)]
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  args <- systemArgs(sysma="param/bowtieSE.param", mytargets="targets_chip.txt")
+#  args <- systemArgs(sysma="param/bowtieSE.param", mytargets="targets_chip_trim.txt")
 #  fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
 #  pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
 #  seeFastqPlot(fqlist)
 #  dev.off()
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  args <- systemArgs(sysma="param/bowtieSE.param", mytargets="targets_chip.txt")
+#  args <- systemArgs(sysma="param/bowtieSE.param", mytargets="targets_chip_trim.txt")
 #  sysargs(args)[1] # Command-line parameters for first FASTQ file
-
-## ----eval=FALSE------------------------------------------------------------------------------
-#  moduleload(modules(args))
-#  system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
-#  resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memory="10gb")
-#  reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01",
-#                    resourceList=resources)
+#  moduleload(modules(args)) # Skip if a module system is not used
+#  system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta") # Indexes reference genome
 #  runCommandline(args)
 #  writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
 
@@ -51,7 +51,7 @@ targets
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"),
 #              urlbase="http://biocluster.ucr.edu/~tgirke/",
-#  	    urlfile="./results/IGVurl.txt")
+#              urlfile="./results/IGVurl.txt")
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  args <- systemArgs(sysma=NULL, mytargets="targets_bam.txt")
@@ -85,6 +85,8 @@ targets
 #      write.table(df, outpaths(args[i]), quote=FALSE, row.names=FALSE, sep="\t")
 #  }
 #  writeTargetsout(x=args, file="targets_peakanno.txt", overwrite=TRUE)
+
+## ----eval=FALSE, include=FALSE---------------------------------------------------------------
 #  ## Perform previous step with full genome annotation from Biomart
 #  # txdb <- makeTxDbFromBiomart(biomart="ENSEMBL_MART_PLANT", dataset="athaliana_eg_gene")
 #  # tx <- transcripts(txdb, columns=c("tx_name", "gene_id", "tx_type"))
@@ -105,7 +107,7 @@ targets
 #  writeTargetsout(x=args, file="targets_peakanno.txt", overwrite=TRUE)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  peak <- readPeakFile(outpaths(args)[1])
+#  peak <- readPeakFile(infile1(args)[1])
 #  covplot(peak, weightCol="X.log10.pvalue.")
 #  peakHeatmap(outpaths(args)[1], TxDb=txdb, upstream=1000, downstream=1000, color="red")
 #  plotAvgProf2(outpaths(args)[1], TxDb=txdb, upstream=1000, downstream=1000, xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency")
@@ -126,18 +128,21 @@ targets
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  args <- systemArgs(sysma="param/macs2.param", mytargets="targets_bam_ref.txt")
-#  args_anno <- systemArgs(sysma="param/annotate_peaks.param", mytargets="targets_chip_anno.txt")
-#  annofiles <- paste0(outpaths(args), ".annotated.xls"); names(annofiles) <- names(outpaths(args))
+#  args_anno <- systemArgs(sysma="param/annotate_peaks.param", mytargets="targets_macs.txt")
+#  annofiles <- outpaths(args_anno)
 #  gene_ids <- sapply(names(annofiles), function(x) unique(as.character(read.delim(annofiles[x])[,"gene_id"])))
 #  load("data/GO/catdb.RData")
 #  BatchResult <- GOCluster_Report(catdb=catdb, setlist=gene_ids, method="all", id_type="gene", CLSZ=2, cutoff=0.9, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  library(Biostrings); library(seqLogo); library(BCRANK)
+#  args <- systemArgs(sysma="param/annotate_peaks.param", mytargets="targets_macs.txt")
+#  rangefiles <- infile1(args)
 #  for(i in seq(along=rangefiles)) {
 #      df <- read.delim(rangefiles[i], comment="#")
 #      peaks <- as(df, "GRanges")
 #      names(peaks) <- paste0(as.character(seqnames(peaks)), "_", start(peaks), "-", end(peaks))
+#      peaks <- peaks[order(values(peaks)$X.log10.pvalue, decreasing=TRUE)]
 #      pseq <- getSeq(FaFile("./data/tair10.fasta"), peaks)
 #      names(pseq) <- names(peaks)
 #      writeXStringSet(pseq, paste0(rangefiles[i], ".fasta"))
@@ -150,7 +155,9 @@ targets
 #  topMotif <- toptable(BCRANKout, 1)
 #  weightMatrix <- pwm(topMotif, normalize = FALSE)
 #  weightMatrixNormalized <- pwm(topMotif, normalize = TRUE)
+#  pdf("results/seqlogo.pdf")
 #  seqLogo(weightMatrixNormalized)
+#  dev.off()
 
 ## ----sessionInfo, results='asis'-------------------------------------------------------------
 toLatex(sessionInfo())
