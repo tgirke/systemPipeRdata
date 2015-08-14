@@ -11,8 +11,13 @@ unlink("test.db")
 ## ----eval=TRUE-------------------------------------------------------------------------------
 library(systemPipeR)
 
-## ----eval=TRUE-------------------------------------------------------------------------------
-source("systemPipeVARseq_Fct.R")
+## ----eval=FALSE------------------------------------------------------------------------------
+#  library(systemPipeRdata)
+#  genWorkenvir(workflow="varseq")
+#  setwd("varseq")
+
+## ----eval=FALSE------------------------------------------------------------------------------
+#  source("systemPipeVARseq_Fct.R")
 
 ## ----eval=TRUE-------------------------------------------------------------------------------
 targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
