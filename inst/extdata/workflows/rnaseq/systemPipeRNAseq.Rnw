@@ -84,8 +84,7 @@ source("systemPipeRNAseq_Fct.R")
 \subsection{Experiment definition provided by \Robject{targets} file}
 The \href{run:targets.txt}{\Robject{targets}} file defines all FASTQ files and sample comparisons of the analysis workflow. 
 <<eval=TRUE>>=
-targetspath <- system.file("extdata", "targets.txt", package="systemPipeR")
-targets <- read.delim(targetspath, comment.char = "#")[,1:4]
+targets <- read.delim("targets.txt", comment.char = "#")[,1:4]
 targets
 @
 
@@ -99,7 +98,7 @@ quality cutoffs and mean quality distribution. The results are written to a PDF 
 \href{run:./results/fastqReport.pdf}{\Robject{fastqReport.pdf}}.
 
 <<eval=FALSE>>=
-args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+args <- systemArgs(sysma="./param/tophat.param", mytargets="targets.txt")
 fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
 pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
 seeFastqPlot(fqlist)
@@ -116,7 +115,7 @@ dev.off()
 \subsection{Read mapping with \Rfunction{Bowtie2/Tophat2}}
 The NGS reads of this project will be aligned against the reference genome sequence using \Robject{Bowtie2/TopHat2} \citep{Kim2013-vg, Langmead2012-bs}. The parameter settings of the aligner are defined in the \Robject{tophat.param} file.
 <<eval=FALSE>>=
-args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+args <- systemArgs(sysma="./param/tophat.param", mytargets="targets.txt")
 sysargs(args)[1] # Command-line parameters for first FASTQ file
 @
 Submission of alignment jobs to compute cluster, here using 72 CPU cores (18 \Robject{qsub} processes each with 4 CPU cores).
@@ -140,7 +139,7 @@ read_statsDF <- alignStats(args=args)
 write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 @
 <<eval=TRUE>>=
-read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), header=TRUE)[1:4,]
+read.table("./results/alignStats.xls", header=TRUE)[1:4,]
 @
 
 \subsection{Create symbolic links for viewing BAM files in IGV}
@@ -204,18 +203,10 @@ dev.off()
 The analysis of differentially expressed genes (DEGs) is performed with the glm method from the \Rpackage{edgeR} package \citep{Robinson2010-uk}. The sample comparisons used by this analysis are defined in the header lines of the \href{run:targets.txt}{\Robject{targets}} file starting with \texttt{<CMP>}.
 <<eval=FALSE>>=
 library(edgeR)
-countDF <- read.delim("countDFeByg.xls", row.names=1, check.names=FALSE) 
+countDF <- read.delim("./results/countDFeByg.xls", row.names=1, check.names=FALSE) 
 targets <- read.delim("targets.txt", comment="#")
 cmp <- readComp(file="targets.txt", format="matrix", delim="-")
 edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=FALSE, mdsplot="")
-@
-
-Add functional descriptions
-<<eval=FALSE>>=
-desc <- read.delim("data/desc.xls") 
-desc <- desc[!duplicated(desc[,1]),]
-descv <- as.character(desc[,2]); names(descv) <- as.character(desc[,1])
-edgeDF <- data.frame(edgeDF, Desc=descv[rownames(edgeDF)], check.names=FALSE)
 write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
 @
 

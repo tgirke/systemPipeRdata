@@ -15,19 +15,18 @@ library(systemPipeR)
 #  source("systemPipeRNAseq_Fct.R")
 
 ## ----eval=TRUE-------------------------------------------------------------------------------
-targetspath <- system.file("extdata", "targets.txt", package="systemPipeR")
-targets <- read.delim(targetspath, comment.char = "#")[,1:4]
+targets <- read.delim("targets.txt", comment.char = "#")[,1:4]
 targets
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+#  args <- systemArgs(sysma="./param/tophat.param", mytargets="targets.txt")
 #  fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
 #  pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
 #  seeFastqPlot(fqlist)
 #  dev.off()
 
 ## ----eval=FALSE------------------------------------------------------------------------------
-#  args <- systemArgs(sysma="tophat.param", mytargets="targets.txt")
+#  args <- systemArgs(sysma="./param/tophat.param", mytargets="targets.txt")
 #  sysargs(args)[1] # Command-line parameters for first FASTQ file
 
 ## ----eval=FALSE------------------------------------------------------------------------------
@@ -46,7 +45,7 @@ targets
 #  write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 
 ## ----eval=TRUE-------------------------------------------------------------------------------
-read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), header=TRUE)[1:4,]
+read.table("./results/alignStats.xls", header=TRUE)[1:4,]
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"),
@@ -88,16 +87,10 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  library(edgeR)
-#  countDF <- read.delim("countDFeByg.xls", row.names=1, check.names=FALSE)
+#  countDF <- read.delim("./results/countDFeByg.xls", row.names=1, check.names=FALSE)
 #  targets <- read.delim("targets.txt", comment="#")
 #  cmp <- readComp(file="targets.txt", format="matrix", delim="-")
 #  edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=FALSE, mdsplot="")
-
-## ----eval=FALSE------------------------------------------------------------------------------
-#  desc <- read.delim("data/desc.xls")
-#  desc <- desc[!duplicated(desc[,1]),]
-#  descv <- as.character(desc[,2]); names(descv) <- as.character(desc[,1])
-#  edgeDF <- data.frame(edgeDF, Desc=descv[rownames(edgeDF)], check.names=FALSE)
 #  write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
 
 ## ----eval=FALSE------------------------------------------------------------------------------
