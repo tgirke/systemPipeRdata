@@ -11,6 +11,7 @@ pathList <- function() {
         workflows=system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE),
         chipseq=system.file("extdata/workflows/chipseq", "", package="systemPipeRdata", mustWork=TRUE),
         rnaseq=system.file("extdata/workflows/rnaseq", "", package="systemPipeRdata", mustWork=TRUE),
+        riboseq=system.file("extdata/workflows/riboseq", "", package="systemPipeRdata", mustWork=TRUE),
         varseq=system.file("extdata/workflows/varseq", "", package="systemPipeRdata", mustWork=TRUE)
     )
 }
@@ -20,7 +21,7 @@ pathList <- function() {
 #########################################
 genWorkenvir <- function(workflow, mydirname=NULL) {
     ## Input validity check
-    check_workflow <- c("varseq", "rnaseq", "chipseq")
+    check_workflow <- c("varseq", "rnaseq", "riboseq", "chipseq")
     if(!workflow %in% check_workflow) stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
     if(all(!c(is.null(mydirname), is.character(mydirname)))) stop("mydirname can only be assigned 'NULL' or a character vector of length 1")
     
@@ -60,6 +61,17 @@ genWorkenvir <- function(workflow, mydirname=NULL) {
         file.copy(c("rnaseq/param/targetsPE.txt", "rnaseq/param/targets.txt"), "./rnaseq")
         file.copy(c("rnaseq/param/Makefile_rnaseq"), "./rnaseq/Makefile")
         file.copy(c("rnaseq/param/bibtex.bib"), "./rnaseq/bibtex.bib")
+    } else if(workflow=="riboseq") {
+        file.copy(pathList()$riboseq, mydirname2temp, recursive=TRUE)
+        file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
+        unlink(mydirname2temp, recursive=TRUE) # removes temp dir
+        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "riboseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "riboseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(pathList()$paramdir, "riboseq/", recursive=TRUE)
+        file.copy(c("riboseq/param/torque.tmpl", "riboseq/param/.BatchJobs.R"), "./riboseq")
+        file.copy(c("riboseq/param/targetsPE.txt", "riboseq/param/targets.txt"), "./riboseq")
+        file.copy(c("riboseq/param/Makefile_riboseq"), "./riboseq/Makefile")
+        file.copy(c("riboseq/param/bibtex.bib"), "./riboseq/bibtex.bib")
     } else if(workflow=="chipseq") {
         file.copy(pathList()$chipseq, mydirname2temp, recursive=TRUE)
         file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
