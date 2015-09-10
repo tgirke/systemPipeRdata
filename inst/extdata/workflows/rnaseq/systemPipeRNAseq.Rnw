@@ -214,14 +214,14 @@ Filter and plot DEG results for up and down regulated genes. The definition of '
 <<eval=FALSE>>=
 edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE) 
 pdf("results/DEGcounts.pdf")
-DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=1))
+DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=10))
 dev.off()
 write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
 @
 \begin{figure}[H]
   \centering
    \includegraphics[width=10cm]{./results/DEGcounts.pdf}
-   \caption{Up and down regulated DEGs with FDR of 1\%.}
+   \caption{Up and down regulated DEGs with FDR of 10\%.}
    \label{fig:DEGcounts}
 \end{figure}
 
@@ -293,12 +293,11 @@ goBarplot(gos, gocat="CC")
 \end{figure}
 
 \section{Clustering and heat maps}
-The following example performs hierarchical clustering on the RPKM normalized expression matrix subsetted by the DEGs identified in the 
-above differential expression analysis. It uses a Pearson correlation-based distance measure and complete linkage for cluster joining.
+The following example performs hierarchical clustering on the \Rfunarg{rlog} normalized expression matrix subsetted by the DEGs identified in the above differential expression analysis. It uses a Pearson correlation-based distance measure and complete linkage for cluster joining.
 <<eval=FALSE>>=
 library(pheatmap)
 geneids <- unique(as.character(unlist(DEG_list[[1]])))
-y <- rpkmDFeByg[geneids, ]
+y <- assay(rlog(dds))[geneids, ]
 pdf("heatmap1.pdf")
 pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
 dev.off()

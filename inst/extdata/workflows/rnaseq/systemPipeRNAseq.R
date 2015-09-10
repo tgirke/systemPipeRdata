@@ -96,7 +96,7 @@ read.table("./results/alignStats.xls", header=TRUE)[1:4,]
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
 #  pdf("results/DEGcounts.pdf")
-#  DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=1))
+#  DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=10))
 #  dev.off()
 #  write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
 
@@ -145,7 +145,7 @@ read.table("./results/alignStats.xls", header=TRUE)[1:4,]
 ## ----eval=FALSE------------------------------------------------------------------------------
 #  library(pheatmap)
 #  geneids <- unique(as.character(unlist(DEG_list[[1]])))
-#  y <- rpkmDFeByg[geneids, ]
+#  y <- assay(rlog(dds))[geneids, ]
 #  pdf("heatmap1.pdf")
 #  pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
 #  dev.off()
