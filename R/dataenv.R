@@ -1,0 +1,80 @@
+#################################
+## Obtain paths to sample data ##
+#################################
+pathList <- function() {
+    list(
+        targets=system.file("extdata/param", "targets.txt", package="systemPipeRdata", mustWork=TRUE),
+        targetsPE=system.file("extdata/param", "targetsPE.txt", package="systemPipeRdata", mustWork=TRUE),
+        annotationdir=system.file("extdata/annotation", "", package="systemPipeRdata", mustWork=TRUE),
+        fastqdir=system.file("extdata/fastq", "", package="systemPipeRdata", mustWork=TRUE),
+        paramdir=system.file("extdata/param", "", package="systemPipeRdata", mustWork=TRUE),
+        workflows=system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE),
+        chipseq=system.file("extdata/workflows/chipseq", "", package="systemPipeRdata", mustWork=TRUE),
+        rnaseq=system.file("extdata/workflows/rnaseq", "", package="systemPipeRdata", mustWork=TRUE),
+        varseq=system.file("extdata/workflows/varseq", "", package="systemPipeRdata", mustWork=TRUE)
+    )
+}
+
+#########################################
+## Generate environments for workflows ##
+#########################################
+genWorkenvir <- function(workflow, mydirname=NULL) {
+    ## Input validity check
+    check_workflow <- c("varseq", "rnaseq", "chipseq")
+    if(!workflow %in% check_workflow) stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
+    if(all(!c(is.null(mydirname), is.character(mydirname)))) stop("mydirname can only be assigned 'NULL' or a character vector of length 1")
+    
+    ## If 'mydirname' is NULL (default) use value assigned to 'workflow' as directory name
+    if(is.null(mydirname)) {
+        mydirname2 <- workflow 
+    } else {
+        mydirname2 <- mydirname
+    }
+    
+    ## Generate temp workflow directory
+    mydirname2temp <- paste0(mydirname2, "_temp", paste(sample(0:9, 4), collapse=""))
+    if(dir.exists(mydirname2) | dir.exists(mydirname2temp)) stop("Directory name assigned to 'mydirname' or its temp variant exists already. Please assign to 'mydirname' a different name or rename/delete existing one.")
+    dir.create(mydirname2temp)
+    
+    ## Move workflow templates into workflow directory
+    if(workflow=="varseq") {
+        file.copy(pathList()$varseq, mydirname2temp, recursive=TRUE)
+        file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
+        unlink(mydirname2temp, recursive=TRUE) # removes temp dir
+        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "varseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "varseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(pathList()$paramdir, "varseq/", recursive=TRUE)
+        file.copy(c("varseq/param/torque.tmpl", "varseq/param/.BatchJobs.R"), "./varseq")
+        file.copy(c("varseq/param/gatk_run.sh", "varseq/param/sambcf_run.sh"), "./varseq")
+        file.copy(c("varseq/param/targetsPE.txt", "varseq/param/targets.txt"), "./varseq")
+        file.copy(c("varseq/param/Makefile_varseq"), "./varseq/Makefile")
+        file.copy(c("varseq/param/bibtex.bib"), "./varseq/bibtex.bib")
+    } else if(workflow=="rnaseq") {
+        file.copy(pathList()$rnaseq, mydirname2temp, recursive=TRUE)
+        file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
+        unlink(mydirname2temp, recursive=TRUE) # removes temp dir
+        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(pathList()$paramdir, "rnaseq/", recursive=TRUE)
+        file.copy(c("rnaseq/param/torque.tmpl", "rnaseq/param/.BatchJobs.R"), "./rnaseq")
+        file.copy(c("rnaseq/param/targetsPE.txt", "rnaseq/param/targets.txt"), "./rnaseq")
+        file.copy(c("rnaseq/param/Makefile_rnaseq"), "./rnaseq/Makefile")
+        file.copy(c("rnaseq/param/bibtex.bib"), "./rnaseq/bibtex.bib")
+    } else if(workflow=="chipseq") {
+        file.copy(pathList()$chipseq, mydirname2temp, recursive=TRUE)
+        file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
+        unlink(mydirname2temp, recursive=TRUE) # removes temp dir
+        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(pathList()$paramdir, "chipseq/", recursive=TRUE)
+        file.copy(c("chipseq/param/torque.tmpl", "chipseq/param/.BatchJobs.R"), "./chipseq")
+        file.copy(c("chipseq/param/targetsPE.txt", "chipseq/param/targets.txt"), "./chipseq")
+        file.copy(c("chipseq/param/Makefile_chipseq"), "./chipseq/Makefile")
+        file.copy(c("chipseq/param/bibtex.bib"), "./chipseq/bibtex.bib")
+    } else {
+        stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
+    }
+    print(paste("Generated", mydirname2, "directory. Next run from command-line 'make -B' within", workflow, "directory, or run R code from *.Rnw template file interactively."))
+}
+## Usage:
+# genWorkenvir(workflow="varseq", mydirname=NULL)

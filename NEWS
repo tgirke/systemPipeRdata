@@ -1,0 +1,8 @@
+CHANGES IN VERSION 1.0.0
+------------------------
+
+The first version of systemPipeRdata may be included in Bioconductor 3.2. 
+
+NEW FEATURES
+
+    o Data package to generate systemPipeR sample workflows with single command
