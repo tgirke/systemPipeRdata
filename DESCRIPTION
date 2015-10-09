@@ -1,11 +1,20 @@
 Package: systemPipeRdata
-Title: Sample data for workflows of systemPipeR package
-Version: 0.99.0
-Date: 2015-08-01
+Title: systemPipeRdata: NGS workflow templates and sample data
+Version: 0.99.1
+Date: 2015-10-08
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
-biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq, ChIPSeq, MethylSeq, SNP, GeneExpression, Coverage, GeneSetEnrichment, Alignment, QualityControl
-Description: systemPipeRdata is a helper package to generate with a single command NGS workflow templates that are intended to be used by its parent package systemPipeR. The latter is an environment for building end-to-end analysis pipelines with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq and many others. Detailed examples for using systemPipeRdata are given in systemPipeR's overview vignette.
+biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq,
+        ChIPSeq, MethylSeq, SNP, GeneExpression, Coverage,
+        GeneSetEnrichment, Alignment, QualityControl
+Description: systemPipeRdata is a helper package to generate with a
+        single command NGS workflow templates that are intended to be
+        used by its parent package systemPipeR. The latter is an
+        environment for building end-to-end analysis pipelines with
+        automated report generation for next generation sequence (NGS)
+        applications such as RNA-Seq, ChIP-Seq, VAR-Seq and many
+        others. Detailed examples for using systemPipeRdata are given
+        in systemPipeR's overview vignette.
 Depends: methods
 Imports: BiocGenerics
 Suggests: RUnit, BiocStyle, knitr, rmarkdown, systemPipeR
