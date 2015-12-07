@@ -1,3 +1,6 @@
 changelog
+    version 1.1.1
+        - RIBO-Seq vignette update
+    
     version 0.99.1
-    - initial package commit
+        - initial package commit

@@ -52,27 +52,94 @@ options(formatR.arrow=TRUE, width=95)
 unlink("test.db")
 @
 
-\title{Ribo-Seq workflow template: Some Descriptive Title}
-\author{Project ID: RIBOseq\_PI\_Name\_Organism\_Aug2015 \\
-	Project PI: First Last (first.last@inst.edu)\\
-        Author of Report: First Last (first.last@inst.edu)}
+\title{\Rpackage{systemPipeR} Workflow for Ribo-Seq and polyRibo-Seq Experiments}
+\author{Piyada Juntawong, Jeremie Bazin, Maureen Hummel, Julia Bailey-Serres and Thomas Girke \\
+        Email contact: thomas.girke@ucr.edu}
 \maketitle
 
 \tableofcontents
 
 \section{Introduction}
-\textcolor{red}{Note: this workflow is currently under construction!}
+Ribo-Seq and polyRibo-Seq are a specific form of RNA-Seq gene expression
+experiments utilizing mRNA subpopulations directly bound to ribosomes.
+Compared to standard RNA-Seq, their readout of gene expression provides a
+better approximation of downstream protein abundance profiles due to their
+close association with translational processes. The most important difference
+among the two is that polyRibo-Seq utilizes polyribosomal RNA for sequencing,
+whereas Ribo-Seq is a footprinting approach restricted to sequencing RNA
+fragments protected by ribosomes \citep{Ingolia2009-cb, Aspden2014-uu, Juntawong2015-ru}. 
 
-\subsection{Background and objectives}
-This workflow contains most of the relevant data analysis steps described by \cite{Juntawong2014-ny}. It includes functionalities for processing both Ribo-Seq and ribosome footprinting (RF-Seq) experiments. To improve re-usability and adapt to recent versions of software (\textit{e.g.} R, Bioconductor and short read aligners), the code has been optimized accordingly. Thus, the results obtained with the updated code are expected to be similar but not necessarily identical with the published ones described in the original paper. 
+The workflow presented in this vignette contains most of the data analysis
+steps described by \cite{Juntawong2014-ny} including functionalities useful for
+processing both polyRibo-Seq and Ribo-Seq experiments. To improve re-usability
+and adapt to recent changes of software versions (\textit{e.g.} R, Bioconductor and
+short read aligners), the code has been optimized accordingly. Thus, the
+results obtained with the updated workflow are expected to be similar but not
+necessarily identical with the published results described in the original
+paper. 
+
+Relevant analysis steps of this workflow include read preprocessing, read
+alignments against a reference genome, counting of reads overlapping with a
+wide range of genomic features (\textit{e.g.} CDSs, UTRs, uORFs, rRNAs, etc.),
+differential gene expression and differential ribosome binding analyses, as
+well as a variety of genome-wide summary plots for visualizing RNA expression
+trends. Functions are provided for evaluating the quality of Ribo-seq data,
+for identifying novel expressed regions in the genomes, and for gaining
+insights into gene regulation at the post-transcriptional and translational
+levels. For example, the functions \Rfunction{genFeatures} and
+\Rfunction{featuretypeCounts} can be used to quantify the expression output for
+all feature types included in a genome annotation (\textit{e.g.} genes,
+introns, exons, miRNAs, intergenic regions, etc.). To determine the approximate
+read length of ribosome footprints in Ribo-Seq experiments, these feature type
+counts can be obtained and plotted for specific read lengths separately.
+Typically, the most abundant read length obtained for translated features
+corresponds to the approximate footprint length occupied by the ribosomes of a
+given organism group. Based on the results from several Ribo-Seq studies, these
+ribosome footprints are typically $\sim$30 nucleotides long
+\citep{Ingolia2011-fc, Ingolia2009-cb, Juntawong2014-ny}.  However, their
+length can vary by several nucleotides depending upon the optimization of the
+RNA digestion step and various factors associated with translational
+regulation.  For quality control purposes of Ribo-Seq experiments it is also
+useful to monitor the abundance of reads mapping to rRNA genes due to the high
+rRNA content of ribosomes. This information can be generated with the 
+\Rfunction{featuretypeCounts} function described above.
+
+Coverage trends along transcripts summarized for any number of transcripts can
+be obtained and plotted with the functions \Rfunction{featureCoverage} and
+\Rfunction{plotfeatureCoverage}, respectively. Their results allow monitoring
+of the phasing of ribosome movements along triplets of coding sequences.
+Commonly, high quality data will display here for the first nucleotide of each
+codon the highest depth of coverage computed for the 5' ends of the aligned
+reads. 
+ 
+Ribo-seq data can also be used to evaluate various aspects of translational
+control due to ribosome occupancy in upstream open reading frames (uORFs). The
+latter are frequently present in (or near) 5' UTRs of transcripts. For this,
+the function \Rfunction{predORFs} can be used to identify ORFs in the
+nucleotide sequences of transcripts or their subcomponents such as UTR regions.
+After scaling the resulting ORF coordinates back to the corresponding genome
+locations using \Rfunction{scaleRanges}, one can use these novel features
+(\textit{e.g.} uORFs) for expression analysis routines similar to those
+employed for pre-existing annotations, such as the exonic regions of genes. For
+instance, in Ribo-Seq experiments one can use this approach to systematically identify all
+transcripts occupied by ribosomes in their uORF regions. The binding of
+ribosomes to uORF regions may indicate a regulatory role in the translation of
+the downstream main ORFs and/or translation of the uORFs into functionally
+relevant peptides. 
 
 \subsection{Experimental design}
-Typically, users want to specify here all information relevant for the analysis of their NGS study. This includes detailed descriptions of FASTQ files, experimental design, reference genome, gene annotations, etc.  
+Typically, users want to specify here all information relevant for the analysis
+of their NGS study. This includes detailed descriptions of FASTQ files,
+experimental design, reference genome, gene annotations, etc.  
 
 
 \section{Load workflow environment}
 \subsection{Load packages and sample data}
-The \Rpackage{systemPipeR} package needs to be loaded to perform the analysis steps shown in this report \citep{Girke2014-oy}. 
+The \Rpackage{systemPipeR} package needs to be loaded to perform the analysis 
+steps shown in this report \citep{Girke2014-oy}. The package allows users
+to run the entire analysis workflow interactively or with a single command 
+while also generating the corresponding analysis report. For details
+see \Rpackage{systemPipeR's} main \href{http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html}{\textcolor{blue}{vignette}}.
 <<eval=TRUE>>=
 library(systemPipeR)
 @
@@ -115,7 +182,8 @@ on read preprocessing is provided in \Rpackage{systemPipeR}'s main vignette.
 args <- systemArgs(sysma="param/trim.param", mytargets="targets.txt")
 fctpath <- system.file("extdata", "custom_Fct.R", package="systemPipeR")
 source(fctpath)
-iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=100)" 
+iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, minpatternlength=6, 
+                             Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=100)" 
 preprocessReads(args=args, Fct=iterTrim, batchsize=100000, overwrite=TRUE, compress=TRUE)
 writeTargetsout(x=args, file="targets_trim.txt", overwrite=TRUE)
 @
@@ -137,7 +205,7 @@ dev.off()
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=18cm]{results/fastqReport.pdf}
+   \includegraphics[width=18cm]{fastqReport.pdf}
    \caption{QC report for 18 FASTQ files.}
    \label{fig:fastqreport}
 \end{figure}
@@ -182,6 +250,7 @@ symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"),
 @
 
 \section{Read distribution across genomic features}
+\label{featuretypes}
 The \Rfunction{genFeatures} function generates a variety of feature types from
 \Robject{TxDb} objects using utilities provided by the
 \Rpackage{GenomicFeatures} package. 
@@ -192,7 +261,8 @@ The first step is the generation of the feature type ranges based on annotations
 library(GenomicFeatures)
 file <- system.file("extdata/annotation", "tair10.gff", package="systemPipeRdata")
 txdb <- makeTxDbFromGFF(file=file, format="gff3", organism="Arabidopsis")
-feat <- genFeatures(txdb, featuretype="all", reduce_ranges=TRUE, upstream=1000, downstream=0, verbose=TRUE)
+feat <- genFeatures(txdb, featuretype="all", reduce_ranges=TRUE, upstream=1000, downstream=0, 
+                    verbose=TRUE)
 @
 
 \subsection{Count and plot reads of any length}
@@ -210,32 +280,119 @@ the counting results can be plotted with the associated
 
 The following generates and plots feature counts for any read length.
 <<eval=FALSE>>=
-fc <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), grl=feat, singleEnd=TRUE, readlength=NULL, type="data.frame")
-p <- plotfeaturetypeCounts(x=fc, graphicsfile="results/featureCounts.pdf", graphicsformat="pdf", scales="fixed", anyreadlength=TRUE, scale_length_val=NULL)
+library(ggplot2); library(grid)
+fc <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), grl=feat, 
+                        singleEnd=TRUE, readlength=NULL, type="data.frame")
+p <- plotfeaturetypeCounts(x=fc, graphicsfile="results/featureCounts.pdf", graphicsformat="pdf", 
+                           scales="fixed", anyreadlength=TRUE, scale_length_val=NULL)
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=18cm]{results/featureCounts.pdf}
+   \includegraphics[width=18cm]{featureCounts.pdf}
    \caption{Read distribution plot across annotation features for any read length.}
    \label{fig:fastqcounts}
 \end{figure}
 
 \subsection{Count and plot reads of specific lengths}
-Generate and plot feature counts for specific read lengths
+To determine the approximate read length of ribosome footprints in Ribo-Seq experiments, one 
+can generate and plot the feature counts for specific read lengths separately. Typically, the 
+most abundant read length obtained for translated features corresponds to the approximate footprint 
+length occupied by the ribosomes.
 <<eval=FALSE>>=
-fc2 <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), grl=feat, singleEnd=TRUE, readlength=c(74:76,99:102), type="data.frame")
-p2 <- plotfeaturetypeCounts(x=fc2, graphicsfile="results/featureCounts2.pdf", graphicsformat="pdf", scales="fixed", anyreadlength=FALSE, scale_length_val=NULL)
+fc2 <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), grl=feat, 
+                         singleEnd=TRUE, readlength=c(74:76,99:102), type="data.frame")
+p2 <- plotfeaturetypeCounts(x=fc2, graphicsfile="results/featureCounts2.pdf", graphicsformat="pdf", 
+                            scales="fixed", anyreadlength=FALSE, scale_length_val=NULL)
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=18cm]{results/featureCounts2.pdf}
+   \includegraphics[width=18cm]{featureCounts2.pdf}
    \caption{Read distribution plot across annotation features for specific read lengths.}
    \label{fig:fastqcounts}
 \end{figure}
 
 \section{Adding custom features to workflow}
 \subsection{Predicting uORFs in 5' UTR regions}
-Will be added as soon as I find time to write the help file. 
+\label{uorfs}
+The function \Rfunction{predORF} can be used to identify open reading frames
+(ORFs) and coding sequences (CDSs) in DNA sequences provided as
+\Robject{DNAString} or \Robject{DNAStringSet} objects. The setting
+\Rfunarg{mode='ORF'} returns continuous reading frames that begin with a start
+codon and end with a stop codon, while \Rfunarg{mode='CDS'} returns continuous
+reading frames that do not need to begin or end with start or stop codons,
+respectively. Non-canonical start and stop condons are supported by allowing the
+user to provide any custom set of triplets under the \Rfunarg{startcodon} and \Rfunarg{stopcodon}
+arguments (\textit{i.e.} non-ATG start codons). The argument \Rfunarg{n} defines the maximum number of ORFs to return for each
+input sequence (\textit{e.g.} \Rfunarg{n=1} returns only the longest ORF). It also
+supports the identification of overlapping and nested ORFs. Alternatively, one 
+can return all non-overlapping ORFs including the longest ORF for each input
+sequence with \Rfunarg{n="all"} and \Rfunarg{longest\_disjoint=TRUE}.
+
+<<eval=FALSE>>=
+library(systemPipeRdata); library(GenomicFeatures); library(rtracklayer)
+gff <- system.file("extdata/annotation", "tair10.gff", package="systemPipeRdata")
+txdb <- makeTxDbFromGFF(file=gff, format="gff3", organism="Arabidopsis")
+futr <- fiveUTRsByTranscript(txdb, use.names=TRUE)
+genome <- system.file("extdata/annotation", "tair10.fasta", package="systemPipeRdata")
+dna <- extractTranscriptSeqs(FaFile(genome), futr)
+uorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="sense")
+@
+
+To use the predicted ORF ranges for expression analysis given genome alignments
+as input, it is necessary to scale them to the corresponding genome
+coordinates. The function \Rfunction{scaleRanges} does this by transforming the
+mappings of spliced features (query ranges) to their corresponding genome
+coordinates (subject ranges). The method accounts for introns in the subject
+ranges that are absent in the query ranges. The above uORFs predicted in the
+provided 5' UTRs sequences using \Rfunction{predORF} are a typical use case
+for this application. These query ranges are given relative to the 5' UTR 
+sequences and \Rfunction{scaleRanges} will convert them to the corresponding 
+genome coordinates. The resulting \Robject{GRangesList} object (here \Robject{grl\_scaled}) 
+can be directly used for read counting as described in Section \ref{readcounting}.
+
+<<eval=FALSE>>=
+grl_scaled <- scaleRanges(subject=futr, query=uorf, type="uORF", verbose=TRUE)
+export.gff3(unlist(grl_scaled), "uorf.gff")
+@
+
+To confirm the correctness of the obtained uORF ranges, one can parse their
+corresponding DNA sequences from the reference genome with the \Rfunction{getSeq}
+function and then translate them with the \Rfunction{translate} function into
+proteins. Typically, the returned protein sequences should start with a
+\texttt{M} (corresponding to start codon) and end with a \texttt{*}
+(corresponding to stop codon). The following example does this for a single uORF 
+containing three exons.
+<<eval=FALSE>>=
+translate(unlist(getSeq(FaFile(genome), grl_scaled[[7]])))
+@
+
+\subsection{Adding custom features to other feature types}
+If required custom feature ranges can be added to the standard features
+generated in Section \ref{featuretypes}. The following does this for the uORF ranges
+predicted in Subsection \ref{uorfs}.
+
+<<eval=FALSE>>=
+feat <- genFeatures(txdb, featuretype="all", reduce_ranges=FALSE)
+feat <- c(feat, GRangesList("uORF"=unlist(grl_scaled)))
+@
+
+\subsection{Predicting sORFs in intergenic regions}
+The following identifies continuous ORFs in intergenic regions. Note,
+\Rfunction{predORF} can only identify continuous ORFs in query sequences. The
+function does not identify and remove introns prior to the ORF prediction.  
+<<eval=FALSE>>=
+feat <- genFeatures(txdb, featuretype="intergenic", reduce_ranges=TRUE)
+intergenic <- feat$intergenic
+strand(intergenic) <- "+"
+dna <- getSeq(FaFile(genome), intergenic)
+names(dna) <- mcols(intergenic)$feature_by
+sorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="both")
+sorf <- sorf[width(sorf) > 60] # Remove sORFs below length cutoff, here 60bp
+intergenic <- split(intergenic, mcols(intergenic)$feature_by)
+grl_scaled_intergenic <- scaleRanges(subject=intergenic, query=sorf, type="sORF", verbose=TRUE)
+export.gff3(unlist(grl_scaled_intergenic), "sorf.gff")
+translate(getSeq(FaFile(genome), unlist(grl_scaled_intergenic)))
+@
 
 \section{Genomic read coverage along transripts or CDSs}
 The \Rfunction{featureCoverage} function computes the read coverage along
@@ -246,7 +403,7 @@ nucleotide resolution (\textit{e.g.} around start and stop codons) or as mean co
 of relative bin sizes, such as 100 bins for each feature. The latter allows
 comparisons of coverage trends among transcripts of variable length. Additionally, 
 the results can be obtained for single or many features (\textit{e.g.} any number of
-transcritpts) at once. Visualization of the coverage results is facilitated by
+transcripts) at once. Visualization of the coverage results is facilitated by
 the downstream \Rfunction{plotfeatureCoverage} function. 
 
 \subsection{Binned CDS coverage to compare many transcripts}
@@ -270,6 +427,7 @@ plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2, scale
 
 \subsection{Combined coverage for both binned CDS and start/stop codons} 
 <<eval=FALSE>>=
+library(ggplot2); library(grid)
 fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1:4], resizereads=NULL, 
                          readlengthrange=NULL, Nbins=20, method=mean, fixedmatrix=TRUE, 
                          resizefeatures=TRUE, upstream=20, downstream=20,
@@ -280,7 +438,7 @@ dev.off()
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=18cm]{results/featurePlot.pdf}
+   \includegraphics[width=18cm]{featurePlot.pdf}
    \caption{Feature coverage plot with single nucleotide resolution around start and stop codons and binned coverage between them.}
    \label{fig:fastqcounts}
 \end{figure}
@@ -294,6 +452,7 @@ plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", scale_count_val=10^
 @
 
 \section{Read quantification per annotation range}
+\label{readcounting}
 \subsection{Read counting with \Rfunction{summarizeOverlaps} in parallel mode using multiple cores}
 Reads overlapping with annotation ranges of interest are counted for each sample using the \Rfunction{summarizeOverlaps} function \citep{Lawrence2013-kt}. The read counting is preformed for exonic gene regions in a non-strand-specific manner while ignoring overlaps among different genes. Subsequently, the expression count values are normalized by \textit{reads per kp per million mapped reads} (RPKM). The raw read count table (\href{run:./results/countDFeByg.xls}{countDFeByg.xls}) and the correspoding RPKM table (\href{run:./results/rpkmDFeByg.xls}{rpkmDFeByg.xls}) are written to separate files in the \Robject{results} directory of this project. Parallelization is achieved with the \Rpackage{BiocParallel} package, here using 8 CPU cores.
 <<eval=FALSE>>=
@@ -332,12 +491,13 @@ dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~
 d <- cor(assay(rlog(dds)), method="spearman")
 hc <- hclust(dist(1-d))
 pdf("results/sample_tree.pdf")
-plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
+plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, 
+           no.margin=TRUE)
 dev.off()
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=10cm]{results/sample_tree.pdf}
+   \includegraphics[width=10cm]{sample_tree.pdf}
    \caption{Correlation dendrogram of samples.}
    \label{fig:sample_tree}
 \end{figure}
@@ -352,7 +512,7 @@ cmp <- readComp(file="targets.txt", format="matrix", delim="-")
 edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=FALSE, mdsplot="")
 @
 
-Add custom functional descriptions. Skip this step if \Robject{desc.xls} is not available.
+Add custom functional descriptions. Skip this step if \Robject{desc.xls} is not available. 
 <<eval=FALSE>>=
 desc <- read.delim("data/desc.xls") 
 desc <- desc[!duplicated(desc[,1]),]
@@ -371,7 +531,7 @@ write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", 
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=10cm]{results/DEGcounts.pdf}
+   \includegraphics[width=10cm]{DEGcounts.pdf}
    \caption{Up and down regulated DEGs with FDR of 1\%.}
    \label{fig:DEGcounts}
 \end{figure}
@@ -386,7 +546,7 @@ dev.off()
 @
 \begin{figure}[H]
   \centering
-   \includegraphics[width=14cm]{results/vennplot.pdf}
+   \includegraphics[width=14cm]{vennplot.pdf}
    \caption{Venn Diagram for 4 Up and Down DEG Sets.}
    \label{fig:vennplot}
 \end{figure}
@@ -402,11 +562,15 @@ m <- useMart("ENSEMBL_MART_PLANT", dataset="athaliana_eg_gene")
 listAttributes(m) # Choose data types you want to download
 go <- getBM(attributes=c("go_accession", "tair_locus", "go_namespace_1003"), mart=m)
 go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
-go[go[,3]=="molecular_function", 3] <- "F"; go[go[,3]=="biological_process", 3] <- "P"; go[go[,3]=="cellular_component", 3] <- "C"
+go[go[,3]=="molecular_function", 3] <- "F"
+go[go[,3]=="biological_process", 3] <- "P"
+go[go[,3]=="cellular_component", 3] <- "C"
 go[1:4,]
 dir.create("./data/GO")
-write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
-catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
+write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, row.names=FALSE, 
+            col.names=FALSE, sep="\t")
+catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, org="", 
+                   colno=c(1,2,3), idconv=NULL)
 save(catdb, file="data/GO/catdb.RData") 
 @
 
@@ -420,10 +584,14 @@ up <- DEG_list$Up; names(up) <- paste(names(up), "_up", sep="")
 down <- DEG_list$Down; names(down) <- paste(names(down), "_down", sep="")
 DEGlist <- c(up_down, up, down)
 DEGlist <- DEGlist[sapply(DEGlist, length) > 0]
-BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", id_type="gene", CLSZ=2, cutoff=0.9, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", id_type="gene", 
+                                CLSZ=2, cutoff=0.9, gocats=c("MF", "BP", "CC"), 
+                                recordSpecGO=NULL)
 library("biomaRt"); m <- useMart("ENSEMBL_MART_PLANT", dataset="athaliana_eg_gene")
 goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), mart=m)[,1])
-BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", id_type="gene", myslimv=goslimvec, CLSZ=10, cutoff=0.01, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", id_type="gene", 
+                                    myslimv=goslimvec, CLSZ=10, cutoff=0.01, 
+                                    gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 @
 
 \subsubsection{Plot batch GO term results}
@@ -438,10 +606,56 @@ goBarplot(gos, gocat="CC")
 
 \begin{figure}[H]
   \centering
-   \includegraphics[width=20cm]{results/GOslimbarplotMF.pdf}
+   \includegraphics[width=20cm]{GOslimbarplotMF.pdf}
    \caption{GO Slim Barplot for MF Ontology.}
    \label{fig:GOMF}
 \end{figure}
+
+\section{Differential ribosome loading analysis (translational efficiency)}
+Combinded with mRNA-Seq data, Ribo-Seq or polyRibo-Seq experiments can be used
+to study changes in translational efficiencies of genes and/or transcripts for
+different treatments. For test purposes the following generates a small test
+data set from the sample data used in this vignette, where two types of RNA
+samples (\Rfunarg{assays}) are considered: polyribosomal mRNA (\Rfunarg{Ribo})
+and total mRNA (\Rfunarg{mRNA}). In addition, there are two treatments
+(\Rfunarg{conditions}): \Rfunarg{M1} and \Rfunarg{A1}. 
+
+<<eval=TRUE>>=
+library(DESeq2)
+targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
+parampath <- system.file("extdata", "tophat.param", package="systemPipeR")
+countDFeBygpath <- system.file("extdata", "countDFeByg.xls", package="systemPipeR")
+args <- suppressWarnings(systemArgs(sysma=parampath, mytargets=targetspath))
+countDFeByg <- read.delim(countDFeBygpath, row.names=1)
+coldata <- DataFrame(assay=factor(rep(c("Ribo","mRNA"), each=4)), 
+                condition=factor(rep(as.character(targetsin(args)$Factor[1:4]), 2)), 
+                row.names=as.character(targetsin(args)$SampleName)[1:8])
+coldata
+@
+
+Differences in translational efficiencies can be calculated by ratios of ratios
+for the two conditions: \\
+\vspace{-0.4cm}
+\begin{center}
+$(Ribo\_A1 / mRNA\_A1) / (Ribo\_M1 / mRNA\_M1)$. 
+\end{center}
+The latter can be modeled with the \Rpackage{DESeq2} package using the design '$\sim assay +
+condition + assay:condition$', where the interaction term '$assay:condition$'
+represents the ratio of ratios. Using the likelihood ratio test of
+\Rpackage{DESeq2}, which removes the interaction term in the reduced model, one
+can test whether the translational efficiency (ribosome loading) is different
+in condition \Rfunarg{A1} than in \Rfunarg{M1}.
+
+<<eval=TRUE>>=
+dds <- DESeqDataSetFromMatrix(countData=as.matrix(countDFeByg[,rownames(coldata)]), 
+                            colData = coldata, 
+                            design = ~ assay + condition + assay:condition)
+# model.matrix(~ assay + condition + assay:condition, coldata) # Corresponding design matrix
+dds <- DESeq(dds, test="LRT", reduced = ~ assay + condition)
+res <- DESeq2::results(dds)
+head(res[order(res$padj),],4)
+# write.table(res, file="transleff.xls", quote=FALSE, col.names = NA, sep="\t")
+@
 
 \section{Clustering and heat maps}
 The following example performs hierarchical clustering on the \Rfunarg{rlog} transformed expression matrix subsetted by the DEGs identified in the 
@@ -451,19 +665,18 @@ library(pheatmap)
 geneids <- unique(as.character(unlist(DEG_list[[1]])))
 y <- assay(rlog(dds))[geneids, ]
 pdf("heatmap1.pdf")
-pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
+pheatmap(y, scale="row", clustering_distance_rows="correlation", 
+         clustering_distance_cols="correlation")
 dev.off()
 @
 
 \begin{figure}[H]
   \centering
-   \includegraphics[width=12cm]{results/heatmap1.pdf}
+   \includegraphics[width=12cm]{heatmap1.pdf}
    \caption{Heat map with hierarchical clustering dendrograms of DEGs.}
    \label{fig:heatmap}
 \end{figure}
 
-\section{Differential ribosome binding analysis (tranlational efficiency)}
-To be added...
 
 \section{Version Information}
 <<sessionInfo, results='asis'>>=
@@ -471,7 +684,9 @@ toLatex(sessionInfo())
 @
 
 \section{Funding}
-This project was supported by funds from the National Institutes of Health (NIH).
+This research was funded by National Science Foundation Grants IOS-0750811 and
+MCB-1021969, and a Marie Curie European Economic Community Fellowship
+PIOF-GA-2012-327954.
 
 \bibliography{bibtex}
 
