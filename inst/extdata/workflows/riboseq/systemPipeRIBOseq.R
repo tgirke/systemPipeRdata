@@ -32,7 +32,7 @@ targets
 ## writeTargetsout(x=args, file="targets_trim.txt", overwrite=TRUE)
 
 ## ----fastq_report, eval=FALSE--------------------------------------------
-## args <- systemArgs(sysma="param/tophat.param", mytargets="targets_trim.txt")
+## args <- systemArgs(sysma="param/hisat2.param", mytargets="targets_trim.txt")
 ## fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
 ## png("./results/fastqReport.png", height=18, width=4*length(fqlist), units="in", res=72)
 ## seeFastqPlot(fqlist)
@@ -84,13 +84,13 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## library(ggplot2); library(grid)
 ## fc <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), grl=feat,
 ##                         singleEnd=TRUE, readlength=NULL, type="data.frame")
-## p <- plotfeaturetypeCounts(x=fc, graphicsfile="results/featureCounts.pdf", graphicsformat="pdf",
+## p <- plotfeaturetypeCounts(x=fc, graphicsfile="results/featureCounts.png", graphicsformat="png",
 ##                            scales="fixed", anyreadlength=TRUE, scale_length_val=NULL)
 
 ## ----featuretypeCounts_length, eval=FALSE--------------------------------
 ## fc2 <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), grl=feat,
 ##                          singleEnd=TRUE, readlength=c(74:76,99:102), type="data.frame")
-## p2 <- plotfeaturetypeCounts(x=fc2, graphicsfile="results/featureCounts2.pdf", graphicsformat="pdf",
+## p2 <- plotfeaturetypeCounts(x=fc2, graphicsfile="results/featureCounts2.png", graphicsformat="png",
 ##                             scales="fixed", anyreadlength=FALSE, scale_length_val=NULL)
 
 ## ----pred_orf, eval=FALSE------------------------------------------------
@@ -104,7 +104,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 
 ## ----scale_ranges, eval=FALSE--------------------------------------------
 ## grl_scaled <- scaleRanges(subject=futr, query=uorf, type="uORF", verbose=TRUE)
-## export.gff3(unlist(grl_scaled), "uorf.gff")
+## export.gff3(unlist(grl_scaled), "results/uorf.gff")
 
 ## ----translate1, eval=FALSE----------------------------------------------
 ## translate(unlist(getSeq(FaFile(genome), grl_scaled[[7]])))
@@ -142,19 +142,18 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 
 ## ----coverage_binned3, eval=FALSE----------------------------------------
 ## library(ggplot2); library(grid)
-## fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1:4], resizereads=NULL,
+## fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:4], resizereads=NULL,
 ##                          readlengthrange=NULL, Nbins=20, method=mean, fixedmatrix=TRUE,
 ##                          resizefeatures=TRUE, upstream=20, downstream=20,
 ##                          outfile="results/featureCoverage.xls", overwrite=TRUE)
-## pdf("./results/featurePlot.pdf", height=12, width=24)
+## png("./results/featurePlot.png", height=12, width=24, units="in", res=72)
 ## plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2, scale_count_val=10^6)
 ## dev.off()
 
 ## ----coverage_nuc_level, eval=FALSE--------------------------------------
-## fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1:4], resizereads=NULL,
-##                          readlengthrange=NULL, Nbins=NULL, method=mean, fixedmatrix=FALSE,
-##                          resizefeatures=TRUE, upstream=20, downstream=20)
-## plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", scale_count_val=10^6)
+## fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1], resizereads=NULL,
+##                         readlengthrange=NULL, Nbins=NULL, method=mean, fixedmatrix=FALSE,
+##                         resizefeatures=TRUE, upstream=20, downstream=20, outfile=NULL)
 
 ## ----read_counting, eval=FALSE-------------------------------------------
 ## library("GenomicFeatures"); library(BiocParallel)
@@ -185,7 +184,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
 ## d <- cor(assay(rlog(dds)), method="spearman")
 ## hc <- hclust(dist(1-d))
-## pdf("results/sample_tree.pdf")
+## png("results/sample_tree.pdf")
 ## plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE,
 ##            no.margin=TRUE)
 ## dev.off()
@@ -198,7 +197,9 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=FALSE, mdsplot="")
 
 ## ----add_descr, eval=FALSE-----------------------------------------------
-## desc <- read.delim("data/desc.xls")
+## library("biomaRt")
+## m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
+## desc <- getBM(attributes=c("tair_locus", "description"), mart=m)
 ## desc <- desc[!duplicated(desc[,1]),]
 ## descv <- as.character(desc[,2]); names(descv) <- as.character(desc[,1])
 ## edgeDF <- data.frame(edgeDF, Desc=descv[rownames(edgeDF)], check.names=FALSE)
@@ -206,15 +207,15 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 
 ## ----filter_degs, eval=FALSE---------------------------------------------
 ## edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
-## pdf("results/DEGcounts.pdf")
-## DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=1))
+## png("./results/DEGcounts.png", height=10, width=10, units="in", res=72)
+## DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=20))
 ## dev.off()
 ## write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
 
 ## ----venn_diagram, eval=FALSE--------------------------------------------
 ## vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
 ## vennsetdown <- overLapper(DEG_list$Down[6:9], type="vennsets")
-## pdf("results/vennplot.pdf")
+## png("results/vennplot.png")
 ## vennPlot(list(vennsetup, vennsetdown), mymain="", mysub="", colmode=2, ccol=c("blue", "red"))
 ## dev.off()
 
@@ -254,7 +255,9 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## ----go_plot, eval=FALSE-------------------------------------------------
 ## gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
 ## gos <- BatchResultslim
+## png("./results/GOslimbarplotMF.png", height=12, width=12, units="in", res=72)
 ## goBarplot(gos, gocat="MF")
+## dev.off()
 ## goBarplot(gos, gocat="BP")
 ## goBarplot(gos, gocat="CC")
 
