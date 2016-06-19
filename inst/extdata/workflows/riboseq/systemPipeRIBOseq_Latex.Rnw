@@ -5,7 +5,7 @@
 %\VignettePackage{systemPipeR}
 
 % Generate vignette with knitr
-% R CMD Sweave --engine=knitr::knitr --pdf systemPipeRIBOseq.Rnw
+% R CMD Sweave --engine=knitr::knitr --pdf systemPipeRIBOseq_Latex.Rnw
 
 \documentclass{article}
 %<<style, eval=TRUE, echo=FALSE, results=tex>>=
