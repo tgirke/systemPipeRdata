@@ -15,9 +15,9 @@ Description: systemPipeRdata is a helper package to generate with a
         applications such as RNA-Seq, RIBO-Seq, ChIP-Seq, VAR-Seq and many
         others. Detailed examples for using systemPipeRdata are given
         in systemPipeR's overview vignette.
-Depends: methods, systemPipeR
+Depends: methods
 Imports: BiocGenerics
-Suggests: RUnit, BiocStyle, knitr, rmarkdown
+Suggests: RUnit, BiocStyle, knitr, rmarkdown, systemPipeR
 VignetteBuilder: knitr
 License: Artistic-2.0
 NeedsCompilation: no
