@@ -68,6 +68,14 @@ The intended way of running _`sytemPipeR`_ workflows is via _`*.Rnw`_ or _`*.Rmd
 
 # Getting Started
 
+## Download latest version of this tutorial
+
+In case there is a newer version of this tutorial, download its `systemPipeR_Intro.Rmd` source and open it in your R IDE (e.g. vim-r or RStudio).
+
+```{r download_latest, eval=FALSE}
+download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd", "systemPipeR_Intro.Rmd")
+```
+
 ## Installation
 
 The R software for running [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) can be downloaded from [_CRAN_](http://cran.at.r-project.org/). The _`systemPipeR`_ environment can be installed from the R console using the _`biocLite`_ install command. The associated data package [_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) can be installed the same way. The latter is a helper package for generating _`systemPipeR`_ workflow environments with a single command containing all parameter files and sample data required to quickly test and run workflows. 

@@ -11,6 +11,9 @@ knitr::opts_chunk$set(
 ## genWorkenvir(workflow="ribseq")
 ## setwd("riboseq")
 
+## ----download_latest, eval=FALSE-----------------------------------------
+## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd", "systemPipeRIBOseq.Rmd")
+
 ## ----load_systempiper, eval=TRUE-----------------------------------------
 library(systemPipeR)
 

@@ -6,6 +6,9 @@ knitr::opts_chunk$set(
     cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")),
     warning=FALSE, message=FALSE)
 
+## ----download_latest, eval=FALSE-----------------------------------------
+## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd", "systemPipeR_Intro.Rmd")
+
 ## ----install, eval=FALSE-------------------------------------------------
 ## source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script
 ## biocLite("systemPipeR") # Installs systemPipeR
