@@ -11,7 +11,7 @@
 
 #### Installation 
 Please install _systemPipeRdata_ from this GitHub repository as shown below. This package provides the data and `Rmd` files for the tutorial. 
-This parent package _systemPipeR_ is a dependency and should install along with all its own dependencies. If it doesn't then please also
+Its parent package _systemPipeR_ is a dependency and should install along with all its own dependencies automatically. If it doesn't then please also
 run the last `biocLite` install command given below.
 
 ```s
