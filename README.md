@@ -10,8 +10,8 @@
 
 #### Installation 
 Please install _systemPipeR_ along with its dependencies from Bioconductor (devel branch) and _systemPipeRdata_ from this GitHub repository as shown below.
-_systemPipeRdata_ has not many dependencies but provides the data and `Rmd` tutorials. However, the parent package _systemPipeR_ has many dependencies which
-should install fine when installing it with `biocLite()`. 
+_systemPipeRdata_ has not many dependencies but provides the data and `Rmd` tutorials. However, the parent package _systemPipeR_ has many dependencies 
+defined in its `DESCRIPTION` file. 
 
 ```s
 source("http://bioconductor.org/biocLite.R")
