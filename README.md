@@ -1,5 +1,5 @@
 
-### systemPipeRdata: NGS workflow templates and sample data
+## systemPipeRdata: NGS workflow templates and sample data
 
 [_systemPipeRdata_](http://bioconductor.org/packages/devel/systemPipeRdata) is a helper 
 package to generate with a single command NGS workflow templates that are intended to
