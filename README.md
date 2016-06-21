@@ -5,7 +5,7 @@
     + Introduction to `systemPipeR` 
         + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.html)
         + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd)
-    + Demo Workflow - RIBO-Seq 
+    + Demo Workflow: RIBO-Seq 
         + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.html)
         + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd)
 
