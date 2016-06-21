@@ -2,7 +2,7 @@
 ### Material for Bioc2016 Tutorial 
 + [Intro Slide Show](https://docs.google.com/presentation/d/175aup31LvnbIJUAvEEoSkpGsKgtBJ2RpQYd0Gs23dLo/embed?start=false&loop=false&delayms=60000)
 + Tutorial Material 
-    + Introduction 
+    + Introduction to `systemPipeR` 
         + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.html)
         + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd)
     + Demo Workflow - RIBO-Seq 
