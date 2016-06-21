@@ -1,6 +1,6 @@
 
 ### Material for Bioc2016 Tutorial 
-+ [Intro Slide Show](https://docs.google.com/presentation/d/175aup31LvnbIJUAvEEoSkpGsKgtBJ2RpQYd0Gs23dLo/embed?start=false&loop=false&delayms=60000): please just link to those slides and don't make a static copy to allow me to make changes until shortly before the event.
++ [Intro Slide Show](https://docs.google.com/presentation/d/175aup31LvnbIJUAvEEoSkpGsKgtBJ2RpQYd0Gs23dLo/embed?start=false&loop=false&delayms=60000)
 + Tutorial Material 
     + Introduction 
         + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.html)
@@ -17,7 +17,7 @@ run the last `biocLite` install command given below.
 ```s
 source("http://bioconductor.org/biocLite.R")
 biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)
-biocLite("systemPipeR") # Normal BioC install is sufficient
+biocLite("systemPipeR")
 ```
 
 Note, due to the relative large size of the sample data (~320 MB) provided by _systemPipeRdata_, its download/install may take some time.
