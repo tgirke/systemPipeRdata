@@ -12,7 +12,7 @@ fontsize: 14pt
 bibliography: bibtex.bib
 ---
 <!--
-%\VignetteEngine{knitr::rmarkdown}
+%\VignetteEngine{rmarkdown::render}
 %\VignetteIndexEntry{Overview Vignette}
 %\VignetteDepends{methods}
 %\VignetteKeywords{compute cluster, pipeline, reports}

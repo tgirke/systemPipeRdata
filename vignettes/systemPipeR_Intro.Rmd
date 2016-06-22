@@ -12,11 +12,11 @@ fontsize: 14pt
 bibliography: bibtex.bib
 ---
 <!--
-%% \VignetteEngine{knitr::rmarkdown}
+%% \VignetteEngine{rmarkdown::render}
 %\VignetteIndexEntry{Overview Vignette}
 %% \VignetteDepends{rjson, ggplot2, limma, edgeR, DESeq2, GOstats, GO.db, annotate, pheatmap}
 %% \VignetteKeywords{compute cluster, pipeline, reports}
-%% \VignettePackage{systemPipeR}
+%% \VignettePackage{systemPipeRdata}
 -->
 
 <!---
