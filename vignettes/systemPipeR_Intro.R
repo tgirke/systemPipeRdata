@@ -6,6 +6,16 @@ knitr::opts_chunk$set(
     cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")),
     warning=FALSE, message=FALSE)
 
+## ----genRibo_workflow, eval=FALSE----------------------------------------
+## library(systemPipeRdata)
+## genWorkenvir(workflow="riboseq", bam=TRUE)
+## setwd("riboseq")
+## 
+## ## Download latest version of this tutorial
+## 
+## In case there is a newer version of this tutorial, download its `systemPipeR_Intro.Rmd` source and open it in your R IDE (e.g. vim-r or RStudio).
+## 
+
 ## ----download_latest, eval=FALSE-----------------------------------------
 ## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd", "systemPipeR_Intro.Rmd")
 

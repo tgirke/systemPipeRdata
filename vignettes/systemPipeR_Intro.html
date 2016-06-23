@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="header">
 <h1 class="title"><em>systemPipeR</em>: NGS workflow and report generation environment</h1>
 <h4 class="author"><em>Author: Thomas Girke (<a href="mailto:thomas.girke@ucr.edu">thomas.girke@ucr.edu</a>)</em></h4>
-<h4 class="date"><em>Last update: 21 June, 2016</em></h4>
+<h4 class="date"><em>Last update: 22 June, 2016</em></h4>
 </div>
 
 <h1>Contents</h1>
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#introduction-slides"><span class="toc-section-number">1</span> Introduction Slides</a></li>
 <li><a href="#background"><span class="toc-section-number">2</span> Background</a></li>
 <li><a href="#getting-started"><span class="toc-section-number">3</span> Getting Started</a><ul>
-<li><a href="#download-latest-version-of-this-tutorial"><span class="toc-section-number">3.1</span> Download latest version of this tutorial</a></li>
+<li><a href="#load-workflow-template"><span class="toc-section-number">3.1</span> Load workflow template</a></li>
 <li><a href="#installation"><span class="toc-section-number">3.2</span> Installation</a></li>
 <li><a href="#loading-package-and-documentation"><span class="toc-section-number">3.3</span> Loading package and documentation</a></li>
 <li><a href="#load-sample-data-and-workflow-templates"><span class="toc-section-number">3.4</span> Load sample data and workflow templates</a></li>
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
 %\VignetteIndexEntry{Overview Vignette}
 %% \VignetteDepends{rjson, ggplot2, limma, edgeR, DESeq2, GOstats, GO.db, annotate, pheatmap}
 %% \VignetteKeywords{compute cluster, pipeline, reports}
-%% \VignettePackage{systemPipeR}
+%% \VignettePackage{systemPipeRdata}
 -->
 <!---
 - Compile from command-line
@@ -133,9 +133,16 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 <div id="getting-started" class="section level1">
 <h1><span class="header-section-number">3</span> Getting Started</h1>
-<div id="download-latest-version-of-this-tutorial" class="section level2">
-<h2><span class="header-section-number">3.1</span> Download latest version of this tutorial</h2>
-<p>In case there is a newer version of this tutorial, download its <code>systemPipeR_Intro.Rmd</code> source and open it in your R IDE (e.g. vim-r or RStudio).</p>
+<div id="load-workflow-template" class="section level2">
+<h2><span class="header-section-number">3.1</span> Load workflow template</h2>
+<p>The following loads one of the available NGS workflow templates (here RIBO-Seq) into the user’s current working directory. At the moment, the package includes workflow templates for RNA-Seq, ChIP-Seq, VAR-Seq and Ribo-Seq. Templates for additional NGS applications will be provided in the future. The sample data are described <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates">here</a>.</p>
+<pre class="r"><code>library(systemPipeRdata)
+genWorkenvir(workflow=&quot;riboseq&quot;, bam=TRUE)
+setwd(&quot;riboseq&quot;)
+
+## Download latest version of this tutorial
+
+In case there is a newer version of this tutorial, download its `systemPipeR_Intro.Rmd` source and open it in your R IDE (e.g. vim-r or RStudio).</code></pre>
 <pre class="r"><code>download.file(&quot;https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd&quot;, &quot;systemPipeR_Intro.Rmd&quot;)</code></pre>
 </div>
 <div id="installation" class="section level2">
@@ -338,13 +345,13 @@ args</code></pre>
 ##  [1] systemPipeR_1.6.2          ShortRead_1.30.0           GenomicAlignments_1.8.3   
 ##  [4] SummarizedExperiment_1.2.3 Biobase_2.32.0             BiocParallel_1.6.2        
 ##  [7] Rsamtools_1.24.0           Biostrings_2.40.2          XVector_0.12.0            
-## [10] GenomicRanges_1.24.2       GenomeInfoDb_1.8.1         IRanges_2.6.0             
+## [10] GenomicRanges_1.24.2       GenomeInfoDb_1.8.1         IRanges_2.6.1             
 ## [13] S4Vectors_0.10.1           BiocGenerics_0.18.0        BiocStyle_2.0.2           
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_0.12.5            lattice_0.20-33        GO.db_3.3.0            digest_0.6.9          
 ##  [5] plyr_1.8.4             BatchJobs_1.6          backports_1.0.2        RSQLite_1.0.0         
-##  [9] evaluate_0.9           ggplot2_2.1.0          zlibbioc_1.18.0        GenomicFeatures_1.24.2
+##  [9] evaluate_0.9           ggplot2_2.1.0          zlibbioc_1.18.0        GenomicFeatures_1.24.3
 ## [13] annotate_1.50.0        Matrix_1.2-6           checkmate_1.8.0        rmarkdown_0.9.6       
 ## [17] GOstats_2.38.0         splines_3.3.0          stringr_1.0.0          pheatmap_1.0.8        
 ## [21] RCurl_1.95-4.8         biomaRt_2.28.0         munsell_0.4.3          sendmailR_1.2-1       

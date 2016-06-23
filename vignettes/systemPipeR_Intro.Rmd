@@ -12,7 +12,7 @@ fontsize: 14pt
 bibliography: bibtex.bib
 ---
 <!--
-%% \VignetteEngine{rmarkdown::render}
+%% \VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{Overview Vignette}
 %% \VignetteDepends{rjson, ggplot2, limma, edgeR, DESeq2, GOstats, GO.db, annotate, pheatmap}
 %% \VignetteKeywords{compute cluster, pipeline, reports}
@@ -67,6 +67,19 @@ The intended way of running _`sytemPipeR`_ workflows is via _`*.Rnw`_ or _`*.Rmd
 
 
 # Getting Started
+
+## Load workflow template
+
+The following loads one of the available NGS workflow templates (here RIBO-Seq)
+into the user's current working directory. At the moment, the package includes
+workflow templates for RNA-Seq, ChIP-Seq, VAR-Seq and Ribo-Seq. Templates for
+additional NGS applications will be provided in the future.
+The sample data are described [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
+
+```{r genRibo_workflow, eval=FALSE}
+library(systemPipeRdata)
+genWorkenvir(workflow="riboseq", bam=TRUE)
+setwd("riboseq")
 
 ## Download latest version of this tutorial
 
