@@ -12,7 +12,7 @@ fontsize: 14pt
 bibliography: bibtex.bib
 ---
 <!--
-%\VignetteEngine{rmarkdown::render}
+%\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{Overview Vignette}
 %\VignetteDepends{methods}
 %\VignetteKeywords{compute cluster, pipeline, reports}
@@ -57,7 +57,7 @@ Note: the most recent version of this vignette can be found <a href="https://htm
 
 ## Installation
 The R software for using _`systemPipeRdata`_ can be downloaded from [CRAN](http://cran.at.r-project.org). The _`systemPipeRdata`_ package can be installed from within R as follows: 
-```{r install, eval=FALSE}
+zR`{r install, eval=FALSE}
 source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script 
 biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # Installs from github
 biocLite("systemPipeRdata") # Installs from Bioconductor once available there

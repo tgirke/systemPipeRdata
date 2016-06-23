@@ -8,7 +8,7 @@ knitr::opts_chunk$set(
 
 ## ----genRibo_workflow, eval=FALSE----------------------------------------
 ## library(systemPipeRdata)
-## genWorkenvir(workflow="ribseq")
+## genWorkenvir(workflow="riboseq", bam=TRUE)
 ## setwd("riboseq")
 
 ## ----download_latest, eval=FALSE-----------------------------------------
@@ -30,19 +30,19 @@ targets
 ## fctpath <- system.file("extdata", "custom_Fct.R", package="systemPipeR")
 ## source(fctpath)
 ## iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, minpatternlength=6,
-##                              Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=100)"
+##                              Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=101)"
 ## preprocessReads(args=args, Fct=iterTrim, batchsize=100000, overwrite=TRUE, compress=TRUE)
 ## writeTargetsout(x=args, file="targets_trim.txt", overwrite=TRUE)
 
 ## ----fastq_report, eval=FALSE--------------------------------------------
-## args <- systemArgs(sysma="param/hisat2.param", mytargets="targets_trim.txt")
+## args <- systemArgs(sysma=NULL, mytargets="targets_trim.txt")
 ## fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
 ## png("./results/fastqReport.png", height=18, width=4*length(fqlist), units="in", res=72)
 ## seeFastqPlot(fqlist)
 ## dev.off()
 
 ## ----tophat_alignment1, eval=FALSE---------------------------------------
-## args <- systemArgs(sysma="param/tophat.param", mytargets="targets.txt")
+## args <- systemArgs(sysma="param/tophat.param", mytargets="targets_trim.txt")
 ## sysargs(args)[1] # Command-line parameters for first FASTQ file
 
 ## ----tophat_alignment2, eval=FALSE, warning=FALSE, message=FALSE---------
@@ -55,7 +55,7 @@ targets
 
 ## ----hisat2_alignment, eval=FALSE----------------------------------------
 ## args <- systemArgs(sysma="param/hisat2.param", mytargets="targets.txt")
-## # args <- systemArgs(sysma="param/hisat2PE.param", mytargets="targetsPE.txt")
+## # args <- systemArgs(sysma="param/hisat2.param", mytargets="targets_trim.txt")
 ## sysargs(args)[1] # Command-line parameters for first FASTQ file
 ## moduleload(modules(args))
 ## system("hisat2-build ./data/tair10.fasta ./data/tair10.fasta")
@@ -78,8 +78,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 
 ## ----genFeatures, eval=FALSE---------------------------------------------
 ## library(GenomicFeatures)
-## file <- system.file("extdata/annotation", "tair10.gff", package="systemPipeRdata")
-## txdb <- makeTxDbFromGFF(file=file, format="gff3", organism="Arabidopsis")
+## txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3", organism="Arabidopsis")
 ## feat <- genFeatures(txdb, featuretype="all", reduce_ranges=TRUE, upstream=1000, downstream=0,
 ##                     verbose=TRUE)
 
@@ -98,11 +97,9 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 
 ## ----pred_orf, eval=FALSE------------------------------------------------
 ## library(systemPipeRdata); library(GenomicFeatures); library(rtracklayer)
-## gff <- system.file("extdata/annotation", "tair10.gff", package="systemPipeRdata")
-## txdb <- makeTxDbFromGFF(file=gff, format="gff3", organism="Arabidopsis")
+## txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3", organism="Arabidopsis")
 ## futr <- fiveUTRsByTranscript(txdb, use.names=TRUE)
-## genome <- system.file("extdata/annotation", "tair10.fasta", package="systemPipeRdata")
-## dna <- extractTranscriptSeqs(FaFile(genome), futr)
+## dna <- extractTranscriptSeqs(FaFile("data/tair10.fasta"), futr)
 ## uorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="sense")
 
 ## ----scale_ranges, eval=FALSE--------------------------------------------
@@ -110,7 +107,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## export.gff3(unlist(grl_scaled), "results/uorf.gff")
 
 ## ----translate1, eval=FALSE----------------------------------------------
-## translate(unlist(getSeq(FaFile(genome), grl_scaled[[7]])))
+## translate(unlist(getSeq(FaFile("data/tair10.fasta"), grl_scaled[[7]])))
 
 ## ----add_features, eval=FALSE--------------------------------------------
 ## feat <- genFeatures(txdb, featuretype="all", reduce_ranges=FALSE)
@@ -120,14 +117,14 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## feat <- genFeatures(txdb, featuretype="intergenic", reduce_ranges=TRUE)
 ## intergenic <- feat$intergenic
 ## strand(intergenic) <- "+"
-## dna <- getSeq(FaFile(genome), intergenic)
+## dna <- getSeq(FaFile("data/tair10.fasta"), intergenic)
 ## names(dna) <- mcols(intergenic)$feature_by
 ## sorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="both")
 ## sorf <- sorf[width(sorf) > 60] # Remove sORFs below length cutoff, here 60bp
 ## intergenic <- split(intergenic, mcols(intergenic)$feature_by)
 ## grl_scaled_intergenic <- scaleRanges(subject=intergenic, query=sorf, type="sORF", verbose=TRUE)
 ## export.gff3(unlist(grl_scaled_intergenic), "sorf.gff")
-## translate(getSeq(FaFile(genome), unlist(grl_scaled_intergenic)))
+## translate(getSeq(FaFile("data/tair10.fasta"), unlist(grl_scaled_intergenic)))
 
 ## ----coverage_binned1, eval=FALSE----------------------------------------
 ## grl <- cdsBy(txdb, "tx", use.names=TRUE)
@@ -249,11 +246,11 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## down <- DEG_list$Down; names(down) <- paste(names(down), "_down", sep="")
 ## DEGlist <- c(up_down, up, down)
 ## DEGlist <- DEGlist[sapply(DEGlist, length) > 0]
-## suppressAll(BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", id_type="gene", CLSZ=2, cutoff=0.9, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL))
+## BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", id_type="gene", CLSZ=2, cutoff=0.9, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 ## library("biomaRt")
 ## m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
 ## goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), mart=m)[,1])
-## suppressAll(BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", id_type="gene", myslimv=goslimvec, CLSZ=10, cutoff=0.01, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL))
+## BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", id_type="gene", myslimv=goslimvec, CLSZ=10, cutoff=0.01, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 
 ## ----go_plot, eval=FALSE-------------------------------------------------
 ## gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
