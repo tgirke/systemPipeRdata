@@ -6,11 +6,6 @@ knitr::opts_chunk$set(
     cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")),
     warning=FALSE, message=FALSE)
 
-## ----genRibo_workflow, eval=FALSE----------------------------------------
-## library(systemPipeRdata)
-## genWorkenvir(workflow="riboseq", bam=TRUE)
-## setwd("riboseq")
-
 ## ----download_latest, eval=FALSE-----------------------------------------
 ## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd", "systemPipeR_Intro.Rmd")
 
@@ -26,8 +21,8 @@ knitr::opts_chunk$set(
 
 ## ----genRna_workflow, eval=FALSE-----------------------------------------
 ## library(systemPipeRdata)
-## genWorkenvir(workflow="rnaseq")
-## setwd("rnaseq")
+## genWorkenvir(workflow="riboseq", bam=TRUE)
+## setwd("riboseq")
 
 ## ----targetsSE, eval=TRUE------------------------------------------------
 library(systemPipeR)

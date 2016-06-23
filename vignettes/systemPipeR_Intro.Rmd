@@ -68,20 +68,6 @@ The intended way of running _`sytemPipeR`_ workflows is via _`*.Rnw`_ or _`*.Rmd
 
 # Getting Started
 
-## Load workflow template
-
-The following loads one of the available NGS workflow templates (here RIBO-Seq)
-into the user's current working directory. At the moment, the package includes
-workflow templates for RNA-Seq, ChIP-Seq, VAR-Seq and Ribo-Seq. Templates for
-additional NGS applications will be provided in the future.
-The sample data are described [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
-
-```{r genRibo_workflow, eval=FALSE}
-library(systemPipeRdata)
-genWorkenvir(workflow="riboseq", bam=TRUE)
-setwd("riboseq")
-```
-
 ## Download latest version of this tutorial
 
 In case there is a newer version of this tutorial, download its `systemPipeR_Intro.Rmd` source and open it in your R IDE (e.g. vim-r or RStudio).
@@ -117,8 +103,8 @@ The mini sample FASTQ files used by this overview vignette as well as the associ
 The following generates a fully populated _`systemPipeR`_ workflow environment (here for RNA-Seq) in the current working directory of an R session. At this time the package includes workflow templates for RNA-Seq, ChIP-Seq, VAR-Seq and Ribo-Seq. Templates for additional NGS applications will be provided in the future.
 ```{r genRna_workflow, eval=FALSE}
 library(systemPipeRdata)
-genWorkenvir(workflow="rnaseq")
-setwd("rnaseq")
+genWorkenvir(workflow="riboseq", bam=TRUE)
+setwd("riboseq")
 ```
 
 The working environment of the sample data loaded in the previous step contains the following preconfigured directory structure. Directory names are indicated in  <span style="color:grey">_**grey**_</span>. Users can change this structure as needed, but need to adjust the code in their workflows accordingly. 
