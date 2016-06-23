@@ -3,7 +3,7 @@ title: "_systemPipeR_: NGS workflow and report generation environment"
 author: "Author: Thomas Girke (thomas.girke@ucr.edu)"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
-  BiocStyle::html_document:
+  BiocStyle::pdf_document:
     toc: true
     toc_depth: 3
     fig_caption: yes
