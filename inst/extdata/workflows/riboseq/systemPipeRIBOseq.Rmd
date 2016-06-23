@@ -3,7 +3,7 @@ title: Workflow Demo for Ribo-Seq and polyRibo-Seq
 author: "First/last name (first.last@ucr.edu)"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
-  BiocStyle::pdf_document:
+  BiocStyle::html_document:
     toc: true
     toc_depth: 3
     fig_caption: yes
