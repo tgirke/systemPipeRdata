@@ -759,7 +759,14 @@ dev.off()
 
 ![](results/heatmap1.png)
 <div align="center">Figure 9: Heat map with hierarchical clustering dendrograms of DEGs</div></br>
+
+# Render report in HTML and PDF format
+
+```{r heatmap, eval=FALSE}
+rmarkdown::render("systemPipeRIBOseq.Rmd", "html_document")
+rmarkdown::render("systemPipeRIBOseq.Rmd", "pdf_document")
 ```
+
 
 # Version Information
 
