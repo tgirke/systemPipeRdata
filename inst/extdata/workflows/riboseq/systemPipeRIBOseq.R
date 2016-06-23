@@ -291,6 +291,10 @@ head(res[order(res$padj),],4)
 ## pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
 ## dev.off()
 
+## ----render_report, eval=FALSE-------------------------------------------
+## rmarkdown::render("systemPipeRIBOseq.Rmd", "html_document")
+## rmarkdown::render("systemPipeRIBOseq.Rmd", "pdf_document")
+
 ## ----sessionInfo---------------------------------------------------------
 sessionInfo()
 

@@ -101,8 +101,9 @@ document.addEventListener("DOMContentLoaded", function() {
 </ul></li>
 <li><a href="#differential-ribosome-loading-analysis-translational-efficiency"><span class="toc-section-number">11</span> Differential ribosome loading analysis (translational efficiency)</a></li>
 <li><a href="#clustering-and-heat-maps"><span class="toc-section-number">12</span> Clustering and heat maps</a></li>
-<li><a href="#version-information"><span class="toc-section-number">13</span> Version Information</a></li>
-<li><a href="#funding"><span class="toc-section-number">14</span> Funding</a></li>
+<li><a href="#render-report-in-html-and-pdf-format"><span class="toc-section-number">13</span> Render report in HTML and PDF format</a></li>
+<li><a href="#version-information"><span class="toc-section-number">14</span> Version Information</a></li>
+<li><a href="#funding"><span class="toc-section-number">15</span> Funding</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -580,10 +581,15 @@ dev.off()</code></pre>
 <div align="center">
 Figure 9: Heat map with hierarchical clustering dendrograms of DEGs
 </div>
-<p></br> ```</p>
+<p></br></p>
+</div>
+<div id="render-report-in-html-and-pdf-format" class="section level1">
+<h1><span class="header-section-number">13</span> Render report in HTML and PDF format</h1>
+<pre class="r"><code>rmarkdown::render(&quot;systemPipeRIBOseq.Rmd&quot;, &quot;html_document&quot;)
+rmarkdown::render(&quot;systemPipeRIBOseq.Rmd&quot;, &quot;pdf_document&quot;)</code></pre>
 </div>
 <div id="version-information" class="section level1">
-<h1><span class="header-section-number">13</span> Version Information</h1>
+<h1><span class="header-section-number">14</span> Version Information</h1>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>## R version 3.3.0 (2016-05-03)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
@@ -627,7 +633,7 @@ Figure 9: Heat map with hierarchical clustering dendrograms of DEGs
 ## [69] geneplotter_1.50.0     rpart_4.1-10           acepack_1.3-3.3</code></pre>
 </div>
 <div id="funding" class="section level1">
-<h1><span class="header-section-number">14</span> Funding</h1>
+<h1><span class="header-section-number">15</span> Funding</h1>
 <p>This research was funded by National Science Foundation Grants IOS-0750811 and MCB-1021969, and a Marie Curie European Economic Community Fellowship PIOF-GA-2012-327954.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
