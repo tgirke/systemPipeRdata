@@ -80,6 +80,7 @@ The sample data are described [here](http://www.bioconductor.org/packages/devel/
 library(systemPipeRdata)
 genWorkenvir(workflow="riboseq", bam=TRUE)
 setwd("riboseq")
+```
 
 ## Download latest version of this tutorial
 

@@ -60,15 +60,16 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><a href="#background"><span class="toc-section-number">2</span> Background</a></li>
 <li><a href="#getting-started"><span class="toc-section-number">3</span> Getting Started</a><ul>
 <li><a href="#load-workflow-template"><span class="toc-section-number">3.1</span> Load workflow template</a></li>
-<li><a href="#installation"><span class="toc-section-number">3.2</span> Installation</a></li>
-<li><a href="#loading-package-and-documentation"><span class="toc-section-number">3.3</span> Loading package and documentation</a></li>
-<li><a href="#load-sample-data-and-workflow-templates"><span class="toc-section-number">3.4</span> Load sample data and workflow templates</a></li>
-<li><a href="#structure-of-targets-file"><span class="toc-section-number">3.5</span> Structure of <em><code>targets</code></em> file</a><ul>
-<li><a href="#structure-of-targets-file-for-single-end-se-samples"><span class="toc-section-number">3.5.1</span> Structure of <em><code>targets</code></em> file for single end (SE) samples</a></li>
-<li><a href="#structure-of-targets-file-for-paired-end-pe-samples"><span class="toc-section-number">3.5.2</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</a></li>
-<li><a href="#sample-comparisons"><span class="toc-section-number">3.5.3</span> Sample comparisons</a></li>
+<li><a href="#download-latest-version-of-this-tutorial"><span class="toc-section-number">3.2</span> Download latest version of this tutorial</a></li>
+<li><a href="#installation"><span class="toc-section-number">3.3</span> Installation</a></li>
+<li><a href="#loading-package-and-documentation"><span class="toc-section-number">3.4</span> Loading package and documentation</a></li>
+<li><a href="#load-sample-data-and-workflow-templates"><span class="toc-section-number">3.5</span> Load sample data and workflow templates</a></li>
+<li><a href="#structure-of-targets-file"><span class="toc-section-number">3.6</span> Structure of <em><code>targets</code></em> file</a><ul>
+<li><a href="#structure-of-targets-file-for-single-end-se-samples"><span class="toc-section-number">3.6.1</span> Structure of <em><code>targets</code></em> file for single end (SE) samples</a></li>
+<li><a href="#structure-of-targets-file-for-paired-end-pe-samples"><span class="toc-section-number">3.6.2</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</a></li>
+<li><a href="#sample-comparisons"><span class="toc-section-number">3.6.3</span> Sample comparisons</a></li>
 </ul></li>
-<li><a href="#structure-of-param-file-and-sysargs-container"><span class="toc-section-number">3.6</span> Structure of <em><code>param</code></em> file and <em><code>SYSargs</code></em> container</a></li>
+<li><a href="#structure-of-param-file-and-sysargs-container"><span class="toc-section-number">3.7</span> Structure of <em><code>param</code></em> file and <em><code>SYSargs</code></em> container</a></li>
 </ul></li>
 <li><a href="#more-detail"><span class="toc-section-number">4</span> More detail</a></li>
 <li><a href="#workflow-demo"><span class="toc-section-number">5</span> Workflow demo</a></li>
@@ -138,15 +139,15 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>The following loads one of the available NGS workflow templates (here RIBO-Seq) into the user’s current working directory. At the moment, the package includes workflow templates for RNA-Seq, ChIP-Seq, VAR-Seq and Ribo-Seq. Templates for additional NGS applications will be provided in the future. The sample data are described <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates">here</a>.</p>
 <pre class="r"><code>library(systemPipeRdata)
 genWorkenvir(workflow=&quot;riboseq&quot;, bam=TRUE)
-setwd(&quot;riboseq&quot;)
-
-## Download latest version of this tutorial
-
-In case there is a newer version of this tutorial, download its `systemPipeR_Intro.Rmd` source and open it in your R IDE (e.g. vim-r or RStudio).</code></pre>
+setwd(&quot;riboseq&quot;)</code></pre>
+</div>
+<div id="download-latest-version-of-this-tutorial" class="section level2">
+<h2><span class="header-section-number">3.2</span> Download latest version of this tutorial</h2>
+<p>In case there is a newer version of this tutorial, download its <code>systemPipeR_Intro.Rmd</code> source and open it in your R IDE (e.g. vim-r or RStudio).</p>
 <pre class="r"><code>download.file(&quot;https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd&quot;, &quot;systemPipeR_Intro.Rmd&quot;)</code></pre>
 </div>
 <div id="installation" class="section level2">
-<h2><span class="header-section-number">3.2</span> Installation</h2>
+<h2><span class="header-section-number">3.3</span> Installation</h2>
 <p>The R software for running <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em><code>systemPipeR</code></em></a> can be downloaded from <a href="http://cran.at.r-project.org/"><em>CRAN</em></a>. The <em><code>systemPipeR</code></em> environment can be installed from the R console using the <em><code>biocLite</code></em> install command. The associated data package <a href="https://github.com/tgirke/systemPipeRdata"><em><code>systemPipeRdata</code></em></a> can be installed the same way. The latter is a helper package for generating <em><code>systemPipeR</code></em> workflow environments with a single command containing all parameter files and sample data required to quickly test and run workflows.</p>
 <pre class="r"><code>source(&quot;http://bioconductor.org/biocLite.R&quot;) # Sources the biocLite.R installation script 
 biocLite(&quot;systemPipeR&quot;) # Installs systemPipeR 
@@ -156,7 +157,7 @@ biocLite(&quot;systemPipeRdata&quot;) # Installs systemPipeRdata</code></pre>
 </div>
 </div>
 <div id="loading-package-and-documentation" class="section level2">
-<h2><span class="header-section-number">3.3</span> Loading package and documentation</h2>
+<h2><span class="header-section-number">3.4</span> Loading package and documentation</h2>
 <pre class="r"><code>library(&quot;systemPipeR&quot;) # Loads the package
 library(help=&quot;systemPipeR&quot;) # Lists package info
 vignette(&quot;systemPipeR&quot;) # Opens vignette</code></pre>
@@ -165,7 +166,7 @@ vignette(&quot;systemPipeR&quot;) # Opens vignette</code></pre>
 </div>
 </div>
 <div id="load-sample-data-and-workflow-templates" class="section level2">
-<h2><span class="header-section-number">3.4</span> Load sample data and workflow templates</h2>
+<h2><span class="header-section-number">3.5</span> Load sample data and workflow templates</h2>
 <p>The mini sample FASTQ files used by this overview vignette as well as the associated workflow reporting vignettes can be loaded via the <em><code>systemPipeRdata</code></em> package as shown below. The chosen data set <a href="http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938"><code>SRP010938</code></a> contains 18 paired-end (PE) read sets from <em>Arabidposis thaliana</em> <span class="citation">(Howard et al. 2013)</span>. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the <em>A. thalina</em> genome. The corresponding reference genome sequence (FASTA) and its GFF annotion files (provided in the same download) have been truncated accordingly. This way the entire test sample data set requires less than 200MB disk storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single end) reads or PE reads.</p>
 <p>The following generates a fully populated <em><code>systemPipeR</code></em> workflow environment (here for RNA-Seq) in the current working directory of an R session. At this time the package includes workflow templates for RNA-Seq, ChIP-Seq, VAR-Seq and Ribo-Seq. Templates for additional NGS applications will be provided in the future.</p>
 <pre class="r"><code>library(systemPipeRdata)
@@ -217,10 +218,10 @@ setwd(&quot;rnaseq&quot;)</code></pre>
 </div>
 </div>
 <div id="structure-of-targets-file" class="section level2">
-<h2><span class="header-section-number">3.5</span> Structure of <em><code>targets</code></em> file</h2>
+<h2><span class="header-section-number">3.6</span> Structure of <em><code>targets</code></em> file</h2>
 <p>The <em><code>targets</code></em> file defines all input files (<em>e.g.</em> FASTQ, BAM, BCF) and sample comparisons of an analysis workflow. The following shows the format of a sample <em><code>targets</code></em> file included in the package. It also can be viewed and downloaded from <em><code>systemPipeR</code></em>’s GitHub repository <a href="https://github.com/tgirke/systemPipeR/blob/master/inst/extdata/targets.txt">here</a>. In a target file with a single type of input files, here FASTQ files of single end (SE) reads, the first three columns are mandatory including their column names, while it is four mandatory columns for FASTQ files of PE reads. All subsequent columns are optional and any number of additional columns can be added as needed.</p>
 <div id="structure-of-targets-file-for-single-end-se-samples" class="section level3">
-<h3><span class="header-section-number">3.5.1</span> Structure of <em><code>targets</code></em> file for single end (SE) samples</h3>
+<h3><span class="header-section-number">3.6.1</span> Structure of <em><code>targets</code></em> file for single end (SE) samples</h3>
 <pre class="r"><code>library(systemPipeR)
 targetspath &lt;- system.file(&quot;extdata&quot;, &quot;targets.txt&quot;, package=&quot;systemPipeR&quot;) 
 read.delim(targetspath, comment.char = &quot;#&quot;)</code></pre>
@@ -249,7 +250,7 @@ read.delim(targetspath, comment.char = &quot;#&quot;)</code></pre>
 </div>
 </div>
 <div id="structure-of-targets-file-for-paired-end-pe-samples" class="section level3">
-<h3><span class="header-section-number">3.5.2</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</h3>
+<h3><span class="header-section-number">3.6.2</span> Structure of <em><code>targets</code></em> file for paired end (PE) samples</h3>
 <pre class="r"><code>targetspath &lt;- system.file(&quot;extdata&quot;, &quot;targetsPE.txt&quot;, package=&quot;systemPipeR&quot;)
 read.delim(targetspath, comment.char = &quot;#&quot;)[1:2,1:6]</code></pre>
 <pre><code>##                  FileName1                FileName2 SampleName Factor SampleLong Experiment
@@ -260,7 +261,7 @@ read.delim(targetspath, comment.char = &quot;#&quot;)[1:2,1:6]</code></pre>
 </div>
 </div>
 <div id="sample-comparisons" class="section level3">
-<h3><span class="header-section-number">3.5.3</span> Sample comparisons</h3>
+<h3><span class="header-section-number">3.6.3</span> Sample comparisons</h3>
 <p>Sample comparisons are defined in the header lines of the <em><code>targets</code></em> file starting with ‘<code># &lt;CMP&gt;</code>’.</p>
 <pre class="r"><code>readLines(targetspath)[1:4]</code></pre>
 <pre><code>## [1] &quot;# Project ID: Arabidopsis - Pseudomonas alternative splicing study (SRA: SRP010938; PMID: 24098335)&quot;                                                                              
@@ -283,7 +284,7 @@ read.delim(targetspath, comment.char = &quot;#&quot;)[1:2,1:6]</code></pre>
 </div>
 </div>
 <div id="structure-of-param-file-and-sysargs-container" class="section level2">
-<h2><span class="header-section-number">3.6</span> Structure of <em><code>param</code></em> file and <em><code>SYSargs</code></em> container</h2>
+<h2><span class="header-section-number">3.7</span> Structure of <em><code>param</code></em> file and <em><code>SYSargs</code></em> container</h2>
 <p>The <em><code>param</code></em> file defines the parameters of a chosen command-line software. The following shows the format of a sample <em><code>param</code></em> file provided by this package.</p>
 <pre class="r"><code>parampath &lt;- system.file(&quot;extdata&quot;, &quot;tophat.param&quot;, package=&quot;systemPipeR&quot;)</code></pre>
 <p>The <em><code>systemArgs</code></em> function imports the definitions of both the <em><code>param</code></em> file and the <em><code>targets</code></em> file, and stores all relevant information in a <em><code>SYSargs</code></em> object (S4 class). To run the pipeline without command-line software, one can assign <em><code>NULL</code></em> to <em><code>sysma</code></em> instead of a <em><code>param</code></em> file. In addition, one can start <em><code>systemPipeR</code></em> workflows with pre-generated BAM files by providing a targets file where the <em><code>FileName</code></em> column provides the paths to the BAM files. Note, in the following example the usage of <em><code>suppressWarnings()</code></em> is only relevant for building this vignette. In typical workflows it should be removed.</p>
