@@ -1,0 +1,8 @@
+CHANGES IN THIS VERSION
+-----------------------
+
+NEW FEATURES
+
+    o Fix of Windows path problem
+    o Included precomputed BAM files
+    o Support for both HTML and PDF reports using R Markdown
