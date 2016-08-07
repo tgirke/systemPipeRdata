@@ -91,7 +91,7 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE) {
     } else {
         stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
     }
-    print(paste("Generated", mydirname2, "directory. Next run from command-line 'make -B' within", workflow, "directory, or run R code from *.Rnw template file interactively."))
+    print(paste("Generated", mydirname2, "directory. Next run in", workflow, "directory, the R code from *.Rmd (*.Rnw) template interactively. Alternatively, workflows can be exectued with a single command as instructed in the vignette."))
 }
 ## Usage:
 # genWorkenvir(workflow="varseq", mydirname=NULL)
