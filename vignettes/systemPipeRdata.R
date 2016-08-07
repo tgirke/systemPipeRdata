@@ -29,9 +29,7 @@ library("systemPipeRdata") # Loads the package
 ## setwd("varseq")
 
 ## ----generate_workenvir_from_shell, eval=FALSE, engine="sh"--------------
-## $ echo 'library(systemPipeRdata); genWorkenvir(workflow="varseq", mydirname=NULL)' | R --slave
-## $ cd varseq
-## $ R
+## $ Rscript -e "systemPipeRdata::genWorkenvir(workflow='varseq', mydirname=NULL)"
 
 ## ----workflow_template_structure, eval=FALSE-----------------------------
 ## workflow_name/            # *.Rnw/*.Rmd scripts and targets file

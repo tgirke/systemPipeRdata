@@ -7,6 +7,7 @@ pathList <- function() {
         targetsPE=system.file("extdata/param", "targetsPE.txt", package="systemPipeRdata", mustWork=TRUE),
         annotationdir=system.file("extdata/annotation", "", package="systemPipeRdata", mustWork=TRUE),
         fastqdir=system.file("extdata/fastq", "", package="systemPipeRdata", mustWork=TRUE),
+        bamdir=system.file("extdata/bam", "", package="systemPipeRdata", mustWork=TRUE),
         paramdir=system.file("extdata/param", "", package="systemPipeRdata", mustWork=TRUE),
         workflows=system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE),
         chipseq=system.file("extdata/workflows/chipseq", "", package="systemPipeRdata", mustWork=TRUE),
@@ -19,7 +20,7 @@ pathList <- function() {
 #########################################
 ## Generate environments for workflows ##
 #########################################
-genWorkenvir <- function(workflow, mydirname=NULL) {
+genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE) {
     ## Input validity check
     check_workflow <- c("varseq", "rnaseq", "riboseq", "chipseq")
     if(!workflow %in% check_workflow) stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
@@ -42,8 +43,9 @@ genWorkenvir <- function(workflow, mydirname=NULL) {
         file.copy(pathList()$varseq, mydirname2temp, recursive=TRUE)
         file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
         unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "varseq/data", overwrite=TRUE, recursive=TRUE)
-        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "varseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), "varseq/data", overwrite=TRUE, recursive=TRUE)
+        if(bam==TRUE) file.copy(normalizePath(list.files(pathList()$bamdir, "*", full.names=TRUE)), "varseq/results", overwrite=TRUE, recursive=TRUE)
+        file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), "varseq/data", overwrite=TRUE, recursive=TRUE)
         file.copy(pathList()$paramdir, "varseq/", recursive=TRUE)
         file.copy(c("varseq/param/torque.tmpl", "varseq/param/.BatchJobs.R"), "./varseq")
         file.copy(c("varseq/param/gatk_run.sh", "varseq/param/sambcf_run.sh"), "./varseq")
@@ -54,8 +56,9 @@ genWorkenvir <- function(workflow, mydirname=NULL) {
         file.copy(pathList()$rnaseq, mydirname2temp, recursive=TRUE)
         file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
         unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
-        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
+        if(bam==TRUE) file.copy(normalizePath(list.files(pathList()$bamdir, "*", full.names=TRUE)), "rnaseq/results", overwrite=TRUE, recursive=TRUE)
+        file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), "rnaseq/data", overwrite=TRUE, recursive=TRUE)
         file.copy(pathList()$paramdir, "rnaseq/", recursive=TRUE)
         file.copy(c("rnaseq/param/torque.tmpl", "rnaseq/param/.BatchJobs.R"), "./rnaseq")
         file.copy(c("rnaseq/param/targetsPE.txt", "rnaseq/param/targets.txt"), "./rnaseq")
@@ -65,8 +68,9 @@ genWorkenvir <- function(workflow, mydirname=NULL) {
         file.copy(pathList()$riboseq, mydirname2temp, recursive=TRUE)
         file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
         unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "riboseq/data", overwrite=TRUE, recursive=TRUE)
-        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "riboseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), "riboseq/data", overwrite=TRUE, recursive=TRUE)
+        if(bam==TRUE) file.copy(normalizePath(list.files(pathList()$bamdir, "*", full.names=TRUE)), "riboseq/results", overwrite=TRUE, recursive=TRUE)
+        file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), "riboseq/data", overwrite=TRUE, recursive=TRUE)
         file.copy(pathList()$paramdir, "riboseq/", recursive=TRUE)
         file.copy(c("riboseq/param/torque.tmpl", "riboseq/param/.BatchJobs.R"), "./riboseq")
         file.copy(c("riboseq/param/targetsPE.txt", "riboseq/param/targets.txt"), "./riboseq")
@@ -76,8 +80,9 @@ genWorkenvir <- function(workflow, mydirname=NULL) {
         file.copy(pathList()$chipseq, mydirname2temp, recursive=TRUE)
         file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
         unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-        file.copy(Sys.glob(paste0(pathList()$fastqdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
-        file.copy(Sys.glob(paste0(pathList()$annotationdir, "*")), "chipseq/data", overwrite=TRUE, recursive=TRUE)
+        file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), "chipseq/data", overwrite=TRUE, recursive=TRUE)
+        if(bam==TRUE) file.copy(normalizePath(list.files(pathList()$bamdir, "*", full.names=TRUE)), "chipseq/results", overwrite=TRUE, recursive=TRUE)
+        file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), "chipseq/data", overwrite=TRUE, recursive=TRUE)
         file.copy(pathList()$paramdir, "chipseq/", recursive=TRUE)
         file.copy(c("chipseq/param/torque.tmpl", "chipseq/param/.BatchJobs.R"), "./chipseq")
         file.copy(c("chipseq/param/targetsPE_chip.txt", "chipseq/param/targets_chip.txt"), "./chipseq")

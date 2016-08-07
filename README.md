@@ -8,8 +8,10 @@ The latter is an environment for building *end-to-end* analysis pipelines with
 automated report generation for next generation sequence (NGS) applications
 such as RNA-Seq, ChIP-Seq, VAR-Seq, Ribo-Seq and many others. 
 
-#### Slides
-+ [Overview Slide Show](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeR/master/inst/extdata/slides/systemPipeRslides.html)
+#### Slide Shows
+
++ [Overview Slide Show - 2016](https://docs.google.com/presentation/d/175aup31LvnbIJUAvEEoSkpGsKgtBJ2RpQYd0Gs23dLo/embed?start=false&loop=false&delayms=60000)
++ [Overview Slide Show - 2015](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeR/master/inst/extdata/slides/systemPipeRslides.html)
 
 #### Installation 
 _systemPipeRdata_ can be installed directly from GitHub using the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
@@ -24,7 +26,7 @@ source("http://bioconductor.org/biocLite.R")
 biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)
 ```
 
-Due to the large size of the sample data (~200 MB) provided by _systemPipeRdata_, its download/install may take some time.
+Due to the large size of the sample data (~320 MB) provided by _systemPipeRdata_, its download/install may take some time.
 
 To install the parent package _systemPipeR_ itself, please use the _biocLite_ method as instructed 
 [_here_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
@@ -36,3 +38,32 @@ Detailed user manuals are available here:
 
 Additional information can be found on the corresponding Bioconductor package overview 
 [_page_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
+
+* * *
+
+### Material for Bioc2016 Tutorial 
++ [Intro Slide Show](https://docs.google.com/presentation/d/175aup31LvnbIJUAvEEoSkpGsKgtBJ2RpQYd0Gs23dLo/embed?start=false&loop=false&delayms=60000)
++ Tutorial Material 
+    + Introduction to `systemPipeR` 
+        + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.html)
+        + [PDF](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.pdf)
+        + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd)
+    + Demo Workflow: RIBO-Seq 
+        + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.html)
+        + [PDF](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.pdf)
+        + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd)
+
+#### Installation 
+Please install _systemPipeRdata_ from this GitHub repository as shown below. This package provides the data and `Rmd` files for the tutorial. 
+Its parent package _systemPipeR_ is a dependency and it should install along with all its own dependencies automatically. If it doesn't then please also
+run the last `biocLite` install command given below.
+
+```s
+source("http://bioconductor.org/biocLite.R")
+biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)
+biocLite("systemPipeR")
+```
+
+
+
+

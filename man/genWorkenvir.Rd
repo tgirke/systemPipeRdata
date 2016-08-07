@@ -8,15 +8,19 @@ Generates workflow templates for \code{systemPipeR} package. The template enviro
 http://bioconductor.org/packages/systemPipeR.
 }
 \usage{
-genWorkenvir(workflow, mydirname=NULL)
+genWorkenvir(workflow, mydirname=NULL, bam=FALSE)
 }
 \arguments{
   \item{workflow}{
 Can be assigned workflow type as character string. Supported values are:
-\code{rnaseq}, \code{varseq} or \code{chipseq} 
+\code{rnaseq}, \code{riboseq}, \code{varseq} or \code{chipseq} 
 }
   \item{mydirname}{
 Specifies the name of the workflow directory. The default \code{NULL} uses the name of the chosen workflow. An error is issued if a directory of the same name and path exists already.
+}
+  \item{bam}{
+If \code{bam=TRUE} pregenerated short read alignment (BAM) files will be included in the \code{results} directory of the workflow environment. Note, these BAM files have been generated with the HISAT2 aligner using the FASTQ files provided in the \code{data} directory. 
+The default \code{bam=FALSE} omits this step meaning no BAM files will be copied into the \code{results} directory.
 }
 }
 \value{
