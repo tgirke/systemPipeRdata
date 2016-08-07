@@ -39,6 +39,8 @@ Detailed user manuals are available here:
 Additional information can be found on the corresponding Bioconductor package overview 
 [_page_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
 
+* * *
+
 ### Material for Bioc2016 Tutorial 
 + [Intro Slide Show](https://docs.google.com/presentation/d/175aup31LvnbIJUAvEEoSkpGsKgtBJ2RpQYd0Gs23dLo/embed?start=false&loop=false&delayms=60000)
 + Tutorial Material 
