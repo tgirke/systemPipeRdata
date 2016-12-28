@@ -1,4 +1,7 @@
 changelog
+    version 1.3.5
+        - added trim_galore.param
+
     version 1.3.4
         - Fixed path problem for Windows
 
