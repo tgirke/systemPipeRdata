@@ -1,8 +1,8 @@
-CHANGES IN VERSION 1.0.0
-------------------------
-
-The first version of systemPipeRdata may be included in Bioconductor 3.2. 
+CHANGES IN THIS VERSION
+-----------------------
 
 NEW FEATURES
 
-    o Data package to generate systemPipeR sample workflows with single command
+    o Fix of Windows path problem
+    o Included precomputed BAM files
+    o Support for both HTML and PDF reports using R Markdown
