@@ -22,7 +22,20 @@ suppressPackageStartupMessages({
 ## library(systemPipeRdata)
 ## genWorkenvir(workflow="rnaseq")
 ## setwd("rnaseq")
-## download.file("https://raw.githubusercontent.com/tgirke/GEN242/master/vignettes/11_RNAseqWorkflow/systemPipeRNAseq.Rmd", "systemPipeRNAseq.Rmd")
+
+## ----genRna_workflow_command_line, eval=FALSE, engine="sh"---------------
+## Rscript -e "systemPipeRdata::genWorkenvir(workflow='rnaseq')"
+
+## ----node_environment, eval=FALSE----------------------------------------
+## # push `F2` on your keyboard to open interactive R session
+## q("no") # closes R session on head node
+## srun --x11 --partition=intel --mem=2gb --cpus-per-task 1 --ntasks 1 --time 2:00:00 --pty bash -l
+## R
+
+## ----r_environment, eval=FALSE-------------------------------------------
+## system("hostname") # should return name of a compute node starting with i or c
+## getwd() # checks current working directory of R session
+## dir() # returns content of current working directory
 
 ## ----load_systempiper, eval=TRUE-----------------------------------------
 library(systemPipeR)
@@ -55,8 +68,18 @@ targets
 ## ----tophat_alignment2, eval=FALSE---------------------------------------
 ## moduleload(modules(args))
 ## system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
-## resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memory="10gb")
-## reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01",
+## resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="10G")
+## reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01",
+##                   resourceList=resources)
+## waitForJobs(reg)
+
+## ----hisat_alignment2, eval=FALSE----------------------------------------
+## args <- systemArgs(sysma="param/hisat2.param", mytargets="targets.txt")
+## sysargs(args)[1] # Command-line parameters for first FASTQ file
+## moduleload(modules(args))
+## system("hisat2-build ./data/tair10.fasta ./data/tair10.fasta")
+## resources <- list(walltime="20:00:00", ntasks=1, ncpus=cores(args), memory="10G")
+## reg <- clusterRun(args, conffile=".BatchJobs.R", template="slurm.tmpl", Njobs=18, runid="01",
 ##                   resourceList=resources)
 ## waitForJobs(reg)
 
@@ -149,7 +172,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## listDatasets(m)
 ## m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
 ## listAttributes(m) # Choose data types you want to download
-## go <- getBM(attributes=c("go_accession", "tair_locus", "go_namespace_1003"), mart=m)
+## go <- getBM(attributes=c("go_id", "tair_locus", "name_1006"), mart=m)
 ## go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
 ## go[go[,3]=="molecular_function", 3] <- "F"; go[go[,3]=="biological_process", 3] <- "P"; go[go[,3]=="cellular_component", 3] <- "C"
 ## go[1:4,]

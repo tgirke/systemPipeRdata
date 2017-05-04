@@ -1,1 +1,1 @@
-cluster.functions <- makeClusterFunctionsTorque("slurm.tmpl")
+cluster.functions <- makeClusterFunctionsSLURM("slurm.tmpl")  
