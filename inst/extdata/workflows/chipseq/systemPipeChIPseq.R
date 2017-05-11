@@ -18,9 +18,6 @@ suppressPackageStartupMessages({
     library(ape)
 })
 
-## ----load_systempiper, eval=TRUE-----------------------------------------
-library(systemPipeR)
-
 ## ----genChip_workflow, eval=FALSE----------------------------------------
 ## library(systemPipeRdata)
 ## genWorkenvir(workflow="chipseq")
@@ -29,18 +26,22 @@ library(systemPipeR)
 ## ----genRna_workflow_command_line, eval=FALSE, engine="sh"---------------
 ## Rscript -e "systemPipeRdata::genWorkenvir(workflow='chipseq')"
 
-## ----load_custom_fct, eval=FALSE-----------------------------------------
-## source("systemPipeChIPseq_Fct.R")
-
 ## ----node_environment, eval=FALSE----------------------------------------
 ## q("no") # closes R session on head node
 ## srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1 --time 2:00:00 --pty bash -l
+## module load R/3.3.0
 ## R
 
 ## ----r_environment, eval=FALSE-------------------------------------------
 ## system("hostname") # should return name of a compute node starting with i or c
 ## getwd() # checks current working directory of R session
 ## dir() # returns content of current working directory
+
+## ----load_systempiper, eval=TRUE-----------------------------------------
+library(systemPipeR)
+
+## ----load_custom_fct, eval=FALSE-----------------------------------------
+## source("systemPipeChIPseq_Fct.R")
 
 ## ----load_targets_file, eval=TRUE----------------------------------------
 targetspath <- system.file("extdata", "targets_chip.txt", package="systemPipeR")
@@ -58,9 +59,18 @@ targets[1:4,-c(5,6)]
 
 ## ----fastq_report, eval=FALSE--------------------------------------------
 ## args <- systemArgs(sysma="param/tophat.param", mytargets="targets_chip.txt")
-## fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
+## library(BiocParallel); library(BatchJobs)
+## f <- function(x) {
+##     library(systemPipeR)
+##     args <- systemArgs(sysma="param/tophat.param", mytargets="targets_chip.txt")
+##     seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
+## }
+## funs <- makeClusterFunctionsSLURM("slurm.tmpl")
+## param <- BatchJobsParam(length(args), resources=list(walltime="00:20:00", ntasks=1, ncpus=1, memory="2G"), cluster.functions=funs)
+## register(param)
+## fqlist <- bplapply(seq(along=args), f)
 ## pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
-## seeFastqPlot(fqlist)
+## seeFastqPlot(unlist(fqlist, recursive=FALSE))
 ## dev.off()
 
 ## ----bowtie2_align, eval=FALSE-------------------------------------------

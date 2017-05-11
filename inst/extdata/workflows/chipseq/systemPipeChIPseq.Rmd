@@ -61,20 +61,11 @@ analysis of their NGS study. This includes detailed descriptions of
 FASTQ files, experimental design, reference genome, gene annotations,
 etc.
 
-# Load workflow environment
 
-Now open the R markdown script `systemPipeChIPseq.Rmd`in your R IDE (_e.g._ vim-r or RStudio) and 
-run the workflow as outlined below. 
+# Workflow environment
 
+## Generate workflow environment
 
-## Load packages and sample data
-
-The `systemPipeR` package needs to be loaded to perform the analysis steps shown in
-this report [@H_Backman2016-bt].
-
-```{r load_systempiper, eval=TRUE}
-library(systemPipeR)
-```
 Load workflow environment with sample data into your current working
 directory. The sample data are described
 [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
@@ -102,14 +93,13 @@ and substitute all test data for their own data. To rerun an established
 workflow on new data, the initial `targets` file along with the corresponding
 FASTQ files are usually the only inputs the user needs to provide.
 
-If applicable users can load custom functions not provided by `systemPipeR`. Skip
-this step if this is not the case.
+## Run workflow
 
-```{r load_custom_fct, eval=FALSE}
-source("systemPipeChIPseq_Fct.R")
-```
+Now open the R markdown script `systemPipeChIPseq.Rmd`in your R IDE (_e.g._ vim-r or RStudio) and 
+run the workflow as outlined below. 
 
-## Run R session on computer node
+
+### Run R session on computer node
 
 After opening the `Rmd` file of this workflow in Vim and attaching a connected
 R session via the `F2` (or other) key, use the following command sequence to run your R
@@ -118,6 +108,7 @@ session on a computer node.
 ```{r node_environment, eval=FALSE}
 q("no") # closes R session on head node
 srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1 --time 2:00:00 --pty bash -l
+module load R/3.3.0
 R
 ```
 
@@ -129,6 +120,22 @@ getwd() # checks current working directory of R session
 dir() # returns content of current working directory
 ```
 
+The `systemPipeR` package needs to be loaded to perform the analysis steps shown in
+this report [@H_Backman2016-bt].
+
+```{r load_systempiper, eval=TRUE}
+library(systemPipeR)
+```
+
+If applicable users can load custom functions not provided by `systemPipeR`. Skip
+this step if this is not the case.
+
+```{r load_custom_fct, eval=FALSE}
+source("systemPipeChIPseq_Fct.R")
+```
+
+# Read preprocessing
+
 ## Experiment definition provided by `targets` file
 
 The `targets` file defines all FASTQ files and sample comparisons of the analysis workflow.
@@ -138,8 +145,6 @@ targetspath <- system.file("extdata", "targets_chip.txt", package="systemPipeR")
 targets <- read.delim(targetspath, comment.char = "#")
 targets[1:4,-c(5,6)]
 ```
-
-# Read preprocessing
 
 ## Read quality filtering and trimming
 
@@ -170,9 +175,18 @@ written to a PDF file named `fastqReport.pdf`.
 
 ```{r fastq_report, eval=FALSE}
 args <- systemArgs(sysma="param/tophat.param", mytargets="targets_chip.txt")
-fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
+library(BiocParallel); library(BatchJobs)
+f <- function(x) {
+    library(systemPipeR)
+    args <- systemArgs(sysma="param/tophat.param", mytargets="targets_chip.txt")
+    seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
+}
+funs <- makeClusterFunctionsSLURM("slurm.tmpl")
+param <- BatchJobsParam(length(args), resources=list(walltime="00:20:00", ntasks=1, ncpus=1, memory="2G"), cluster.functions=funs)
+register(param)
+fqlist <- bplapply(seq(along=args), f)
 pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
-seeFastqPlot(fqlist)
+seeFastqPlot(unlist(fqlist, recursive=FALSE))
 dev.off()
 ``` 
 

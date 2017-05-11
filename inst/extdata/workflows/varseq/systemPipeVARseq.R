@@ -18,16 +18,30 @@ suppressPackageStartupMessages({
     library(ape)
 })
 
-## ----load_systempiper, eval=TRUE-----------------------------------------
-library(systemPipeR)
-
 ## ----genVAR_workflow, eval=FALSE-----------------------------------------
 ## library(systemPipeRdata)
 ## genWorkenvir(workflow="varseq")
 ## setwd("varseq")
 
+## ----genVar_workflow_command_line, eval=FALSE, engine="sh"---------------
+## Rscript -e "systemPipeRdata::genWorkenvir(workflow='varseq')"
+
+## ----node_environment, eval=FALSE----------------------------------------
+## q("no") # closes R session on head node
+## srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1 --time 2:00:00 --pty bash -l
+## module load R/3.3.0
+## R
+
+## ----r_environment, eval=FALSE-------------------------------------------
+## system("hostname") # should return name of a compute node starting with i or c
+## getwd() # checks current working directory of R session
+## dir() # returns content of current working directory
+
+## ----load_systempiper, eval=TRUE-----------------------------------------
+library(systemPipeR)
+
 ## ----load_custom_fct, eval=FALSE-----------------------------------------
-## source("systemPipeChIPseq_Fct.R")
+## source("systemPipeVARseq_Fct.R")
 
 ## ----load_targets_file, eval=TRUE----------------------------------------
 targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
