@@ -426,7 +426,7 @@ export.gff3(unlist(grl_scaled_intergenic), "sorf.gff")
 translate(getSeq(FaFile("data/tair10.fasta"), unlist(grl_scaled_intergenic)))
 ```
 
-# Genomic read coverage along transripts or CDSs
+# Genomic read coverage along transcripts or CDSs
 The `featureCoverage` function computes the read coverage along
 single and multi component features based on genomic alignments. The coverage
 segments of component features are spliced to continuous ranges, such as exons
