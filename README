@@ -1,9 +1,13 @@
 changelog
     version 1.5.1
-        - commit test 
+        - Switched all vignettes to R markdown (*.Rmd)
         
-    version 1.3.6 - 1.5.0
-        - various updates including support for SLURM
+    version 1.3.7 - 1.5.0
+        - various updates
+    
+    version 1.3.6
+        - Support for SLURM 
+        - R markdown template for RNA-Seq
     
     version 1.3.5
         - added trim_galore.param

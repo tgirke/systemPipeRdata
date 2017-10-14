@@ -2,7 +2,10 @@ CHANGES IN THIS VERSION
 -----------------------
 
 NEW FEATURES
-
+    
+    o R mardown now default for all workflows
+    o Support for SLURM; is now default scheduler for workflows
+    o Various new *.param files
     o Fix of Windows path problem
     o Included precomputed BAM files
     o Support for both HTML and PDF reports using R Markdown

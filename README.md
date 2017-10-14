@@ -45,13 +45,13 @@ Additional information can be found on the corresponding Bioconductor package ov
 + [Intro Slide Show](https://docs.google.com/presentation/d/175aup31LvnbIJUAvEEoSkpGsKgtBJ2RpQYd0Gs23dLo/embed?start=false&loop=false&delayms=60000)
 + Tutorial Material 
     + Introduction to `systemPipeR` 
-        + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.html)
-        + [PDF](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.pdf)
-        + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeR_Intro.Rmd)
+        + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master_github_deprecated/vignettes/systemPipeR_Intro.html)
+        + [PDF](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master_github_deprecated/vignettes/systemPipeR_Intro.pdf)
+        + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master_github_deprecated/vignettes/systemPipeR_Intro.Rmd)
     + Demo Workflow: RIBO-Seq 
-        + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.html)
-        + [PDF](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.pdf)
-        + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd)
+        + [HTML](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master_github_deprecated/inst/extdata/workflows/riboseq/systemPipeRIBOseq.html)
+        + [PDF](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master_github_deprecated/inst/extdata/workflows/riboseq/systemPipeRIBOseq.pdf)
+        + [Rmd](https://raw.githubusercontent.com/tgirke/systemPipeRdata/master_github_deprecated/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd)
 
 #### Installation 
 Please install _systemPipeRdata_ from this GitHub repository as shown below. This package provides the data and `Rmd` files for the tutorial. 
