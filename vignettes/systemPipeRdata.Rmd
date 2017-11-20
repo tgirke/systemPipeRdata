@@ -7,10 +7,10 @@ output:
     toc_float: true
     code_folding: show
   BiocStyle::pdf_document: default
-package: systemPipeR
+package: systemPipeRdata
 vignette: |
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{_systemPipeR_: NGS workflow and report generation environment}
+  %\VignetteIndexEntry{_systemPipeRdata_: NGS workflow templates and sample data}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib
