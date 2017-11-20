@@ -12,11 +12,6 @@ suppressPackageStartupMessages({
     library(BiocGenerics)
 })
 
-## ----install, eval=FALSE-------------------------------------------------
-## source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script
-## biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # Installs from github
-## biocLite("systemPipeRdata") # Installs from Bioconductor once available there
-
 ## ----load_systemPipeRdata, eval=TRUE-------------------------------------
 library("systemPipeRdata") # Loads the package
 
@@ -27,9 +22,6 @@ library("systemPipeRdata") # Loads the package
 ## ----generate_workenvir, eval=FALSE--------------------------------------
 ## genWorkenvir(workflow="varseq", mydirname=NULL)
 ## setwd("varseq")
-
-## ----generate_workenvir_from_shell, eval=FALSE, engine="sh"--------------
-## $ Rscript -e "systemPipeRdata::genWorkenvir(workflow='varseq', mydirname=NULL)"
 
 ## ----workflow_template_structure, eval=FALSE-----------------------------
 ## workflow_name/            # *.Rnw/*.Rmd scripts and targets file

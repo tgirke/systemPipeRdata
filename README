@@ -1,4 +1,7 @@
 changelog
+    version 1.5.2
+        - Update vignettes (BiocStyle)
+
     version 1.5.1
         - Switched all vignettes to R markdown (*.Rmd)
         

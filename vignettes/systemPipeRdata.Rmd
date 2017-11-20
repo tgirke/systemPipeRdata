@@ -1,33 +1,27 @@
 ---
-title: "_systemPipeRdata_: NGS workflow templates and sample data" 
-author: "Author: Thomas Girke (thomas.girke@ucr.edu)"
+title: "_systemPipeRdata_: NGS workflow templates and sample data"
+author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
   BiocStyle::html_document:
-    toc: true
-    toc_depth: 3
-    fig_caption: yes
-
+    toc_float: true
+    code_folding: show
+  BiocStyle::pdf_document: default
+package: systemPipeR
+vignette: |
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{_systemPipeR_: NGS workflow and report generation environment}
+  %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib
 ---
-<!--
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{Overview Vignette}
-%\VignetteDepends{methods}
-%\VignetteKeywords{compute cluster, pipeline, reports}
-%\VignettePackage{systemPipeRdata}
--->
 
 <!---
 - Compile from command-line
-Rscript -e "rmarkdown::render('systemPipeRdata.Rmd')"; R CMD Stangle systemPipeRdata.Rmd
+Rscript -e "rmarkdown::render('systemPipeR data.Rmd', c('BiocStyle::html_document'), clean=F); Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::pdf_document'))"
 
 - Commit to github
 git commit -am "some edits"; git push -u origin master
-
-- To customize font size and other style features, add this line to output section in preamble:  
-    css: style.css
 -->
 
 ```{r style, echo = FALSE, results = 'asis'}
