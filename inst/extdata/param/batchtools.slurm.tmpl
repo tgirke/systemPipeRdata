@@ -1,4 +1,5 @@
-#!/bin/bash -l
+#!/bin/bash
+
 ## Job Resource Interface Definition
 ##
 ## ntasks [integer(1)]:       Number of required tasks,
@@ -13,37 +14,37 @@
 ##                            Must be at least 100 (when I tried lower values my
 ##                            jobs did not start at all).
 ##
-## Default resources can be set in your .BatchJobs.R by defining the variable
+## Default resources can be set in your .batchtools.conf.R by defining the variable
 ## 'default.resources' as a named list.
 
-## For MPI use something like
-## <%
-## cmd = "R CMD BATCH --no-save --no-restore"
-## if(ntasks > 1L) 
-##   cmd = paste("mpirun -np 1", cmd)
-## 
-## -%>
+<%
+# relative paths are not handled well by Slurm
+log.file = normalizePath(log.file, winslash = "/", mustWork = FALSE)
+-%>
+
 
 #SBATCH --job-name=<%= job.name %>
-## direct streams to our logfile
 #SBATCH --output=<%= log.file %>
 #SBATCH --error=<%= log.file %>
-#SBATCH --time=<%= resources$walltime %>
-#SBATCH --ntasks=<%= resources$ntasks %>
+#SBATCH --time=<%= ceiling(resources$walltime / 1) %>
+#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=<%= resources$ncpus %>
 #SBATCH --mem-per-cpu=<%= resources$memory %>
-## remove this line if your cluster does not support arrayjobs
-##SBATCH --array=1-<%= arrayjobs %> 
+<%= if (!is.null(resources$partition)) sprintf(paste0("#SBATCH --partition='", resources$partition, "'")) %>
+<%= if (array.jobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %>
 
 ## specify which queue on biocluster, one of 'batch', 'highmem', 'highmem', 'gpu', 'mygroup'
 #SBATCH -p short
-  
+##SBATCH -p batch,higmen 
+
 ## Initialize work environment like
 ## source /etc/profile
 ## module add ...
-module load R
+
+## Export value of DEBUGME environemnt var to slave
+export DEBUGME=<%= Sys.getenv("DEBUGME") %>
 
 ## Run R:
 ## we merge R output with stdout from SLURM, which gets then logged via --output option
-R CMD BATCH --no-save --no-restore "<%= rscript %>" /dev/stdout
+Rscript -e 'batchtools::doJobCollection("<%= uri %>")'
 

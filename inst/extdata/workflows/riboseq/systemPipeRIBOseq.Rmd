@@ -1,27 +1,25 @@
 ---
-title: Workflow Demo for Ribo-Seq and polyRibo-Seq 
-author: "First/last name (first.last@ucr.edu)"
+title: "RIBO-Seq Workflow" 
+author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
   BiocStyle::html_document:
-    toc: true
-    toc_depth: 3
-    fig_caption: yes
-
+    toc_float: true
+    code_folding: show
+  BiocStyle::pdf_document: default
+package: systemPipeR
+vignette: |
+  %\VignetteIndexEntry{RIBO-Seq Workflow}
+  %\VignetteEncoding{UTF-8}
+  
+  %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib
 ---
-<!--
-%% \VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{RIBO-Seq Workflow Template}
-%% \VignetteDepends{rjson, ggplot2, limma, edgeR, DESeq2, GOstats, GO.db, annotate, pheatmap}
-%% \VignetteKeywords{compute cluster, pipeline, reports}
-%% \VignettePackage{systemPipeR}
--->
 
-<!---
+<!--
 - Compile from command-line
-Rscript -e "rmarkdown::render('systemPipeRIBOseq.Rmd')"; R CMD Stangle systemPipeRIBOseq.Rmd
+Rscript -e "rmarkdown::render('systemPipeRIBOseq.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRIBOseq.Rmd', tangle=TRUE)"; Rscript ../md2jekyll.R systemPipeRIBOseq.knit.md 6; Rscript -e "rmarkdown::render('systemPipeRIBOseq.Rmd', c('BiocStyle::pdf_document'))"
 -->
 
 ```{r style, echo = FALSE, results = 'asis'}
@@ -29,12 +27,22 @@ BiocStyle::markdown()
 options(width=100, max.print=1000)
 knitr::opts_chunk$set(
     eval=as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
-    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")),
-    warning=FALSE, message=FALSE)
+    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")))
 ```
 
-Note: the most recent version of this tutorial can be found <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.html">here</a> and a short overview slide show [here](https://docs.google.com/presentation/d/175aup31LvnbIJUAvEEoSkpGsKgtBJ2RpQYd0Gs23dLo/embed?start=false&loop=false&delayms=60000).
-
+```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE}
+suppressPackageStartupMessages({
+    library(systemPipeR)
+    library(BiocParallel)
+    library(Biostrings)
+    library(Rsamtools)
+    library(GenomicRanges)
+    library(ggplot2)
+    library(GenomicAlignments)
+    library(ShortRead)
+    library(ape)
+})
+```
 
 # Introduction
 
@@ -129,7 +137,8 @@ In case there is a newer version of this tutorial, download its `systemPipeRIBOs
 
 
 ```{r download_latest, eval=FALSE}
-download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd", "systemPipeRIBOseq.Rmd")
+download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd", 
+              "systemPipeRIBOseq.Rmd")
 ```
 
 ## Load packages and sample data
@@ -187,9 +196,11 @@ on read preprocessing is provided in `systemPipeR's` main vignette.
 args <- systemArgs(sysma="param/trim.param", mytargets="targets.txt")
 fctpath <- system.file("extdata", "custom_Fct.R", package="systemPipeR")
 source(fctpath)
-iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, minpatternlength=6, 
-                             Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=101)" 
-preprocessReads(args=args, Fct=iterTrim, batchsize=100000, overwrite=TRUE, compress=TRUE)
+iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, 
+                minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16, 
+                maxreadlength=101)" 
+preprocessReads(args=args, Fct=iterTrim, batchsize=100000, overwrite=TRUE, 
+                compress=TRUE)
 writeTargetsout(x=args, file="targets_trim.txt", overwrite=TRUE)
 ```
 
@@ -204,13 +215,14 @@ quality cutoffs and mean quality distribution. The results are written to a PDF 
 ```{r fastq_report, eval=FALSE}
 args <- systemArgs(sysma=NULL, mytargets="targets_trim.txt")
 fqlist <- seeFastq(fastq=infile1(args), batchsize=100000, klength=8)
-png("./results/fastqReport.png", height=18, width=4*length(fqlist), units="in", res=72)
+png("./results/fastqReport.png", height=18, width=4*length(fqlist), 
+    units="in", res=72)
 seeFastqPlot(fqlist)
 dev.off()
 ```
 
-![](results/fastqReport.png)
-<div align="center">Figure 1: FASTQ quality report for 18 samples</div></br>
+![](fastqReport.png)
+<div align="center"><b>Figure 2:</b> FASTQ quality report. To zoom in, rigth click image and open it in a separate browser tab. </div></br>
 
 # Alignments
 
@@ -230,10 +242,10 @@ Submission of alignment jobs to compute cluster, here using 72 CPU cores (18 `qs
 ```{r tophat_alignment2, eval=FALSE, warning=FALSE, message=FALSE}
 moduleload(modules(args))
 system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
-resources <- list(walltime="20:00:00", nodes=paste0("1:ppn=", cores(args)), memory="10gb")
-reg <- clusterRun(args, conffile=".BatchJobs.R", template="torque.tmpl", Njobs=18, runid="01", 
-                  resourceList=resources)
-waitForJobs(reg)
+resources <- list(walltime=1200, ntasks=1, ncpus=cores(args), memory=10240)  
+reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
+                  template="batchtools.slurm.tmpl", resourceList=resources)
+waitForJobs(reg=reg)  
 ```
 
 ## Read mapping with `HISAT2`
@@ -258,11 +270,13 @@ The following provides an overview of the number of reads in each sample and how
 
 ```{r align_stats, eval=FALSE}
 read_statsDF <- alignStats(args=args) 
-write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, 
+            quote=FALSE, sep="\t")
 ```
 
 ```{r align_stats_view, eval=TRUE}
-read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), header=TRUE)[1:4,]
+read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), 
+           header=TRUE)[1:4,]
 ```
 
 ## Create symbolic links for viewing BAM files in IGV
@@ -292,9 +306,10 @@ number of custom annotations can be included in this routine.
 
 ```{r genFeatures, eval=FALSE}
 library(GenomicFeatures)
-txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3", organism="Arabidopsis")
-feat <- genFeatures(txdb, featuretype="all", reduce_ranges=TRUE, upstream=1000, downstream=0, 
-                    verbose=TRUE)
+txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3", 
+                        organism="Arabidopsis")
+feat <- genFeatures(txdb, featuretype="all", reduce_ranges=TRUE, upstream=1000, 
+                    downstream=0, verbose=TRUE)
 ```
 
 ## Count and plot reads of any length
@@ -314,13 +329,15 @@ The following generates and plots feature counts for any read length.
 
 ```{r featuretypeCounts, eval=FALSE}
 library(ggplot2); library(grid)
-fc <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), grl=feat, 
-                        singleEnd=TRUE, readlength=NULL, type="data.frame")
-p <- plotfeaturetypeCounts(x=fc, graphicsfile="results/featureCounts.png", graphicsformat="png", 
-                           scales="fixed", anyreadlength=TRUE, scale_length_val=NULL)
+fc <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), 
+                        grl=feat, singleEnd=TRUE, readlength=NULL, 
+                        type="data.frame")
+p <- plotfeaturetypeCounts(x=fc, graphicsfile="results/featureCounts.png", 
+                           graphicsformat="png", scales="fixed", 
+                           anyreadlength=TRUE, scale_length_val=NULL)
 ```
 
-![](results/featureCounts.png)
+![](featureCounts.png)
 <div align="center">Figure 2: Read distribution plot across annotation features for any read length.</div></br>
 
 ## Count and plot reads of specific lengths
@@ -331,13 +348,15 @@ most abundant read length obtained for translated features corresponds to the ap
 length occupied by the ribosomes.
 
 ```{r featuretypeCounts_length, eval=FALSE}
-fc2 <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), grl=feat, 
-                         singleEnd=TRUE, readlength=c(74:76,99:102), type="data.frame")
-p2 <- plotfeaturetypeCounts(x=fc2, graphicsfile="results/featureCounts2.png", graphicsformat="png", 
-                            scales="fixed", anyreadlength=FALSE, scale_length_val=NULL)
+fc2 <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), 
+                         grl=feat, singleEnd=TRUE, readlength=c(74:76,99:102), 
+                         type="data.frame")
+p2 <- plotfeaturetypeCounts(x=fc2, graphicsfile="results/featureCounts2.png",
+                            graphicsformat="png", scales="fixed", 
+                            anyreadlength=FALSE, scale_length_val=NULL)
 ```
 
-![](results/featureCounts2.png)
+![](featureCounts2.png)
 <div align="center">Figure 3: Read distribution plot across annotation features for specific read lengths.</div></br>
 
 
@@ -361,10 +380,12 @@ sequence with `n="all"` and `longest_disjoint=TRUE`.
 
 ```{r pred_orf, eval=FALSE}
 library(systemPipeRdata); library(GenomicFeatures); library(rtracklayer)
-txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3", organism="Arabidopsis")
+txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3", 
+                        organism="Arabidopsis")
 futr <- fiveUTRsByTranscript(txdb, use.names=TRUE)
 dna <- extractTranscriptSeqs(FaFile("data/tair10.fasta"), futr)
-uorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="sense")
+uorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, 
+                strand="sense")
 ```
 
 To use the predicted ORF ranges for expression analysis given genome alignments
@@ -421,7 +442,8 @@ names(dna) <- mcols(intergenic)$feature_by
 sorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="both")
 sorf <- sorf[width(sorf) > 60] # Remove sORFs below length cutoff, here 60bp
 intergenic <- split(intergenic, mcols(intergenic)$feature_by)
-grl_scaled_intergenic <- scaleRanges(subject=intergenic, query=sorf, type="sORF", verbose=TRUE)
+grl_scaled_intergenic <- scaleRanges(subject=intergenic, query=sorf, 
+                                     type="sORF", verbose=TRUE)
 export.gff3(unlist(grl_scaled_intergenic), "sorf.gff")
 translate(getSeq(FaFile("data/tair10.fasta"), unlist(grl_scaled_intergenic)))
 ```
@@ -442,45 +464,51 @@ the downstream `plotfeatureCoverage` function.
 
 ```{r coverage_binned1, eval=FALSE}
 grl <- cdsBy(txdb, "tx", use.names=TRUE)
-fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1:4], resizereads=NULL, 
-                         readlengthrange=NULL, Nbins=20, method=mean, fixedmatrix=FALSE, 
-                         resizefeatures=TRUE, upstream=20, downstream=20,
-                         outfile="results/featureCoverage.xls", overwrite=TRUE)
+fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1:4], 
+                        resizereads=NULL, readlengthrange=NULL, Nbins=20, 
+                        method=mean, fixedmatrix=FALSE, resizefeatures=TRUE, 
+                        upstream=20, downstream=20, overwrite=TRUE,
+                        outfile="results/featureCoverage.xls")
 ```
 
 ## Coverage upstream and downstream of start and stop codons
 
 ```{r coverage_binned2, eval=FALSE}
-fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:12], resizereads=NULL, 
-                         readlengthrange=NULL, Nbins=NULL, method=mean, fixedmatrix=TRUE, 
-                         resizefeatures=TRUE, upstream=20, downstream=20, 
+fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:12], 
+                        resizereads=NULL, readlengthrange=NULL, Nbins=NULL, 
+                        method=mean, fixedmatrix=TRUE, resizefeatures=TRUE, 
+                        upstream=20, downstream=20, 
                          outfile="results/featureCoverage.xls", overwrite=TRUE)
-plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2, scale_count_val=10^6)
+plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2, 
+                    scale_count_val=10^6)
 ```
 
 ## Combined coverage for both binned CDS and start/stop codons
 
 ```{r coverage_binned3, eval=FALSE}
 library(ggplot2); library(grid)
-fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:4], resizereads=NULL, 
-                         readlengthrange=NULL, Nbins=20, method=mean, fixedmatrix=TRUE, 
+fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:4], 
+                        resizereads=NULL, readlengthrange=NULL, Nbins=20,
+                        method=mean, fixedmatrix=TRUE, 
                          resizefeatures=TRUE, upstream=20, downstream=20,
                          outfile="results/featureCoverage.xls", overwrite=TRUE)
 png("./results/featurePlot.png", height=12, width=24, units="in", res=72)
-plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2, scale_count_val=10^6)
+plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2, 
+                    scale_count_val=10^6)
 dev.off()
 ```
 
-![](results/featurePlot.png)
+![](featurePlot.png)
 <div align="center">Figure 4: Feature coverage plot with single nucleotide resolution around start and stop codons and binned coverage between them.</div></br>
 
 
 ## Nucleotide level coverage along entire transcripts/CDSs
 
 ```{r coverage_nuc_level, eval=FALSE}
-fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1], resizereads=NULL, 
-                        readlengthrange=NULL, Nbins=NULL, method=mean, fixedmatrix=FALSE, 
-                        resizefeatures=TRUE, upstream=20, downstream=20, outfile=NULL)
+fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1], 
+                        resizereads=NULL, readlengthrange=NULL, Nbins=NULL, 
+                        method=mean, fixedmatrix=FALSE, resizefeatures=TRUE, 
+                        upstream=20, downstream=20, outfile=NULL)
 ```
 
 # Read quantification per annotation range
@@ -503,16 +531,22 @@ library("GenomicFeatures"); library(BiocParallel)
 txdb <- loadDb("./data/tair10.sqlite")
 eByg <- exonsBy(txdb, by=c("gene"))
 bfl <- BamFileList(outpaths(args), yieldSize=50000, index=character())
-multicoreParam <- MulticoreParam(workers=8); register(multicoreParam); registered()
+multicoreParam <- MulticoreParam(workers=8); register(multicoreParam)
+registered()
 counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", 
                                                ignore.strand=TRUE, 
                                                inter.feature=FALSE, 
                                                singleEnd=TRUE)) 
-countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
-rownames(countDFeByg) <- names(rowRanges(counteByg[[1]])); colnames(countDFeByg) <- names(bfl)
-rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
-write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
-write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
+countDFeByg <- sapply(seq(along=counteByg), 
+                      function(x) assays(counteByg[[x]])$counts)
+rownames(countDFeByg) <- names(rowRanges(counteByg[[1]]))
+colnames(countDFeByg) <- names(bfl)
+rpkmDFeByg <- apply(countDFeByg, 2, 
+                    function(x) returnRPKM(counts=x, ranges=eByg))
+write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, 
+            quote=FALSE, sep="\t")
+write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, 
+            quote=FALSE, sep="\t")
 ```
 
 Sample of data slice of count table
@@ -545,17 +579,19 @@ in the `results` directory.
 ```{r sample_tree, eval=FALSE}
 library(DESeq2, quietly=TRUE); library(ape,  warn.conflicts=FALSE)
 countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
-colData <- data.frame(row.names=targetsin(args)$SampleName, condition=targetsin(args)$Factor)
-dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+colData <- data.frame(row.names=targetsin(args)$SampleName, 
+                      condition=targetsin(args)$Factor)
+dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, 
+                              design = ~ condition)
 d <- cor(assay(rlog(dds)), method="spearman")
 hc <- hclust(dist(1-d))
 png("results/sample_tree.pdf")
-plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, 
-           no.margin=TRUE)
+plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, 
+           show.node.label=TRUE, no.margin=TRUE)
 dev.off()
 ```
 
-![](results/sample_tree.png)
+![](sample_tree.png)
 <div align="center">Figure 5: Correlation dendrogram of samples.</div></br>
 
 
@@ -568,22 +604,26 @@ comparisons used by this analysis are defined in the header lines of the
 
 ```{r deg_edger, eval=FALSE}
 library(edgeR)
-countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE) 
+countDF <- read.delim("results/countDFeByg.xls", row.names=1, 
+                      check.names=FALSE) 
 targets <- read.delim("targets.txt", comment="#")
 cmp <- readComp(file="targets.txt", format="matrix", delim="-")
-edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=FALSE, mdsplot="")
+edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], 
+                    independent=FALSE, mdsplot="")
 ```
 
 Add functional gene descriptions, here from `biomaRt`. 
 
 ```{r add_descr, eval=FALSE}
 library("biomaRt")
-m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
+m <- useMart("plants_mart", dataset="athaliana_eg_gene", 
+             host="plants.ensembl.org")
 desc <- getBM(attributes=c("tair_locus", "description"), mart=m)
 desc <- desc[!duplicated(desc[,1]),]
 descv <- as.character(desc[,2]); names(descv) <- as.character(desc[,1])
 edgeDF <- data.frame(edgeDF, Desc=descv[rownames(edgeDF)], check.names=FALSE)
-write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
+write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, 
+            sep="\t", col.names = NA)
 ```
 
 Filter and plot DEG results for up and down regulated genes. The definition of
@@ -591,14 +631,17 @@ Filter and plot DEG results for up and down regulated genes. The definition of
 open it, type `?filterDEGs` in the R console. 
 
 ```{r filter_degs, eval=FALSE}
-edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE) 
+edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, 
+                     check.names=FALSE) 
 png("./results/DEGcounts.png", height=10, width=10, units="in", res=72)
 DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=20))
 dev.off()
-write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
+write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, 
+            sep="\t", row.names=FALSE)
 ```
 
-![](results//DEGcounts.png)
+![](DEGcounts.png)
+
 <div align="center">Figure 6: Up and down regulated DEGs.</div></br>
 
 The function `overLapper` can compute Venn intersects for large
@@ -611,11 +654,13 @@ Venn diagram (here for 4 up and down DEG sets).
 vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
 vennsetdown <- overLapper(DEG_list$Down[6:9], type="vennsets")
 png("results/vennplot.png")
-vennPlot(list(vennsetup, vennsetdown), mymain="", mysub="", colmode=2, ccol=c("blue", "red"))
+vennPlot(list(vennsetup, vennsetdown), mymain="", mysub="", 
+         colmode=2, ccol=c("blue", "red"))
 dev.off()
 ```
 
-![](results/vennplot.png)
+![](vennplot.png)
+
 <div align="center">Figure 7: Venn Diagram for 4 Up and Down DEG Sets</div></br>
 
 # GO term enrichment analysis of DEGs}
@@ -636,15 +681,21 @@ listMarts() # To choose BioMart database
 listMarts(host="plants.ensembl.org")
 m <- useMart("plants_mart", host="plants.ensembl.org")
 listDatasets(m)
-m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
+m <- useMart("plants_mart", dataset="athaliana_eg_gene", 
+             host="plants.ensembl.org")
 listAttributes(m) # Choose data types you want to download
-go <- getBM(attributes=c("go_accession", "tair_locus", "go_namespace_1003"), mart=m)
+go <- getBM(attributes=c("go_accession", "tair_locus", "go_namespace_1003"), 
+            mart=m)
 go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
-go[go[,3]=="molecular_function", 3] <- "F"; go[go[,3]=="biological_process", 3] <- "P"; go[go[,3]=="cellular_component", 3] <- "C"
+go[go[,3]=="molecular_function", 3] <- "F"
+go[go[,3]=="biological_process", 3] <- "P"
+go[go[,3]=="cellular_component", 3] <- "C"
 go[1:4,]
 dir.create("./data/GO")
-write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
-catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
+write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, 
+            row.names=FALSE, col.names=FALSE, sep="\t")
+catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, 
+                   org="", colno=c(1,2,3), idconv=NULL)
 save(catdb, file="data/GO/catdb.RData")
 ```
 
@@ -665,16 +716,24 @@ library("biomaRt")
 library(BBmisc) # Defines suppressAll()
 load("data/GO/catdb.RData")
 DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=50), plot=FALSE)
-up_down <- DEG_list$UporDown; names(up_down) <- paste(names(up_down), "_up_down", sep="")
+up_down <- DEG_list$UporDown; names(up_down) <- paste(names(up_down),
+                                                      "_up_down", sep="")
 up <- DEG_list$Up; names(up) <- paste(names(up), "_up", sep="")
 down <- DEG_list$Down; names(down) <- paste(names(down), "_down", sep="")
 DEGlist <- c(up_down, up, down)
 DEGlist <- DEGlist[sapply(DEGlist, length) > 0]
-BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", id_type="gene", CLSZ=2, cutoff=0.9, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", 
+                                id_type="gene", CLSZ=2, cutoff=0.9, 
+                                gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 library("biomaRt")
-m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
-goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), mart=m)[,1])
-BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", id_type="gene", myslimv=goslimvec, CLSZ=10, cutoff=0.01, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+m <- useMart("plants_mart", dataset="athaliana_eg_gene", 
+             host="plants.ensembl.org")
+goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), 
+                                mart=m)[,1])
+BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, 
+                                    method="slim", id_type="gene", 
+                                    myslimv=goslimvec, CLSZ=10, cutoff=0.01, 
+                                    gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 ```
 
 The `data.frame` generated by `GOCluster` can be plotted with the `goBarplot` function. Because of the
@@ -693,7 +752,7 @@ goBarplot(gos, gocat="BP")
 goBarplot(gos, gocat="CC")
 ```
 
-![](results/GOslimbarplotMF.png)
+![](GOslimbarplotMF.png)
 <div align="center">Figure 8: GO Slim Barplot for MF Ontology.</div></br>
 
 # Differential ribosome loading analysis (translational efficiency)
@@ -710,7 +769,8 @@ and total mRNA (`mRNA`). In addition, there are two treatments
 library(DESeq2)
 targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
 parampath <- system.file("extdata", "tophat.param", package="systemPipeR")
-countDFeBygpath <- system.file("extdata", "countDFeByg.xls", package="systemPipeR")
+countDFeBygpath <- system.file("extdata", "countDFeByg.xls", 
+                               package="systemPipeR")
 args <- suppressWarnings(systemArgs(sysma=parampath, mytargets=targetspath))
 countDFeByg <- read.delim(countDFeBygpath, row.names=1)
 coldata <- DataFrame(assay=factor(rep(c("Ribo","mRNA"), each=4)), 
@@ -753,11 +813,12 @@ library(pheatmap)
 geneids <- unique(as.character(unlist(DEG_list[[1]])))
 y <- assay(rlog(dds))[geneids, ]
 png("heatmap1.png")
-pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
+pheatmap(y, scale="row", clustering_distance_rows="correlation",
+         clustering_distance_cols="correlation")
 dev.off()
 ```
 
-![](results/heatmap1.png)
+![](heatmap1.png)
 <div align="center">Figure 9: Heat map with hierarchical clustering dendrograms of DEGs</div></br>
 
 # Render report in HTML and PDF format
