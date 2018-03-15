@@ -1,7 +1,7 @@
 ## Parameter file for HISAT2		
 ## Values in <...> reference column titles in targets file		
 PairSet	Name	Value
-modules	NA	hisat2/2.0.1
+modules	NA	hisat2/2.1.0
 software	NA	hisat2
 cores	-p	4
 other	NA	-k 1 --min-intronlen 30 --max-intronlen 3000
