@@ -1,4 +1,8 @@
 changelog
+    
+    version 1.9.1
+        - Kallisto *.param added
+    
     version 1.5.1
         - Switched all vignettes to R markdown (*.Rmd)
         
