@@ -17,8 +17,9 @@ devtools::install_github("tgirke/systemPipeRdata")
 
 Alternatively, one can install it with the Bioconductor _biocLite_ command.
 ```s
-source("http://bioconductor.org/biocLite.R")
-biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)
 ```
 
 Due to the large size of the sample data (~320 MB) provided by _systemPipeRdata_, its download/install may take some time.

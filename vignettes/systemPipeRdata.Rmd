@@ -59,8 +59,8 @@ Note: the most recent version of this vignette can be found <a href="https://htm
 The R software for using _`systemPipeRdata`_ can be downloaded from [CRAN](http://cran.at.r-project.org). The _`systemPipeRdata`_ package can be installed from within R as follows: 
 zR`{r install, eval=FALSE}
 source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script 
-biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # Installs from github
-biocLite("systemPipeRdata") # Installs from Bioconductor once available there
+BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # Installs from github
+BiocManager::install("systemPipeRdata") # Installs from Bioconductor once available there
 ```
 <div align="right">[Back to Table of Contents]()</div>
 
