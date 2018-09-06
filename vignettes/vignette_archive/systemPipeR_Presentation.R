@@ -25,9 +25,10 @@ suppressPackageStartupMessages({
 ## download.file("https://github.com/tgirke/systemPipeRdata/raw/master/inst/extdata/workflows/varseq/systemPipeVARseq_single.pdf", "systemPipeVARseq_single.pdf", method="libcurl")
 
 ## ----install, eval=FALSE-------------------------------------------------
-## source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script
-## biocLite("systemPipeR") # Installs systemPipeR from Bioconductor
-## biocLite("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
+## if (!requireNamespace("BiocManager", quietly=TRUE))
+    ## install.packages("BiocManager")
+## BiocManager::install("systemPipeR") # Installs systemPipeR from Bioconductor
+## BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
 
 ## ----documentation, eval=FALSE-------------------------------------------
 ## library("systemPipeR") # Loads the package

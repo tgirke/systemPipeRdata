@@ -96,11 +96,12 @@ download.file("https://github.com/tgirke/systemPipeRdata/raw/master/inst/extdata
 
 ## Installation
 
-The R software for running [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) and [_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) can be downloaded from [_CRAN_](http://cran.at.r-project.org/). The _`systemPipeR`_ environment can be installed from R using the `biocLite` install command. 
+The R software for running [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) and [_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) can be downloaded from [_CRAN_](http://cran.at.r-project.org/). The _`systemPipeR`_ environment can be installed from R using the install command:
 
     
 ```{r install, eval=FALSE}
-source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script 
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
 BiocManager::install("systemPipeR") # Installs systemPipeR from Bioconductor 
 BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE) # From github
 ```
