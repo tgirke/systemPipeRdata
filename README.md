@@ -15,7 +15,7 @@ package from CRAN.
 devtools::install_github("tgirke/systemPipeRdata")
 ```
 
-Alternatively, one can install it with the Bioconductor _biocLite_ command.
+Alternatively, one can install it with the BiocManager _install_ command:
 ```s
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
@@ -24,7 +24,7 @@ BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencie
 
 Due to the large size of the sample data (~320 MB) provided by _systemPipeRdata_, its download/install may take some time.
 
-To install the parent package _systemPipeR_ itself, please use the _biocLite_ method as instructed 
+To install the parent package _systemPipeR_ itself, please use the _BiocManager::install_ method as instructed
 [_here_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
 
 #### Usage
