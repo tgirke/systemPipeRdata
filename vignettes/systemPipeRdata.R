@@ -12,6 +12,14 @@ suppressPackageStartupMessages({
     library(BiocGenerics)
 })
 
+## ----install, eval=FALSE-------------------------------------------------
+## if (!requireNamespace("BiocManager", quietly=TRUE))
+##     install.packages("BiocManager")
+## BiocManager::install("systemPipeRdata") # Installs from Bioconductor once
+##                                           # available there
+## BiocManager::install("tgirke/systemPipeR", build_vignettes=TRUE,
+##                      dependencies=TRUE)  # Installs from github
+
 ## ----load_systemPipeRdata, eval=TRUE-------------------------------------
 library("systemPipeRdata") # Loads the package
 
@@ -24,13 +32,14 @@ library("systemPipeRdata") # Loads the package
 ## setwd("varseq")
 
 ## ----workflow_template_structure, eval=FALSE-----------------------------
-## workflow_name/            # *.Rnw/*.Rmd scripts and targets file
-##                 param/    # parameter files for command-line software
-##                 data/     # inputs e.g. FASTQ, reference, annotations
-##                 results/  # analysis result files
+## workflow_name/ # *.Rnw/*.Rmd scripts and targets file
+## param/ # parameter files for command-line software
+## data/ # inputs e.g. FASTQ, reference, annotations
+## results/ # analysis result files
 
 ## ----load_systemPipeR, eval=TRUE-----------------------------------------
-library("systemPipeR") # Loads systemPipeR which needs to be installed via biocLite() from Bioconductor 
+library("systemPipeR") 
+# Loads systemPipeR which needs to be installed via BiocManager from Bioconductor
 
 ## ----documentation_systemPipeR, eval=FALSE-------------------------------
 ## vignette("systemPipeR", package = "systemPipeR")

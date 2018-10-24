@@ -28,8 +28,7 @@ suppressPackageStartupMessages({
 ## ----node_environment, eval=FALSE----------------------------------------
 ## # push `F2` on your keyboard to open interactive R session
 ## q("no") # closes R session on head node
-## srun --x11 --partition=intel --mem=2gb --cpus-per-task 1
-##         --ntasks 1 --time 2:00:00 --pty bash -l
+## srun --x11 --partition=intel --mem=2gb --cpus-per-task 1 --ntasks 1 --time 2:00:00 --pty bash -l
 ## R
 
 ## ----r_environment, eval=FALSE-------------------------------------------
@@ -51,7 +50,8 @@ targets
 ## ----fastq_filter, eval=FALSE--------------------------------------------
 ## args <- systemArgs(sysma="param/trim.param", mytargets="targets.txt")
 ## preprocessReads(args=args, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA',
-##                 subject=fq)", batchsize=100000, overwrite=TRUE, compress=TRUE)
+##                 subject=fq)", batchsize=100000, overwrite=TRUE,
+##                 compress=TRUE)
 ## writeTargetsout(x=args, file="targets_trim.txt", overwrite=TRUE)
 
 ## ----fastq_report, eval=FALSE--------------------------------------------
@@ -68,9 +68,10 @@ targets
 ## ----tophat_alignment2, eval=FALSE---------------------------------------
 ## moduleload(modules(args))
 ## system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
-## resources <- list(walltime=1200, ntasks=1, ncpus=cores(args), memory=10240)
-## reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
-##                   template="batchtools.slurm.tmpl", resourceList=resources)
+## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
+## reg <- clusterRun(args, conf.file=".batchtools.conf.R",
+##                   template="batchtools.slurm.tmpl", runid="01",
+##                   resourceList=resources)
 ## waitForJobs(reg=reg)
 
 ## ----hisat_alignment2, eval=FALSE----------------------------------------
@@ -78,9 +79,10 @@ targets
 ## sysargs(args)[1] # Command-line parameters for first FASTQ file
 ## moduleload(modules(args))
 ## system("hisat2-build ./data/tair10.fasta ./data/tair10.fasta")
-## resources <- list(walltime=1200, ntasks=1, ncpus=cores(args), memory=10240)
-## reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
-##                   template="batchtools.slurm.tmpl", resourceList=resources)
+## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
+## reg <- clusterRun(args, conf.file=".batchtools.conf.R",
+##                   template="batchtools.slurm.tmpl", runid="01",
+##                   resourceList=resources)
 ## waitForJobs(reg=reg)
 
 ## ----check_files_exist, eval=FALSE---------------------------------------
@@ -102,12 +104,11 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 
 ## ----read_counting1, eval=FALSE------------------------------------------
 ## library("GenomicFeatures"); library(BiocParallel)
-## txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff",
-##                         dataSource="TAIR", organism="Arabidopsis thaliana")
+## txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff", dataSource="TAIR",
+##                         organism="Arabidopsis thaliana")
 ## saveDb(txdb, file="./data/tair10.sqlite")
 ## txdb <- loadDb("./data/tair10.sqlite")
-## (align <- readGAlignments(outpaths(args)[1]))
-## # Demonstrates how to read bam file into R
+## (align <- readGAlignments(outpaths(args)[1])) # Demonstrates how to read bam file into R
 ## eByg <- exonsBy(txdb, by=c("gene"))
 ## bfl <- BamFileList(outpaths(args), yieldSize=50000, index=character())
 ## multicoreParam <- MulticoreParam(workers=2); register(multicoreParam)
@@ -116,12 +117,10 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ##                                                ignore.strand=TRUE,
 ##                                                inter.feature=FALSE,
 ##                                                singleEnd=TRUE))
-## countDFeByg <- sapply(seq(along=counteByg), f
-##                       unction(x) assays(counteByg[[x]])$counts)
+## countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
 ## rownames(countDFeByg) <- names(rowRanges(counteByg[[1]]))
 ## colnames(countDFeByg) <- names(bfl)
-## rpkmDFeByg <- apply(countDFeByg, 2,
-##                     function(x) returnRPKM(counts=x, ranges=eByg))
+## rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
 ## write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA,
 ##             quote=FALSE, sep="\t")
 ## write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA,
@@ -167,20 +166,19 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ##             sep="\t", col.names = NA)
 
 ## ----filter_degs, eval=FALSE---------------------------------------------
-## edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1,
-##                      check.names=FALSE)
+## edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
 ## pdf("results/DEGcounts.pdf")
 ## DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=20))
 ## dev.off()
-## write.table(DEG_list$Summary, "./results/DEGcounts.xls",
-##             quote=FALSE, sep="\t", row.names=FALSE)
+## write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE,
+##             sep="\t", row.names=FALSE)
 
 ## ----venn_diagram, eval=FALSE--------------------------------------------
 ## vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
 ## vennsetdown <- overLapper(DEG_list$Down[6:9], type="vennsets")
 ## pdf("results/vennplot.pdf")
-## vennPlot(list(vennsetup, vennsetdown), mymain="", mysub="",
-##          colmode=2, ccol=c("blue", "red"))
+## vennPlot(list(vennsetup, vennsetdown), mymain="", mysub="", colmode=2,
+##          ccol=c("blue", "red"))
 ## dev.off()
 
 ## ----get_go_annot, eval=FALSE--------------------------------------------
@@ -199,8 +197,8 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## go[go[,3]=="cellular_component", 3] <- "C"
 ## go[1:4,]
 ## dir.create("./data/GO")
-## write.table(go, "data/GO/GOannotationsBiomart_mod.txt",
-##             quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
+## write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE,
+##             row.names=FALSE, col.names=FALSE, sep="\t")
 ## catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt",
 ##                    lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
 ## save(catdb, file="data/GO/catdb.RData")
@@ -209,8 +207,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## library("biomaRt")
 ## load("data/GO/catdb.RData")
 ## DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=50), plot=FALSE)
-## up_down <- DEG_list$UporDown
-## names(up_down) <- paste(names(up_down), "_up_down", sep="")
+## up_down <- DEG_list$UporDown; names(up_down) <- paste(names(up_down), "_up_down", sep="")
 ## up <- DEG_list$Up; names(up) <- paste(names(up), "_up", sep="")
 ## down <- DEG_list$Down; names(down) <- paste(names(down), "_down", sep="")
 ## DEGlist <- c(up_down, up, down)
@@ -219,14 +216,12 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ##                                 id_type="gene", CLSZ=2, cutoff=0.9,
 ##                                 gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 ## library("biomaRt")
-## m <- useMart("plants_mart", dataset="athaliana_eg_gene",
-##              host="plants.ensembl.org")
-## goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"),
-##                                 mart=m)[,1])
-## BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim",
-##                                     id_type="gene", myslimv=goslimvec, CLSZ=10,
-##                                     cutoff=0.01, gocats=c("MF", "BP", "CC"),
-##                                     recordSpecGO=NULL)
+## m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
+## goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), mart=m)[,1])
+## BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist,
+##                                     method="slim", id_type="gene",
+##                                     myslimv=goslimvec, CLSZ=10, cutoff=0.01,
+##                                     gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 
 ## ----go_plot, eval=FALSE-------------------------------------------------
 ## gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
@@ -241,8 +236,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## geneids <- unique(as.character(unlist(DEG_list[[1]])))
 ## y <- assay(rlog(dds))[geneids, ]
 ## pdf("heatmap1.pdf")
-## pheatmap(y, scale="row", clustering_distance_rows="correlation",
-##          clustering_distance_cols="correlation")
+## pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
 ## dev.off()
 
 ## ----sessionInfo---------------------------------------------------------

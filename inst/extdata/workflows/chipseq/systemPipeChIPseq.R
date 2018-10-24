@@ -83,7 +83,7 @@ targets[1:4,-c(5,6)]
 ## moduleload(modules(args)) # Skip if a module system is not used
 ## system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
 ##         # Indexes reference genome
-## resources <- list(walltime=5400, ntasks=1, ncpus=cores(args), memory=10240)
+## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
 ## reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
 ##                   template="batchtools.slurm.tmpl", resourceList=resources)
 ## getStatus(reg=reg)

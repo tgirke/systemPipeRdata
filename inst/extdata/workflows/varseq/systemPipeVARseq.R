@@ -27,8 +27,7 @@ suppressPackageStartupMessages({
 
 ## ----node_environment, eval=FALSE----------------------------------------
 ## q("no") # closes R session on head node
-## srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1
-##         --time 2:00:00 --pty bash -l
+## srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1 --time 2:00:00 --pty bash -l
 ## module load R/3.4.2
 ## R
 
@@ -46,11 +45,11 @@ library(systemPipeR)
 ## ----load_targets_file, eval=TRUE----------------------------------------
 targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
 targets <- read.delim(targetspath, comment.char = "#")
-targets[,1:4]
+targets[1:4, 1:4]
 
 ## ----preprocess_reads, eval=FALSE----------------------------------------
 ## args <- systemArgs(sysma="param/trimPE.param", mytargets="targetsPE.txt")[1:4]
-##             # Note: subsetting!
+##           # Note: subsetting!
 ## filterFct <- function(fq, cutoff=20, Nexceptions=0) {
 ##     qcount <- rowSums(as(quality(fq), "matrix") <= cutoff)
 ##     fq[qcount <= Nexceptions]
@@ -80,9 +79,10 @@ targets[,1:4]
 ## ----bwa_parallel, eval=FALSE--------------------------------------------
 ## moduleload(modules(args))
 ## system("bwa index -a bwtsw ./data/tair10.fasta")
-## resources <- list(walltime=1200, ntasks=1, ncpus=cores(args), memory=10240)
-## reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
-##                   template="batchtools.slurm.tmpl", resourceList=resources)
+## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
+## reg <- clusterRun(args, conf.file=".batchtools.conf.R",
+##                   template="batchtools.slurm.tmpl", runid="01",
+##                   resourceList=resources)
 ## waitForJobs(reg=reg)
 ## writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
 
@@ -105,9 +105,9 @@ targets[,1:4]
 ##                params=p, output=outfile1(args)[x])
 ## }
 ## funs <- makeClusterFunctionsSLURM("slurm.tmpl")
-## param <- BatchJobsParam(length(args), resources=list(walltime="00:20:00",
-##                         ntasks=1, ncpus=1, memory="6G"),
-##                         cluster.functions=funs)
+## param <- BatchJobsParam(length(args),
+##                         resources=list(walltime="00:20:00", ntasks=1, ncpus=1,
+##                                        memory="6G"), cluster.functions=funs)
 ## register(param)
 ## d <- bplapply(seq(along=args), f)
 ## writeTargetsout(x=args, file="targets_gsnap_bam.txt", overwrite=TRUE)
@@ -124,22 +124,23 @@ targets[,1:4]
 
 ## ----run_gatk, eval=FALSE------------------------------------------------
 ## moduleload("picard/1.130"); moduleload("samtools/1.3")
-## system("picard CreateSequenceDictionary
-##        R=./data/tair10.fasta O=./data/tair10.dict")
+## system("picard CreateSequenceDictionary R=./data/tair10.fasta O=./data/tair10.dict")
 ## system("samtools faidx data/tair10.fasta")
 ## args <- systemArgs(sysma="param/gatk.param", mytargets="targets_bam.txt")
-## resources <- list(walltime=1200, ntasks=1, ncpus=cores(args), memory=10240)
-## reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
-##                   template="batchtools.slurm.tmpl", resourceList=resources)
+## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
+## reg <- clusterRun(args, conf.file=".batchtools.conf.R",
+##                   template="batchtools.slurm.tmpl", runid="01",
+##                   resourceList=resources)
 ## waitForJobs(reg=reg)
 ## # unlink(outfile1(args), recursive = TRUE, force = TRUE)
 ## writeTargetsout(x=args, file="targets_gatk.txt", overwrite=TRUE)
 
 ## ----run_bcftools, eval=FALSE--------------------------------------------
 ## args <- systemArgs(sysma="param/sambcf.param", mytargets="targets_bam.txt")
-## resources <- list(walltime=1200, ntasks=1, ncpus=cores(args), memory=10240)
-## reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
-##                   template="batchtools.slurm.tmpl", resourceList=resources)
+## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
+## reg <- clusterRun(args, conf.file=".batchtools.conf.R",
+##                   template="batchtools.slurm.tmpl", runid="01",
+##                   resourceList=resources)
 ## waitForJobs(reg=reg)
 ## # unlink(outfile1(args), recursive = TRUE, force = TRUE)
 ## writeTargetsout(x=args, file="targets_sambcf.txt", overwrite=TRUE)
@@ -162,9 +163,9 @@ targets[,1:4]
 ##     writeVcf(asVCF(var), outfile1(args)[x], index = TRUE)
 ## }
 ## funs <- makeClusterFunctionsSLURM("slurm.tmpl")
-## param <- BatchJobsParam(length(args), resources=list(walltime="00:20:00",
-##                         ntasks=1, ncpus=1, memory="6G"),
-##                         cluster.functions=funs)
+## param <- BatchJobsParam(length(args),
+##                         resources=list(walltime="00:20:00", ntasks=1, ncpus=1,
+##                                        memory="6G"), cluster.functions=funs)
 ## register(param)
 ## d <- bplapply(seq(along=args), f)
 ## writeTargetsout(x=args, file="targets_vartools.txt", overwrite=TRUE)
@@ -182,12 +183,9 @@ targets[,1:4]
 ## library(BBmisc) # Defines suppressAll()
 ## args <- systemArgs(sysma="param/filter_gatk.param",
 ##                    mytargets="targets_gatk.txt")[1:4]
-## filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8)
-##             & rowSums(softFilterMatrix(vr))>=1"
-## # filter <- "totalDepth(vr) >= 20 & (altDepth(vr) / totalDepth(vr) >= 0.8)
-##             # & rowSums(softFilterMatrix(vr))==6"
-## suppressAll(filterVars(args, filter, varcaller="gatk",
-##                        organism="A. thaliana"))
+## filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8) & rowSums(softFilterMatrix(vr))>=1"
+## # filter <- "totalDepth(vr) >= 20 & (altDepth(vr) / totalDepth(vr) >= 0.8) & rowSums(softFilterMatrix(vr))==6"
+## suppressAll(filterVars(args, filter, varcaller="gatk", organism="A. thaliana"))
 ## writeTargetsout(x=args, file="targets_gatk_filtered.txt", overwrite=TRUE)
 
 ## ----filter_bcftools, eval=FALSE-----------------------------------------
@@ -204,10 +202,8 @@ targets[,1:4]
 ## library(BBmisc) # Defines suppressAll()
 ## args <- systemArgs(sysma="param/filter_vartools.param",
 ##                    mytargets="targets_vartools.txt")[1:4]
-## filter <- "(values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 2 &
-## (values(vr)$n.read.pos / (values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 0.8)"
-## # filter <- "(values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 20 &
-## #(values(vr)$n.read.pos / (values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 0.8)"
+## filter <- "(values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 2 & (values(vr)$n.read.pos / (values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 0.8)"
+## # filter <- "(values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 20 & (values(vr)$n.read.pos / (values(vr)$n.read.pos.ref + values(vr)$n.read.pos) >= 0.8)"
 ## filterVars(args, filter, varcaller="vartools", organism="A. thaliana")
 ## writeTargetsout(x=args, file="targets_vartools_filtered.txt", overwrite=TRUE)
 
@@ -253,8 +249,8 @@ targets[,1:4]
 ## read.delim(outpaths(args)[1])[38:40,]
 
 ## ----combine_gatk, eval=FALSE--------------------------------------------
-## args <- systemArgs(sysma="param/annotate_vars.param",
-##                    mytargets="targets_gatk_filtered.txt")
+## args <- systemArgs(sysma="param/annotate_vars.param", m
+##                    ytargets="targets_gatk_filtered.txt")
 ## combineDF <- combineVarReports(args, filtercol=c(Consequence="nonsynonymous"))
 ## write.table(combineDF, "./results/combineDF_nonsyn_gatk.xls",
 ##             quote=FALSE, row.names=FALSE, sep="\t")
@@ -312,8 +308,8 @@ targets[,1:4]
 ##                   function(x) as.character(read.delim(outpaths(args)[x])$VARID))
 ## vennset_vartools <- overLapper(varlist, type="vennsets")
 ## pdf("./results/vennplot_var.pdf")
-## vennPlot(list(vennset_gatk, vennset_bcf, vennset_vartools), mymain="",
-##          mysub="GATK: red; BCFtools: blue; VariantTools: green",
+## vennPlot(list(vennset_gatk, vennset_bcf, vennset_vartools),
+##          mymain="", mysub="GATK: red; BCFtools: blue; VariantTools: green",
 ##          colmode=2, ccol=c("red", "blue", "green"))
 ## dev.off()
 
@@ -327,14 +323,13 @@ targets[,1:4]
 ## p1 <- autoplot(ga, geom = "rect")
 ## p2 <- autoplot(ga, geom = "line", stat = "coverage")
 ## p3 <- autoplot(vcf[seqnames(vcf)==mychr], type = "fixed") +
-##     xlim(mystart, myend) + theme(legend.position = "none",
-##                                  axis.text.y = element_blank(),
-##                                  axis.ticks.y=element_blank())
+##                 xlim(mystart, myend) + theme(legend.position = "none",
+##                     axis.text.y = element_blank(), axis.ticks.y=element_blank())
 ## p4 <- autoplot(txdb, which=GRanges(mychr, IRanges(mystart, myend)),
 ##                names.expr = "gene_id")
 ## png("./results/plot_variant.png")
-## tracks(Reads=p1, Coverage=p2, Variant=p3, Transcripts=p4, h
-##        eights = c(0.3, 0.2, 0.1, 0.35)) + ylab("")
+## tracks(Reads=p1, Coverage=p2, Variant=p3, Transcripts=p4,
+##        heights = c(0.3, 0.2, 0.1, 0.35)) + ylab("")
 ## dev.off()
 
 ## ----sessionInfo---------------------------------------------------------

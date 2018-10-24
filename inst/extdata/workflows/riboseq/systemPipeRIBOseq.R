@@ -24,8 +24,7 @@ suppressPackageStartupMessages({
 ## setwd("riboseq")
 
 ## ----download_latest, eval=FALSE-----------------------------------------
-## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd",
-##               "systemPipeRIBOseq.Rmd")
+## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd", "systemPipeRIBOseq.Rmd")
 
 ## ----load_systempiper, eval=TRUE-----------------------------------------
 library(systemPipeR)
@@ -43,8 +42,8 @@ targets
 ## fctpath <- system.file("extdata", "custom_Fct.R", package="systemPipeR")
 ## source(fctpath)
 ## iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE,
-##                 minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16,
-##                 maxreadlength=101)"
+##               minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16,
+##               maxreadlength=101)"
 ## preprocessReads(args=args, Fct=iterTrim, batchsize=100000, overwrite=TRUE,
 ##                 compress=TRUE)
 ## writeTargetsout(x=args, file="targets_trim.txt", overwrite=TRUE)
@@ -64,9 +63,10 @@ targets
 ## ----tophat_alignment2, eval=FALSE, warning=FALSE, message=FALSE---------
 ## moduleload(modules(args))
 ## system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
-## resources <- list(walltime=1200, ntasks=1, ncpus=cores(args), memory=10240)
-## reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
-##                   template="batchtools.slurm.tmpl", resourceList=resources)
+## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
+## reg <- clusterRun(args, conf.file=".batchtools.conf.R", t
+##                   emplate="batchtools.slurm.tmpl", runid="01",
+##                   resourceList=resources)
 ## waitForJobs(reg=reg)
 
 ## ----hisat2_alignment, eval=FALSE----------------------------------------
@@ -86,13 +86,13 @@ targets
 ##             quote=FALSE, sep="\t")
 
 ## ----align_stats_view, eval=TRUE-----------------------------------------
-read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), 
+read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
            header=TRUE)[1:4,]
 
 ## ----bam_urls, eval=FALSE------------------------------------------------
 ## symLink2bam(sysargs=args, htmldir=c("~/.html/", "projects/tests/"),
 ##             urlbase="http://biocluster.ucr.edu/~tgirke/",
-## 	        urlfile="./results/IGVurl.txt")
+##             urlfile="./results/IGVurl.txt")
 
 ## ----genFeatures, eval=FALSE---------------------------------------------
 ## library(GenomicFeatures)
@@ -112,11 +112,12 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 
 ## ----featuretypeCounts_length, eval=FALSE--------------------------------
 ## fc2 <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000),
-##                          grl=feat, singleEnd=TRUE, readlength=c(74:76,99:102),
+##                          grl=feat,
+##                          singleEnd=TRUE, readlength=c(74:76,99:102),
 ##                          type="data.frame")
 ## p2 <- plotfeaturetypeCounts(x=fc2, graphicsfile="results/featureCounts2.png",
-##                             graphicsformat="png", scales="fixed",
-##                             anyreadlength=FALSE, scale_length_val=NULL)
+##                             graphicsformat="png", scales="fixed", a
+##                             nyreadlength=FALSE, scale_length_val=NULL)
 
 ## ----pred_orf, eval=FALSE------------------------------------------------
 ## library(systemPipeRdata); library(GenomicFeatures); library(rtracklayer)
@@ -124,8 +125,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ##                         organism="Arabidopsis")
 ## futr <- fiveUTRsByTranscript(txdb, use.names=TRUE)
 ## dna <- extractTranscriptSeqs(FaFile("data/tair10.fasta"), futr)
-## uorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE,
-##                 strand="sense")
+## uorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="sense")
 
 ## ----scale_ranges, eval=FALSE--------------------------------------------
 ## grl_scaled <- scaleRanges(subject=futr, query=uorf, type="uORF", verbose=TRUE)
@@ -147,8 +147,8 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## sorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="both")
 ## sorf <- sorf[width(sorf) > 60] # Remove sORFs below length cutoff, here 60bp
 ## intergenic <- split(intergenic, mcols(intergenic)$feature_by)
-## grl_scaled_intergenic <- scaleRanges(subject=intergenic, query=sorf,
-##                                      type="sORF", verbose=TRUE)
+## grl_scaled_intergenic <- scaleRanges(subject=intergenic, query=sorf, type="sORF",
+##                                      verbose=TRUE)
 ## export.gff3(unlist(grl_scaled_intergenic), "sorf.gff")
 ## translate(getSeq(FaFile("data/tair10.fasta"), unlist(grl_scaled_intergenic)))
 
@@ -157,15 +157,15 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1:4],
 ##                         resizereads=NULL, readlengthrange=NULL, Nbins=20,
 ##                         method=mean, fixedmatrix=FALSE, resizefeatures=TRUE,
-##                         upstream=20, downstream=20, overwrite=TRUE,
-##                         outfile="results/featureCoverage.xls")
+##                         upstream=20, downstream=20,
+##                         outfile="results/featureCoverage.xls", overwrite=TRUE)
 
 ## ----coverage_binned2, eval=FALSE----------------------------------------
 ## fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:12],
 ##                         resizereads=NULL, readlengthrange=NULL, Nbins=NULL,
-##                         method=mean, fixedmatrix=TRUE, resizefeatures=TRUE,
-##                         upstream=20, downstream=20,
-##                          outfile="results/featureCoverage.xls", overwrite=TRUE)
+##                         method=mean, fixedmatrix=TRUE,
+##                         resizefeatures=TRUE, upstream=20, downstream=20,
+##                         outfile="results/featureCoverage.xls", overwrite=TRUE)
 ## plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2,
 ##                     scale_count_val=10^6)
 
@@ -173,9 +173,9 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## library(ggplot2); library(grid)
 ## fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:4],
 ##                         resizereads=NULL, readlengthrange=NULL, Nbins=20,
-##                         method=mean, fixedmatrix=TRUE,
-##                          resizefeatures=TRUE, upstream=20, downstream=20,
-##                          outfile="results/featureCoverage.xls", overwrite=TRUE)
+##                         method=mean, fixedmatrix=TRUE, resizefeatures=TRUE,
+##                         upstream=20, downstream=20,
+##                         outfile="results/featureCoverage.xls", overwrite=TRUE)
 ## png("./results/featurePlot.png", height=12, width=24, units="in", res=72)
 ## plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2,
 ##                     scale_count_val=10^6)
@@ -202,8 +202,8 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ##                       function(x) assays(counteByg[[x]])$counts)
 ## rownames(countDFeByg) <- names(rowRanges(counteByg[[1]]))
 ## colnames(countDFeByg) <- names(bfl)
-## rpkmDFeByg <- apply(countDFeByg, 2,
-##                     function(x) returnRPKM(counts=x, ranges=eByg))
+## rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x,
+##                                                            ranges=eByg))
 ## write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA,
 ##             quote=FALSE, sep="\t")
 ## write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA,
@@ -231,8 +231,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 
 ## ----deg_edger, eval=FALSE-----------------------------------------------
 ## library(edgeR)
-## countDF <- read.delim("results/countDFeByg.xls", row.names=1,
-##                       check.names=FALSE)
+## countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)
 ## targets <- read.delim("targets.txt", comment="#")
 ## cmp <- readComp(file="targets.txt", format="matrix", delim="-")
 ## edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]],
@@ -246,8 +245,8 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## desc <- desc[!duplicated(desc[,1]),]
 ## descv <- as.character(desc[,2]); names(descv) <- as.character(desc[,1])
 ## edgeDF <- data.frame(edgeDF, Desc=descv[rownames(edgeDF)], check.names=FALSE)
-## write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE,
-##             sep="\t", col.names = NA)
+## write.table(edgeDF, "./results/edgeRglm_allcomp.xls",
+##             quote=FALSE, sep="\t", col.names = NA)
 
 ## ----filter_degs, eval=FALSE---------------------------------------------
 ## edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1,
@@ -255,8 +254,8 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## png("./results/DEGcounts.png", height=10, width=10, units="in", res=72)
 ## DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=20))
 ## dev.off()
-## write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE,
-##             sep="\t", row.names=FALSE)
+## write.table(DEG_list$Summary, "./results/DEGcounts.xls",
+##             quote=FALSE, sep="\t", row.names=FALSE)
 
 ## ----venn_diagram, eval=FALSE--------------------------------------------
 ## vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
@@ -285,8 +284,8 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## dir.create("./data/GO")
 ## write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE,
 ##             row.names=FALSE, col.names=FALSE, sep="\t")
-## catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL,
-##                    org="", colno=c(1,2,3), idconv=NULL)
+## catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt",
+##                    lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
 ## save(catdb, file="data/GO/catdb.RData")
 
 ## ----go_enrich, eval=FALSE, warning=FALSE, message=FALSE-----------------
@@ -294,24 +293,25 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
 ## library(BBmisc) # Defines suppressAll()
 ## load("data/GO/catdb.RData")
 ## DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=50), plot=FALSE)
-## up_down <- DEG_list$UporDown; names(up_down) <- paste(names(up_down),
-##                                                       "_up_down", sep="")
+## up_down <- DEG_list$UporDown
+## names(up_down) <- paste(names(up_down), "_up_down", sep="")
 ## up <- DEG_list$Up; names(up) <- paste(names(up), "_up", sep="")
-## down <- DEG_list$Down; names(down) <- paste(names(down), "_down", sep="")
+## down <- DEG_list$Down
+## names(down) <- paste(names(down), "_down", sep="")
 ## DEGlist <- c(up_down, up, down)
 ## DEGlist <- DEGlist[sapply(DEGlist, length) > 0]
-## BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all",
-##                                 id_type="gene", CLSZ=2, cutoff=0.9,
+## BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist,
+##                                 method="all", id_type="gene", CLSZ=2, cutoff=0.9,
 ##                                 gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 ## library("biomaRt")
 ## m <- useMart("plants_mart", dataset="athaliana_eg_gene",
 ##              host="plants.ensembl.org")
 ## goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"),
 ##                                 mart=m)[,1])
-## BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist,
-##                                     method="slim", id_type="gene",
-##                                     myslimv=goslimvec, CLSZ=10, cutoff=0.01,
-##                                     gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+## BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim",
+##                                     id_type="gene", myslimv=goslimvec, CLSZ=10,
+##                                     cutoff=0.01, gocats=c("MF", "BP", "CC"),
+##                                     recordSpecGO=NULL)
 
 ## ----go_plot, eval=FALSE-------------------------------------------------
 ## gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
@@ -331,8 +331,8 @@ countDFeBygpath <- system.file("extdata", "countDFeByg.xls",
 args <- suppressWarnings(systemArgs(sysma=parampath, mytargets=targetspath))
 countDFeByg <- read.delim(countDFeBygpath, row.names=1)
 coldata <- DataFrame(assay=factor(rep(c("Ribo","mRNA"), each=4)), 
-                condition=factor(rep(as.character(targetsin(args)$Factor[1:4]), 2)), 
-                row.names=as.character(targetsin(args)$SampleName)[1:8])
+                     condition=factor(rep(as.character(targetsin(args)$Factor[1:4]), 2)), 
+                     row.names=as.character(targetsin(args)$SampleName)[1:8])
 coldata
 
 ## ----diff_translational_eff, eval=TRUE-----------------------------------

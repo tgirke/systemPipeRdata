@@ -11,7 +11,6 @@ package: systemPipeR
 vignette: |
   %\VignetteIndexEntry{RIBO-Seq Workflow}
   %\VignetteEncoding{UTF-8}
-  
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib
@@ -135,10 +134,8 @@ setwd("riboseq")
 
 In case there is a newer version of this tutorial, download its `systemPipeRIBOseq.Rmd` source and open it in your R IDE (e.g. vim-r or RStudio).
 
-
 ```{r download_latest, eval=FALSE}
-download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd", 
-              "systemPipeRIBOseq.Rmd")
+download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/inst/extdata/workflows/riboseq/systemPipeRIBOseq.Rmd", "systemPipeRIBOseq.Rmd")
 ```
 
 ## Load packages and sample data
@@ -197,8 +194,8 @@ args <- systemArgs(sysma="param/trim.param", mytargets="targets.txt")
 fctpath <- system.file("extdata", "custom_Fct.R", package="systemPipeR")
 source(fctpath)
 iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, 
-                minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16, 
-                maxreadlength=101)" 
+              minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16, 
+              maxreadlength=101)" 
 preprocessReads(args=args, Fct=iterTrim, batchsize=100000, overwrite=TRUE, 
                 compress=TRUE)
 writeTargetsout(x=args, file="targets_trim.txt", overwrite=TRUE)
@@ -242,9 +239,10 @@ Submission of alignment jobs to compute cluster, here using 72 CPU cores (18 `qs
 ```{r tophat_alignment2, eval=FALSE, warning=FALSE, message=FALSE}
 moduleload(modules(args))
 system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
-resources <- list(walltime=1200, ntasks=1, ncpus=cores(args), memory=10240)  
-reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
-                  template="batchtools.slurm.tmpl", resourceList=resources)
+resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024) 
+reg <- clusterRun(args, conf.file=".batchtools.conf.R", t
+                  emplate="batchtools.slurm.tmpl", runid="01",
+                  resourceList=resources)
 waitForJobs(reg=reg)  
 ```
 
@@ -275,7 +273,7 @@ write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE,
 ```
 
 ```{r align_stats_view, eval=TRUE}
-read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), 
+read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"),
            header=TRUE)[1:4,]
 ```
 
@@ -286,9 +284,9 @@ genome browser such as IGV. The corresponding URLs are written to a file
 with a path specified under `urlfile` in the `results` directory.
 
 ```{r bam_urls, eval=FALSE}
-symLink2bam(sysargs=args, htmldir=c("~/.html/", "projects/tests/"), 
-            urlbase="http://biocluster.ucr.edu/~tgirke/", 
-	        urlfile="./results/IGVurl.txt")
+symLink2bam(sysargs=args, htmldir=c("~/.html/", "projects/tests/"),
+            urlbase="http://biocluster.ucr.edu/~tgirke/",
+            urlfile="./results/IGVurl.txt")
 ```
 
 # Read distribution across genomic features
@@ -306,7 +304,7 @@ number of custom annotations can be included in this routine.
 
 ```{r genFeatures, eval=FALSE}
 library(GenomicFeatures)
-txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3", 
+txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3",
                         organism="Arabidopsis")
 feat <- genFeatures(txdb, featuretype="all", reduce_ranges=TRUE, upstream=1000, 
                     downstream=0, verbose=TRUE)
@@ -348,12 +346,13 @@ most abundant read length obtained for translated features corresponds to the ap
 length occupied by the ribosomes.
 
 ```{r featuretypeCounts_length, eval=FALSE}
-fc2 <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000), 
-                         grl=feat, singleEnd=TRUE, readlength=c(74:76,99:102), 
+fc2 <- featuretypeCounts(bfl=BamFileList(outpaths(args), yieldSize=50000),
+                         grl=feat, 
+                         singleEnd=TRUE, readlength=c(74:76,99:102), 
                          type="data.frame")
 p2 <- plotfeaturetypeCounts(x=fc2, graphicsfile="results/featureCounts2.png",
-                            graphicsformat="png", scales="fixed", 
-                            anyreadlength=FALSE, scale_length_val=NULL)
+                            graphicsformat="png", scales="fixed", a
+                            nyreadlength=FALSE, scale_length_val=NULL)
 ```
 
 ![](featureCounts2.png)
@@ -380,12 +379,11 @@ sequence with `n="all"` and `longest_disjoint=TRUE`.
 
 ```{r pred_orf, eval=FALSE}
 library(systemPipeRdata); library(GenomicFeatures); library(rtracklayer)
-txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3", 
+txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff3",
                         organism="Arabidopsis")
 futr <- fiveUTRsByTranscript(txdb, use.names=TRUE)
 dna <- extractTranscriptSeqs(FaFile("data/tair10.fasta"), futr)
-uorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, 
-                strand="sense")
+uorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="sense")
 ```
 
 To use the predicted ORF ranges for expression analysis given genome alignments
@@ -442,8 +440,8 @@ names(dna) <- mcols(intergenic)$feature_by
 sorf <- predORF(dna, n="all", mode="orf", longest_disjoint=TRUE, strand="both")
 sorf <- sorf[width(sorf) > 60] # Remove sORFs below length cutoff, here 60bp
 intergenic <- split(intergenic, mcols(intergenic)$feature_by)
-grl_scaled_intergenic <- scaleRanges(subject=intergenic, query=sorf, 
-                                     type="sORF", verbose=TRUE)
+grl_scaled_intergenic <- scaleRanges(subject=intergenic, query=sorf, type="sORF", 
+                                     verbose=TRUE)
 export.gff3(unlist(grl_scaled_intergenic), "sorf.gff")
 translate(getSeq(FaFile("data/tair10.fasta"), unlist(grl_scaled_intergenic)))
 ```
@@ -464,22 +462,22 @@ the downstream `plotfeatureCoverage` function.
 
 ```{r coverage_binned1, eval=FALSE}
 grl <- cdsBy(txdb, "tx", use.names=TRUE)
-fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1:4], 
-                        resizereads=NULL, readlengthrange=NULL, Nbins=20, 
+fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1:4],
+                        resizereads=NULL, readlengthrange=NULL, Nbins=20,
                         method=mean, fixedmatrix=FALSE, resizefeatures=TRUE, 
-                        upstream=20, downstream=20, overwrite=TRUE,
-                        outfile="results/featureCoverage.xls")
+                        upstream=20, downstream=20, 
+                        outfile="results/featureCoverage.xls", overwrite=TRUE)
 ```
 
 ## Coverage upstream and downstream of start and stop codons
 
 ```{r coverage_binned2, eval=FALSE}
-fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:12], 
+fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:12],
                         resizereads=NULL, readlengthrange=NULL, Nbins=NULL, 
-                        method=mean, fixedmatrix=TRUE, resizefeatures=TRUE, 
-                        upstream=20, downstream=20, 
-                         outfile="results/featureCoverage.xls", overwrite=TRUE)
-plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2, 
+                        method=mean, fixedmatrix=TRUE,
+                        resizefeatures=TRUE, upstream=20, downstream=20,
+                        outfile="results/featureCoverage.xls", overwrite=TRUE)
+plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2,
                     scale_count_val=10^6)
 ```
 
@@ -487,11 +485,11 @@ plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2,
 
 ```{r coverage_binned3, eval=FALSE}
 library(ggplot2); library(grid)
-fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:4], 
-                        resizereads=NULL, readlengthrange=NULL, Nbins=20,
-                        method=mean, fixedmatrix=TRUE, 
-                         resizefeatures=TRUE, upstream=20, downstream=20,
-                         outfile="results/featureCoverage.xls", overwrite=TRUE)
+fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:4]), grl=grl[1:4],
+                        resizereads=NULL, readlengthrange=NULL, Nbins=20, 
+                        method=mean, fixedmatrix=TRUE, resizefeatures=TRUE, 
+                        upstream=20, downstream=20,
+                        outfile="results/featureCoverage.xls", overwrite=TRUE)
 png("./results/featurePlot.png", height=12, width=24, units="in", res=72)
 plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2, 
                     scale_count_val=10^6)
@@ -505,7 +503,7 @@ dev.off()
 ## Nucleotide level coverage along entire transcripts/CDSs
 
 ```{r coverage_nuc_level, eval=FALSE}
-fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1], 
+fcov <- featureCoverage(bfl=BamFileList(outpaths(args)[1:2]), grl=grl[1],
                         resizereads=NULL, readlengthrange=NULL, Nbins=NULL, 
                         method=mean, fixedmatrix=FALSE, resizefeatures=TRUE, 
                         upstream=20, downstream=20, outfile=NULL)
@@ -541,8 +539,8 @@ countDFeByg <- sapply(seq(along=counteByg),
                       function(x) assays(counteByg[[x]])$counts)
 rownames(countDFeByg) <- names(rowRanges(counteByg[[1]]))
 colnames(countDFeByg) <- names(bfl)
-rpkmDFeByg <- apply(countDFeByg, 2, 
-                    function(x) returnRPKM(counts=x, ranges=eByg))
+rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, 
+                                                           ranges=eByg))
 write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, 
             quote=FALSE, sep="\t")
 write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, 
@@ -604,8 +602,7 @@ comparisons used by this analysis are defined in the header lines of the
 
 ```{r deg_edger, eval=FALSE}
 library(edgeR)
-countDF <- read.delim("results/countDFeByg.xls", row.names=1, 
-                      check.names=FALSE) 
+countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE) 
 targets <- read.delim("targets.txt", comment="#")
 cmp <- readComp(file="targets.txt", format="matrix", delim="-")
 edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], 
@@ -622,8 +619,8 @@ desc <- getBM(attributes=c("tair_locus", "description"), mart=m)
 desc <- desc[!duplicated(desc[,1]),]
 descv <- as.character(desc[,2]); names(descv) <- as.character(desc[,1])
 edgeDF <- data.frame(edgeDF, Desc=descv[rownames(edgeDF)], check.names=FALSE)
-write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, 
-            sep="\t", col.names = NA)
+write.table(edgeDF, "./results/edgeRglm_allcomp.xls", 
+            quote=FALSE, sep="\t", col.names = NA)
 ```
 
 Filter and plot DEG results for up and down regulated genes. The definition of
@@ -636,8 +633,8 @@ edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1,
 png("./results/DEGcounts.png", height=10, width=10, units="in", res=72)
 DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=20))
 dev.off()
-write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, 
-            sep="\t", row.names=FALSE)
+write.table(DEG_list$Summary, "./results/DEGcounts.xls", 
+            quote=FALSE, sep="\t", row.names=FALSE)
 ```
 
 ![](DEGcounts.png)
@@ -684,7 +681,7 @@ listDatasets(m)
 m <- useMart("plants_mart", dataset="athaliana_eg_gene", 
              host="plants.ensembl.org")
 listAttributes(m) # Choose data types you want to download
-go <- getBM(attributes=c("go_accession", "tair_locus", "go_namespace_1003"), 
+go <- getBM(attributes=c("go_accession", "tair_locus", "go_namespace_1003"),
             mart=m)
 go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
 go[go[,3]=="molecular_function", 3] <- "F"
@@ -694,8 +691,8 @@ go[1:4,]
 dir.create("./data/GO")
 write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, 
             row.names=FALSE, col.names=FALSE, sep="\t")
-catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, 
-                   org="", colno=c(1,2,3), idconv=NULL)
+catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", 
+                   lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
 save(catdb, file="data/GO/catdb.RData")
 ```
 
@@ -716,24 +713,25 @@ library("biomaRt")
 library(BBmisc) # Defines suppressAll()
 load("data/GO/catdb.RData")
 DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=50), plot=FALSE)
-up_down <- DEG_list$UporDown; names(up_down) <- paste(names(up_down),
-                                                      "_up_down", sep="")
+up_down <- DEG_list$UporDown
+names(up_down) <- paste(names(up_down), "_up_down", sep="")
 up <- DEG_list$Up; names(up) <- paste(names(up), "_up", sep="")
-down <- DEG_list$Down; names(down) <- paste(names(down), "_down", sep="")
+down <- DEG_list$Down
+names(down) <- paste(names(down), "_down", sep="")
 DEGlist <- c(up_down, up, down)
 DEGlist <- DEGlist[sapply(DEGlist, length) > 0]
-BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", 
-                                id_type="gene", CLSZ=2, cutoff=0.9, 
+BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, 
+                                method="all", id_type="gene", CLSZ=2, cutoff=0.9, 
                                 gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
 library("biomaRt")
 m <- useMart("plants_mart", dataset="athaliana_eg_gene", 
              host="plants.ensembl.org")
 goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), 
                                 mart=m)[,1])
-BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, 
-                                    method="slim", id_type="gene", 
-                                    myslimv=goslimvec, CLSZ=10, cutoff=0.01, 
-                                    gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", 
+                                    id_type="gene", myslimv=goslimvec, CLSZ=10, 
+                                    cutoff=0.01, gocats=c("MF", "BP", "CC"), 
+                                    recordSpecGO=NULL)
 ```
 
 The `data.frame` generated by `GOCluster` can be plotted with the `goBarplot` function. Because of the
@@ -774,8 +772,8 @@ countDFeBygpath <- system.file("extdata", "countDFeByg.xls",
 args <- suppressWarnings(systemArgs(sysma=parampath, mytargets=targetspath))
 countDFeByg <- read.delim(countDFeBygpath, row.names=1)
 coldata <- DataFrame(assay=factor(rep(c("Ribo","mRNA"), each=4)), 
-                condition=factor(rep(as.character(targetsin(args)$Factor[1:4]), 2)), 
-                row.names=as.character(targetsin(args)$SampleName)[1:8])
+                     condition=factor(rep(as.character(targetsin(args)$Factor[1:4]), 2)), 
+                     row.names=as.character(targetsin(args)$SampleName)[1:8])
 coldata
 ```
 
@@ -813,7 +811,7 @@ library(pheatmap)
 geneids <- unique(as.character(unlist(DEG_list[[1]])))
 y <- assay(rlog(dds))[geneids, ]
 png("heatmap1.png")
-pheatmap(y, scale="row", clustering_distance_rows="correlation",
+pheatmap(y, scale="row", clustering_distance_rows="correlation", 
          clustering_distance_cols="correlation")
 dev.off()
 ```
@@ -827,7 +825,6 @@ dev.off()
 rmarkdown::render("systemPipeRIBOseq.Rmd", "html_document")
 rmarkdown::render("systemPipeRIBOseq.Rmd", "pdf_document")
 ```
-
 
 # Version Information
 
