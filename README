@@ -1,7 +1,14 @@
 changelog
-    version 1.5.2
-        - Update vignettes (BiocStyle)
-
+    
+    version 1.9.2
+        - batchtools templates added (SGE, Slurm and Torque)
+	- Update Makefile
+	- Update all the workflows vignettes
+	- Updated genWorkenvir function 
+    
+    version 1.9.1
+        - Kallisto *.param added
+    
     version 1.5.1
         - Switched all vignettes to R markdown (*.Rmd)
         

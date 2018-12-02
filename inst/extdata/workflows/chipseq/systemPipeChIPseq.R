@@ -1,9 +1,12 @@
+## pre code {
+
 ## ----style, echo = FALSE, results = 'asis'-------------------------------
 BiocStyle::markdown()
-options(width=100, max.print=1000)
+options(width=60, max.print=1000)
 knitr::opts_chunk$set(
     eval=as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
-    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")))
+    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")), 
+    tidy.opts=list(width.cutoff=60), tidy=TRUE)
 
 ## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE-------------------
 suppressPackageStartupMessages({
@@ -16,6 +19,7 @@ suppressPackageStartupMessages({
     library(GenomicAlignments)
     library(ShortRead)
     library(ape)
+    library(batchtools)
 })
 
 ## ----genChip_workflow, eval=FALSE----------------------------------------
@@ -27,9 +31,8 @@ suppressPackageStartupMessages({
 
 ## ----node_environment, eval=FALSE----------------------------------------
 ## q("no") # closes R session on head node
-## srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1
-##         --time 2:00:00 --pty bash -l
-## module load R/3.4.2
+## srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1 --time 2:00:00 --pty bash -l
+## module load R/3.5.1
 ## R
 
 ## ----r_environment, eval=FALSE-------------------------------------------
@@ -51,7 +54,7 @@ targets[1:4,-c(5,6)]
 ## ----proprocess_reads, eval=FALSE, messages=FALSE, warning=FALSE, cache=TRUE----
 ## args <- systemArgs(sysma="param/trim.param", mytargets="targets_chip.txt")
 ## filterFct <- function(fq, cutoff=20, Nexceptions=0) {
-##     qcount <- rowSums(as(quality(fq), "matrix") <= cutoff)
+##     qcount <- rowSums(as(quality(fq), "matrix") <= cutoff, na.rm=TRUE)
 ##     fq[qcount <= Nexceptions]
 ##     # Retains reads where Phred scores are >= cutoff with N exceptions
 ## }
@@ -61,17 +64,16 @@ targets[1:4,-c(5,6)]
 
 ## ----fastq_report, eval=FALSE--------------------------------------------
 ## args <- systemArgs(sysma="param/tophat.param", mytargets="targets_chip.txt")
-## library(BiocParallel); library(BatchJobs)
+## library(BiocParallel); library(batchtools)
 ## f <- function(x) {
 ##     library(systemPipeR)
 ##     args <- systemArgs(sysma="param/tophat.param", mytargets="targets_chip.txt")
 ##     seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
 ## }
-## funs <- makeClusterFunctionsSLURM("slurm.tmpl")
-## param <- BatchJobsParam(length(args), resources=list(walltime="00:20:00",
-##                         ntasks=1, ncpus=1, memory="2G"), cluster.functions=funs)
-## register(param)
-## fqlist <- bplapply(seq(along=args), f)
+## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
+## param <- BatchtoolsParam(workers = 4, cluster = "slurm", template = "batchtools.slurm.tmpl", resources = resources)
+## fqlist <- bplapply(seq(along=args), f, BPPARAM = param)
+## 
 ## pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
 ## seeFastqPlot(unlist(fqlist, recursive=FALSE))
 ## dev.off()
@@ -84,8 +86,7 @@ targets[1:4,-c(5,6)]
 ## system("bowtie2-build ./data/tair10.fasta ./data/tair10.fasta")
 ##         # Indexes reference genome
 ## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
-## reg <- clusterRun(args, conf.file=".batchtools.conf.R", runid="01",
-##                   template="batchtools.slurm.tmpl", resourceList=resources)
+## reg <- clusterRun(args, conffile = ".batchtools.conf.R", Njobs=18, template = "batchtools.slurm.tmpl", runid="01", resourceList=resources)
 ## getStatus(reg=reg)
 ## waitForJobs(reg=reg)
 ## writeTargetsout(x=args, file="targets_bam.txt", overwrite=TRUE)
