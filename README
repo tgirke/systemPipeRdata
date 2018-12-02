@@ -1,6 +1,6 @@
 changelog
     
-    version 1.9.2
+    version 1.10.1
         - batchtools templates added (SGE, Slurm and Torque)
 	- Update Makefile
 	- Update all the workflows vignettes
