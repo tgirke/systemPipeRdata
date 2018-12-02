@@ -1,9 +1,12 @@
+## pre code {
+
 ## ----style, echo = FALSE, results = 'asis'-------------------------------
 BiocStyle::markdown()
-options(width=100, max.print=1000)
+options(width=60, max.print=1000)
 knitr::opts_chunk$set(
     eval=as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
-    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")))
+    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")), 
+    tidy.opts=list(width.cutoff=60), tidy=TRUE)
 
 ## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE-------------------
 suppressPackageStartupMessages({
@@ -31,11 +34,7 @@ library("systemPipeRdata") # Loads the package
 ## genWorkenvir(workflow="varseq", mydirname=NULL)
 ## setwd("varseq")
 
-## ----workflow_template_structure, eval=FALSE-----------------------------
-## workflow_name/ # *.Rnw/*.Rmd scripts and targets file
-## param/ # parameter files for command-line software
-## data/ # inputs e.g. FASTQ, reference, annotations
-## results/ # analysis result files
+## Rscript -e "systemPipeRdata::genWorkenvir(workflow='varseq', mydirname=NULL)"
 
 ## ----load_systemPipeR, eval=TRUE-----------------------------------------
 library("systemPipeR") 
