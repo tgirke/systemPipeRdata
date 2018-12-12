@@ -247,7 +247,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## listDatasets(m)
 ## m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
 ## listAttributes(m) # Choose data types you want to download
-## go <- getBM(attributes=c("go_accession", "tair_locus", "go_namespace_1003"), mart=m)
+## go <- getBM(attributes=c("go_id", "tair_locus", "namespace_1003"), mart=m)
 ## go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
 ## go[go[,3]=="molecular_function", 3] <- "F"; go[go[,3]=="biological_process", 3] <- "P"; go[go[,3]=="cellular_component", 3] <- "C"
 ## go[1:4,]

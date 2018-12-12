@@ -236,7 +236,7 @@ targets[1:4,-c(5,6)]
 ## annofiles <- outpaths(args_anno)
 ## gene_ids <- sapply(names(annofiles),
 ##                    function(x) unique(as.character
-##                     (read.delim(annofiles[x])[,"geneId"])), simplify=FALSE)
+##                     (read.delim(annofiles[x])[,"gene_id"])), simplify=FALSE)
 ## load("data/GO/catdb.RData")
 ## BatchResult <- GOCluster_Report(catdb=catdb, setlist=gene_ids, method="all",
 ##                                 id_type="gene", CLSZ=2, cutoff=0.9,
@@ -252,7 +252,7 @@ targets[1:4,-c(5,6)]
 ##     peaks <- as(df, "GRanges")
 ##     names(peaks) <- paste0(as.character(seqnames(peaks)), "_", start(peaks),
 ##                            "-", end(peaks))
-##     peaks <- peaks[order(values(peaks)$X.log10.pvalue, decreasing=TRUE)]
+##     peaks <- peaks[order(values(peaks)$X.log10.pvalue., decreasing=TRUE)]
 ##     pseq <- getSeq(FaFile("./data/tair10.fasta"), peaks)
 ##     names(pseq) <- names(peaks)
 ##     writeXStringSet(pseq, paste0(rangefiles[i], ".fasta"))
