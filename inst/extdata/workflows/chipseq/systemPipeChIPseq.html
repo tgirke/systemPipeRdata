@@ -449,6 +449,10 @@ autoplot(ga, aes(color = strand, fill = strand), facets = strand ~
 args_merge &lt;- mergeBamByFactor(args, overwrite = TRUE)
 writeTargetsout(x = args_merge, file = &quot;targets_mergeBamByFactor.txt&quot;, 
     overwrite = TRUE)</code></pre>
+<pre class="r"><code># Skip if a module system is not used
+module(&quot;list&quot;)
+module(&quot;unload&quot;, &quot;miniconda2&quot;)
+module(&quot;load&quot;, &quot;python/2.7.14&quot;)  # Make sure to set up your enviroment variable for MACS2 </code></pre>
 </div>
 <div id="peak-calling-without-inputreference-sample" class="section level2">
 <h2><span class="header-section-number">6.2</span> Peak calling without input/reference sample</h2>
@@ -462,10 +466,6 @@ writeTargetsout(x = args, file = &quot;targets_macs.txt&quot;, overwrite = TRUE)
 <div id="peak-calling-with-inputreference-sample" class="section level2">
 <h2><span class="header-section-number">6.3</span> Peak calling with input/reference sample</h2>
 <p>To perform peak calling with input samples, they can be most conveniently specified in the <code>SampleReference</code> column of the initial <code>targets</code> file. The <code>writeTargetsRef</code> function uses this information to create a <code>targets</code> file intermediate for running MACS2 with the corresponding input samples.</p>
-<pre class="r"><code># Skip if a module system is not used
-module(&quot;list&quot;)
-module(&quot;unload&quot;, &quot;miniconda2&quot;)
-module(&quot;load&quot;, &quot;python/2.7.14&quot;)  # Make sure to set up your enviroment variable for MACS2 </code></pre>
 <pre class="r"><code>writeTargetsRef(infile = &quot;targets_mergeBamByFactor.txt&quot;, outfile = &quot;targets_bam_ref.txt&quot;, 
     silent = FALSE, overwrite = TRUE)
 args_input &lt;- systemArgs(sysma = &quot;param/macs2.param&quot;, mytargets = &quot;targets_bam_ref.txt&quot;)

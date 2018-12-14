@@ -320,6 +320,13 @@ args_merge <- mergeBamByFactor(args, overwrite=TRUE)
 writeTargetsout(x=args_merge, file="targets_mergeBamByFactor.txt", overwrite=TRUE)
 ```
 
+```{r call_peaks_macs_envVar_settings, eval=FALSE}
+# Skip if a module system is not used
+module("list")
+module("unload", "miniconda2")
+module("load", "python/2.7.14") # Make sure to set up your enviroment variable for MACS2 
+```
+
 ## Peak calling without input/reference sample
 
 MACS2 can perform peak calling on ChIP-Seq data with and without input
@@ -344,13 +351,6 @@ To perform peak calling with input samples, they can be most
 conveniently specified in the `SampleReference` column of the initial
 `targets` file. The `writeTargetsRef` function uses this information to create a `targets` 
 file intermediate for running MACS2 with the corresponding input samples.
-
-```{r call_peaks_macs_envVar_settings, eval=FALSE}
-# Skip if a module system is not used
-module("list")
-module("unload", "miniconda2")
-module("load", "python/2.7.14") # Make sure to set up your enviroment variable for MACS2 
-```
 
 ```{r call_peaks_macs_withref, eval=FALSE}
 writeTargetsRef(infile="targets_mergeBamByFactor.txt", 

@@ -137,6 +137,12 @@ targets[1:4,-c(5,6)]
 ## args_merge <- mergeBamByFactor(args, overwrite=TRUE)
 ## writeTargetsout(x=args_merge, file="targets_mergeBamByFactor.txt", overwrite=TRUE)
 
+## ----call_peaks_macs_envVar_settings, eval=FALSE-------------------------
+## # Skip if a module system is not used
+## module("list")
+## module("unload", "miniconda2")
+## module("load", "python/2.7.14") # Make sure to set up your enviroment variable for MACS2
+
 ## ----call_peaks_macs_noref, eval=FALSE-----------------------------------
 ## args <- systemArgs(sysma="param/macs2_noinput.param",
 ##                    mytargets="targets_mergeBamByFactor.txt")
@@ -144,12 +150,6 @@ targets[1:4,-c(5,6)]
 ## runCommandline(args)
 ## file.exists(outpaths(args))
 ## writeTargetsout(x=args, file="targets_macs.txt", overwrite=TRUE)
-
-## ----call_peaks_macs_envVar_settings, eval=FALSE-------------------------
-## # Skip if a module system is not used
-## module("list")
-## module("unload", "miniconda2")
-## module("load", "python/2.7.14") # Make sure to set up your enviroment variable for MACS2
 
 ## ----call_peaks_macs_withref, eval=FALSE---------------------------------
 ## writeTargetsRef(infile="targets_mergeBamByFactor.txt",
