@@ -186,6 +186,7 @@ f <- function(x) {
     args <- systemArgs(sysma="param/tophat.param", mytargets="targets_chip.txt")
     seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
 }
+moduleload(modules(args)) # Skip if a module system is not used
 resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024) 
 param <- BatchtoolsParam(workers = 4, cluster = "slurm", template = "batchtools.slurm.tmpl", resources = resources)
 fqlist <- bplapply(seq(along=args), f, BPPARAM = param)
@@ -343,6 +344,13 @@ To perform peak calling with input samples, they can be most
 conveniently specified in the `SampleReference` column of the initial
 `targets` file. The `writeTargetsRef` function uses this information to create a `targets` 
 file intermediate for running MACS2 with the corresponding input samples.
+
+```{r call_peaks_macs_envVar_settings, eval=FALSE}
+# Skip if a module system is not used
+module("list")
+module("unload", "miniconda2")
+module("load", "python/2.7.14") # Make sure to set up your enviroment variable for MACS2 
+```
 
 ```{r call_peaks_macs_withref, eval=FALSE}
 writeTargetsRef(infile="targets_mergeBamByFactor.txt", 

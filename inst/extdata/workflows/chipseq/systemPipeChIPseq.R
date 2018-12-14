@@ -70,6 +70,7 @@ targets[1:4,-c(5,6)]
 ##     args <- systemArgs(sysma="param/tophat.param", mytargets="targets_chip.txt")
 ##     seeFastq(fastq=infile1(args)[x], batchsize=100000, klength=8)
 ## }
+## moduleload(modules(args)) # Skip if a module system is not used
 ## resources <- list(walltime=120, ntasks=1, ncpus=cores(args), memory=1024)
 ## param <- BatchtoolsParam(workers = 4, cluster = "slurm", template = "batchtools.slurm.tmpl", resources = resources)
 ## fqlist <- bplapply(seq(along=args), f, BPPARAM = param)
@@ -143,6 +144,12 @@ targets[1:4,-c(5,6)]
 ## runCommandline(args)
 ## file.exists(outpaths(args))
 ## writeTargetsout(x=args, file="targets_macs.txt", overwrite=TRUE)
+
+## ----call_peaks_macs_envVar_settings, eval=FALSE-------------------------
+## # Skip if a module system is not used
+## module("list")
+## module("unload", "miniconda2")
+## module("load", "python/2.7.14") # Make sure to set up your enviroment variable for MACS2
 
 ## ----call_peaks_macs_withref, eval=FALSE---------------------------------
 ## writeTargetsRef(infile="targets_mergeBamByFactor.txt",
