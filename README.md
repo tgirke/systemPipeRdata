@@ -11,11 +11,13 @@ such as RNA-Seq, ChIP-Seq, VAR-Seq, Ribo-Seq and many others.
 #### Installation 
 _systemPipeRdata_ can be installed directly from GitHub using the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
 package from CRAN.
+
 ```
 devtools::install_github("tgirke/systemPipeRdata")
 ```
 
 Alternatively, one can install it with the BiocManager _install_ command:
+
 ```
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
@@ -30,7 +32,7 @@ To install the parent package _systemPipeR_ itself, please use the _BiocManager:
 #### Usage
 Detailed user manuals are available here: 
 + [_systemPipeRdata_ Vignette](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.html)
-+ [_systemPipeR_ Overview Vignette](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/vignettes/systemPipeR.html)
++ [_systemPipeR_ Overview Vignette](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html)
 
 Additional information can be found on the corresponding Bioconductor package overview 
 [_page_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
