@@ -3,10 +3,10 @@ title: "_systemPipeRdata_: NGS workflow templates and sample data"
 author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
-  BiocStyle::pdf_document: default
   BiocStyle::html_document:
     toc_float: true
     code_folding: show
+  BiocStyle::pdf_document: default
 package: systemPipeRdata
 vignette: |
   %\VignetteEncoding{UTF-8}
@@ -50,7 +50,11 @@ suppressPackageStartupMessages({
 })
 ```
 
-Note: the most recent version of this vignette can be found <a href="https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.html">here</a> and a short overview slide show [here](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/inst/extdata/slides/systemPipeRslides.html).
+**Note:** the most recent version of this vignette can be found <a href="https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.html">here</a> and a short overview slide show [here](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/inst/extdata/slides/systemPipeRslides.html).
+
+**Note:** if you use _`systemPipeR`_ and _`systemPipeRdata`_ in published research, please cite:
+
+Backman, T.W.H and Girke, T. (2016). *systemPipeR*: NGS Workflow and Report Generation Environment. *BMC Bioinformatics*, 17: 388. [10.1186/s12859-016-1241-0](https://doi.org/10.1186/s12859-016-1241-0).
 
 # Introduction
 

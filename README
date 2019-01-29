@@ -1,4 +1,7 @@
 changelog
+
+    version 1.11.2
+	- Updated systemPipeRdata vignette   
         
     version 1.11.1
 	- Updated 'genWorkenvir' function and help file (Added new argument allowing to download a specific template file/version) 
