@@ -1,4 +1,13 @@
 changelog
+        
+    version 1.11.1
+	- Updated 'genWorkenvir' function and help file (Added new argument allowing to download a specific template file/version) 
+	- Makefile update (support for .Rmd)
+	- Removed old .tmpl files and added new batchtools files
+        - Bibtex update (in the workflows and systemPipeRdata vignette)
+	- Updated all the vignettes in the workflow (removed old .Rnw templates)
+	- Removed all the .pdf figures in the workflows subdirecty
+	- Updated systemPipeRdata vignette
     
     version 1.9.1
         - Kallisto *.param added

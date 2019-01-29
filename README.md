@@ -11,12 +11,12 @@ such as RNA-Seq, ChIP-Seq, VAR-Seq, Ribo-Seq and many others.
 #### Installation 
 _systemPipeRdata_ can be installed directly from GitHub using the [_devtools_](http://cran.r-project.org/web/packages/devtools/index.html) 
 package from CRAN.
-```s
+```
 devtools::install_github("tgirke/systemPipeRdata")
 ```
 
 Alternatively, one can install it with the BiocManager _install_ command:
-```s
+```
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
 BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)

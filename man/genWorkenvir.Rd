@@ -8,7 +8,7 @@ Generates workflow templates for \code{systemPipeR} package. The template enviro
 http://bioconductor.org/packages/systemPipeR.
 }
 \usage{
-genWorkenvir(workflow, mydirname=NULL, bam=FALSE)
+genWorkenvir(workflow, mydirname=NULL, bam=FALSE, url=NULL, urlname=NULL)
 }
 \arguments{
   \item{workflow}{
@@ -21,6 +21,12 @@ Specifies the name of the workflow directory. The default \code{NULL} uses the n
   \item{bam}{
 If \code{bam=TRUE} pregenerated short read alignment (BAM) files will be included in the \code{results} directory of the workflow environment. Note, these BAM files have been generated with the HISAT2 aligner using the FASTQ files provided in the \code{data} directory. 
 The default \code{bam=FALSE} omits this step meaning no BAM files will be copied into the \code{results} directory.
+}
+  \item{url}{
+Specifies the location of a different version of the workflow template or other file to download. The default \code{NULL} copies the current version available in the `systemPipeRdata`. Please check the available options [here](https://github.com/tgirke/systemPipeRdata/tree/master/inst/extdata/workflows).
+}
+  \item{urlname}{
+Specifies the name of the download file. The default \code{NULL} uses the name of the chosen workflow. An error is issued when the \code{url} is provided and only the default \code{urlname} is provided it.
 }
 }
 \value{
@@ -39,7 +45,7 @@ Thomas Girke
 samplepaths <- pathList()
 \dontrun{
 ## Generate varseq workflow environment
-genWorkenvir(workflow="varseq", mydirname=NULL)
+genWorkenvir(workflow="varseq", mydirname=NULL, url=NULL, urlname=NULL)
 setwd("varseq")
 }
 }

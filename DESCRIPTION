@@ -1,12 +1,12 @@
 Package: systemPipeRdata
 Title: systemPipeRdata: NGS workflow templates and sample data
-Version: 1.11.0
-Date: 2018-06-10
+Version: 1.11.1
+Date: 2019-01-28
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
 biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq,
         ChIPSeq, MethylSeq, SNP, GeneExpression, Coverage,
-        GeneSetEnrichment, Alignment, QualityControl
+        GeneSetEnrichment, Alignment, QualityControl, ImmunoOncology
 Description: systemPipeRdata is a helper package to generate with a
         single command NGS workflow templates that are intended to be
         used by its parent package systemPipeR. The latter is an

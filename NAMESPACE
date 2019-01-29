@@ -1,6 +1,9 @@
 ## Imports
 import(BiocGenerics, methods)
 
+## Importing functions
+importFrom("utils", "download.file")
+
 ## Functions
 export(
     "pathList", "genWorkenvir"
