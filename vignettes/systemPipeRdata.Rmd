@@ -10,7 +10,7 @@ output:
 package: systemPipeRdata
 vignette: |
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{_systemPipeRdata_: NGS workflow templates and sample data}
+  %\VignetteIndexEntry{systemPipeRdata: NGS workflow templates and sample data}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib
