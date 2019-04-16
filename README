@@ -1,4 +1,6 @@
 changelog
+    version 1.11.3
+	- Added systemPipeR vignettes
 
     version 1.11.2
 	- Updated systemPipeRdata vignette   

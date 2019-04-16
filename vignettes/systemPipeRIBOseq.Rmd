@@ -39,7 +39,7 @@ knitr::opts_chunk$set(
     tidy.opts=list(width.cutoff=60), tidy=TRUE)
 ```
 
-```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE}
+```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE, eval=FALSE}
 suppressPackageStartupMessages({
     library(systemPipeR)
     library(BiocParallel)
@@ -553,11 +553,11 @@ in the `results` directory.
 library(DESeq2, quietly=TRUE); library(ape,  warn.conflicts=FALSE)
 countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
 colData <- data.frame(row.names=targetsin(args)$SampleName, condition=targetsin(args)$Factor)
-dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
-d <- cor(assay(rlog(dds)), method="spearman")
+dds <- DESeq2::DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+d <- cor(assay(DESeq2::rlog(dds)), method="spearman")
 hc <- hclust(dist(1-d))
 png("results/sample_tree.pdf")
-plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, 
+ape::plot.phylo(ape::as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, 
            no.margin=TRUE)
 dev.off()
 ```
@@ -714,7 +714,7 @@ samples (`assays`) are considered: polyribosomal mRNA (`Ribo`)
 and total mRNA (`mRNA`). In addition, there are two treatments
 (`conditions`): `M1` and `A1`. 
 
-```{r diff_loading, eval=TRUE}
+```{r diff_loading, eval=FALSE}
 library(DESeq2)
 targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
 parampath <- system.file("extdata", "tophat.param", package="systemPipeR")
@@ -735,12 +735,12 @@ $$(Ribo\_A1 / mRNA\_A1) / (Ribo\_M1 / mRNA\_M1)$$
 
 The latter can be modeled with the `DESeq2` package using the design $\sim assay + condition + assay:condition$, where the interaction term $assay:condition$ represents the ratio of ratios. Using the likelihood ratio test of `DESeq2`, which removes the interaction term in the reduced model, one can test whether the translational efficiency (ribosome loading) is different in condition `A1` than in `M1`.
 
-```{r diff_translational_eff, eval=TRUE}
-dds <- DESeqDataSetFromMatrix(countData=as.matrix(countDFeByg[,rownames(coldata)]), 
+```{r diff_translational_eff, eval=FALSE}
+dds <- DESeq2::DESeqDataSetFromMatrix(countData=as.matrix(countDFeByg[,rownames(coldata)]), 
                             colData = coldata, 
                             design = ~ assay + condition + assay:condition)
 # model.matrix(~ assay + condition + assay:condition, coldata) # Corresponding design matrix
-dds <- DESeq(dds, test="LRT", reduced = ~ assay + condition)
+dds <- DESeq2::DESeq(dds, test="LRT", reduced = ~ assay + condition)
 res <- DESeq2::results(dds)
 head(res[order(res$padj),],4)
 # write.table(res, file="transleff.xls", quote=FALSE, col.names = NA, sep="\t")
@@ -754,7 +754,7 @@ above differential expression analysis. It uses a Pearson correlation-based dist
 ```{r heatmap, eval=FALSE}
 library(pheatmap)
 geneids <- unique(as.character(unlist(DEG_list[[1]])))
-y <- assay(rlog(dds))[geneids, ]
+y <- assay(DESeq2::rlog(dds))[geneids, ]
 png("heatmap1.png")
 pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
 dev.off()
