@@ -1,4 +1,7 @@
 changelog
+    version 1.11.5
+	- Added default *.html
+
     version 1.11.4
 	- Added systemPipeR vignettes (*.pdf)
 
