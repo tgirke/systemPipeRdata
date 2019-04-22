@@ -1,5 +1,8 @@
 changelog
     version 1.11.5
+	- Removed PDF from vignettes directory
+
+    version 1.11.5
 	- Added default *.html
 
     version 1.11.4
