@@ -1,7 +1,11 @@
 Package: systemPipeRdata
 Title: systemPipeRdata: NGS workflow templates and sample data
 Version: 1.13.1
+<<<<<<< HEAD
 Date: 2019-07-29
+=======
+Date: 2019-09-12
+>>>>>>> 7f2b6f86440e94c8de0f15b09325a772d16e6703
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
 biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq,
