@@ -1,12 +1,8 @@
 changelog
     version 1.13.1
-<<<<<<< HEAD
 	- Added the data with valid Id Names
-
-=======
 	- Added new *cwl files
 	
->>>>>>> 7f2b6f86440e94c8de0f15b09325a772d16e6703
     version 1.11.5
 	- Removed PDF from vignettes directory
 
