@@ -147,7 +147,7 @@ setwd("riboseq")
 In case there is a newer version of this tutorial, download its `systemPipeRIBOseq.Rmd` source and open it in your R IDE (e.g. vim-r or RStudio).
 
 ```{r download_latest, eval=FALSE}
-download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeRIBOseq.Rmd", "systemPipeRIBOseq2.Rmd")
+download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeRIBOseq.Rmd", "systemPipeRIBOseq.Rmd")
 ```
 
 ## Load packages and sample data
