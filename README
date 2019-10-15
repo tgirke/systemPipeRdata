@@ -1,10 +1,12 @@
 changelog
+    version 1.13.3
+	- Updated Vignettes
+	
     version 1.13.2
 	- Added the param/docopt.R/*
 	- Added the data with valid Id Names
 	
     version 1.13.1
-
 	- Added new *cwl files
 	
     version 1.11.5
