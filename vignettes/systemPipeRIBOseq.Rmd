@@ -158,7 +158,7 @@ to run the entire analysis workflow interactively or with a single command
 while also generating the corresponding analysis report. For details
 see `systemPipeR's` main [vignette](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
 
-```{r load_systempiper, eval=FALSE}
+```{r load_systempiper, eval=TRUE}
 library(systemPipeR)
 ```
 
@@ -216,7 +216,8 @@ fctpath <- system.file("extdata", "custom_Fct.R", package="systemPipeR")
 source(fctpath)
 iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=101)" 
 preprocessReads(args=trim, Fct=iterTrim, batchsize=100000, overwrite=TRUE, compress=TRUE)
-writeTargetsout(x=trim, file="targets_trim.txt", overwrite=TRUE)
+writeTargetsout(x=trim, file="targets_trim.txt", step = 1, 
+                new_col = "FileName", new_col_output_index = 1, overwrite = TRUE)
 ```
 
 ## FASTQ quality report
@@ -271,15 +272,15 @@ args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_
 args
 cmdlist(args)[1:2]
 output(args)[1:2]
+
+## Run in single machine
+args <- runCommandline(args, make_bam = TRUE)
 ```
 
 Submission of alignment jobs to compute cluster, here using 72 CPU cores
 (18 `qsub` processes each with 4 CPU cores).
 
-```{r tophat_se_run, eval=FALSE}
-## Run in single machine
-args <- runCommandline(args, make_bam = TRUE)
-
+```{r tophat_se_cluster, eval=FALSE}
 ## Run on the cluster
 moduleload(modules(args))
 resources <- list(walltime=120, ntasks=1, ncpus=4, memory=1024) 
@@ -320,6 +321,9 @@ args <- renderWF(args, inputvars=c(FileName="_FASTQ_PATH1_", SampleName="_Sample
 args
 cmdlist(args)[1:2]
 output(args)[1:2]
+
+## Run 
+args <- runCommandline(args)
 ```
 
 ```{r hisat2_clusterRun, eval=FALSE}
@@ -335,7 +339,7 @@ waitForJobs(reg=reg)
 Check whether all BAM files have been created.
 
 ```{r check_files_exist, eval=FALSE}
-outpaths <- subsetWF(args , slot="output", subset=1)
+outpaths <- subsetWF(args , slot="output", subset=1, index=1)
 file.exists(outpaths)
 ```
 
@@ -402,7 +406,7 @@ The following generates and plots feature counts for any read length.
 
 ```{r featuretypeCounts, eval=FALSE}
 library(ggplot2); library(grid)
-outpaths <- subsetWF(args , slot="output", subset=1)
+outpaths <- subsetWF(args , slot="output", subset=1, index=1)
 fc <- featuretypeCounts(bfl=BamFileList(outpaths, yieldSize=50000), grl=feat, 
                         singleEnd=TRUE, readlength=NULL, type="data.frame")
 p <- plotfeaturetypeCounts(x=fc, graphicsfile="results/featureCounts.png", 

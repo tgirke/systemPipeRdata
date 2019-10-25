@@ -243,15 +243,14 @@ args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_
 args
 cmdlist(args)[1:2]
 output(args)[1:2]
+## Run in single machine
+args <- runCommandline(args, make_bam = TRUE)
 ```
 
 Submission of alignment jobs to compute cluster, here using 72 CPU cores
 (18 `qsub` processes each with 4 CPU cores).
 
 ```{r tophat_se_run, eval=FALSE}
-## Run in single machine
-args <- runCommandline(args, make_bam = TRUE)
-
 ## Run on the cluster
 moduleload(modules(args))
 resources <- list(walltime=120, ntasks=1, ncpus=4, memory=1024) 
@@ -284,7 +283,7 @@ The parameter settings of the aligner are defined in the `hisat2-mapping-se.cwl`
 and `hisat2-mapping-se.yml` files. The following shows how to construct the 
 corresponding *SYSargs2* object, here *args*.
 
-```{r hisat_SYSargs2_object, eval=TRUE}
+```{r hisat_SYSargs2_object, eval=FALSE}
 dir_path <- system.file("extdata/cwl/hisat2/hisat2-se", package="systemPipeR")
 args <- loadWorkflow(targets=targetspath, wf_file="hisat2-mapping-se.cwl", 
                      input_file="hisat2-mapping-se.yml", dir_path=dir_path)
@@ -292,6 +291,9 @@ args <- renderWF(args, inputvars=c(FileName="_FASTQ_PATH1_", SampleName="_Sample
 args
 cmdlist(args)[1:2]
 output(args)[1:2]
+
+## Runc single Machine
+args <- runCommandline(args)
 ```
 
 ```{r hisat2_clusterRun, eval=FALSE}
@@ -302,12 +304,14 @@ reg <- clusterRun(args, FUN = runCommandline, more.args = list(args=args, make_b
                   Njobs=18, runid="01", resourceList=resources)
 getStatus(reg=reg)
 waitForJobs(reg=reg)
+args <- output_update(args, dir=FALSE, replace=TRUE, extension=c(".sam", ".bam")) ## Updates the output(args) to the right location in the subfolders
+output(args)
 ```
 
 Check whether all BAM files have been created.
 
 ```{r check_files_exist, eval=FALSE}
-outpaths <- subsetWF(args , slot="output", subset=1)
+outpaths <- subsetWF(args , slot="output", subset=1, index=1)
 file.exists(outpaths)
 ```
 
@@ -356,7 +360,7 @@ library("GenomicFeatures"); library(BiocParallel)
 txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff", dataSource="TAIR", organism="Arabidopsis thaliana")
 saveDb(txdb, file="./data/tair10.sqlite")
 txdb <- loadDb("./data/tair10.sqlite")
-outpaths <- subsetWF(args, slot="output", subset=1)
+outpaths <- subsetWF(args, slot="output", subset=1, index=1)
 (align <- readGAlignments(outpaths[1])) # Demonstrates how to read bam file into R
 eByg <- exonsBy(txdb, by=c("gene"))
 bfl <- BamFileList(outpaths, yieldSize=50000, index=character())
