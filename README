@@ -1,4 +1,13 @@
 changelog
+     version 1.13.4
+	- Updated vignettes
+        - Added "cwl/*" files:
+            - MACS2/*
+            - annotate_peaks/*
+            - count_rangesets/*
+            - mergeBamByFactor/*
+            - rundiff/*
+
     version 1.13.3
 	- Updated Vignettes
 	
