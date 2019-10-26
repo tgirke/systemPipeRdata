@@ -1,6 +1,12 @@
 changelog
+     version 1.13.5
+        - Added "cwl/*" files:
+            - GATK/*
+            - bcftools/*
+            - varseq/*
+
      version 1.13.4
-	- Updated vignettes
+        - Updated vignettes
         - Added "cwl/*" files:
             - MACS2/*
             - annotate_peaks/*
