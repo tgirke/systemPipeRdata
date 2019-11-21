@@ -158,7 +158,7 @@ to run the entire analysis workflow interactively or with a single command
 while also generating the corresponding analysis report. For details
 see `systemPipeR's` main [vignette](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
 
-```{r load_systempiper, eval=TRUE}
+```{r load_systempiper, eval=TRUE, messages=FALSE}
 library(systemPipeR)
 ```
 
