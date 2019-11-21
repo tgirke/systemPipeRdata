@@ -1,4 +1,7 @@
 changelog
+     version 1.14.1
+    - Updated the vignettes 'inst/extdata/workflows/*
+    
      version 1.13.5
         - Added "cwl/*" files:
             - GATK/*
