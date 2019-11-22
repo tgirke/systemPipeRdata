@@ -133,7 +133,7 @@ accordingly.
 
 Next, run from within R the chosen sample workflow by executing the code provided in the corresponding _`*.Rmd`_ template file. If preferred the corresponding _`*.Rnw`_ or _`*.R`_ versions can be used instead. Alternatively, one can run an entire workflow from start to finish with a single command by executing from the command-line _`'make -B'`_ within the workflow directory (here _`'varseq'`_). Much more detailed information on running and customizing [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) workflows is available in its overview vignette [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html). This vignette can also be opened from R with the following command. 
 
-```{r load_systemPipeR, eval=TRUE}
+```{r load_systemPipeR, eval=TRUE, messages=FALSE}
 library("systemPipeR") # Loads systemPipeR which needs to be installed via BiocManager::install() from Bioconductor
 ```
 
