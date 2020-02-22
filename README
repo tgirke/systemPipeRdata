@@ -1,6 +1,7 @@
 changelog
      version 1.15.3
         - Added workflow "NEW" -  basic structure of the SYS_project
+	- Updated 'genWorkenvir' function and help file (Added new arguments allowing to download/install and create a specific project from GitHub package)
         
      version 1.15.2
         - Fixed message=FALSE load library vignette

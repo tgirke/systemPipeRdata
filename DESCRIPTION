@@ -1,7 +1,7 @@
 Package: systemPipeRdata
 Title: systemPipeRdata: NGS workflow templates and sample data
-Version: 1.15.2
-Date: 2019-11-21
+Version: 1.15.3
+Date: 2020-02-22
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
 biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq,
@@ -16,7 +16,7 @@ Description: systemPipeRdata is a helper package to generate with a
         others. Detailed examples for using systemPipeRdata are given
         in systemPipeR's overview vignette.
 Depends: methods
-Imports: BiocGenerics
+Imports: BiocGenerics, devtools
 Suggests: RUnit, BiocStyle, knitr, rmarkdown, systemPipeR
 VignetteBuilder: knitr
 License: Artistic-2.0
