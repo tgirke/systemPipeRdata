@@ -8,12 +8,12 @@ Generates workflow templates for \code{systemPipeR} package. The template enviro
 http://bioconductor.org/packages/systemPipeR.
 }
 \usage{
-genWorkenvir(workflow, mydirname=NULL, bam=FALSE, url=NULL, urlname=NULL)
+genWorkenvir(workflow, mydirname=NULL, bam=FALSE, package_repo=NULL, ref="master", subdir=NULL, url=NULL, urlname=NULL)
 }
 \arguments{
   \item{workflow}{
 Can be assigned workflow type as character string. Supported values are:
-\code{rnaseq}, \code{riboseq}, \code{varseq} or \code{chipseq} 
+\code{rnaseq}, \code{riboseq}, \code{varseq}, \code{chipseq} or \code{new}
 }
   \item{mydirname}{
 Specifies the name of the workflow directory. The default \code{NULL} uses the name of the chosen workflow. An error is issued if a directory of the same name and path exists already.
@@ -21,6 +21,15 @@ Specifies the name of the workflow directory. The default \code{NULL} uses the n
   \item{bam}{
 If \code{bam=TRUE} pregenerated short read alignment (BAM) files will be included in the \code{results} directory of the workflow environment. Note, these BAM files have been generated with the HISAT2 aligner using the FASTQ files provided in the \code{data} directory. 
 The default \code{bam=FALSE} omits this step meaning no BAM files will be copied into the \code{results} directory.
+}
+  \item{package_repo}{
+GitHub repository address in the format \code{username/repo}.
+}
+  \item{ref}{
+Desired GitHub reference for the \code{branch} name. Default to \code{branch}.
+}
+  \item{subdir}{
+subdirectory within GitHub repo that contains the R package.
 }
   \item{url}{
 Specifies the location of a different version of the workflow template or other file to download. The default \code{NULL} copies the current version available in the `systemPipeRdata`. Please check the available options [here](https://github.com/tgirke/systemPipeRdata/tree/master/inst/extdata/workflows).
@@ -36,6 +45,10 @@ Workflow directory containing sample data and parameter files along with the fol
     \item{results/}{stores output results}
 
 For more details, please consult the Overview Vignette (HTML) of the systemPipeR package (http://bioconductor.org/packages/systemPipeR).
+}
+\details{
+For an interactive() session, the readline() function used internally is used to choose between \code{yes} or \code{no}.
+For non-interactive use, if there is no package install, the option \code{yes} will be chosen.
 }
 \author{
 Thomas Girke

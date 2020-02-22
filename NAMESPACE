@@ -1,8 +1,8 @@
 ## Imports
-import(BiocGenerics, methods)
+import(BiocGenerics, methods, devtools)
 
 ## Importing functions
-importFrom("utils", "download.file")
+importFrom("utils", "download.file", "install.packages")
 
 ## Functions
 export(
