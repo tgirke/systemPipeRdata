@@ -1,5 +1,7 @@
 changelog
-<<<<<<< HEAD
+     version 1.15.2
+        - Fixed message=FALSE load library vignette
+        
      version 1.15.1
         - Updated the vignettes 'inst/extdata/workflows/*"
 
