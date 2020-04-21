@@ -1,5 +1,5 @@
 
-### systemPipeRdata: NGS workflow templates and sample data
+# systemPipeRdata: Workflow templates and sample data <img src="https://github.com/tgirke/systemPipeR/raw/gh-pages/images/systemPipeR.png" align="right" height="139" />
 
 [![platforms](http://www.bioconductor.org/images/shields/availability/all.svg)](http://www.bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html#archives)
 [![rank](http://www.bioconductor.org/shields/downloads/devel/systemPipeRdata.svg)](http://bioconductor.org/packages/stats/data-experiment/systemPipeRdata/)
@@ -46,6 +46,3 @@ Detailed user manuals are available here:
 
 Additional information can be found on the corresponding Bioconductor package overview 
 [_page_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
-
-
-
