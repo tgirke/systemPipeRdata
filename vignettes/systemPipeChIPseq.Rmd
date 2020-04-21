@@ -10,7 +10,7 @@ output:
 package: systemPipeR
 vignette: |
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{ChIP-Seq Workflow Template}
+  %\VignetteIndexEntry{WF: ChIP-Seq Workflow Template}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib
