@@ -1,6 +1,6 @@
 Package: systemPipeRdata
 Title: systemPipeRdata: NGS workflow templates and sample data
-Version: 1.15.5
+Version: 1.17.0
 Date: 2020-04-20
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
