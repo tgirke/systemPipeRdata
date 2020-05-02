@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
     tidy.opts=list(width.cutoff=60), tidy=TRUE)
 
 
-## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE----
+## ----setup, echo=FALSE, message=FALSE, warning=FALSE------
 suppressPackageStartupMessages({
     library(systemPipeR)
     library(BiocParallel)
@@ -41,32 +41,8 @@ suppressPackageStartupMessages({
 ## setwd("rnaseq")
 
 
-## Rscript -e "systemPipeRdata::genWorkenvir(workflow='rnaseq')"
-
-
-## ----closeR, eval=FALSE-----------------------------------
-## q("no") # closes R session on head node
-
-
-## srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1 --time 2:00:00 --pty bash -l
-
-## module load R/3.4.2
-
-## R
-
-
-## ----r_environment, eval=FALSE----------------------------
-## system("hostname") # should return name of a compute node starting with i or c
-## getwd() # checks current working directory of R session
-## dir() # returns content of current working directory
-
-
-## ----load_systempiper, eval=TRUE,  messages=FALSE---------
+## ----load_systempiper, eval=TRUE, message=FALSE-----------
 library(systemPipeR)
-
-
-## ----source_helper_fcts, eval=FALSE-----------------------
-## source("systemPipeRNAseq_Fct.R")
 
 
 ## ----load_targets, eval=TRUE------------------------------
@@ -86,7 +62,7 @@ targets
 ## ----preprocessing, eval=FALSE----------------------------
 ## preprocessReads(args=trim, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA',
 ##                 subject=fq)", batchsize=100000, overwrite=TRUE, compress=TRUE)
-## writeTargetsout(x=trim, file="targets_trimPE.txt", step = 1,
+## writeTargetsout(x=trim, file="targets_trim.txt", step = 1,
 ##                 new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
 
 
@@ -95,39 +71,6 @@ targets
 ## pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
 ## seeFastqPlot(fqlist)
 ## dev.off()
-
-
-## ----bowtie_index, eval=FALSE-----------------------------
-## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-idx", package="systemPipeR")
-## idx <- loadWorkflow(targets=NULL, wf_file="bowtie2-index.cwl", input_file="bowtie2-index.yml", dir_path=dir_path)
-## idx <- renderWF(idx)
-## idx
-## cmdlist(idx)
-## 
-## ## Run in single machine
-## runCommandline(idx, make_bam = FALSE)
-
-
-## ----tophat2-se, eval=FALSE-------------------------------
-## dir_path <- system.file("extdata/cwl/tophat2/tophat2-se", package="systemPipeR")
-## args <- loadWorkflow(targets = targetspath, wf_file = "tophat2-mapping-se.cwl",
-##     input_file = "tophat2-mapping-se.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-## args
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## ## Run in single machine
-## args <- runCommandline(args, make_bam = TRUE)
-
-
-## ----tophat_se_run, eval=FALSE----------------------------
-## ## Run on the cluster
-## moduleload(modules(args))
-## resources <- list(walltime=120, ntasks=1, ncpus=4, memory=1024)
-## reg <- clusterRun(args, FUN = runCommandline, more.args = list(args=args, make_bam=TRUE, dir=FALSE),
-##                   conffile = ".batchtools.conf.R", template = "batchtools.slurm.tmpl",
-##                   Njobs=18, runid="01", resourceList=resources)
-## waitForJobs(reg=reg)
 
 
 ## ----hisat_index, eval=FALSE------------------------------

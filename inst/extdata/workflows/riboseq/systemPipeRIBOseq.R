@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
     tidy.opts=list(width.cutoff=60), tidy=TRUE)
 
 
-## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE, eval=FALSE----
+## ----setup, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE----
 ## suppressPackageStartupMessages({
 ##     library(systemPipeR)
 ##     library(BiocParallel)
@@ -41,16 +41,8 @@ knitr::opts_chunk$set(
 ## setwd("riboseq")
 
 
-## ----download_latest, eval=FALSE--------------------------
-## download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeRIBOseq.Rmd", "systemPipeRIBOseq.Rmd")
-
-
-## ----load_systempiper, eval=TRUE, messages=FALSE----------
+## ----load_systempiper, eval=TRUE, message=FALSE-----------
 library(systemPipeR)
-
-
-## ----source_helper_fcts, eval=FALSE-----------------------
-## source("systemPipeRIBOseq_Fct.R")
 
 
 ## ----load_targets, eval=TRUE------------------------------

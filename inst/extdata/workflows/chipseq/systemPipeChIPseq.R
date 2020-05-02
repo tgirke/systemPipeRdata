@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
     tidy.opts=list(width.cutoff=60), tidy=TRUE)
 
 
-## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE, eval=FALSE----
+## ----setup, echo=FALSE, message=FALSE, wwarning=FALSE, eval=FALSE----
 ## suppressPackageStartupMessages({
 ##     library(systemPipeR)
 ##     library(BiocParallel)
@@ -41,32 +41,8 @@ knitr::opts_chunk$set(
 ## setwd("chipseq")
 
 
-## Rscript -e "systemPipeRdata::genWorkenvir(workflow='chipseq')"
-
-
-## ----closeR, eval=FALSE-----------------------------------
-## q("no") # closes R session on head node
-
-
-## srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1 --time 2:00:00 --pty bash -l
-
-## module load R/3.6.0
-
-## R
-
-
-## ----r_environment, eval=FALSE----------------------------
-## system("hostname") # should return name of a compute node starting with i or c
-## getwd() # checks current working directory of R session
-## dir() # returns content of current working directory
-
-
-## ----load_systempiper, eval=TRUE, messages=FALSE----------
+## ----load_systempiper, eval=TRUE, message=FALSE-----------
 library(systemPipeR)
-
-
-## ----load_custom_fct, eval=FALSE--------------------------
-## source("systemPipeChIPseq_Fct.R")
 
 
 ## ----load_targets_file, eval=TRUE-------------------------
@@ -83,7 +59,7 @@ targets[1:4,-c(5,6)]
 ## output(trim)[1:2]
 
 
-## ----proprocess_reads, eval=FALSE, messages=FALSE, warning=FALSE, cache=TRUE----
+## ----proprocess_reads, eval=FALSE, message=FALSE, warning=FALSE, cache=TRUE----
 ## # args <- systemArgs(sysma="param/trim.param", mytargets="targets_chip.txt")
 ## filterFct <- function(fq, cutoff=20, Nexceptions=0) {
 ##     qcount <- rowSums(as(quality(fq), "matrix") <= cutoff, na.rm=TRUE)

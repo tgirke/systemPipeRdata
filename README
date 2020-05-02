@@ -1,4 +1,7 @@
 changelog
+     version 1.16.1
+        - Fixed typo on the vignettes
+        
      version 1.15.5
         - Updating the order of the workflows on Bioc webpage
         

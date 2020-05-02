@@ -9,7 +9,7 @@ output:
   BiocStyle::pdf_document: default
 package: systemPipeR
 vignette: |
-  %\VignetteIndexEntry{RIBO-Seq Workflow Template}
+  %\VignetteIndexEntry{WF: RIBO-Seq Workflow Template}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
@@ -39,7 +39,7 @@ knitr::opts_chunk$set(
     tidy.opts=list(width.cutoff=60), tidy=TRUE)
 ```
 
-```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE, eval=FALSE}
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
 suppressPackageStartupMessages({
     library(systemPipeR)
     library(BiocParallel)
@@ -142,14 +142,6 @@ genWorkenvir(workflow="riboseq", bam=TRUE)
 setwd("riboseq")
 ```
 
-## Download latest version of this tutorial
-
-In case there is a newer version of this tutorial, download its `systemPipeRIBOseq.Rmd` source and open it in your R IDE (e.g. vim-r or RStudio).
-
-```{r download_latest, eval=FALSE}
-download.file("https://raw.githubusercontent.com/tgirke/systemPipeRdata/master/vignettes/systemPipeRIBOseq.Rmd", "systemPipeRIBOseq.Rmd")
-```
-
 ## Load packages and sample data
 
 The `systemPipeR` package needs to be loaded to perform the analysis 
@@ -158,7 +150,7 @@ to run the entire analysis workflow interactively or with a single command
 while also generating the corresponding analysis report. For details
 see `systemPipeR's` main [vignette](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
 
-```{r load_systempiper, eval=TRUE, messages=FALSE}
+```{r load_systempiper, eval=TRUE, message=FALSE}
 library(systemPipeR)
 ```
 
@@ -174,13 +166,6 @@ To work with real data, users want to organize their own data similarly and
 substitute all test data for their own data. To rerun an established workflow
 on new data, the initial `targets` file along with the corresponding
 FASTQ files are usually the only inputs the user needs to provide.
-
-If applicable users can load custom functions not provided by
-`systemPipeR`. Skip this step if this is not the case.
-
-```{r source_helper_fcts, eval=FALSE}
-source("systemPipeRIBOseq_Fct.R")
-```
 
 ## Experiment definition provided by `targets` file
 
