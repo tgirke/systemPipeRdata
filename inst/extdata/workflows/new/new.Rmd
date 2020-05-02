@@ -38,7 +38,7 @@ knitr::opts_chunk$set(
     tidy.opts=list(width.cutoff=60), tidy=TRUE)
 ```
 
-```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE, eval=FALSE}
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
 suppressPackageStartupMessages({
     library(systemPipeR)
 })
@@ -54,7 +54,7 @@ to run the entire analysis workflow interactively or with a single command
 while also generating the corresponding analysis report. For details
 see `systemPipeR's` main [vignette](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
 
-```{r load_systempiper, eval=TRUE, messages=TRUE}
+```{r load_systempiper, eval=TRUE, message=FALSE}
 library(systemPipeR)
 ```
 

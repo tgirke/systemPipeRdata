@@ -9,7 +9,7 @@ output:
   BiocStyle::pdf_document: default
 package: systemPipeR
 vignette: |
-  %\VignetteIndexEntry{RNA-Seq Workflow Template}
+  %\VignetteIndexEntry{WF: RNA-Seq Workflow Template}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
@@ -39,7 +39,7 @@ knitr::opts_chunk$set(
     tidy.opts=list(width.cutoff=60), tidy=TRUE)
 ```
 
-```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE}
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 suppressPackageStartupMessages({
     library(systemPipeR)
     library(BiocParallel)
@@ -94,51 +94,13 @@ genWorkenvir(workflow="rnaseq")
 setwd("rnaseq")
 ```
 
-Alternatively, this can be done from the command-line as follows:
-
-```{sh genRna_workflow_command_line, eval=FALSE}
-Rscript -e "systemPipeRdata::genWorkenvir(workflow='rnaseq')"
-```
-
-Now open the R markdown script `systemPipeRNAseq.Rmd`in your R IDE (_e.g._
-vim-r or RStudio) and run the workflow as outlined below. If you work under
-Vim-R-Tmux, the following command sequence will connect the user in an
-interactive session with a node on the cluster. The code of the `Rmd`
-script can then be sent from Vim on the login (head) node to an open R session running
-on the corresponding computer node. This is important since Tmux sessions
-should not be run on the computer nodes. 
-
-```{r closeR, eval=FALSE}
-q("no") # closes R session on head node
-```
-
-```{bash node_environment, eval=FALSE}
-srun --x11 --partition=short --mem=2gb --cpus-per-task 4 --ntasks 1 --time 2:00:00 --pty bash -l
-module load R/3.4.2
-R
-```
-
-Now check whether your R session is running on a computer node of the cluster and not on a head node.
-
-```{r r_environment, eval=FALSE}
-system("hostname") # should return name of a compute node starting with i or c 
-getwd() # checks current working directory of R session
-dir() # returns content of current working directory
-```
-
 ## Required packages and resources
 
 The `systemPipeR` package needs to be loaded to perform the analysis steps shown in
 this report [@H_Backman2016-bt].
 
-```{r load_systempiper, eval=TRUE,  messages=FALSE}
+```{r load_systempiper, eval=TRUE, message=FALSE}
 library(systemPipeR)
-```
-
-If applicable load custom functions not provided by `systemPipeR` package.
-
-```{r source_helper_fcts, eval=FALSE}
-source("systemPipeRNAseq_Fct.R")
 ```
 
 To apply workflows to custom data, the user needs to modify the _`targets`_ file and if
@@ -186,7 +148,7 @@ output(trim)[1:2]
 ```{r preprocessing, eval=FALSE}
 preprocessReads(args=trim, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA', 
                 subject=fq)", batchsize=100000, overwrite=TRUE, compress=TRUE)
-writeTargetsout(x=trim, file="targets_trimPE.txt", step = 1, 
+writeTargetsout(x=trim, file="targets_trim.txt", step = 1, 
                 new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
 ```
 
@@ -210,55 +172,6 @@ dev.off()
 <div align="center">Figure 1: FASTQ quality report for 18 samples</div></br>
 
 # Alignments
-
-## Read mapping with `Bowtie2/Tophat2` 
-
-The NGS reads of this project will be aligned against the reference
-genome sequence using `Bowtie2/TopHat2` [@Kim2013-vg; @Langmead2012-bs] in both 
-interactive job submissions and batch submissions to queuing systems of clusters 
-using the _`systemPipeR's`_ new CWL command-line interface.
-
-Build _`Bowtie2`_ index.
-
-```{r bowtie_index, eval=FALSE}
-dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-idx", package="systemPipeR")
-idx <- loadWorkflow(targets=NULL, wf_file="bowtie2-index.cwl", input_file="bowtie2-index.yml", dir_path=dir_path)
-idx <- renderWF(idx)
-idx
-cmdlist(idx)
-
-## Run in single machine
-runCommandline(idx, make_bam = FALSE)
-```
-
-The parameter settings of the aligner are defined in the `tophat2-mapping-pe.cwl` 
-and `tophat2-mapping-pe.yml` files. The following shows how to construct the 
-corresponding *SYSargs2* object, here *args*.
-
-```{r tophat2-se, eval=FALSE}
-dir_path <- system.file("extdata/cwl/tophat2/tophat2-se", package="systemPipeR")
-args <- loadWorkflow(targets = targetspath, wf_file = "tophat2-mapping-se.cwl", 
-    input_file = "tophat2-mapping-se.yml", dir_path = dir_path)
-args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-args
-cmdlist(args)[1:2]
-output(args)[1:2]
-## Run in single machine
-args <- runCommandline(args, make_bam = TRUE)
-```
-
-Submission of alignment jobs to compute cluster, here using 72 CPU cores
-(18 `qsub` processes each with 4 CPU cores).
-
-```{r tophat_se_run, eval=FALSE}
-## Run on the cluster
-moduleload(modules(args))
-resources <- list(walltime=120, ntasks=1, ncpus=4, memory=1024) 
-reg <- clusterRun(args, FUN = runCommandline, more.args = list(args=args, make_bam=TRUE, dir=FALSE), 
-                  conffile = ".batchtools.conf.R", template = "batchtools.slurm.tmpl", 
-                  Njobs=18, runid="01", resourceList=resources)
-waitForJobs(reg=reg)
-```
 
 ## Read mapping with `HISAT2`
 
