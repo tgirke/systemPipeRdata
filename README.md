@@ -8,6 +8,8 @@
 [![updated](http://www.bioconductor.org/shields/lastcommit/devel/data-experiment/systemPipeRdata.svg)](http://bioconductor.org/checkResults/devel/data-experiment-LATEST/systemPipeRdata/)
 [![dependencies](http://www.bioconductor.org/shields/dependencies/devel/systemPipeRdata.svg)](http://www.bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html#since)
 
+![R-CMD-check](https://github.com/tgirke/systemPipeRdata/workflows/R-CMD-check/badge.svg)
+
 [_systemPipeRdata_](http://bioconductor.org/packages/devel/systemPipeRdata) is a helper 
 package to generate with a single command NGS workflow templates that are intended to
 be used by its parent package [_systemPipeR_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html). 
