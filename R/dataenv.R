@@ -33,7 +33,7 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, package_repo=NULL,
       mydirname2 <- .genWorkenvirPKG(package_repo=package_repo, ref=ref, subdir=subdir, mydirname=mydirname, build_env=TRUE)
     }
   } else {
-    check_workflow <- dir(system.file("extdata/workflows/", "", package="systemPipeRdata", mustWork=TRUE))
+    check_workflow <- dir(system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE))
     if(!workflow %in% check_workflow) stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
     if(workflow=="new" && is.null(mydirname)) warning("It is recommended to specify the workflow directory name, using 'mydirname' argument")
     if(all(!c(is.null(mydirname), is.character(mydirname)))) stop("mydirname can only be assigned 'NULL' or a character vector of length 1")
