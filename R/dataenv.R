@@ -87,7 +87,7 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, package_repo=NULL,
     ## Moving data and param common files
     file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
     file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
-    file.copy(c(paste0(pathList()$paramdir, "targetsPE.txt"), paste0(pathList()$paramdir, "targets.txt")), paste0(mydirname2, "/"))
+    file.copy(c(normalizePath(paste0(pathList()$paramdir, "/targetsPE.txt")), normalizePath(paste0(pathList()$paramdir, "/targets.txt"))), paste0(mydirname2, "/"))
     file.copy(c(paste0(pathList()$paramdir, "bibtex.bib")), paste0(mydirname2, "/bibtex.bib"), overwrite=TRUE)
     if(bam==TRUE) file.copy(normalizePath(list.files(pathList()$bamdir, "*", full.names=TRUE)), paste0(mydirname2, "/results"), overwrite=TRUE, recursive=TRUE)
     file.copy(pathList()$paramdir, paste0(mydirname2, "/"), recursive=TRUE)
