@@ -1,5 +1,5 @@
 ---
-title: "_systemPipeRdata_: NGS workflow templates and sample data"
+title: "_systemPipeRdata_: Workflow templates and sample data"
 author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
@@ -44,40 +44,48 @@ knitr::opts_chunk$set(
 
 ```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE}
 suppressPackageStartupMessages({
-    library(systemPipeR)
     library(systemPipeRdata)
-    library(BiocGenerics)
 })
 ```
 
-**Note:** the most recent version of this vignette can be found <a href="https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.html">here</a> and a short overview slide show [here](https://htmlpreview.github.io/?https://github.com/tgirke/systemPipeR/blob/master/inst/extdata/slides/systemPipeRslides.html).
+**Note:** the most recent version of this vignette can be found <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.Rmd">here</a>.
 
 **Note:** if you use _`systemPipeR`_ and _`systemPipeRdata`_ in published research, please cite:
 
-Backman, T.W.H and Girke, T. (2016). *systemPipeR*: NGS Workflow and Report Generation Environment. *BMC Bioinformatics*, 17: 388. [10.1186/s12859-016-1241-0](https://doi.org/10.1186/s12859-016-1241-0).
+Backman, T.W.H and Girke, T. (2016). *systemPipeR*: Workflow and Report Generation Environment. *BMC Bioinformatics*, 17: 388. [10.1186/s12859-016-1241-0](https://doi.org/10.1186/s12859-016-1241-0).
 
 # Introduction
 
-[_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) is a helper package to generate with a single command NGS workflow templates that are intended to be used by its parent package [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt]. The latter is an environment for building *end-to-end* analysis pipelines with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, Ribo-Seq, ChIP-Seq, VAR-Seq and many others. The directory structure of the workflow templates and the sample data used by _`systemPipeRdata`_ are described [here](http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
+[_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) is a helper package 
+to generate with a single command  workflow templates that are intended to be 
+used by its parent package [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt]. 
+The *systemPipeR* project provides a suite of R/Bioconductor packages for designing,
+building and running end-to-end analysis workflows on local machines, HPC clusters 
+and cloud systems, while generating at the same time publication quality analysis reports.
 
-# Getting Started
+To test workflows quickly or design new ones from existing templates, users can
+generate with a single command workflow instances fully populated with sample data 
+and parameter files required for running a chosen workflow.
+Pre-configured directory structure of the workflow environment and the sample data 
+used by _`systemPipeRdata`_ are described [here](http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
+
+# Getting started
 
 ## Installation
 
-The R software for using _`systemPipeRdata`_ can be downloaded from [CRAN](http://cran.at.r-project.org). The _`systemPipeRdata`_ package can be installed from within R as follows: 
+The _`systemPipeRdata`_ package is available at [Bioconductor](http://www.bioconductor.org/packages/release/data/experiment/html/systemPipeRdata.html) and can be installed from within R as follows: 
 
 ```{r install, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
-BiocManager::install("systemPipeRdata") # Installs from Bioconductor once
-                                          # available there
-BiocManager::install("tgirke/systemPipeR", build_vignettes=TRUE,
-                     dependencies=TRUE)  # Installs from github
+BiocManager::install("systemPipeRdata") # Installs Release version from Bioconductor 
+BiocManager::install("systemPipeRdata", version = "devel", build_vignettes=TRUE,
+                     dependencies=TRUE)  # Installs Devel version from Bioconductor
 ```
 
 ## Loading package and documentation
 
-```{r load_systemPipeRdata, eval=TRUE}
+```{r load_systemPipeRdata, eval=TRUE, messages=FALSE, warnings=FALSE}
 library("systemPipeRdata") # Loads the package
 ```
 ```{r documentation_systemPipeRdata, eval=FALSE}
@@ -85,9 +93,13 @@ library(help="systemPipeRdata") # Lists package info
 vignette("systemPipeRdata") # Opens vignette
 ```
 
-## Generate workflow template
+## Starting with preconfigured workflow templates
 
-Load one of the available NGS workflows into your current working directory. The following does this for the _`varseq`_ template. The name of the resulting workflow directory can be specified under the _`mydirname`_ argument. The default _`NULL`_ uses the name of the chosen workflow. An error is issued if a directory of the same name and path exists already. Besides, it is possible to choose different version of the workflow template. Please check the available options [here](https://github.com/tgirke/systemPipeRdata/tree/master/inst/extdata/workflows), or provide the download URL to your template. The URL can be specified under _`url`_ argument and the file name in the _`urlname`_ argument. The default _`NULL`_ copies the current version available in the [systemPipeRdata](https://github.com/tgirke/systemPipeRdata/tree/master/inst/extdata/workflows).
+Load one of the available workflows into your current working directory. 
+The following does this for the _`varseq`_ workflow template. The name of the resulting 
+workflow directory can be specified under the _`mydirname`_ argument. The default _`NULL`_ 
+uses the name of the chosen workflow. An error is issued if a directory of the same 
+name and path exists already. 
 
 ```{r generate_workenvir, eval=FALSE}
 genWorkenvir(workflow="varseq", mydirname=NULL, url=NULL, urlname=NULL)
@@ -97,10 +109,59 @@ setwd("varseq")
 On Linux and OS X systems the same can be achieved from the command-line of a terminal with the following commands.
 
 ```{bash generate_workenvir_from_shell, eval=FALSE}
-$ Rscript -e "systemPipeRdata::genWorkenvir(workflow='varseq', mydirname=NULL, url=NULL, urlname=NULL)"
+$ Rscript -e "systemPipeRdata::genWorkenvir(workflow='varseq', mydirname=NULL)"
 ```
 
-### Directory Structure
+### Workflow templates collection
+
+A collection of workflow templates are available and it is possible to browse the 
+current availability, as follows:
+
+```{r eval=FALSE, tidy=FALSE}
+availableWF(github = TRUE)
+```
+
+This function returns the list of workflow templates available within the package 
+and [systemPipeR Organization](https://github.com/systemPipeR) on GitHub. Each one 
+listed template can be created as described above. 
+
+```{r eval=FALSE, tidy=FALSE}
+genWorkenvir(workflow="systemPipeR/systemPipeVARseq", mydirname="NULL")
+```
+
+The workflow template choose from Github will be installed as an R package, and 
+also it creates the environment with all the settings and files to run the demo 
+analysis quickly.
+
+Besides, it is possible to choose different versions of the workflow template, 
+defined through other branches on the GitHub Repository. By default, the _`master`_ 
+branch is selected, however, it is possible to define a different branch with the _`ref`_ argument. 
+
+```{r eval=FALSE, tidy=FALSE}
+genWorkenvir(workflow="systemPipeR/systemPipeRNAseq", ref = "singleMachine")
+```
+
+### Download a specific R Markdown file
+
+Also, it is possible to download a specific workflow script for your analysis. The URL can 
+be specified under _`url`_ argument and the file name in the _`urlname`_ argument. 
+The default _`NULL`_ copies the current version available in the chose template.
+
+```{r eval=FALSE, tidy=FALSE}
+genWorkenvir(workflow="rnaseq", url = "https://raw.githubusercontent.com/systemPipeR/systemPipeRNAseq/cluster/vignettes/systemPipeRNAseq.Rmd", 
+             urlname = "rnaseq_V-cluster.Rmd")
+```
+
+## Dinamic generation of workflow template
+
+It is possible to create a new workflow structure from RStudio 
+menu `File -> New File -> R Markdown -> From Template -> systemPipeR New WorkFlow`.
+This interactive option creates the same environment as demonstrated above.
+
+![](results/rstudio.png)
+**Figure 1:** Selecting workflow template within RStudio.
+
+## Directory Structure
 
 The workflow templates generated by _`genWorkenvir`_ contain the following preconfigured directory structure:
 
@@ -127,13 +188,17 @@ accordingly.
 
 <center><img src="results/directory.png"></center>
 
-**Figure 1:** *systemPipeR's* preconfigured directory structure.
+**Figure 2:** *systemPipeR's* preconfigured directory structure.
 
 ## Run workflows
 
-Next, run from within R the chosen sample workflow by executing the code provided in the corresponding _`*.Rmd`_ template file. If preferred the corresponding _`*.Rnw`_ or _`*.R`_ versions can be used instead. Alternatively, one can run an entire workflow from start to finish with a single command by executing from the command-line _`'make -B'`_ within the workflow directory (here _`'varseq'`_). Much more detailed information on running and customizing [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) workflows is available in its overview vignette [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html). This vignette can also be opened from R with the following command. 
+Next, run from within R the chosen sample workflow by executing the code provided 
+in the corresponding _`*.Rmd`_ template file. 
+Much more detailed information on running and customizing [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) 
+workflows is available in its overview vignette [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html). 
+This vignette can also be opened from R with the following command. 
 
-```{r load_systemPipeR, eval=TRUE, messages=FALSE}
+```{r load_systemPipeR, eval=FALSE, messages=FALSE}
 library("systemPipeR") # Loads systemPipeR which needs to be installed via BiocManager::install() from Bioconductor
 ```
 

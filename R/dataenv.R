@@ -21,17 +21,12 @@ pathList <- function() {
 #########################################
 ## Generate environments for workflows ##
 #########################################
-genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, package_repo=NULL, ref="master", subdir=NULL, url=NULL, urlname=NULL) {
+genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subdir=NULL, url=NULL, urlname=NULL) {
   ## Input validity check
-  if(all(!is.null(package_repo) && !is.null(workflow))) stop("If 'package_repo' argument is assigned at a GitHub Repo, the 'workflow' argument needs to be assigned NULL")
-  # check_workflow <- c("varseq", "rnaseq", "riboseq", "chipseq")
-  if(is.null(workflow)) {
-    if(is.null(package_repo)) { 
-      stop("It is required to provide either a demo 'workflow' name or a 'package_repo' address.")
-    } else {
+  if(grepl("/", workflow)==TRUE) {
       ## if the package is defined it
-      mydirname2 <- .genWorkenvirPKG(package_repo=package_repo, ref=ref, subdir=subdir, mydirname=mydirname, build_env=TRUE)
-    }
+      mydirname2 <- .genWorkenvirPKG(package_repo=workflow, ref=ref, subdir=subdir, mydirname=mydirname, build_env=TRUE, silent=TRUE)
+      genWorkdata(path = mydirname2)
   } else {
     check_workflow <- dir(system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE))
     if(!workflow %in% check_workflow) stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
@@ -101,20 +96,29 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, package_repo=NULL,
 }
 ## Usage:
 # genWorkenvir(workflow="varseq", mydirname=NULL)
+# genWorkenvir(workflow="systemPipeR/systemPipeVARseq", mydirname=NULL)
+# genWorkenvir(workflow="systemPipeR/systemPipeRNAseq", mydirname="rnaseq",
+# url = "https://raw.githubusercontent.com/systemPipeR/systemPipeRNAseq/cluster/vignettes/systemPipeRNAseq.Rmd",
+# urlname = "rnaseq_V-cluster.Rmd")
 
 ############################################
-## Generate data/param for SYS_packages  ##
+## Generate data/param for SPR_packages ##
 ############################################
-genWorkdata <- function(data=TRUE, param=TRUE){
+genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
   ## TODO: we can add a check if it is a sysproject
+  suppressWarnings({
+    data.path <- normalizePath(paste0(path, "/data/"))
+    param.path <- normalizePath(paste0(path, "/param/"))
+  })
   if(data==TRUE){
-    if (dir.exists("data/") == FALSE) (dir.create("data/"))
-    file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), paste0("./data"), overwrite=TRUE, recursive=TRUE)
-    file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), paste0("./data"), overwrite=TRUE, recursive=TRUE)
+    if (dir.exists(data.path) == FALSE) (dir.create(data.path))
+    file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), data.path, overwrite=TRUE, recursive=TRUE)
+    file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), data.path, overwrite=TRUE, recursive=TRUE)
     print("The 'demo data'was successfully copied to your project.")
   }
   if (param==TRUE){
-    file.copy(pathList()$paramdir, paste0("./"), recursive=TRUE)
+    if (dir.exists(param.path) == FALSE) (dir.create(param.path))
+    file.copy(pathList()$paramdir, normalizePath(path), recursive=TRUE)
     print("The 'param' directory was successfully copied to your project.")
   }
 }
@@ -123,22 +127,23 @@ genWorkdata <- function(data=TRUE, param=TRUE){
 # genWorkdata()
 
 ############################################
-## Generate environments for SYS_packages ##
+## Generate environments for SPR_packages ##
 ############################################
-# This function installs packages from GitHub. Internally, it is used devtools::install_github(), which also requires devtools to be installed. 
+# This function installs packages from GitHub. Internally, it is used remotes::install_github(), which also requires remotes to be installed. 
 ## Arguments
 # package_repo Repository Github address in the format `username/repo`. 
 # ref Desired GitHub reference for the `"branch"` name. Default to `"master"`.
 # subdir subdirectory within GitHub repo that contains the R package.
 # mydirname Specifies the name of the workflow directory and the *Rmd file. Default is NULL, using the workflow/package name.
 # build_env Internally the function uses rmarkdown::draft function to populate the directory with all the files,  the same way if it is used the Rstudio create a new file. Default is TRUE.
+# silent If TRUE, suppress output.
 # Details
 # For an interactive() session, the readline() function is used to choose between `yes` or `no`.
 # For non-interactive use, if there is no package install, the option YES will be chosen.
 
-.genWorkenvirPKG <- function(package_repo, ref="master", subdir=NULL, mydirname=NULL, build_env=TRUE){
+.genWorkenvirPKG <- function(package_repo, ref="master", subdir=NULL, mydirname=NULL, build_env=TRUE, silent=FALSE){
   ## Check if pkg is installed
-  pkgs <- c("devtools", sub('.*/', '', package_repo))
+  pkgs <- c("remotes", sub('.*/', '', package_repo))
   pkg_name <- sub('.*/', '', package_repo)
   pkg_req <- sapply(pkgs, function(x) !requireNamespace(x, quietly=TRUE))
   ## If 'mydirname' is NULL (default) use value assigned to 'pkg_name' as directory/*Rmd name
@@ -160,9 +165,9 @@ genWorkdata <- function(data=TRUE, param=TRUE){
     print(paste("Installing package", pkg_name))
     for(i in which(pkg_req)){
       if (pkg_install == "1"){
-        if (!requireNamespace("devtools", quietly=TRUE))
-          install.packages("devtools", quiet = TRUE)
-        devtools::install_github(package_repo, ref=ref, subdir=subdir, quiet = TRUE, upgrade = "always", build_vignettes=TRUE, dependencies=TRUE)
+        if (!requireNamespace("remotes", quietly=TRUE))
+          install.packages("remotes", quiet = TRUE)
+        remotes::install_github(repo=package_repo, ref=ref, subdir=subdir, quiet = TRUE, upgrade = "always", build_vignettes=TRUE, dependencies=TRUE)
       } else if (pkg_install == 2)
         stop (paste("The", pkg_name, "package is required, you can install the package and come back later!"))
     }
@@ -170,7 +175,7 @@ genWorkdata <- function(data=TRUE, param=TRUE){
   print(paste("Package", pkg_name, "is successfully installed!"))
   if(build_env==TRUE){
     rmarkdown::draft(paste0(mydirname2, ".Rmd"), template = pkg_name, package = pkg_name, edit=FALSE)
-    # print(paste("Generated", mydirname2, "directory. Next run in", pkg_name, "directory, the R code from *.Rmd template interactively. Alternatively, workflows can be exectued with a single command as instructed in the vignette."))
+    if(silent != TRUE) print(paste("Generated", mydirname2, "directory. Next run in", pkg_name, "directory, the R code from *.Rmd template interactively. Alternatively, workflows can be exectued with a single command as instructed in the vignette."))
   } else {
     dump <- "do nothing"
   }
@@ -178,5 +183,54 @@ genWorkdata <- function(data=TRUE, param=TRUE){
 }
 
 ## Usage:
-#  package_repo <- "systemPipeR/systemPipeRIBOseq"
-# .genWorkenvirPKG(package_repo=package_repo)
+# .genWorkenvirPKG(package_repo="systemPipeR/systemPipeRIBOseq")
+
+############################################
+## Check Workflow Templates Availability ##
+############################################
+# This function checks the workflow templates availability from systemPipeRdata package and 
+# also from GitHub. 
+## Arguments
+# github if TRUE, it will return the available Workflow Templates packages from https://github.com/systemPipeR
+## Note:
+# We are assuming that workflow templates repositories under [systemPipeR Organization](https://github.com/systemPipeR/)
+# content the keywords in the description "Workflow Template" and in "Topics" we expected "systempiper" and "release" or "development" words.
+
+availableWF <- function(github = FALSE){
+  check_workflow <- dir(system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE))
+  if(github==TRUE){
+    ## get all the repos
+    tryCatch(get_repos <- jsonlite::fromJSON("https://api.github.com/orgs/systemPipeR/repos"),
+             error = function(e){
+               stop('You have reached the limit for GitHub API requests. The limit is 60 requests per hour.')
+             } 
+    )  
+    WFrepos <- data.frame(workflow=get_repos$name, html=get_repos$html_url, description=get_repos$description)
+    ## Keep repos with the right description
+    WFrepos <- WFrepos[WFrepos$description %in% "Workflow Template", ]
+    ## branches
+    for(i in seq_along(WFrepos$workflow)){
+      branches <- jsonlite::fromJSON(paste0("https://api.github.com/repos/systemPipeR/", WFrepos$workflow[i], "/branches"))$name
+      WFrepos$branches[i] <- list(branches)
+    }
+    ## Searching for topics
+    release <- data.frame(workflow=jsonlite::fromJSON("https://api.github.com/search/repositories?q=topic:systempiper+topic:release")$items$name)
+    devel <- data.frame(workflow=jsonlite::fromJSON("https://api.github.com/search/repositories?q=topic:systempiper+topic:development")$items$name)
+    ## Merge topics and version
+    WFrepos_devel <- cbind(merge(WFrepos, devel, by="workflow"), version=rep("devel"))
+    WFrepos_release <- cbind(merge(WFrepos, release, by="workflow"), version=rep("release"))
+    ## final
+    WFrepos <- rbind(WFrepos_release, WFrepos_devel)
+    WFrepos$workflow <- paste0("systemPipeR/", WFrepos$workflow)
+    WFrepos <- WFrepos[c("workflow", "branches", "version", "html", "description")]
+    list <- list(systemPipeRdata=check_workflow, github=WFrepos)
+    return(list)
+  }
+  return(list(systemPipeRdata=check_workflow))
+}
+
+## Usage:
+# availableWF()
+# availableWF(github = TRUE)
+
+
