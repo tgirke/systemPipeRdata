@@ -31,7 +31,7 @@ github as follow:
 ```
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
-BiocManager::install("tgirke/systemPipeR", build_vignettes=TRUE, dependencies=TRUE)
+BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)
 ```
 
 Due to the large size of the sample data (~320 MB) provided by _systemPipeRdata_, its download/install may take some time.
