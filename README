@@ -1,4 +1,7 @@
 changelog
+     version 1.16.2
+        - Fixed path Windows
+        
      version 1.16.1
         - Fixed typo on the vignettes
         
