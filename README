@@ -1,8 +1,12 @@
 changelog
+    version 1.17.3
+	- Fixed typo systemPipeRdata vignette   
+	
      version 1.17.2
         - Updated systemPipeRdata vignette
         - Updated help files
         - New function: "availableWF" 
+        
      version 1.17.1
         - Fixed typo on the vignettes
         

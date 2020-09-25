@@ -160,7 +160,7 @@ genWorkenvir(workflow="rnaseq", url = "https://raw.githubusercontent.com/systemP
 setwd("rnaseq")
 ```
 
-# Dinamic generation of workflow template
+# Dynamic generation of workflow template
 
 It is possible to create a new workflow structure from RStudio 
 menu `File -> New File -> R Markdown -> From Template -> systemPipeR New WorkFlow`.
