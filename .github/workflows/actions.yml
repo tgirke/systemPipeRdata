@@ -64,6 +64,7 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           install.packages(c("BiocManager", "ape", "knitcitations", "DOT", "usethis"))
+          BiocManager::install("Bioconductor/BiocStyle")
           BiocManager::install("tgirke/systemPipeR")
           BiocManager::install("tgirke/systemPipeRdata")
         shell: Rscript {0}
