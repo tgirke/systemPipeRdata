@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
     tidy.opts=list(width.cutoff=60), tidy=TRUE)
 
 
-## ----setup, echo=FALSE, message=FALSE, warning=FALSE------
+## ----setup_libraries, echo=FALSE, message=FALSE, warning=FALSE----
 suppressPackageStartupMessages({
     library(systemPipeR)
     library(BiocParallel)
@@ -35,26 +35,20 @@ suppressPackageStartupMessages({
 })
 
 
-## ----genRna_workflow, eval=FALSE--------------------------
-## library(systemPipeRdata)
-## genWorkenvir(workflow="rnaseq")
-## setwd("rnaseq")
-
-
 ## ----load_systempiper, eval=TRUE, message=FALSE-----------
 library(systemPipeR)
 
 
 ## ----load_targets, eval=TRUE------------------------------
-targetspath <- system.file("extdata", "targets.txt", package="systemPipeR")
+targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
 targets <- read.delim(targetspath, comment.char = "#")[,1:4]
 targets
 
 
 ## ----construct_SYSargs2_trim-se, eval=FALSE---------------
-## dir_path <- system.file("extdata/cwl/preprocessReads/trim-se", package="systemPipeR")
-## trim <- loadWorkflow(targets=targetspath, wf_file="trim-se.cwl", input_file="trim-se.yml", dir_path=dir_path)
-## trim <- renderWF(trim, inputvars=c(FileName="_FASTQ_PATH1_", SampleName="_SampleName_"))
+## dir_path <- system.file("extdata/cwl/preprocessReads/trim-pe", package="systemPipeR")
+## trim <- loadWorkflow(targets=targetspath, wf_file="trim-pe.cwl", input_file="trim-pe.yml", dir_path=dir_path)
+## trim <- renderWF(trim, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
 ## trim
 ## output(trim)[1:2]
 
@@ -63,7 +57,7 @@ targets
 ## preprocessReads(args=trim, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA',
 ##                 subject=fq)", batchsize=100000, overwrite=TRUE, compress=TRUE)
 ## writeTargetsout(x=trim, file="targets_trim.txt", step = 1,
-##                 new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
+##                 new_col = c("FileName1", "FileName2"), new_col_output_index = c(1, 2), overwrite = TRUE)
 
 
 ## ----fastq_report, eval=FALSE-----------------------------
@@ -84,16 +78,18 @@ targets
 ## runCommandline(idx, make_bam = FALSE)
 
 
-## ----hisat_SYSargs2_object, eval=FALSE--------------------
-## dir_path <- system.file("extdata/cwl/hisat2/hisat2-se", package="systemPipeR")
-## args <- loadWorkflow(targets=targetspath, wf_file="hisat2-mapping-se.cwl",
-##                      input_file="hisat2-mapping-se.yml", dir_path=dir_path)
-## args <- renderWF(args, inputvars=c(FileName="_FASTQ_PATH1_", SampleName="_SampleName_"))
-## args
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## 
-## ## Runc single Machine
+## ----hisat_SYSargs2_object, eval=TRUE---------------------
+dir_path <- system.file("extdata/cwl/hisat2/hisat2-pe", package="systemPipeR")
+args <- loadWorkflow(targets=targetspath, wf_file="hisat2-mapping-pe.cwl", 
+                     input_file="hisat2-mapping-pe.yml", dir_path=dir_path)
+args <- renderWF(args, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
+args
+cmdlist(args)[1:2]
+output(args)[1:2]
+
+
+## ----hisat_SYSargs2_singleM, eval=FALSE-------------------
+## ## Run single Machine
 ## args <- runCommandline(args)
 
 
@@ -125,7 +121,7 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 
 ## ----bam_urls, eval=FALSE---------------------------------
 ## symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"),
-##             urlbase="http://biocluster.ucr.edu/~tgirke/",
+##             urlbase="http://cluster.hpcc.ucr.edu/~tgirke/",
 ## 	        urlfile="./results/IGVurl.txt")
 
 
@@ -173,8 +169,8 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## ----run_edger, eval=FALSE--------------------------------
 ## library(edgeR)
 ## countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)
-## targets <- read.delim("targets.txt", comment="#")
-## cmp <- readComp(file="targets.txt", format="matrix", delim="-")
+## targets <- read.delim("targetsPE.txt", comment="#")
+## cmp <- readComp(file="targetsPE.txt", format="matrix", delim="-")
 ## edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=FALSE, mdsplot="")
 
 
