@@ -35,12 +35,6 @@ knitr::opts_chunk$set(
 ## })
 
 
-## ----genVAR_workflow, eval=FALSE--------------------------
-## library(systemPipeRdata)
-## genWorkenvir(workflow="varseq")
-## setwd("varseq")
-
-
 ## ----load_systempiper, eval=TRUE, message=FALSE-----------
 library(systemPipeR)
 
