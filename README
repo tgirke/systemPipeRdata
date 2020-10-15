@@ -1,4 +1,7 @@
 changelog
+    version 1.17.4
+	- Updated systemPipeR* vignettes
+	
     version 1.17.3
 	- Fixed typo systemPipeRdata vignette   
 	
