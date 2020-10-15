@@ -35,26 +35,20 @@ knitr::opts_chunk$set(
 ## })
 
 
-## ----genRibo_workflow, eval=FALSE-------------------------
-## library(systemPipeRdata)
-## genWorkenvir(workflow="riboseq", bam=TRUE)
-## setwd("riboseq")
-
-
-## ----load_systempiper, eval=TRUE, message=FALSE-----------
+## ----load_systempiper, eval=TRUE, message=FALSE, warning=FALSE----
 library(systemPipeR)
 
 
 ## ----load_targets, eval=TRUE------------------------------
-targetspath <- system.file("extdata", "targets.txt", package="systemPipeR")
+targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
 targets <- read.delim(targetspath, comment.char = "#")[,1:4]
 targets
 
 
 ## ----construct_SYSargs2_trim-se, eval=FALSE---------------
-## dir_path <- system.file("extdata/cwl/preprocessReads/trim-se", package="systemPipeR")
-## trim <- loadWorkflow(targets=targetspath, wf_file="trim-se.cwl", input_file="trim-se.yml", dir_path=dir_path)
-## trim <- renderWF(trim, inputvars=c(FileName="_FASTQ_PATH1_", SampleName="_SampleName_"))
+## dir_path <- system.file("extdata/cwl/preprocessReads/trim-pe", package="systemPipeR")
+## trim <- loadWorkflow(targets=targetspath, wf_file="trim-pe.cwl", input_file="trim-pe.yml", dir_path=dir_path)
+## trim <- renderWF(trim, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
 ## trim
 ## output(trim)[1:2]
 
@@ -64,8 +58,8 @@ targets
 ## source(fctpath)
 ## iterTrim <- ".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=101)"
 ## preprocessReads(args=trim, Fct=iterTrim, batchsize=100000, overwrite=TRUE, compress=TRUE)
-## writeTargetsout(x=trim, file="targets_trim.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE)
+## writeTargetsout(x=trim, file="targets_trimPE.txt", step=1, new_col = c("FileName1", "FileName2"),
+##                 new_col_output_index = c(1,2), overwrite = TRUE)
 
 
 ## ----fastq_report, eval=FALSE-----------------------------
@@ -73,40 +67,6 @@ targets
 ## png("./results/fastqReport.png", height=18, width=4*length(fqlist), units="in", res=72)
 ## seeFastqPlot(fqlist)
 ## dev.off()
-
-
-## ----bowtie_index, eval=FALSE-----------------------------
-## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-idx", package="systemPipeR")
-## idx <- loadWorkflow(targets=NULL, wf_file="bowtie2-index.cwl", input_file="bowtie2-index.yml", dir_path=dir_path)
-## idx <- renderWF(idx)
-## idx
-## cmdlist(idx)
-## 
-## ## Run in single machine
-## runCommandline(idx, make_bam = FALSE)
-
-
-## ----tophat2-se, eval=FALSE-------------------------------
-## dir_path <- system.file("extdata/cwl/tophat2/tophat2-se", package="systemPipeR")
-## args <- loadWorkflow(targets = targetspath, wf_file = "tophat2-mapping-se.cwl",
-##     input_file = "tophat2-mapping-se.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-## args
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## 
-## ## Run in single machine
-## args <- runCommandline(args, make_bam = TRUE)
-
-
-## ----tophat_se_cluster, eval=FALSE------------------------
-## ## Run on the cluster
-## moduleload(modules(args))
-## resources <- list(walltime=120, ntasks=1, ncpus=4, memory=1024)
-## reg <- clusterRun(args, FUN = runCommandline, more.args = list(args=args, make_bam=TRUE, dir=FALSE),
-##                   conffile = ".batchtools.conf.R", template = "batchtools.slurm.tmpl",
-##                   Njobs=18, runid="01", resourceList=resources)
-## waitForJobs(reg=reg)
 
 
 ## ----hisat_index, eval=FALSE------------------------------
@@ -121,10 +81,10 @@ targets
 
 
 ## ----hisat_SYSargs2_object, eval=FALSE--------------------
-## dir_path <- system.file("extdata/cwl/hisat2/hisat2-se", package="systemPipeR")
-## args <- loadWorkflow(targets=targetspath, wf_file="hisat2-mapping-se.cwl",
-##                      input_file="hisat2-mapping-se.yml", dir_path=dir_path)
-## args <- renderWF(args, inputvars=c(FileName="_FASTQ_PATH1_", SampleName="_SampleName_"))
+## dir_path <- system.file("extdata/cwl/hisat2/hisat2-pe", package="systemPipeR")
+## args <- loadWorkflow(targets=targetspath, wf_file="hisat2-mapping-pe.cwl",
+##                      input_file="hisat2-mapping-pe.yml", dir_path=dir_path)
+## args <- renderWF(args, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
 ## args
 ## cmdlist(args)[1:2]
 ## output(args)[1:2]
@@ -301,8 +261,8 @@ read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), head
 ## ----deg_edger, eval=FALSE--------------------------------
 ## library(edgeR)
 ## countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)
-## targets <- read.delim("targets.txt", comment="#")
-## cmp <- readComp(file="targets.txt", format="matrix", delim="-")
+## targets <- read.delim("targetsPE.txt", comment="#")
+## cmp <- readComp(file="targetsPE.txt", format="matrix", delim="-")
 ## edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=FALSE, mdsplot="")
 
 
