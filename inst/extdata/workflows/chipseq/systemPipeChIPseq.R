@@ -35,32 +35,25 @@ knitr::opts_chunk$set(
 ## })
 
 
-## ----genChip_workflow, eval=FALSE-------------------------
-## library(systemPipeRdata)
-## genWorkenvir(workflow="chipseq")
-## setwd("chipseq")
-
-
-## ----load_systempiper, eval=TRUE, message=FALSE-----------
+## ----load_systempiper, eval=TRUE, message=FALSE, warning=FALSE----
 library(systemPipeR)
 
 
 ## ----load_targets_file, eval=TRUE-------------------------
-targetspath <- system.file("extdata", "targets_chip.txt", package="systemPipeR")
+targetspath <- system.file("extdata", "targetsPE_chip.txt", package="systemPipeR")
 targets <- read.delim(targetspath, comment.char = "#")
 targets[1:4,-c(5,6)]
 
 
 ## ----construct_SYSargs2_trim-se, eval=FALSE---------------
-## dir_path <- system.file("extdata/cwl/preprocessReads/trim-se", package="systemPipeR")
-## trim <- loadWF(targets=targetspath, wf_file="trim-se.cwl", input_file="trim-se.yml", dir_path=dir_path)
-## trim <- renderWF(trim, inputvars=c(FileName="_FASTQ_PATH1_", SampleName="_SampleName_"))
+## dir_path <- system.file("extdata/cwl/preprocessReads/trim-pe", package="systemPipeR")
+## trim <- loadWF(targets=targetspath, wf_file="trim-pe.cwl", input_file="trim-pe.yml", dir_path=dir_path)
+## trim <- renderWF(trim, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
 ## trim
 ## output(trim)[1:2]
 
 
 ## ----proprocess_reads, eval=FALSE, message=FALSE, warning=FALSE, cache=TRUE----
-## # args <- systemArgs(sysma="param/trim.param", mytargets="targets_chip.txt")
 ## filterFct <- function(fq, cutoff=20, Nexceptions=0) {
 ##     qcount <- rowSums(as(quality(fq), "matrix") <= cutoff, na.rm=TRUE)
 ##     fq[qcount <= Nexceptions]
@@ -68,18 +61,18 @@ targets[1:4,-c(5,6)]
 ## }
 ## preprocessReads(args=trim, Fct="filterFct(fq, cutoff=20, Nexceptions=0)",
 ##                 batchsize=100000)
-## writeTargetsout(x=trim, file="targets_chip_trim.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE)
+## writeTargetsout(x=trim, file="targets_chip_trimPE.txt", step=1, new_col = c("FileName1", "FileName2"),
+##                 new_col_output_index = c(1,2), overwrite = TRUE)
 
 
 ## ----fastq_report, eval=FALSE-----------------------------
 ## library(BiocParallel); library(batchtools)
 ## f <- function(x) {
 ##   library(systemPipeR)
-##   targets <- system.file("extdata", "targets_chip.txt", package="systemPipeR")
-##   dir_path <- system.file("extdata/cwl/preprocessReads/trim-se", package="systemPipeR")
-##   trim <- loadWorkflow(targets=targets, wf_file="trim-se.cwl", input_file="trim-se.yml", dir_path=dir_path)
-##   trim <- renderWF(trim, inputvars=c(FileName="_FASTQ_PATH1_", SampleName="_SampleName_"))
+##   targets <- system.file("extdata", "targetsPE_chip.txt", package="systemPipeR")
+##   dir_path <- system.file("extdata/cwl/preprocessReads/trim-pe", package="systemPipeR")
+##   trim <- loadWorkflow(targets=targets, wf_file="trim-pe.cwl", input_file="trim-pe.yml", dir_path=dir_path)
+##   trim <- renderWF(trim, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
 ##   seeFastq(fastq=infile1(trim)[x], batchsize=100000, klength=8)
 ## }
 ## 
@@ -104,11 +97,11 @@ targets[1:4,-c(5,6)]
 
 
 ## ----bowtie2_align, eval=FALSE----------------------------
-## targets <- system.file("extdata", "targets_chip.txt", package="systemPipeR")
-## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-se", package="systemPipeR")
-## args <- loadWF(targets = targets, wf_file = "bowtie2-mapping-se.cwl",
-##     input_file = "bowtie2-mapping-se.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
+## targets <- system.file("extdata", "targetsPE_chip.txt", package="systemPipeR")
+## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-pe", package="systemPipeR")
+## args <- loadWF(targets = targets, wf_file = "bowtie2-mapping-pe.cwl",
+##     input_file = "bowtie2-mapping-pe.yml", dir_path = dir_path)
+## args <- renderWF(args, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
 ## args
 ## cmdlist(args)[1:2]
 ## output(args)[1:2]
@@ -300,10 +293,10 @@ targets[1:4,-c(5,6)]
 ## args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
 ## 
 ## ## Bam Files
-## targets <- system.file("extdata", "targets_chip.txt", package="systemPipeR")
-## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-se", package="systemPipeR")
-## args_bam <- loadWF(targets = targets, wf_file = "bowtie2-mapping-se.cwl",
-##     input_file = "bowtie2-mapping-se.yml", dir_path = dir_path)
+## targets <- system.file("extdata", "targetsPE_chip.txt", package="systemPipeR")
+## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-pe", package="systemPipeR")
+## args_bam <- loadWF(targets = targets, wf_file = "bowtie2-mapping-pe.cwl",
+##     input_file = "bowtie2-mapping-pe.yml", dir_path = dir_path)
 ## args_bam <- renderWF(args_bam, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
 ## args_bam <- output_update(args_bam, dir=FALSE, replace=TRUE, extension=c(".sam", ".bam"))
 ## outpaths <- subsetWF(args_bam, slot="output", subset=1, index=1)
