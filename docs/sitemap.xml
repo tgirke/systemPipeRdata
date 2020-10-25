@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//index.html</loc>
+  </url>
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//reference/availableWF.html</loc>
+  </url>
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//reference/genWorkenvir.html</loc>
+  </url>
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//reference/pathList.html</loc>
+  </url>
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//articles/systemPipeChIPseq.html</loc>
+  </url>
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//articles/systemPipeRIBOseq.html</loc>
+  </url>
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//articles/systemPipeRNAseq.html</loc>
+  </url>
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//articles/systemPipeRdata.html</loc>
+  </url>
+  <url>
+    <loc>https://systempipe.org/systemPipeRdata//articles/systemPipeVARseq.html</loc>
+  </url>
+</urlset>
