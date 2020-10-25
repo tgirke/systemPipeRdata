@@ -1,0 +1,16 @@
+title: systemPipeRdata
+url: https://systempipe.org/systemPipeRdata/
+authors:
+   Daniela Cassol:
+     href: https://www.dcassol.com/
+   Thomas Girke:
+     href: http://girke.bioinformatics.ucr.edu/
+
+home:
+  links:
+  - text: Download from GitHub
+    href: https://github.com/tgirke/systemPipeRdata
+  - text: Ask a question about systemPipeRdata
+    href: https://support.bioconductor.org/
+  - text: Report a bug
+    href: https://github.com/tgirke/systemPipeRdata/issues
