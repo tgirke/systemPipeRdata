@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">systemPipeRdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.17.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.19.1</span>
       </span>
     </div>
 
@@ -88,14 +88,14 @@
 
       
 
-      </header><link href="systemPipeRNAseq_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+      </header><script src="systemPipeRNAseq_files/header-attrs-2.5/header-attrs.js"></script><script src="systemPipeRNAseq_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="systemPipeRNAseq_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
 <script src="systemPipeRNAseq_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>RNA-Seq Workflow Template</h1>
                         <h4 class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
             
-            <h4 class="date">Last update: 25 October, 2020</h4>
+            <h4 class="date">Last update: 29 October, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRNAseq.Rmd"><code>vignettes/systemPipeRNAseq.Rmd</code></a></small>
       <div class="hidden name"><code>systemPipeRNAseq.Rmd</code></div>
@@ -106,7 +106,6 @@
     
 <!--
 Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRNAseq.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::pdf_document'))"
-# Rmarkdown/HTML setting
 -->
 <style type="text/css">
 pre code {
@@ -366,7 +365,7 @@ Figure 1: FASTQ quality report for 18 samples
 <a href="#read-counting-with-summarizeoverlaps-in-parallel-mode-using-multiple-cores" class="anchor"></a>Read counting with <code>summarizeOverlaps</code> in parallel mode using multiple cores</h2>
 <p>Reads overlapping with annotation ranges of interest are counted for each sample using the <code>summarizeOverlaps</code> function <span class="citation">(Lawrence et al. 2013)</span>. The read counting is preformed for exonic gene regions in a non-strand-specific manner while ignoring overlaps among different genes. Subsequently, the expression count values are normalized by <em>reads per kp per million mapped reads</em> (RPKM). The raw read count table (<code>countDFeByg.xls</code>) and the corresponding RPKM table (<code>rpkmDFeByg.xls</code>) are written to separate files in the directory of this project. Parallelization is achieved with the <code>BiocParallel</code> package, here using 8 CPU cores.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"GenomicFeatures"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.org/packages/GenomicFeatures">"GenomicFeatures"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel">BiocParallel</a></span><span class="op">)</span>
 <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/makeTxDbFromGFF.html">makeTxDbFromGFF</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"data/tair10.gff"</span>, format <span class="op">=</span> <span class="st">"gff"</span>, 
     dataSource <span class="op">=</span> <span class="st">"TAIR"</span>, organism <span class="op">=</span> <span class="st">"Arabidopsis thaliana"</span><span class="op">)</span>
@@ -587,13 +586,13 @@ Figure 6: Heat Map with Hierarchical Clustering Dendrograms of DEGs
 <a href="#version-information" class="anchor"></a>Version Information</h1>
 <div class="sourceCode" id="cb33"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>## R version 4.0.3 (2020-10-10)
+<pre><code>## R Under development (unstable) (2020-10-24 r79367)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 20.04.1 LTS
 ## 
 ## Matrix products: default
 ## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
-## LAPACK: /home/dcassol/src/R-4.0.3/lib/libRlapack.so
+## LAPACK: /home/dcassol/src/R-devel/lib/libRlapack.so
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -609,71 +608,72 @@ Figure 6: Heat Map with Hierarchical Clustering Dendrograms of DEGs
 ## 
 ## other attached packages:
 ##  [1] batchtools_0.9.14           ape_5.4-1                  
-##  [3] ggplot2_3.3.2               systemPipeR_1.23.8         
-##  [5] ShortRead_1.46.0            GenomicAlignments_1.24.0   
-##  [7] SummarizedExperiment_1.18.2 DelayedArray_0.14.1        
-##  [9] matrixStats_0.57.0          Biobase_2.48.0             
-## [11] BiocParallel_1.22.0         Rsamtools_2.4.0            
-## [13] Biostrings_2.56.0           XVector_0.28.0             
-## [15] GenomicRanges_1.40.0        GenomeInfoDb_1.24.2        
-## [17] IRanges_2.22.2              S4Vectors_0.26.1           
-## [19] BiocGenerics_0.34.0         BiocStyle_2.16.1           
+##  [3] ggplot2_3.3.2               systemPipeR_1.25.1         
+##  [5] ShortRead_1.49.0            GenomicAlignments_1.27.0   
+##  [7] SummarizedExperiment_1.21.0 Biobase_2.51.0             
+##  [9] MatrixGenerics_1.3.0        matrixStats_0.57.0         
+## [11] BiocParallel_1.25.0         Rsamtools_2.7.0            
+## [13] Biostrings_2.59.0           XVector_0.31.0             
+## [15] GenomicRanges_1.43.0        GenomeInfoDb_1.27.0        
+## [17] IRanges_2.25.0              S4Vectors_0.29.0           
+## [19] BiocGenerics_0.37.0         BiocStyle_2.19.0           
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] colorspace_1.4-1         rjson_0.2.20            
 ##   [3] hwriter_1.3.2            ellipsis_0.3.1          
 ##   [5] rprojroot_1.3-2          fs_1.5.0                
-##   [7] bit64_4.0.5              AnnotationDbi_1.50.3    
-##   [9] xml2_1.3.2               codetools_0.2-16        
-##  [11] splines_4.0.3            knitr_1.30              
-##  [13] jsonlite_1.7.1           annotate_1.66.0         
-##  [15] GO.db_3.11.4             dbplyr_1.4.4            
-##  [17] png_0.1-7                pheatmap_1.0.12         
-##  [19] graph_1.66.0             BiocManager_1.30.10     
-##  [21] compiler_4.0.3           httr_1.4.2              
-##  [23] GOstats_2.54.0           backports_1.1.10        
-##  [25] assertthat_0.2.1         Matrix_1.2-18           
-##  [27] limma_3.44.3             formatR_1.7             
-##  [29] htmltools_0.5.0          prettyunits_1.1.1       
-##  [31] tools_4.0.3              gtable_0.3.0            
-##  [33] glue_1.4.2               GenomeInfoDbData_1.2.3  
-##  [35] Category_2.54.0          dplyr_1.0.2             
-##  [37] rsvg_2.1                 rappdirs_0.3.1          
-##  [39] V8_3.2.0                 Rcpp_1.0.5              
-##  [41] pkgdown_1.6.1            vctrs_0.3.4             
-##  [43] nlme_3.1-150             rtracklayer_1.48.0      
-##  [45] xfun_0.18                stringr_1.4.0           
-##  [47] lifecycle_0.2.0          XML_3.99-0.5            
-##  [49] edgeR_3.30.3             zlibbioc_1.34.0         
-##  [51] scales_1.1.1             BSgenome_1.56.0         
-##  [53] VariantAnnotation_1.34.0 ragg_0.4.0              
-##  [55] hms_0.5.3                RBGL_1.64.0             
-##  [57] RColorBrewer_1.1-2       yaml_2.2.1              
-##  [59] curl_4.3                 memoise_1.1.0           
-##  [61] biomaRt_2.44.4           latticeExtra_0.6-29     
-##  [63] stringi_1.5.3            RSQLite_2.2.1           
-##  [65] genefilter_1.70.0        desc_1.2.0              
-##  [67] checkmate_2.0.0          GenomicFeatures_1.40.1  
-##  [69] DOT_0.1                  rlang_0.4.8             
-##  [71] pkgconfig_2.0.3          systemfonts_0.3.2       
-##  [73] bitops_1.0-6             evaluate_0.14           
-##  [75] lattice_0.20-41          purrr_0.3.4             
-##  [77] bit_4.0.4                tidyselect_1.1.0        
-##  [79] GSEABase_1.50.1          AnnotationForge_1.30.1  
-##  [81] magrittr_1.5             bookdown_0.21           
-##  [83] R6_2.4.1                 generics_0.0.2          
-##  [85] base64url_1.4            DBI_1.1.0               
-##  [87] withr_2.3.0              pillar_1.4.6            
-##  [89] survival_3.2-7           RCurl_1.98-1.2          
-##  [91] tibble_3.0.4             crayon_1.3.4            
-##  [93] BiocFileCache_1.12.1     rmarkdown_2.5           
-##  [95] jpeg_0.1-8.1             progress_1.2.2          
-##  [97] locfit_1.5-9.4           grid_4.0.3              
-##  [99] data.table_1.13.2        blob_1.2.1              
-## [101] Rgraphviz_2.32.0         digest_0.6.27           
-## [103] xtable_1.8-4             brew_1.0-6              
-## [105] textshaping_0.1.2        openssl_1.4.3           
-## [107] munsell_0.5.0            askpass_1.1</code></pre>
+##   [7] rstudioapi_0.11          bit64_4.0.5             
+##   [9] AnnotationDbi_1.53.0     xml2_1.3.2              
+##  [11] codetools_0.2-16         splines_4.1.0           
+##  [13] knitr_1.30               jsonlite_1.7.1          
+##  [15] annotate_1.69.0          GO.db_3.12.0            
+##  [17] dbplyr_1.4.4             png_0.1-7               
+##  [19] pheatmap_1.0.12          graph_1.69.0            
+##  [21] BiocManager_1.30.10      compiler_4.1.0          
+##  [23] httr_1.4.2               GOstats_2.57.0          
+##  [25] backports_1.1.10         assertthat_0.2.1        
+##  [27] Matrix_1.2-18            limma_3.47.0            
+##  [29] formatR_1.7              htmltools_0.5.0         
+##  [31] prettyunits_1.1.1        tools_4.1.0             
+##  [33] gtable_0.3.0             glue_1.4.2              
+##  [35] GenomeInfoDbData_1.2.4   Category_2.57.0         
+##  [37] dplyr_1.0.2              rsvg_2.1                
+##  [39] rappdirs_0.3.1           V8_3.3.1                
+##  [41] Rcpp_1.0.5               pkgdown_1.6.1           
+##  [43] vctrs_0.3.4              nlme_3.1-150            
+##  [45] rtracklayer_1.51.0       xfun_0.18               
+##  [47] stringr_1.4.0            lifecycle_0.2.0         
+##  [49] XML_3.99-0.5             edgeR_3.33.0            
+##  [51] zlibbioc_1.37.0          scales_1.1.1            
+##  [53] BSgenome_1.59.0          VariantAnnotation_1.37.0
+##  [55] ragg_0.4.0               hms_0.5.3               
+##  [57] RBGL_1.67.0              RColorBrewer_1.1-2      
+##  [59] yaml_2.2.1               curl_4.3                
+##  [61] memoise_1.1.0            biomaRt_2.47.0          
+##  [63] latticeExtra_0.6-29      stringi_1.5.3           
+##  [65] RSQLite_2.2.1            genefilter_1.73.0       
+##  [67] desc_1.2.0               checkmate_2.0.0         
+##  [69] GenomicFeatures_1.43.0   DOT_0.1                 
+##  [71] rlang_0.4.8              pkgconfig_2.0.3         
+##  [73] systemfonts_0.3.2        bitops_1.0-6            
+##  [75] evaluate_0.14            lattice_0.20-41         
+##  [77] purrr_0.3.4              bit_4.0.4               
+##  [79] tidyselect_1.1.0         GSEABase_1.53.0         
+##  [81] AnnotationForge_1.33.0   magrittr_1.5            
+##  [83] bookdown_0.21            R6_2.5.0                
+##  [85] generics_0.0.2           base64url_1.4           
+##  [87] DelayedArray_0.15.16     DBI_1.1.0               
+##  [89] withr_2.3.0              pillar_1.4.6            
+##  [91] survival_3.2-7           RCurl_1.98-1.2          
+##  [93] tibble_3.0.4             crayon_1.3.4            
+##  [95] BiocFileCache_1.15.0     rmarkdown_2.5           
+##  [97] jpeg_0.1-8.1             progress_1.2.2          
+##  [99] locfit_1.5-9.4           grid_4.1.0              
+## [101] data.table_1.13.2        blob_1.2.1              
+## [103] Rgraphviz_2.35.0         digest_0.6.27           
+## [105] xtable_1.8-4             brew_1.0-6              
+## [107] textshaping_0.1.2        openssl_1.4.3           
+## [109] munsell_0.5.0            askpass_1.1</code></pre>
 </div>
 <div id="funding" class="section level1">
 <h1 class="hasAnchor">
@@ -683,7 +683,7 @@ Figure 6: Heat Map with Hierarchical Clustering Dendrograms of DEGs
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
+<div id="refs" class="references hanging-indent">
 <div id="ref-H_Backman2016-bt">
 <p>H Backman, Tyler W, and Thomas Girke. 2016. “systemPipeR: NGS workflow and report generation environment.” <em>BMC Bioinformatics</em> 17 (1): 388. <a href="https://doi.org/10.1186/s12859-016-1241-0">https://doi.org/10.1186/s12859-016-1241-0</a>.</p>
 </div>

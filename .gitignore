@@ -1,1 +1,11 @@
-*~
+vignettes/systemPipeChIPseq_cache/*
+vignettes/systemPipeRIBOseq_cache/*
+vignettes/systemPipeRNAseq_cache/*
+vignettes/systemPipeRdata_cache/*
+vignettes/systemPipeVARseq_cache/*
+docs/articles/systemPipeChIPseq_files/*
+docs/articles/systemPipeRIBOseq_files/*
+docs/articles/systemPipeRNAseq_files/*
+docs/articles/systemPipeRdata_files/*
+docs/articles/systemPipeVARseq_files/*
+

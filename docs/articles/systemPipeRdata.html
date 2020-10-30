@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">systemPipeRdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.17.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.19.1</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
 
       
 
-      </header><link href="systemPipeRdata_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+      </header><script src="systemPipeRdata_files/header-attrs-2.5/header-attrs.js"></script><script src="systemPipeRdata_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="systemPipeRdata_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
 <script src="systemPipeRdata_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -96,7 +96,7 @@
 <em>systemPipeRdata</em>: Workflow templates and sample data</h1>
                         <h4 class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
             
-            <h4 class="date">Last update: 25 October, 2020</h4>
+            <h4 class="date">Last update: 29 October, 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.Rmd"><code>vignettes/systemPipeRdata.Rmd</code></a></small>
       <div class="hidden name"><code>systemPipeRdata.Rmd</code></div>
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="fu"><a href="../reference/genWorkenvir.html">genWorkenvir</a></span><span class="op">(</span>workflow <span class="op">=</span> <span class="st">"varseq"</span>, mydirname <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/getwd.html">setwd</a></span><span class="op">(</span><span class="st">"varseq"</span><span class="op">)</span></pre></div>
 <p>On Linux and OS X systems the same can be achieved from the command-line of a terminal with the following commands.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1">$ <span class="ex">Rscript</span> -e <span class="st">"systemPipeRdata::genWorkenvir(workflow='varseq', mydirname=NULL)"</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a>$ <span class="ex">Rscript</span> -e <span class="st">"systemPipeRdata::genWorkenvir(workflow='varseq', mydirname=NULL)"</span></span></code></pre></div>
 </div>
 </div>
 <div id="workflow-templates-collection" class="section level1">
@@ -269,40 +269,40 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="fu"><a href="../reference/pathList.html">pathList</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <pre><code>## $targets
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/param/targets.txt"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/param/targets.txt"
 ## 
 ## $targetsPE
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/param/targetsPE.txt"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/param/targetsPE.txt"
 ## 
 ## $annotationdir
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/annotation/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/annotation/"
 ## 
 ## $fastqdir
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/fastq/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/fastq/"
 ## 
 ## $bamdir
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/bam/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/bam/"
 ## 
 ## $paramdir
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/param/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/param/"
 ## 
 ## $workflows
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/workflows/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/workflows/"
 ## 
 ## $chipseq
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/workflows/chipseq/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/workflows/chipseq/"
 ## 
 ## $rnaseq
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/workflows/rnaseq/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/workflows/rnaseq/"
 ## 
 ## $riboseq
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/workflows/riboseq/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/workflows/riboseq/"
 ## 
 ## $varseq
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/workflows/varseq/"
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/workflows/varseq/"
 ## 
 ## $new
-## [1] "/tmp/Rtmp7feKYX/temp_libpath41eab3d5cc4ae/systemPipeRdata/extdata/workflows/new/"</code></pre>
+## [1] "/tmp/RtmpFMTWT6/temp_libpath5609114fa90df/systemPipeRdata/extdata/workflows/new/"</code></pre>
 </div>
 </div>
 <div id="version-information" class="section level1">
@@ -310,13 +310,13 @@ document.addEventListener("DOMContentLoaded", function() {
 <a href="#version-information" class="anchor"></a>Version information</h1>
 <div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>## R version 4.0.3 (2020-10-10)
+<pre><code>## R Under development (unstable) (2020-10-24 r79367)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 20.04.1 LTS
 ## 
 ## Matrix products: default
 ## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
-## LAPACK: /home/dcassol/src/R-4.0.3/lib/libRlapack.so
+## LAPACK: /home/dcassol/src/R-devel/lib/libRlapack.so
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -331,26 +331,26 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [6] methods   base     
 ## 
 ## other attached packages:
-## [1] systemPipeRdata_1.17.4 BiocStyle_2.16.1      
+## [1] systemPipeRdata_1.19.1 BiocStyle_2.19.0      
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] knitr_1.30          magrittr_1.5       
-##  [3] BiocGenerics_0.34.0 R6_2.4.1           
-##  [5] ragg_0.4.0          rlang_0.4.8        
-##  [7] stringr_1.4.0       tools_4.0.3        
-##  [9] parallel_4.0.3      xfun_0.18          
-## [11] remotes_2.2.0       htmltools_0.5.0    
-## [13] systemfonts_0.3.2   yaml_2.2.1         
-## [15] assertthat_0.2.1    rprojroot_1.3-2    
-## [17] digest_0.6.27       pkgdown_1.6.1      
-## [19] crayon_1.3.4        bookdown_0.21      
-## [21] textshaping_0.1.2   formatR_1.7        
-## [23] BiocManager_1.30.10 codetools_0.2-16   
-## [25] fs_1.5.0            memoise_1.1.0      
-## [27] evaluate_0.14       rmarkdown_2.5      
-## [29] stringi_1.5.3       compiler_4.0.3     
-## [31] desc_1.2.0          backports_1.1.10   
-## [33] jsonlite_1.7.1</code></pre>
+##  [1] rstudioapi_0.11     knitr_1.30         
+##  [3] magrittr_1.5        BiocGenerics_0.37.0
+##  [5] R6_2.5.0            ragg_0.4.0         
+##  [7] rlang_0.4.8         stringr_1.4.0      
+##  [9] tools_4.1.0         parallel_4.1.0     
+## [11] xfun_0.18           remotes_2.2.0      
+## [13] htmltools_0.5.0     systemfonts_0.3.2  
+## [15] yaml_2.2.1          assertthat_0.2.1   
+## [17] digest_0.6.27       rprojroot_1.3-2    
+## [19] pkgdown_1.6.1       crayon_1.3.4       
+## [21] bookdown_0.21       textshaping_0.1.2  
+## [23] formatR_1.7         BiocManager_1.30.10
+## [25] codetools_0.2-16    fs_1.5.0           
+## [27] memoise_1.1.0       evaluate_0.14      
+## [29] rmarkdown_2.5       stringi_1.5.3      
+## [31] compiler_4.1.0      desc_1.2.0         
+## [33] backports_1.1.10    jsonlite_1.7.1</code></pre>
 </div>
 <div id="funding" class="section level1">
 <h1 class="hasAnchor">
@@ -360,7 +360,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
+<div id="refs" class="references hanging-indent">
 <div id="ref-H_Backman2016-bt">
 <p>H Backman, Tyler W, and Thomas Girke. 2016. “systemPipeR: NGS workflow and report generation environment.” <em>BMC Bioinformatics</em> 17 (1): 388. <a href="https://doi.org/10.1186/s12859-016-1241-0">https://doi.org/10.1186/s12859-016-1241-0</a>.</p>
 </div>
