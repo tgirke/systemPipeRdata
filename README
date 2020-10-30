@@ -1,4 +1,7 @@
 changelog
+    version 1.19.1
+	- Updated systemPipeRNAseq and systemPipeVARseq vignettes
+	
     version 1.17.4
 	- Updated systemPipeR* vignettes
 	

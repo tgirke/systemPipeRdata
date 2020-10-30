@@ -384,11 +384,11 @@ cmdlist(args)[1:2]
   args <- runCommandline(args= args,  make_bam=FALSE) 
   writeTargetsout(x = args, file = "./results/targets_gatk.txt",
                   step = 1, new_col = "GATK_FIXED", new_col_output_index = 1, overwrite = TRUE)
-  ```
+```
   
-  Up till this step, sample preprocess is done. All analysis ready `BAM` files and 
-  their index `.bai` files are created. Individual and cohort calling by 
-  `HaplotypeCaller` is performed from the next step.
+Up till this step, sample preprocess is done. All analysis ready `BAM` files and 
+their index `.bai` files are created. Individual and cohort calling by 
+`HaplotypeCaller` is performed from the next step.
 
 ### Step6: HaplotypeCaller `gvcf`
 
