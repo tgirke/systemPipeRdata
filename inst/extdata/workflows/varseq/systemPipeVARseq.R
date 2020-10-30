@@ -35,7 +35,7 @@ knitr::opts_chunk$set(
 ## })
 
 
-## ----load_systempiper, eval=TRUE, message=FALSE-----------
+## ----load_systempiper, eval=TRUE, message=FALSE, warning=FALSE----
 library(systemPipeR)
 
 

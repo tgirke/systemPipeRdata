@@ -17,7 +17,6 @@ bibliography: bibtex.bib
 
 <!--
 Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRNAseq.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::pdf_document'))"
-# Rmarkdown/HTML setting
 -->
 
 ```{css, echo=FALSE}
