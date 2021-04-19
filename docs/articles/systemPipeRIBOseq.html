@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">systemPipeRdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.19.2</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -74,7 +74,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/tgirke/systemPipeRdata/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -88,14 +88,13 @@
 
       
 
-      </header><script src="systemPipeRIBOseq_files/header-attrs-2.5/header-attrs.js"></script><script src="systemPipeRIBOseq_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="systemPipeRIBOseq_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="systemPipeRIBOseq_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="systemPipeRIBOseq_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>RIBO-Seq Workflow Template</h1>
                         <h4 class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
             
-            <h4 class="date">Last update: 29 October, 2020</h4>
+            <h4 class="date">Last update: 18 April, 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRIBOseq.Rmd"><code>vignettes/systemPipeRIBOseq.Rmd</code></a></small>
       <div class="hidden name"><code>systemPipeRIBOseq.Rmd</code></div>
@@ -148,8 +147,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="hasAnchor">
 <a href="#load-packages-and-sample-data" class="anchor"></a>Load packages and sample data</h2>
 <p>The <code>systemPipeR</code> package needs to be loaded to perform the analysis steps shown in this report <span class="citation">(H Backman and Girke 2016)</span>. The package allows users to run the entire analysis workflow interactively or with a single command while also generating the corresponding analysis report. For details see <code>systemPipeR's</code> main <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">vignette</a>.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://girke.bioinformatics.ucr.edu/systemPipeR/">systemPipeR</a></span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://systempipe.org/">systemPipeR</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="generate-workflow-environment" class="section level2">
 <h2 class="hasAnchor">
@@ -170,10 +169,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="hasAnchor">
 <a href="#experiment-definition-provided-by-targets-file" class="anchor"></a>Experiment definition provided by <code>targets</code> file</h2>
 <p>The <code>targets</code> file defines all FASTQ files and sample comparisons of the analysis workflow.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="va">targetspath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"targetsPE.txt"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">targetspath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"targetsPE.txt"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">targets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="va">targetspath</span>, comment.char <span class="op">=</span> <span class="st">"#"</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>
-<span class="va">targets</span></pre></div>
+<span class="va">targets</span></code></pre></div>
 <pre><code>##                      FileName1                   FileName2
 ## 1  ./data/SRR446027_1.fastq.gz ./data/SRR446027_2.fastq.gz
 ## 2  ./data/SRR446028_1.fastq.gz ./data/SRR446028_2.fastq.gz
@@ -222,37 +221,37 @@ document.addEventListener("DOMContentLoaded", function() {
 <a href="#quality-filtering-and-adaptor-trimming" class="anchor"></a>Quality filtering and adaptor trimming</h2>
 <p>The following custom function trims adaptors hierarchically from the longest to the shortest match of the right end of the reads. If <code>internalmatch=TRUE</code> then internal matches will trigger the same behavior. The argument <code>minpatternlength</code> defines the shortest adaptor match to consider in this iterative process. In addition, the function removes reads containing Ns or homopolymer regions. More detailed information on read preprocessing is provided in <code>systemPipeR's</code> main vignette.</p>
 <p>First, we construct <em><code>SYSargs2</code></em> object from <em><code>cwl</code></em> and <em><code>yml</code></em> param and <em><code>targets</code></em> files.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/preprocessReads/trim-pe"</span>, 
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/preprocessReads/trim-pe"</span>, 
     package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">trim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWorkflow</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="va">targetspath</span>, wf_file <span class="op">=</span> <span class="st">"trim-pe.cwl"</span>, 
     input_file <span class="op">=</span> <span class="st">"trim-pe.yml"</span>, dir_path <span class="op">=</span> <span class="va">dir_path</span><span class="op">)</span>
 <span class="va">trim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderWF.html">renderWF</a></span><span class="op">(</span><span class="va">trim</span>, inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>FileName1 <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>, 
     FileName2 <span class="op">=</span> <span class="st">"_FASTQ_PATH2_"</span>, SampleName <span class="op">=</span> <span class="st">"_SampleName_"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">trim</span>
-<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/sysargs2-methods.html">output</a></span><span class="op">(</span><span class="va">trim</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/sysargs2-methods.html">output</a></span><span class="op">(</span><span class="va">trim</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></code></pre></div>
 <p>Next, we execute the code for trimming all the raw data.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">fctpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"custom_Fct.R"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fctpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"custom_Fct.R"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="va">fctpath</span><span class="op">)</span>
 <span class="va">iterTrim</span> <span class="op">&lt;-</span> <span class="st">".iterTrimbatch1(fq, pattern='ACACGTCT', internalmatch=FALSE, minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=101)"</span>
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/preprocessReads.html">preprocessReads</a></span><span class="op">(</span>args <span class="op">=</span> <span class="va">trim</span>, Fct <span class="op">=</span> <span class="va">iterTrim</span>, batchsize <span class="op">=</span> <span class="fl">1e+05</span>, 
     overwrite <span class="op">=</span> <span class="cn">TRUE</span>, compress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/writeTargetsout.html">writeTargetsout</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">trim</span>, file <span class="op">=</span> <span class="st">"targets_trimPE.txt"</span>, step <span class="op">=</span> <span class="fl">1</span>, 
     new_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FileName1"</span>, <span class="st">"FileName2"</span><span class="op">)</span>, new_col_output_index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, 
-        <span class="fl">2</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+        <span class="fl">2</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="fastq-quality-report" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fastq-quality-report" class="anchor"></a>FASTQ quality report</h2>
 <p>The following <code>seeFastq</code> and <code>seeFastqPlot</code> functions generate and plot a series of useful quality statistics for a set of FASTQ files including per cycle quality box plots, base proportions, base-level quality trends, relative k-mer diversity, length and occurrence distribution of reads, number of reads above quality cutoffs and mean quality distribution. The results are written to a PDF file named <code>fastqReport.png</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">fqlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/seeFastq.html">seeFastq</a></span><span class="op">(</span>fastq <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/sysargs.html">infile1</a></span><span class="op">(</span><span class="va">trim</span><span class="op">)</span>, batchsize <span class="op">=</span> <span class="fl">10000</span>, 
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fqlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/seeFastq.html">seeFastq</a></span><span class="op">(</span>fastq <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/sysargs.html">infile1</a></span><span class="op">(</span><span class="va">trim</span><span class="op">)</span>, batchsize <span class="op">=</span> <span class="fl">10000</span>, 
     klength <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"./results/fastqReport.png"</span>, height <span class="op">=</span> <span class="fl">18</span>, width <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">fqlist</span><span class="op">)</span>, 
     units <span class="op">=</span> <span class="st">"in"</span>, res <span class="op">=</span> <span class="fl">72</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/seeFastq.html">seeFastqPlot</a></span><span class="op">(</span><span class="va">fqlist</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <img src="results/fastqReport.png"><div align="center">
 <b>Figure 1:</b> FASTQ quality report. To zoom in, right click image and open it in a separate browser tab.
 </div>
@@ -268,8 +267,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </h2>
 <p>The following steps will demonstrate how to use the short read aligner <code>Hisat2</code> <span class="citation">(Kim, Langmead, and Salzberg 2015)</span> in both interactive job submissions and batch submissions to queuing systems of clusters using the <em><code>systemPipeR's</code></em> new CWL command-line interface.</p>
 <p>Build <code>Hisat2</code> index.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/hisat2/hisat2-idx"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/hisat2/hisat2-idx"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWorkflow</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="cn">NULL</span>, wf_file <span class="op">=</span> <span class="st">"hisat2-index.cwl"</span>, 
     input_file <span class="op">=</span> <span class="st">"hisat2-index.yml"</span>, dir_path <span class="op">=</span> <span class="va">dir_path</span><span class="op">)</span>
 <span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderWF.html">renderWF</a></span><span class="op">(</span><span class="va">idx</span><span class="op">)</span>
@@ -277,10 +276,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/sysargs2-methods.html">cmdlist</a></span><span class="op">(</span><span class="va">idx</span><span class="op">)</span>
 
 <span class="co">## Run</span>
-<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runCommandline.html">runCommandline</a></span><span class="op">(</span><span class="va">idx</span>, make_bam <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runCommandline.html">runCommandline</a></span><span class="op">(</span><span class="va">idx</span>, make_bam <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>The parameter settings of the aligner are defined in the <code>hisat2-mapping-se.cwl</code> and <code>hisat2-mapping-se.yml</code> files. The following shows how to construct the corresponding <em>SYSargs2</em> object, here <em>args</em>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/hisat2/hisat2-pe"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/hisat2/hisat2-pe"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWorkflow</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="va">targetspath</span>, wf_file <span class="op">=</span> <span class="st">"hisat2-mapping-pe.cwl"</span>, 
     input_file <span class="op">=</span> <span class="st">"hisat2-mapping-pe.yml"</span>, dir_path <span class="op">=</span> <span class="va">dir_path</span><span class="op">)</span>
 <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderWF.html">renderWF</a></span><span class="op">(</span><span class="va">args</span>, inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>FileName1 <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>, 
@@ -290,32 +289,32 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/sysargs2-methods.html">output</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>
 
 <span class="co">## Run</span>
-<span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runCommandline.html">runCommandline</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mllg/batchtools">batchtools</a></span><span class="op">)</span>
+<span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runCommandline.html">runCommandline</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mllg/batchtools">batchtools</a></span><span class="op">)</span>
 <span class="va">resources</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>walltime <span class="op">=</span> <span class="fl">120</span>, ntasks <span class="op">=</span> <span class="fl">1</span>, ncpus <span class="op">=</span> <span class="fl">4</span>, memory <span class="op">=</span> <span class="fl">1024</span><span class="op">)</span>
 <span class="va">reg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/clusterRun.html">clusterRun</a></span><span class="op">(</span><span class="va">args</span>, FUN <span class="op">=</span> <span class="va">runCommandline</span>, more.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>args <span class="op">=</span> <span class="va">args</span>, 
     make_bam <span class="op">=</span> <span class="cn">TRUE</span>, dir <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, conffile <span class="op">=</span> <span class="st">".batchtools.conf.R"</span>, 
     template <span class="op">=</span> <span class="st">"batchtools.slurm.tmpl"</span>, Njobs <span class="op">=</span> <span class="fl">18</span>, runid <span class="op">=</span> <span class="st">"01"</span>, 
     resourceList <span class="op">=</span> <span class="va">resources</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/batchtools/man/getStatus.html">getStatus</a></span><span class="op">(</span>reg <span class="op">=</span> <span class="va">reg</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/batchtools/man/waitForJobs.html">waitForJobs</a></span><span class="op">(</span>reg <span class="op">=</span> <span class="va">reg</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/batchtools/man/waitForJobs.html">waitForJobs</a></span><span class="op">(</span>reg <span class="op">=</span> <span class="va">reg</span><span class="op">)</span></code></pre></div>
 <p>Check whether all BAM files have been created.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/subsetWF.html">subsetWF</a></span><span class="op">(</span><span class="va">args</span>, slot <span class="op">=</span> <span class="st">"output"</span>, subset <span class="op">=</span> <span class="fl">1</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/subsetWF.html">subsetWF</a></span><span class="op">(</span><span class="va">args</span>, slot <span class="op">=</span> <span class="st">"output"</span>, subset <span class="op">=</span> <span class="fl">1</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="read-and-alignment-stats" class="section level2">
 <h2 class="hasAnchor">
 <a href="#read-and-alignment-stats" class="anchor"></a>Read and alignment stats</h2>
 <p>The following provides an overview of the number of reads in each sample and how many of them aligned to the reference.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="va">read_statsDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/alignStats.html">alignStats</a></span><span class="op">(</span>args <span class="op">=</span> <span class="va">args</span><span class="op">)</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">read_statsDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/alignStats.html">alignStats</a></span><span class="op">(</span>args <span class="op">=</span> <span class="va">args</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">read_statsDF</span>, <span class="st">"results/alignStats.xls"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, 
-    quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"alignStats.xls"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>, 
-    header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></pre></div>
+    quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"alignStats.xls"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>, 
+    header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></code></pre></div>
 <pre><code>##   FileName Nreads2x Nalign Perc_Aligned Nalign_Primary
 ## 1      M1A   192918 177961     92.24697         177961
 ## 2      M1B   197484 159378     80.70426         159378
@@ -331,9 +330,9 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="hasAnchor">
 <a href="#create-symbolic-links-for-viewing-bam-files-in-igv" class="anchor"></a>Create symbolic links for viewing BAM files in IGV</h2>
 <p>The <code>symLink2bam</code> function creates symbolic links to view the BAM alignment files in a genome browser such as IGV. The corresponding URLs are written to a file with a path specified under <code>urlfile</code> in the <code>results</code> directory.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/symLink2bam.html">symLink2bam</a></span><span class="op">(</span>sysargs <span class="op">=</span> <span class="va">args</span>, htmldir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"~/.html/"</span>, <span class="st">"projects/tests/"</span><span class="op">)</span>, 
-    urlbase <span class="op">=</span> <span class="st">"http://biocluster.ucr.edu/~tgirke/"</span>, urlfile <span class="op">=</span> <span class="st">"./results/IGVurl.txt"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/symLink2bam.html">symLink2bam</a></span><span class="op">(</span>sysargs <span class="op">=</span> <span class="va">args</span>, htmldir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"~/.html/"</span>, <span class="st">"projects/tests/"</span><span class="op">)</span>, 
+    urlbase <span class="op">=</span> <span class="st">"http://biocluster.ucr.edu/~tgirke/"</span>, urlfile <span class="op">=</span> <span class="st">"./results/IGVurl.txt"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="read-distribution-across-genomic-features" class="section level1">
@@ -344,27 +343,27 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="hasAnchor">
 <a href="#obtain-feature-types" class="anchor"></a>Obtain feature types</h2>
 <p>The first step is the generation of the feature type ranges based on annotations provided by a GFF file that can be transformed into a <code>TxDb</code> object. This includes ranges for mRNAs, exons, introns, UTRs, CDSs, miRNAs, rRNAs, tRNAs, promoter and intergenic regions. In addition, any number of custom annotations can be included in this routine.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures">GenomicFeatures</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures">GenomicFeatures</a></span><span class="op">)</span>
 <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/makeTxDbFromGFF.html">makeTxDbFromGFF</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"data/tair10.gff"</span>, format <span class="op">=</span> <span class="st">"gff3"</span>, 
     organism <span class="op">=</span> <span class="st">"Arabidopsis"</span><span class="op">)</span>
 <span class="va">feat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/genFeatures.html">genFeatures</a></span><span class="op">(</span><span class="va">txdb</span>, featuretype <span class="op">=</span> <span class="st">"all"</span>, reduce_ranges <span class="op">=</span> <span class="cn">TRUE</span>, 
-    upstream <span class="op">=</span> <span class="fl">1000</span>, downstream <span class="op">=</span> <span class="fl">0</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+    upstream <span class="op">=</span> <span class="fl">1000</span>, downstream <span class="op">=</span> <span class="fl">0</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="count-and-plot-reads-of-any-length" class="section level2">
 <h2 class="hasAnchor">
 <a href="#count-and-plot-reads-of-any-length" class="anchor"></a>Count and plot reads of any length</h2>
 <p>The <code>featuretypeCounts</code> function counts how many reads in short read alignment files (BAM format) overlap with entire annotation categories. This utility is useful for analyzing the distribution of the read mappings across feature types, <em>e.g.</em> coding versus non-coding genes. By default the read counts are reported for the sense and antisense strand of each feature type separately. To minimize memory consumption, the BAM files are processed in a stream using utilities from the <code>Rsamtools</code> and <code>GenomicAlignment</code> packages. The counts can be reported for each read length separately or as a single value for reads of any length. Subsequently, the counting results can be plotted with the associated <code>plotfeaturetypeCounts</code> function.</p>
 <p>The following generates and plots feature counts for any read length.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span>
 <span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/subsetWF.html">subsetWF</a></span><span class="op">(</span><span class="va">args</span>, slot <span class="op">=</span> <span class="st">"output"</span>, subset <span class="op">=</span> <span class="fl">1</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featuretypeCounts.html">featuretypeCounts</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span>, yieldSize <span class="op">=</span> <span class="fl">50000</span><span class="op">)</span>, 
     grl <span class="op">=</span> <span class="va">feat</span>, singleEnd <span class="op">=</span> <span class="cn">TRUE</span>, readlength <span class="op">=</span> <span class="cn">NULL</span>, type <span class="op">=</span> <span class="st">"data.frame"</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/plotfeaturetypeCounts.html">plotfeaturetypeCounts</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fc</span>, graphicsfile <span class="op">=</span> <span class="st">"results/featureCounts.png"</span>, 
     graphicsformat <span class="op">=</span> <span class="st">"png"</span>, scales <span class="op">=</span> <span class="st">"fixed"</span>, anyreadlength <span class="op">=</span> <span class="cn">TRUE</span>, 
-    scale_length_val <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></pre></div>
+    scale_length_val <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <img src="results/featureCounts.png"><div align="center">
 Figure 2: Read distribution plot across annotation features for any read length.
 </div>
@@ -374,13 +373,13 @@ Figure 2: Read distribution plot across annotation features for any read length.
 <h2 class="hasAnchor">
 <a href="#count-and-plot-reads-of-specific-lengths" class="anchor"></a>Count and plot reads of specific lengths</h2>
 <p>To determine the approximate read length of ribosome footprints in Ribo-Seq experiments, one can generate and plot the feature counts for specific read lengths separately. Typically, the most abundant read length obtained for translated features corresponds to the approximate footprint length occupied by the ribosomes.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="va">fc2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featuretypeCounts.html">featuretypeCounts</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span>, yieldSize <span class="op">=</span> <span class="fl">50000</span><span class="op">)</span>, 
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fc2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featuretypeCounts.html">featuretypeCounts</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span>, yieldSize <span class="op">=</span> <span class="fl">50000</span><span class="op">)</span>, 
     grl <span class="op">=</span> <span class="va">feat</span>, singleEnd <span class="op">=</span> <span class="cn">TRUE</span>, readlength <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">74</span><span class="op">:</span><span class="fl">76</span>, <span class="fl">99</span><span class="op">:</span><span class="fl">102</span><span class="op">)</span>, 
     type <span class="op">=</span> <span class="st">"data.frame"</span><span class="op">)</span>
 <span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/plotfeaturetypeCounts.html">plotfeaturetypeCounts</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fc2</span>, graphicsfile <span class="op">=</span> <span class="st">"results/featureCounts2.png"</span>, 
     graphicsformat <span class="op">=</span> <span class="st">"png"</span>, scales <span class="op">=</span> <span class="st">"fixed"</span>, anyreadlength <span class="op">=</span> <span class="cn">FALSE</span>, 
-    scale_length_val <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></pre></div>
+    scale_length_val <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <img src="results/featureCounts2.png"><div align="center">
 Figure 3: Read distribution plot across annotation features for specific read lengths.
 </div>
@@ -394,8 +393,8 @@ Figure 3: Read distribution plot across annotation features for specific read le
 <h2 class="hasAnchor">
 <a href="#predicting-uorfs-in-5-utr-regions" class="anchor"></a>Predicting uORFs in 5’ UTR regions</h2>
 <p>The function <code>predORF</code> can be used to identify open reading frames (ORFs) and coding sequences (CDSs) in DNA sequences provided as <code>DNAString</code> or <code>DNAStringSet</code> objects. The setting <code>mode='ORF'</code> returns continuous reading frames that begin with a start codon and end with a stop codon, while <code>mode='CDS'</code> returns continuous reading frames that do not need to begin or end with start or stop codons, respectively. Non-canonical start and stop condons are supported by allowing the user to provide any custom set of triplets under the <code>startcodon</code> and <code>stopcodon</code> arguments (<code>i.e.</code> non-ATG start codons). The argument <code>n</code> defines the maximum number of ORFs to return for each input sequence (<em>e.g.</em> <code>n=1</code> returns only the longest ORF). It also supports the identification of overlapping and nested ORFs. Alternatively, one can return all non-overlapping ORFs including the longest ORF for each input sequence with <code>n="all"</code> and <code>longest_disjoint=TRUE</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tgirke/systemPipeRdata">systemPipeRdata</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tgirke/systemPipeRdata">systemPipeRdata</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures">GenomicFeatures</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span>
 <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/makeTxDbFromGFF.html">makeTxDbFromGFF</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"data/tair10.gff"</span>, format <span class="op">=</span> <span class="st">"gff3"</span>, 
@@ -403,30 +402,30 @@ Figure 3: Read distribution plot across annotation features for specific read le
 <span class="va">futr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/transcriptsBy.html">fiveUTRsByTranscript</a></span><span class="op">(</span><span class="va">txdb</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">dna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html">extractTranscriptSeqs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/FaFile-class.html">FaFile</a></span><span class="op">(</span><span class="st">"data/tair10.fasta"</span><span class="op">)</span>, <span class="va">futr</span><span class="op">)</span>
 <span class="va">uorf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/predORF.html">predORF</a></span><span class="op">(</span><span class="va">dna</span>, n <span class="op">=</span> <span class="st">"all"</span>, mode <span class="op">=</span> <span class="st">"orf"</span>, longest_disjoint <span class="op">=</span> <span class="cn">TRUE</span>, 
-    strand <span class="op">=</span> <span class="st">"sense"</span><span class="op">)</span></pre></div>
+    strand <span class="op">=</span> <span class="st">"sense"</span><span class="op">)</span></code></pre></div>
 <p>To use the predicted ORF ranges for expression analysis given genome alignments as input, it is necessary to scale them to the corresponding genome coordinates. The function <code>scaleRanges</code> does this by transforming the mappings of spliced features (query ranges) to their corresponding genome coordinates (subject ranges). The method accounts for introns in the subject ranges that are absent in the query ranges. The above uORFs predicted in the provided 5’ UTRs sequences using <code>predORF</code> are a typical use case for this application. These query ranges are given relative to the 5’ UTR sequences and <code>scaleRanges</code> will convert them to the corresponding genome coordinates. The resulting <code>GRangesList</code> object (here <code>grl_scaled</code>) can be directly used for read counting.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="va">grl_scaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/scaleRanges.html">scaleRanges</a></span><span class="op">(</span>subject <span class="op">=</span> <span class="va">futr</span>, query <span class="op">=</span> <span class="va">uorf</span>, type <span class="op">=</span> <span class="st">"uORF"</span>, 
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">grl_scaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/scaleRanges.html">scaleRanges</a></span><span class="op">(</span>subject <span class="op">=</span> <span class="va">futr</span>, query <span class="op">=</span> <span class="va">uorf</span>, type <span class="op">=</span> <span class="st">"uORF"</span>, 
     verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html">export.gff3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">grl_scaled</span><span class="op">)</span>, <span class="st">"results/uorf.gff"</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html">export.gff3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">grl_scaled</span><span class="op">)</span>, <span class="st">"results/uorf.gff"</span><span class="op">)</span></code></pre></div>
 <p>To confirm the correctness of the obtained uORF ranges, one can parse their corresponding DNA sequences from the reference genome with the <code>getSeq</code> function and then translate them with the <code>translate</code> function into proteins. Typically, the returned protein sequences should start with a <code>M</code> (corresponding to start codon) and end with <code><a href="https://rdrr.io/r/base/Arithmetic.html">*</a></code> (corresponding to stop codon). The following example does this for a single uORF containing three exons.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/translate.html">translate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/getSeq.html">getSeq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/FaFile-class.html">FaFile</a></span><span class="op">(</span><span class="st">"data/tair10.fasta"</span><span class="op">)</span>, <span class="va">grl_scaled</span><span class="op">[[</span><span class="fl">7</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/translate.html">translate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/getSeq.html">getSeq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/FaFile-class.html">FaFile</a></span><span class="op">(</span><span class="st">"data/tair10.fasta"</span><span class="op">)</span>, <span class="va">grl_scaled</span><span class="op">[[</span><span class="fl">7</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="adding-custom-features-to-other-feature-types" class="section level2">
 <h2 class="hasAnchor">
 <a href="#adding-custom-features-to-other-feature-types" class="anchor"></a>Adding custom features to other feature types</h2>
 <p>If required custom feature ranges can be added to the standard features generated with the <code>genFeatures</code> function above. The following does this for the uORF ranges predicted with <code>predORF</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="va">feat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/genFeatures.html">genFeatures</a></span><span class="op">(</span><span class="va">txdb</span>, featuretype <span class="op">=</span> <span class="st">"all"</span>, reduce_ranges <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">feat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">feat</span>, <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html">GRangesList</a></span><span class="op">(</span>uORF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">grl_scaled</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">feat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/genFeatures.html">genFeatures</a></span><span class="op">(</span><span class="va">txdb</span>, featuretype <span class="op">=</span> <span class="st">"all"</span>, reduce_ranges <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">feat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">feat</span>, <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html">GRangesList</a></span><span class="op">(</span>uORF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">grl_scaled</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="predicting-sorfs-in-intergenic-regions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#predicting-sorfs-in-intergenic-regions" class="anchor"></a>Predicting sORFs in intergenic regions</h2>
 <p>The following identifies continuous ORFs in intergenic regions. Note, <code>predORF</code> can only identify continuous ORFs in query sequences. The function does not identify and remove introns prior to the ORF prediction.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="va">feat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/genFeatures.html">genFeatures</a></span><span class="op">(</span><span class="va">txdb</span>, featuretype <span class="op">=</span> <span class="st">"intergenic"</span>, reduce_ranges <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">feat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/genFeatures.html">genFeatures</a></span><span class="op">(</span><span class="va">txdb</span>, featuretype <span class="op">=</span> <span class="st">"intergenic"</span>, reduce_ranges <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">intergenic</span> <span class="op">&lt;-</span> <span class="va">feat</span><span class="op">$</span><span class="va">intergenic</span>
 <span class="fu">strand</span><span class="op">(</span><span class="va">intergenic</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"+"</span>
 <span class="va">dna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/getSeq.html">getSeq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/FaFile-class.html">FaFile</a></span><span class="op">(</span><span class="st">"data/tair10.fasta"</span><span class="op">)</span>, <span class="va">intergenic</span><span class="op">)</span>
@@ -438,7 +437,7 @@ Figure 3: Read distribution plot across annotation features for specific read le
 <span class="va">grl_scaled_intergenic</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/scaleRanges.html">scaleRanges</a></span><span class="op">(</span>subject <span class="op">=</span> <span class="va">intergenic</span>, query <span class="op">=</span> <span class="va">sorf</span>, 
     type <span class="op">=</span> <span class="st">"sORF"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html">export.gff3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">grl_scaled_intergenic</span><span class="op">)</span>, <span class="st">"sorf.gff"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/translate.html">translate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/getSeq.html">getSeq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/FaFile-class.html">FaFile</a></span><span class="op">(</span><span class="st">"data/tair10.fasta"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">grl_scaled_intergenic</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/translate.html">translate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/getSeq.html">getSeq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/FaFile-class.html">FaFile</a></span><span class="op">(</span><span class="st">"data/tair10.fasta"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">grl_scaled_intergenic</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="genomic-read-coverage-along-transripts-or-cdss" class="section level1">
@@ -448,31 +447,31 @@ Figure 3: Read distribution plot across annotation features for specific read le
 <div id="binned-cds-coverage-to-compare-many-transcripts" class="section level2">
 <h2 class="hasAnchor">
 <a href="#binned-cds-coverage-to-compare-many-transcripts" class="anchor"></a>Binned CDS coverage to compare many transcripts</h2>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/transcriptsBy.html">cdsBy</a></span><span class="op">(</span><span class="va">txdb</span>, <span class="st">"tx"</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/transcriptsBy.html">cdsBy</a></span><span class="op">(</span><span class="va">txdb</span>, <span class="st">"tx"</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">fcov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featureCoverage.html">featureCoverage</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>, grl <span class="op">=</span> <span class="va">grl</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, 
     resizereads <span class="op">=</span> <span class="cn">NULL</span>, readlengthrange <span class="op">=</span> <span class="cn">NULL</span>, Nbins <span class="op">=</span> <span class="fl">20</span>, method <span class="op">=</span> <span class="va">mean</span>, 
     fixedmatrix <span class="op">=</span> <span class="cn">FALSE</span>, resizefeatures <span class="op">=</span> <span class="cn">TRUE</span>, upstream <span class="op">=</span> <span class="fl">20</span>, 
     downstream <span class="op">=</span> <span class="fl">20</span>, outfile <span class="op">=</span> <span class="st">"results/featureCoverage.xls"</span>, 
-    overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+    overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="coverage-upstream-and-downstream-of-start-and-stop-codons" class="section level2">
 <h2 class="hasAnchor">
 <a href="#coverage-upstream-and-downstream-of-start-and-stop-codons" class="anchor"></a>Coverage upstream and downstream of start and stop codons</h2>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="va">fcov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featureCoverage.html">featureCoverage</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>, grl <span class="op">=</span> <span class="va">grl</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span>, 
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fcov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featureCoverage.html">featureCoverage</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>, grl <span class="op">=</span> <span class="va">grl</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span>, 
     resizereads <span class="op">=</span> <span class="cn">NULL</span>, readlengthrange <span class="op">=</span> <span class="cn">NULL</span>, Nbins <span class="op">=</span> <span class="cn">NULL</span>, 
     method <span class="op">=</span> <span class="va">mean</span>, fixedmatrix <span class="op">=</span> <span class="cn">TRUE</span>, resizefeatures <span class="op">=</span> <span class="cn">TRUE</span>, 
     upstream <span class="op">=</span> <span class="fl">20</span>, downstream <span class="op">=</span> <span class="fl">20</span>, outfile <span class="op">=</span> <span class="st">"results/featureCoverage.xls"</span>, 
     overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/plotfeatureCoverage.html">plotfeatureCoverage</a></span><span class="op">(</span>covMA <span class="op">=</span> <span class="va">fcov</span>, method <span class="op">=</span> <span class="va">mean</span>, scales <span class="op">=</span> <span class="st">"fixed"</span>, 
-    extendylim <span class="op">=</span> <span class="fl">2</span>, scale_count_val <span class="op">=</span> <span class="fl">10</span><span class="op">^</span><span class="fl">6</span><span class="op">)</span></pre></div>
+    extendylim <span class="op">=</span> <span class="fl">2</span>, scale_count_val <span class="op">=</span> <span class="fl">10</span><span class="op">^</span><span class="fl">6</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="combined-coverage-for-both-binned-cds-and-startstop-codons" class="section level2">
 <h2 class="hasAnchor">
 <a href="#combined-coverage-for-both-binned-cds-and-startstop-codons" class="anchor"></a>Combined coverage for both binned CDS and start/stop codons</h2>
-<div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span>
 <span class="va">fcov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featureCoverage.html">featureCoverage</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>, grl <span class="op">=</span> <span class="va">grl</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, 
     resizereads <span class="op">=</span> <span class="cn">NULL</span>, readlengthrange <span class="op">=</span> <span class="cn">NULL</span>, Nbins <span class="op">=</span> <span class="fl">20</span>, method <span class="op">=</span> <span class="va">mean</span>, 
@@ -483,7 +482,7 @@ Figure 3: Read distribution plot across annotation features for specific read le
     res <span class="op">=</span> <span class="fl">72</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/plotfeatureCoverage.html">plotfeatureCoverage</a></span><span class="op">(</span>covMA <span class="op">=</span> <span class="va">fcov</span>, method <span class="op">=</span> <span class="va">mean</span>, scales <span class="op">=</span> <span class="st">"fixed"</span>, 
     extendylim <span class="op">=</span> <span class="fl">2</span>, scale_count_val <span class="op">=</span> <span class="fl">10</span><span class="op">^</span><span class="fl">6</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <img src="results/featurePlot.png"><div align="center">
 Figure 4: Feature coverage plot with single nucleotide resolution around start and stop codons and binned coverage between them.
 </div>
@@ -492,11 +491,11 @@ Figure 4: Feature coverage plot with single nucleotide resolution around start a
 <div id="nucleotide-level-coverage-along-entire-transcriptscdss" class="section level2">
 <h2 class="hasAnchor">
 <a href="#nucleotide-level-coverage-along-entire-transcriptscdss" class="anchor"></a>Nucleotide level coverage along entire transcripts/CDSs</h2>
-<div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="va">fcov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featureCoverage.html">featureCoverage</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>, grl <span class="op">=</span> <span class="va">grl</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fcov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/featureCoverage.html">featureCoverage</a></span><span class="op">(</span>bfl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>, grl <span class="op">=</span> <span class="va">grl</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
     resizereads <span class="op">=</span> <span class="cn">NULL</span>, readlengthrange <span class="op">=</span> <span class="cn">NULL</span>, Nbins <span class="op">=</span> <span class="cn">NULL</span>, 
     method <span class="op">=</span> <span class="va">mean</span>, fixedmatrix <span class="op">=</span> <span class="cn">FALSE</span>, resizefeatures <span class="op">=</span> <span class="cn">TRUE</span>, 
-    upstream <span class="op">=</span> <span class="fl">20</span>, downstream <span class="op">=</span> <span class="fl">20</span>, outfile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></pre></div>
+    upstream <span class="op">=</span> <span class="fl">20</span>, downstream <span class="op">=</span> <span class="fl">20</span>, outfile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="read-quantification-per-annotation-range" class="section level1">
@@ -506,8 +505,8 @@ Figure 4: Feature coverage plot with single nucleotide resolution around start a
 <h2 class="hasAnchor">
 <a href="#read-counting-with-summarizeoverlaps-in-parallel-mode-using-multiple-cores" class="anchor"></a>Read counting with <code>summarizeOverlaps</code> in parallel mode using multiple cores</h2>
 <p>Reads overlapping with annotation ranges of interest are counted for each sample using the <code>summarizeOverlaps</code> function <span class="citation">(Lawrence et al. 2013)</span>. The read counting is preformed for exonic gene regions in a non-strand-specific manner while ignoring overlaps among different genes. Subsequently, the expression count values are normalized by  (RPKM). The raw read count table (<code>countDFeByg.xls</code>) and the corresponding RPKM table (<code>rpkmDFeByg.xls</code>) are written to separate files in the <code>results</code> directory of this project. Parallelization is achieved with the <code>BiocParallel</code> package, here using 8 CPU cores.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.org/packages/GenomicFeatures">"GenomicFeatures"</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.org/packages/GenomicFeatures">"GenomicFeatures"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel">BiocParallel</a></span><span class="op">)</span>
 <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu">loadDb</span><span class="op">(</span><span class="st">"./data/tair10.sqlite"</span><span class="op">)</span>
 <span class="va">eByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/transcriptsBy.html">exonsBy</a></span><span class="op">(</span><span class="va">txdb</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gene"</span><span class="op">)</span><span class="op">)</span>
@@ -526,23 +525,23 @@ Figure 4: Feature coverage plot with single nucleotide resolution around start a
 <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">countDFeByg</span>, <span class="st">"results/countDFeByg.xls"</span>, col.names <span class="op">=</span> <span class="cn">NA</span>, 
     quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">rpkmDFeByg</span>, <span class="st">"results/rpkmDFeByg.xls"</span>, col.names <span class="op">=</span> <span class="cn">NA</span>, 
-    quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></pre></div>
+    quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></code></pre></div>
 <p>Sample of data slice of count table</p>
-<div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/countDFeByg.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>, check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, 
-    <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/countDFeByg.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>, check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, 
+    <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></code></pre></div>
 <p>Sample of data slice of RPKM table</p>
-<div class="sourceCode" id="cb29"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/rpkmDFeByg.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>, check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, 
-    <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></pre></div>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/rpkmDFeByg.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>, check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, 
+    <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></code></pre></div>
 <p>Note, for most statistical differential expression or abundance analysis methods, such as <code>edgeR</code> or <code>DESeq2</code>, the raw count values should be used as input. The usage of RPKM values should be restricted to specialty applications required by some users, <em>e.g.</em> manually comparing the expression levels among different genes or features.</p>
 </div>
 <div id="sample-wise-correlation-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#sample-wise-correlation-analysis" class="anchor"></a>Sample-wise correlation analysis</h2>
 <p>The following computes the sample-wise Spearman correlation coefficients from the <code>rlog</code> transformed expression values generated with the <code>DESeq2</code> package. After transformation to a distance matrix, hierarchical clustering is performed with the <code>hclust</code> function and the result is plotted as a dendrogram and written to a file named <code>sample_tree.png</code> in the <code>results</code> directory.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ape-package.ird.fr/">ape</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="va">countDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span><span class="op">(</span><span class="st">"./results/countDFeByg.xls"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">colData</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/targets.as.df.html">targets.as.df</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/targets.html">targets</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">SampleName</span>, 
@@ -554,7 +553,7 @@ Figure 4: Feature coverage plot with single nucleotide resolution around start a
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"results/sample_tree.pdf"</span><span class="op">)</span>
 <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/plot.phylo.html">plot.phylo</a></span><span class="op">(</span><span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html">as.phylo</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"p"</span>, edge.col <span class="op">=</span> <span class="st">"blue"</span>, 
     edge.width <span class="op">=</span> <span class="fl">2</span>, show.node.label <span class="op">=</span> <span class="cn">TRUE</span>, no.margin <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <img src="results/sample_tree.png"><div align="center">
 Figure 5: Correlation dendrogram of samples.
 </div>
@@ -566,17 +565,17 @@ Figure 5: Correlation dendrogram of samples.
 <a href="#analysis-of-differentially-expressed-genes-with-edger" class="anchor"></a>Analysis of differentially expressed genes with <code>edgeR</code>
 </h1>
 <p>The analysis of differentially expressed genes (DEGs) is performed with the glm method from the <code>edgeR</code> package <span class="citation">(Robinson, McCarthy, and Smyth 2010)</span>. The sample comparisons used by this analysis are defined in the header lines of the <code>targetsPE.txt</code> file starting with <code>&lt;CMP&gt;</code>.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/edgeR">edgeR</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/edgeR">edgeR</a></span><span class="op">)</span>
 <span class="va">countDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/countDFeByg.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>, 
     check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="va">targets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"targetsPE.txt"</span>, comment <span class="op">=</span> <span class="st">"#"</span><span class="op">)</span>
 <span class="va">cmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/readComp.html">readComp</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"targetsPE.txt"</span>, format <span class="op">=</span> <span class="st">"matrix"</span>, delim <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span>
 <span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/run_edgeR.html">run_edgeR</a></span><span class="op">(</span>countDF <span class="op">=</span> <span class="va">countDF</span>, targets <span class="op">=</span> <span class="va">targets</span>, cmp <span class="op">=</span> <span class="va">cmp</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, 
-    independent <span class="op">=</span> <span class="cn">FALSE</span>, mdsplot <span class="op">=</span> <span class="st">""</span><span class="op">)</span></pre></div>
+    independent <span class="op">=</span> <span class="cn">FALSE</span>, mdsplot <span class="op">=</span> <span class="st">""</span><span class="op">)</span></code></pre></div>
 <p>Add functional gene descriptions, here from <code>biomaRt</code>.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, dataset <span class="op">=</span> <span class="st">"athaliana_eg_gene"</span>, host <span class="op">=</span> <span class="st">"plants.ensembl.org"</span><span class="op">)</span>
 <span class="va">desc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tair_locus"</span>, <span class="st">"description"</span><span class="op">)</span>, mart <span class="op">=</span> <span class="va">m</span><span class="op">)</span>
 <span class="va">desc</span> <span class="op">&lt;-</span> <span class="va">desc</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">desc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span>
@@ -585,29 +584,29 @@ Figure 5: Correlation dendrogram of samples.
 <span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">edgeDF</span>, Desc <span class="op">=</span> <span class="va">descv</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">edgeDF</span><span class="op">)</span><span class="op">]</span>, 
     check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">edgeDF</span>, <span class="st">"./results/edgeRglm_allcomp.xls"</span>, quote <span class="op">=</span> <span class="cn">FALSE</span>, 
-    sep <span class="op">=</span> <span class="st">"\t"</span>, col.names <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></pre></div>
+    sep <span class="op">=</span> <span class="st">"\t"</span>, col.names <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></code></pre></div>
 <p>Filter and plot DEG results for up and down regulated genes. The definition of <code>up</code> and <code>down</code> is given in the corresponding help file. To open it, type <code><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html">?filterDEGs</a></code> in the R console.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit">
-<span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/edgeRglm_allcomp.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>, 
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/edgeRglm_allcomp.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>, 
     check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"./results/DEGcounts.png"</span>, height <span class="op">=</span> <span class="fl">10</span>, width <span class="op">=</span> <span class="fl">10</span>, units <span class="op">=</span> <span class="st">"in"</span>, 
     res <span class="op">=</span> <span class="fl">72</span><span class="op">)</span>
 <span class="va">DEG_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html">filterDEGs</a></span><span class="op">(</span>degDF <span class="op">=</span> <span class="va">edgeDF</span>, filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>Fold <span class="op">=</span> <span class="fl">2</span>, FDR <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Summary</span>, <span class="st">"./results/DEGcounts.xls"</span>, quote <span class="op">=</span> <span class="cn">FALSE</span>, 
-    sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
+    sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <img src="results/DEGcounts.png"><div align="center">
 Figure 6: Up and down regulated DEGs.
 </div>
 <p></p>
 <p>The function <code>overLapper</code> can compute Venn intersects for large numbers of sample sets (up to 20 or more) and <code>vennPlot</code> can plot 2-5 way Venn diagrams. A useful feature is the possiblity to combine the counts from several Venn comparisons with the same number of sample sets in a single Venn diagram (here for 4 up and down DEG sets).</p>
-<div class="sourceCode" id="cb34"><pre class="downlit">
-<span class="va">vennsetup</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/overLapper.html">overLapper</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Up</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"vennsets"</span><span class="op">)</span>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">vennsetup</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/overLapper.html">overLapper</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Up</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"vennsets"</span><span class="op">)</span>
 <span class="va">vennsetdown</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/overLapper.html">overLapper</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Down</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"vennsets"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"results/vennplot.png"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/vennPlot.html">vennPlot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">vennsetup</span>, <span class="va">vennsetdown</span><span class="op">)</span>, mymain <span class="op">=</span> <span class="st">""</span>, mysub <span class="op">=</span> <span class="st">""</span>, 
     colmode <span class="op">=</span> <span class="fl">2</span>, ccol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <img src="results/vennplot.png"><div align="center">
 Figure 7: Venn Diagram for 4 Up and Down DEG Sets
 </div>
@@ -620,8 +619,8 @@ Figure 7: Venn Diagram for 4 Up and Down DEG Sets
 <h2 class="hasAnchor">
 <a href="#obtain-gene-to-go-mappings" class="anchor"></a>Obtain gene-to-GO mappings</h2>
 <p>The following shows how to obtain gene-to-GO mappings from <code>biomaRt</code> (here for <em>A. thaliana</em>) and how to organize them for the downstream GO term enrichment analysis. Alternatively, the gene-to-GO mappings can be obtained for many organisms from Bioconductor’s <code>*.db</code> genome annotation packages or GO annotation files provided by various genome databases. For each annotation this relatively slow preprocessing step needs to be performed only once. Subsequently, the preprocessed data can be loaded with the <code>load</code> function as shown in the next subsection.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/listMarts.html">listMarts</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># To choose BioMart database</span>
 <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/listMarts.html">listMarts</a></span><span class="op">(</span>host <span class="op">=</span> <span class="st">"plants.ensembl.org"</span><span class="op">)</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, host <span class="op">=</span> <span class="st">"plants.ensembl.org"</span><span class="op">)</span>
@@ -641,15 +640,15 @@ Figure 7: Venn Diagram for 4 Up and Down DEG Sets
     row.names <span class="op">=</span> <span class="cn">FALSE</span>, col.names <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span>
 <span class="va">catdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">makeCATdb</a></span><span class="op">(</span>myfile <span class="op">=</span> <span class="st">"data/GO/GOannotationsBiomart_mod.txt"</span>, 
     lib <span class="op">=</span> <span class="cn">NULL</span>, org <span class="op">=</span> <span class="st">""</span>, colno <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, idconv <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">catdb</span>, file <span class="op">=</span> <span class="st">"data/GO/catdb.RData"</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">catdb</span>, file <span class="op">=</span> <span class="st">"data/GO/catdb.RData"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="batch-go-term-enrichment-analysis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#batch-go-term-enrichment-analysis" class="anchor"></a>Batch GO term enrichment analysis</h2>
 <p>Apply the enrichment analysis to the DEG sets obtained the above differential expression analysis. Note, in the following example the <code>FDR</code> filter is set here to an unreasonably high value, simply because of the small size of the toy data set used in this vignette. Batch enrichment analysis of many gene sets is performed with the function. When <code>method=all</code>, it returns all GO terms passing the p-value cutoff specified under the <code>cutoff</code> arguments. When <code>method=slim</code>, it returns only the GO terms specified under the <code>myslimv</code> argument. The given example shows how a GO slim vector for a specific organism can be obtained from BioMart.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/berndbischl/BBmisc">BBmisc</a></span><span class="op">)</span>  <span class="co"># Defines suppressAll()</span>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">BBmisc</span><span class="op">)</span>  <span class="co"># Defines suppressAll()</span>
 <span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="st">"data/GO/catdb.RData"</span><span class="op">)</span>
 <span class="va">DEG_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html">filterDEGs</a></span><span class="op">(</span>degDF <span class="op">=</span> <span class="va">edgeDF</span>, filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>Fold <span class="op">=</span> <span class="fl">2</span>, FDR <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>, 
     plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
@@ -670,10 +669,10 @@ Figure 7: Venn Diagram for 4 Up and Down DEG Sets
     mart <span class="op">=</span> <span class="va">m</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>
 <span class="va">BatchResultslim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">GOCluster_Report</a></span><span class="op">(</span>catdb <span class="op">=</span> <span class="va">catdb</span>, setlist <span class="op">=</span> <span class="va">DEGlist</span>, 
     method <span class="op">=</span> <span class="st">"slim"</span>, id_type <span class="op">=</span> <span class="st">"gene"</span>, myslimv <span class="op">=</span> <span class="va">goslimvec</span>, CLSZ <span class="op">=</span> <span class="fl">10</span>, 
-    cutoff <span class="op">=</span> <span class="fl">0.01</span>, gocats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"MF"</span>, <span class="st">"BP"</span>, <span class="st">"CC"</span><span class="op">)</span>, recordSpecGO <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></pre></div>
+    cutoff <span class="op">=</span> <span class="fl">0.01</span>, gocats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"MF"</span>, <span class="st">"BP"</span>, <span class="st">"CC"</span><span class="op">)</span>, recordSpecGO <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <p>The <code>data.frame</code> generated by <code>GOCluster</code> can be plotted with the <code>goBarplot</code> function. Because of the variable size of the sample sets, it may not always be desirable to show the results from different DEG sets in the same bar plot. Plotting single sample sets is achieved by subsetting the input data frame as shown in the first line of the following example.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit">
-<span class="va">gos</span> <span class="op">&lt;-</span> <span class="va">BatchResultslim</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"M6-V6_up_down"</span>, <span class="va">BatchResultslim</span><span class="op">$</span><span class="va">CLID</span><span class="op">)</span>, 
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gos</span> <span class="op">&lt;-</span> <span class="va">BatchResultslim</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"M6-V6_up_down"</span>, <span class="va">BatchResultslim</span><span class="op">$</span><span class="va">CLID</span><span class="op">)</span>, 
     <span class="op">]</span>
 <span class="va">gos</span> <span class="op">&lt;-</span> <span class="va">BatchResultslim</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"./results/GOslimbarplotMF.png"</span>, height <span class="op">=</span> <span class="fl">12</span>, width <span class="op">=</span> <span class="fl">12</span>, 
@@ -681,7 +680,7 @@ Figure 7: Venn Diagram for 4 Up and Down DEG Sets
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"MF"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"BP"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"CC"</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"CC"</span><span class="op">)</span></code></pre></div>
 <img src="results/GOslimbarplotMF.png"><div align="center">
 Figure 8: GO Slim Barplot for MF Ontology.
 </div>
@@ -692,20 +691,20 @@ Figure 8: GO Slim Barplot for MF Ontology.
 <h1 class="hasAnchor">
 <a href="#differential-ribosome-loading-analysis-translational-efficiency" class="anchor"></a>Differential ribosome loading analysis (translational efficiency)</h1>
 <p>Combined with mRNA-Seq data, Ribo-Seq or polyRibo-Seq experiments can be used to study changes in translational efficiencies of genes and/or transcripts for different treatments. For test purposes the following generates a small test data set from the sample data used in this vignette, where two types of RNA samples (<code>assays</code>) are considered: polyribosomal mRNA (<code>Ribo</code>) and total mRNA (<code>mRNA</code>). In addition, there are two treatments (<code>conditions</code>): <code>M1</code> and <code>A1</code>.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span><span class="op">)</span>
 <span class="va">countDFeBygpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"countDFeByg.xls"</span>, 
     package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">countDFeByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="va">countDFeBygpath</span>, row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="va">coldata</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>assay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ribo"</span>, <span class="st">"mRNA"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>, 
     condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/targets.as.df.html">targets.as.df</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/targets.html">targets</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">Factor</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>, 
         <span class="fl">2</span><span class="op">)</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/targets.as.df.html">targets.as.df</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/targets.html">targets</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">SampleName</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span><span class="op">)</span>
-<span class="va">coldata</span></pre></div>
+<span class="va">coldata</span></code></pre></div>
 <p>Differences in translational efficiencies can be calculated by ratios of ratios for the two conditions:</p>
 <p><span class="math display">\[(Ribo\_A1 / mRNA\_A1) / (Ribo\_M1 / mRNA\_M1)\]</span></p>
 <p>The latter can be modeled with the <code>DESeq2</code> package using the design <span class="math inline">\(\sim assay + condition + assay:condition\)</span>, where the interaction term <span class="math inline">\(assay:condition\)</span> represents the ratio of ratios. Using the likelihood ratio test of <code>DESeq2</code>, which removes the interaction term in the reduced model, one can test whether the translational efficiency (ribosome loading) is different in condition <code>A1</code> than in <code>M1</code>.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit">
-<span class="va">dds</span> <span class="op">&lt;-</span> <span class="fu">DESeq2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeqDataSet.html">DESeqDataSetFromMatrix</a></span><span class="op">(</span>countData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">countDFeByg</span><span class="op">[</span>, 
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dds</span> <span class="op">&lt;-</span> <span class="fu">DESeq2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeqDataSet.html">DESeqDataSetFromMatrix</a></span><span class="op">(</span>countData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">countDFeByg</span><span class="op">[</span>, 
     <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">coldata</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, colData <span class="op">=</span> <span class="va">coldata</span>, design <span class="op">=</span> <span class="op">~</span><span class="va">assay</span> <span class="op">+</span> 
     <span class="va">condition</span> <span class="op">+</span> <span class="va">assay</span><span class="op">:</span><span class="va">condition</span><span class="op">)</span>
 <span class="co"># model.matrix(~ assay + condition + assay:condition,</span>
@@ -714,20 +713,20 @@ Figure 8: GO Slim Barplot for MF Ontology.
 <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">DESeq2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/results.html">results</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">padj</span><span class="op">)</span>, <span class="op">]</span>, <span class="fl">4</span><span class="op">)</span>
 <span class="co"># write.table(res, file='transleff.xls', quote=FALSE,</span>
-<span class="co"># col.names = NA, sep='\t')</span></pre></div>
+<span class="co"># col.names = NA, sep='\t')</span></code></pre></div>
 </div>
 <div id="clustering-and-heat-maps" class="section level1">
 <h1 class="hasAnchor">
 <a href="#clustering-and-heat-maps" class="anchor"></a>Clustering and heat maps</h1>
 <p>The following example performs hierarchical clustering on the <code>rlog</code> transformed expression matrix subsetted by the DEGs identified in the above differential expression analysis. It uses a Pearson correlation-based distance measure and complete linkage for cluster joining.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span>
 <span class="va">geneids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="fu">DESeq2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/rlog.html">rlog</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">geneids</span>, <span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"heatmap1.png"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html">pheatmap</a></span><span class="op">(</span><span class="va">y</span>, scale <span class="op">=</span> <span class="st">"row"</span>, clustering_distance_rows <span class="op">=</span> <span class="st">"correlation"</span>, 
     clustering_distance_cols <span class="op">=</span> <span class="st">"correlation"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <img src="results/heatmap1.png"><div align="center">
 Figure 9: Heat map with hierarchical clustering dendrograms of DEGs
 </div>
@@ -736,18 +735,18 @@ Figure 9: Heat map with hierarchical clustering dendrograms of DEGs
 <div id="render-report-in-html-and-pdf-format" class="section level1">
 <h1 class="hasAnchor">
 <a href="#render-report-in-html-and-pdf-format" class="anchor"></a>Render report in HTML and PDF format</h1>
-<div class="sourceCode" id="cb41"><pre class="downlit">
-<span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/render.html">render</a></span><span class="op">(</span><span class="st">"systemPipeRIBOseq.Rmd"</span>, <span class="st">"html_document"</span><span class="op">)</span>
-<span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmarkdown/man/render.html">render</a></span><span class="op">(</span><span class="st">"systemPipeRIBOseq.Rmd"</span>, <span class="st">"pdf_document"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html">render</a></span><span class="op">(</span><span class="st">"systemPipeRIBOseq.Rmd"</span>, <span class="st">"html_document"</span><span class="op">)</span>
+<span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html">render</a></span><span class="op">(</span><span class="st">"systemPipeRIBOseq.Rmd"</span>, <span class="st">"pdf_document"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="version-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#version-information" class="anchor"></a>Version Information</h1>
-<div class="sourceCode" id="cb42"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>## R Under development (unstable) (2020-10-24 r79367)
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<pre><code>## R Under development (unstable) (2021-02-04 r79940)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.1 LTS
+## Running under: Ubuntu 20.04.2 LTS
 ## 
 ## Matrix products: default
 ## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
@@ -766,73 +765,83 @@ Figure 9: Heat map with hierarchical clustering dendrograms of DEGs
 ## [6] utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] systemPipeR_1.25.1          ShortRead_1.49.0           
-##  [3] GenomicAlignments_1.27.0    SummarizedExperiment_1.21.0
-##  [5] Biobase_2.51.0              MatrixGenerics_1.3.0       
-##  [7] matrixStats_0.57.0          BiocParallel_1.25.0        
-##  [9] Rsamtools_2.7.0             Biostrings_2.59.0          
-## [11] XVector_0.31.0              GenomicRanges_1.43.0       
-## [13] GenomeInfoDb_1.27.0         IRanges_2.25.0             
-## [15] S4Vectors_0.29.0            BiocGenerics_0.37.0        
-## [17] BiocStyle_2.19.0           
+##  [1] systemPipeR_1.25.12         ShortRead_1.49.2           
+##  [3] GenomicAlignments_1.27.2    SummarizedExperiment_1.21.3
+##  [5] Biobase_2.51.0              MatrixGenerics_1.3.1       
+##  [7] matrixStats_0.58.0          BiocParallel_1.25.5        
+##  [9] Rsamtools_2.7.2             Biostrings_2.59.2          
+## [11] XVector_0.31.1              GenomicRanges_1.43.4       
+## [13] GenomeInfoDb_1.27.11        IRanges_2.25.8             
+## [15] S4Vectors_0.29.15           BiocGenerics_0.37.1        
+## [17] BiocStyle_2.19.2           
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] colorspace_1.4-1         rjson_0.2.20            
-##   [3] hwriter_1.3.2            ellipsis_0.3.1          
-##   [5] rprojroot_1.3-2          fs_1.5.0                
-##   [7] rstudioapi_0.11          bit64_4.0.5             
-##   [9] AnnotationDbi_1.53.0     xml2_1.3.2              
-##  [11] codetools_0.2-16         splines_4.1.0           
-##  [13] knitr_1.30               jsonlite_1.7.1          
-##  [15] annotate_1.69.0          GO.db_3.12.0            
-##  [17] dbplyr_1.4.4             png_0.1-7               
-##  [19] pheatmap_1.0.12          graph_1.69.0            
-##  [21] BiocManager_1.30.10      compiler_4.1.0          
-##  [23] httr_1.4.2               GOstats_2.57.0          
-##  [25] backports_1.1.10         assertthat_0.2.1        
-##  [27] Matrix_1.2-18            limma_3.47.0            
-##  [29] formatR_1.7              htmltools_0.5.0         
-##  [31] prettyunits_1.1.1        tools_4.1.0             
-##  [33] gtable_0.3.0             glue_1.4.2              
-##  [35] GenomeInfoDbData_1.2.4   Category_2.57.0         
-##  [37] dplyr_1.0.2              rsvg_2.1                
-##  [39] batchtools_0.9.14        rappdirs_0.3.1          
-##  [41] V8_3.3.1                 Rcpp_1.0.5              
-##  [43] pkgdown_1.6.1            vctrs_0.3.4             
-##  [45] rtracklayer_1.51.0       xfun_0.18               
-##  [47] stringr_1.4.0            lifecycle_0.2.0         
-##  [49] XML_3.99-0.5             edgeR_3.33.0            
-##  [51] zlibbioc_1.37.0          scales_1.1.1            
-##  [53] BSgenome_1.59.0          VariantAnnotation_1.37.0
-##  [55] ragg_0.4.0               hms_0.5.3               
-##  [57] RBGL_1.67.0              RColorBrewer_1.1-2      
-##  [59] yaml_2.2.1               curl_4.3                
-##  [61] memoise_1.1.0            ggplot2_3.3.2           
-##  [63] biomaRt_2.47.0           latticeExtra_0.6-29     
-##  [65] stringi_1.5.3            RSQLite_2.2.1           
-##  [67] genefilter_1.73.0        desc_1.2.0              
-##  [69] checkmate_2.0.0          GenomicFeatures_1.43.0  
-##  [71] DOT_0.1                  rlang_0.4.8             
-##  [73] pkgconfig_2.0.3          systemfonts_0.3.2       
-##  [75] bitops_1.0-6             evaluate_0.14           
-##  [77] lattice_0.20-41          purrr_0.3.4             
-##  [79] bit_4.0.4                tidyselect_1.1.0        
-##  [81] GSEABase_1.53.0          AnnotationForge_1.33.0  
-##  [83] magrittr_1.5             bookdown_0.21           
-##  [85] R6_2.5.0                 generics_0.0.2          
-##  [87] base64url_1.4            DelayedArray_0.15.16    
-##  [89] DBI_1.1.0                withr_2.3.0             
-##  [91] pillar_1.4.6             survival_3.2-7          
-##  [93] RCurl_1.98-1.2           tibble_3.0.4            
-##  [95] crayon_1.3.4             BiocFileCache_1.15.0    
-##  [97] rmarkdown_2.5            jpeg_0.1-8.1            
-##  [99] progress_1.2.2           locfit_1.5-9.4          
-## [101] grid_4.1.0               data.table_1.13.2       
-## [103] Rgraphviz_2.35.0         blob_1.2.1              
-## [105] digest_0.6.27            xtable_1.8-4            
-## [107] brew_1.0-6               textshaping_0.1.2       
-## [109] openssl_1.4.3            munsell_0.5.0           
-## [111] askpass_1.1</code></pre>
+##   [1] backports_1.2.1          BiocFileCache_1.99.5    
+##   [3] systemfonts_1.0.1        plyr_1.8.6              
+##   [5] lazyeval_0.2.2           splines_4.1.0           
+##   [7] ggplot2_3.3.3            digest_0.6.27           
+##   [9] htmltools_0.5.1.1        fansi_0.4.2             
+##  [11] magrittr_2.0.1           checkmate_2.0.0         
+##  [13] memoise_2.0.0            BSgenome_1.59.2         
+##  [15] base64url_1.4            limma_3.47.12           
+##  [17] annotate_1.69.2          pkgdown_1.6.1           
+##  [19] prettyunits_1.1.1        jpeg_0.1-8.1            
+##  [21] colorspace_2.0-0         blob_1.2.1              
+##  [23] rappdirs_0.3.3           ggrepel_0.9.1           
+##  [25] textshaping_0.3.3        xfun_0.22               
+##  [27] dplyr_1.0.5              crayon_1.4.1            
+##  [29] RCurl_1.98-1.3           jsonlite_1.7.2          
+##  [31] genefilter_1.73.1        VariantAnnotation_1.37.1
+##  [33] brew_1.0-6               survival_3.2-10         
+##  [35] ape_5.4-1                glue_1.4.2              
+##  [37] gtable_0.3.0             zlibbioc_1.37.0         
+##  [39] DelayedArray_0.17.10     V8_3.4.0                
+##  [41] scales_1.1.1             pheatmap_1.0.12         
+##  [43] DBI_1.1.1                GGally_2.1.1            
+##  [45] edgeR_3.33.3             Rcpp_1.0.6              
+##  [47] viridisLite_0.4.0        xtable_1.8-4            
+##  [49] progress_1.2.2           tidytree_0.3.3          
+##  [51] bit_4.0.4                rsvg_2.1                
+##  [53] htmlwidgets_1.5.3        httr_1.4.2              
+##  [55] RColorBrewer_1.1-2       ellipsis_0.3.1          
+##  [57] pkgconfig_2.0.3          reshape_0.8.8           
+##  [59] XML_3.99-0.6             sass_0.3.1              
+##  [61] dbplyr_2.1.1             locfit_1.5-9.4          
+##  [63] utf8_1.2.1               tidyselect_1.1.0        
+##  [65] rlang_0.4.10             AnnotationDbi_1.53.1    
+##  [67] munsell_0.5.0            tools_4.1.0             
+##  [69] cachem_1.0.4             generics_0.1.0          
+##  [71] RSQLite_2.2.6            evaluate_0.14           
+##  [73] stringr_1.4.0            fastmap_1.1.0           
+##  [75] yaml_2.2.1               ragg_1.1.2              
+##  [77] ggtree_2.5.2             knitr_1.32              
+##  [79] bit64_4.0.5              fs_1.5.0                
+##  [81] purrr_0.3.4              KEGGREST_1.31.1         
+##  [83] nlme_3.1-152             formatR_1.9             
+##  [85] aplot_0.0.6              biomaRt_2.47.7          
+##  [87] compiler_4.1.0           plotly_4.9.3            
+##  [89] filelock_1.0.2           curl_4.3                
+##  [91] png_0.1-7                treeio_1.15.6           
+##  [93] tibble_3.1.0             geneplotter_1.69.0      
+##  [95] bslib_0.2.4              stringi_1.5.3           
+##  [97] GenomicFeatures_1.43.8   desc_1.3.0              
+##  [99] lattice_0.20-41          Matrix_1.3-2            
+## [101] glmpca_0.2.0             vctrs_0.3.7             
+## [103] pillar_1.6.0             lifecycle_1.0.0         
+## [105] BiocManager_1.30.12      jquerylib_0.1.3         
+## [107] data.table_1.14.0        bitops_1.0-6            
+## [109] patchwork_1.1.1          rtracklayer_1.51.5      
+## [111] R6_2.5.0                 BiocIO_1.1.2            
+## [113] latticeExtra_0.6-29      hwriter_1.3.2           
+## [115] bookdown_0.21            codetools_0.2-18        
+## [117] MASS_7.3-53.1            assertthat_0.2.1        
+## [119] DESeq2_1.31.18           rprojroot_2.0.2         
+## [121] rjson_0.2.20             withr_2.4.1             
+## [123] batchtools_0.9.15        GenomeInfoDbData_1.2.4  
+## [125] hms_1.0.0                grid_4.1.0              
+## [127] tidyr_1.1.3              DOT_0.1                 
+## [129] rmarkdown_2.7            rvcheck_0.1.8           
+## [131] Rtsne_0.15               restfulr_0.0.13</code></pre>
 </div>
 <div id="funding" class="section level1">
 <h1 class="hasAnchor">
@@ -842,33 +851,33 @@ Figure 9: Heat map with hierarchical clustering dendrograms of DEGs
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references hanging-indent">
-<div id="ref-Aspden2014-uu">
-<p>Aspden, Julie L, Ying Chen Eyre-Walker, Rose J Phillips, Unum Amin, Muhammad Ali S Mumtaz, Michele Brocard, and Juan-Pablo Couso. 2014. “Extensive Translation of Small Open Reading Frames Revealed by Poly-Ribo-Seq.” <em>Elife</em> 3: e03528. <a href="https://doi.org/10.7554/eLife.03528">https://doi.org/10.7554/eLife.03528</a>.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Aspden2014-uu" class="csl-entry">
+Aspden, Julie L, Ying Chen Eyre-Walker, Rose J Phillips, Unum Amin, Muhammad Ali S Mumtaz, Michele Brocard, and Juan-Pablo Couso. 2014. <span>“Extensive Translation of Small Open Reading Frames Revealed by <span>Poly-Ribo-Seq</span>.”</span> <em>Elife</em> 3: e03528. <a href="https://doi.org/10.7554/eLife.03528">https://doi.org/10.7554/eLife.03528</a>.
 </div>
-<div id="ref-H_Backman2016-bt">
-<p>H Backman, Tyler W, and Thomas Girke. 2016. “systemPipeR: NGS workflow and report generation environment.” <em>BMC Bioinformatics</em> 17 (1): 388. <a href="https://doi.org/10.1186/s12859-016-1241-0">https://doi.org/10.1186/s12859-016-1241-0</a>.</p>
+<div id="ref-H_Backman2016-bt" class="csl-entry">
+H Backman, Tyler W, and Thomas Girke. 2016. <span>“<span class="nocase">systemPipeR: NGS workflow and report generation environment</span>.”</span> <em>BMC Bioinformatics</em> 17 (1): 388. <a href="https://doi.org/10.1186/s12859-016-1241-0">https://doi.org/10.1186/s12859-016-1241-0</a>.
 </div>
-<div id="ref-Ingolia2009-cb">
-<p>Ingolia, N T, S Ghaemmaghami, J R Newman, and J S Weissman. 2009. “Genome-Wide Analysis in Vivo of Translation with Nucleotide Resolution Using Ribosome Profiling.” <em>Science</em> 324 (5924): 218–23. <a href="https://doi.org/10.1016/j.ymeth.2009.03.016">https://doi.org/10.1016/j.ymeth.2009.03.016</a>.</p>
+<div id="ref-Ingolia2009-cb" class="csl-entry">
+Ingolia, N T, S Ghaemmaghami, J R Newman, and J S Weissman. 2009. <span>“Genome-Wide Analysis in Vivo of Translation with Nucleotide Resolution Using Ribosome Profiling.”</span> <em>Science</em> 324 (5924): 218–23. <a href="https://doi.org/10.1016/j.ymeth.2009.03.016">https://doi.org/10.1016/j.ymeth.2009.03.016</a>.
 </div>
-<div id="ref-Ingolia2011-fc">
-<p>Ingolia, N T, L F Lareau, and J S Weissman. 2011. “Ribosome Profiling of Mouse Embryonic Stem Cells Reveals the Complexity and Dynamics of Mammalian Proteomes.” <em>Cell</em> 147 (4): 789–802. <a href="https://doi.org/10.1016/j.cell.2011.10.002">https://doi.org/10.1016/j.cell.2011.10.002</a>.</p>
+<div id="ref-Ingolia2011-fc" class="csl-entry">
+Ingolia, N T, L F Lareau, and J S Weissman. 2011. <span>“Ribosome Profiling of Mouse Embryonic Stem Cells Reveals the Complexity and Dynamics of Mammalian Proteomes.”</span> <em>Cell</em> 147 (4): 789–802. <a href="https://doi.org/10.1016/j.cell.2011.10.002">https://doi.org/10.1016/j.cell.2011.10.002</a>.
 </div>
-<div id="ref-Juntawong2014-ny">
-<p>Juntawong, Piyada, Thomas Girke, Jérémie Bazin, and Julia Bailey-Serres. 2014. “Translational Dynamics Revealed by Genome-Wide Profiling of Ribosome Footprints in Arabidopsis.” <em>Proc. Natl. Acad. Sci. U. S. A.</em> 111 (1): E203–12. <a href="https://doi.org/10.1073/pnas.1317811111">https://doi.org/10.1073/pnas.1317811111</a>.</p>
+<div id="ref-Juntawong2014-ny" class="csl-entry">
+Juntawong, Piyada, Thomas Girke, Jérémie Bazin, and Julia Bailey-Serres. 2014. <span>“Translational Dynamics Revealed by Genome-Wide Profiling of Ribosome Footprints in Arabidopsis.”</span> <em>Proc. Natl. Acad. Sci. U. S. A.</em> 111 (1): E203–12. <a href="https://doi.org/10.1073/pnas.1317811111">https://doi.org/10.1073/pnas.1317811111</a>.
 </div>
-<div id="ref-Juntawong2015-ru">
-<p>Juntawong, Piyada, Maureen Hummel, Jeremie Bazin, and Julia Bailey-Serres. 2015. “Ribosome Profiling: A Tool for Quantitative Evaluation of Dynamics in mRNA Translation.” <em>Methods Mol. Biol.</em> 1284: 139–73. <a href="https://doi.org/10.1007/978-1-4939-2444-8%5C_7">https://doi.org/10.1007/978-1-4939-2444-8\_7</a>.</p>
+<div id="ref-Juntawong2015-ru" class="csl-entry">
+Juntawong, Piyada, Maureen Hummel, Jeremie Bazin, and Julia Bailey-Serres. 2015. <span>“Ribosome Profiling: A Tool for Quantitative Evaluation of Dynamics in <span class="nocase">mRNA</span> Translation.”</span> <em>Methods Mol. Biol.</em> 1284: 139–73. <a href="https://doi.org/10.1007/978-1-4939-2444-8%5C_7">https://doi.org/10.1007/978-1-4939-2444-8\_7</a>.
 </div>
-<div id="ref-Kim2015-ve">
-<p>Kim, Daehwan, Ben Langmead, and Steven L Salzberg. 2015. “HISAT: A Fast Spliced Aligner with Low Memory Requirements.” <em>Nat. Methods</em> 12 (4): 357–60.</p>
+<div id="ref-Kim2015-ve" class="csl-entry">
+Kim, Daehwan, Ben Langmead, and Steven L Salzberg. 2015. <span>“<span>HISAT</span>: A Fast Spliced Aligner with Low Memory Requirements.”</span> <em>Nat. Methods</em> 12 (4): 357–60.
 </div>
-<div id="ref-Lawrence2013-kt">
-<p>Lawrence, Michael, Wolfgang Huber, Hervé Pagès, Patrick Aboyoun, Marc Carlson, Robert Gentleman, Martin T Morgan, and Vincent J Carey. 2013. “Software for Computing and Annotating Genomic Ranges.” <em>PLoS Comput. Biol.</em> 9 (8): e1003118. <a href="https://doi.org/10.1371/journal.pcbi.1003118">https://doi.org/10.1371/journal.pcbi.1003118</a>.</p>
+<div id="ref-Lawrence2013-kt" class="csl-entry">
+Lawrence, Michael, Wolfgang Huber, Hervé Pagès, Patrick Aboyoun, Marc Carlson, Robert Gentleman, Martin T Morgan, and Vincent J Carey. 2013. <span>“Software for Computing and Annotating Genomic Ranges.”</span> <em>PLoS Comput. Biol.</em> 9 (8): e1003118. <a href="https://doi.org/10.1371/journal.pcbi.1003118">https://doi.org/10.1371/journal.pcbi.1003118</a>.
 </div>
-<div id="ref-Robinson2010-uk">
-<p>Robinson, M D, D J McCarthy, and G K Smyth. 2010. “EdgeR: A Bioconductor Package for Differential Expression Analysis of Digital Gene Expression Data.” <em>Bioinformatics</em> 26 (1): 139–40. <a href="https://doi.org/10.1093/bioinformatics/btp616">https://doi.org/10.1093/bioinformatics/btp616</a>.</p>
+<div id="ref-Robinson2010-uk" class="csl-entry">
+Robinson, M D, D J McCarthy, and G K Smyth. 2010. <span>“edgeR: A Bioconductor Package for Differential Expression Analysis of Digital Gene Expression Data.”</span> <em>Bioinformatics</em> 26 (1): 139–40. <a href="https://doi.org/10.1093/bioinformatics/btp616">https://doi.org/10.1093/bioinformatics/btp616</a>.
 </div>
 </div>
 </div>

@@ -108,14 +108,14 @@ uses the name of the chosen workflow. An error is issued if a directory of the s
 name and path exists already. 
 
 ```{r generate_workenvir, eval=FALSE}
-genWorkenvir(workflow="varseq", mydirname=NULL)
+genWorkenvir(workflow="systemPipeR/SPvarseq", mydirname="varseq")
 setwd("varseq")
 ```
 
 On Linux and OS X systems the same can be achieved from the command-line of a terminal with the following commands.
 
 ```{bash generate_workenvir_from_shell, eval=FALSE}
-$ Rscript -e "systemPipeRdata::genWorkenvir(workflow='varseq', mydirname=NULL)"
+$ Rscript -e "systemPipeRdata::genWorkenvir(workflow='systemPipeR/SPvarseq', mydirname='varseq')"
 ```
 
 # Workflow templates collection
@@ -133,10 +133,11 @@ listed template can be created as described above.
 
 The workflow template choose from Github will be installed as an R package, and 
 also it creates the environment with all the settings and files to run the demo 
-analysis 
+analysis.
+
 ```{r eval=FALSE, tidy=FALSE}
-genWorkenvir(workflow="systemPipeR/systemPipeVARseq", mydirname="NULL")
-setwd("systemPipeVARseq")
+genWorkenvir(workflow="systemPipeR/SPrnaseq", mydirname="NULL")
+setwd("SPrnaseq")
 ```
 
 Besides, it is possible to choose different versions of the workflow template, 
@@ -144,8 +145,8 @@ defined through other branches on the GitHub Repository. By default, the _`maste
 branch is selected, however, it is possible to define a different branch with the _`ref`_ argument. 
 
 ```{r eval=FALSE, tidy=FALSE}
-genWorkenvir(workflow="systemPipeR/systemPipeRNAseq", ref = "singleMachine")
-setwd("systemPipeRNAseq")
+genWorkenvir(workflow="systemPipeR/SPrnaseq", ref = "singleMachine")
+setwd("SPrnaseq")
 ```
 
 ## Download a specific R Markdown file
@@ -155,7 +156,7 @@ The URL can be specified under _`url`_ argument and the R Markdown file name in
 the _`urlname`_ argument. The default _`NULL`_ copies the current version available in the chose template.
 
 ```{r eval=FALSE, tidy=FALSE}
-genWorkenvir(workflow="rnaseq", url = "https://raw.githubusercontent.com/systemPipeR/systemPipeRNAseq/cluster/vignettes/systemPipeRNAseq.Rmd", 
+genWorkenvir(workflow="systemPipeR/SPrnaseq", url = "https://raw.githubusercontent.com/systemPipeR/systemPipeRNAseq/cluster/vignettes/systemPipeRNAseq.Rmd", 
              urlname = "rnaseq_V-cluster.Rmd")
 setwd("rnaseq")
 ```
@@ -220,6 +221,113 @@ The location of the sample data provided by _`systemPipeRdata`_ can be returned 
 
 ```{r return_samplepaths, eval=TRUE}
 pathList()
+```
+
+# Create a small RNA-seq Data
+
+## Download NCBI data
+
+The chosen data set [`SRP010938`](http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938) 
+obtains 18 paired-end (PE) read sets from _Arabidposis thaliana_ [@Howard2013-fq]. 
+
+```{r targets_mirnaseq, eval=TRUE}
+## https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP010938&o=acc_s%3Aa
+targetspath <- system.file("extdata", "targetsPE.txt", package = "systemPipeR")
+targets <- read.delim(targetspath, comment.char = "#")
+systemPipeR::showDT(targets)
+```
+
+
+```{r download_rnaseq, eval=FALSE}
+## Create a SYSargs2 object and populate all the command-line
+dir_path <- system.file("extdata/cwl/fastq-dump", package = "systemPipeR")
+WF <- systemPipeR::loadWF(targets = targetspath, wf_file = "fastq-dump.cwl", 
+                          input_file = "fastq-dump.yml", dir_path = dir_path)
+WF <- renderWF(WF, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
+cmdlist(WF)
+output(WF)
+runCommandline(WF, make_bam = FALSE)
+```
+
+## Create targets file
+
+```{r targets_rnaseq, eval=TRUE}
+targetspath <- system.file("extdata", "targetsPE.txt", package = "systemPipeR")
+targets <- read.delim(targetspath, comment.char = "#")
+systemPipeR::showDT(targets)
+```
+
+## Mapping 
+
+Build Index:
+
+```{r index_rnaseq, eval=FALSE}
+idx <- loadWF(targets = NULL, wf_file = "hisat2-index.cwl", 
+    input_file = "hisat2-index.yml", dir_path = "param/cwl/hisat2/hisat2-idx/")
+idx <- renderWF(idx)
+idx
+cmdlist(idx)
+ 
+library(batchtools)
+resources <- list(walltime = 1200, ntasks = 1, ncpus = 14, memory = 20480)
+reg <- clusterRun(idx, FUN = runCommandline, more.args = list(args=idx, dir =FALSE, make_bam=FALSE), 
+    conffile = ".batchtools.conf.R", template = "batchtools.slurm.tmpl", 
+    Njobs = 1, runid = "01", resourceList = resources)
+getStatus(reg = reg)
+waitForJobs(reg = reg)
+```
+
+### Mapping
+
+```{r align_rnaseq, eval=FALSE}
+## Build WF
+align <- loadWF(targets = targetspath, wf_file = "hisat2-mapping-pe.cwl", 
+    input_file = "hisat2-mapping-pe.yml", dir_path = "param/cwl/hisat2/hisat2-pe/")
+align <- renderWF(align, inputvars = c(FileName1 = "_FASTQ_PATH1_", FileName2 = "_FASTQ_PATH2_", 
+    SampleName = "_SampleName_"))
+align
+cmdlist(align)[1:2]
+output(align)[1:2]
+
+## Run 
+library(batchtools)
+resources <- list(walltime = 1200, ntasks = 1, ncpus = 14, memory = 20480)
+reg <- clusterRun(align, FUN = runCommandline, more.args = list(args=align, dir =FALSE), 
+    conffile = ".batchtools.conf.R", template = "batchtools.slurm.tmpl", 
+    Njobs = 18, runid = "01", resourceList = resources)
+getStatus(reg = reg)
+waitForJobs(reg = reg)
+align <- output_update(align, replace=TRUE, dir=FALSE, extension = c(".sam", ".bam"))
+```
+
+## Subset reads by Mapping Region
+
+To minimize processing time during testing, each FASTQ file has been subsetted to 
+800-900 randomly sampled PE reads that map to the first 900 nucleotides 
+of each chromosome of the _A. thalina_ genome.
+
+```{r subsetMapping, eval=FALSE}
+getSubsetReads(align, MappingRegion = 1:900, sample_range = 800:900, outdir = "data/subset/", silent = FALSE)
+```
+
+## Subset reads by Genes List 
+
+Select genes upregulated by DEG analysis with _`DESeq2`_.
+
+```{r deg, eval=FALSE}
+library(DESeq2)
+targets <- read.delim(targetspath, comment="#")
+cmp <- readComp(file=targetspath, format="matrix", delim="-")
+cmp[[1]]
+countDFeBygpath <- system.file("extdata", "countDFeByg.xls", package="systemPipeR")
+countDFeByg <- read.delim(countDFeBygpath, row.names=1)
+degseqDF <- run_DESeq2(countDF=countDFeByg, targets=targets, cmp=cmp[[1]], independent=FALSE)
+DEG_list <- filterDEGs(degDF=degseqDF, filter=c(Fold=2, FDR=10)) ## filter
+list <- unique(unlist(DEG_list$Up))
+```
+
+```{r subsetList, eval=FALSE}
+getSubsetReads(align, geneList=list, MappingRegion = NULL, sample_range = NULL, outdir = "data/subset/", silent = FALSE)
 ```
 
 # Version information

@@ -1,4 +1,9 @@
 changelog
+    version 1.19.2
+	- Added `getSubsetReads` function
+	- Added new cwl files
+	- Updated vignette
+	
     version 1.19.1
 	- Updated systemPipeRNAseq and systemPipeVARseq vignettes
 	

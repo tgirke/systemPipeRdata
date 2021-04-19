@@ -1,4 +1,4 @@
-pandoc: 2.9.2.1
+pandoc: '2.13'
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
@@ -7,7 +7,7 @@ articles:
   systemPipeRNAseq: systemPipeRNAseq.html
   systemPipeRdata: systemPipeRdata.html
   systemPipeVARseq: systemPipeVARseq.html
-last_built: 2020-10-30T03:09Z
+last_built: 2021-04-19T03:54Z
 urls:
   reference: https://systempipe.org/systemPipeRdata//reference
   article: https://systempipe.org/systemPipeRdata//articles

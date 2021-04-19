@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>List Available Workflows Templates at systemPipeRdata package — availableWF • systemPipeRdata</title>
+<title>Subsetting fastq data — getSubsetReads • systemPipeRdata</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,9 @@
 
 
 
-<meta property="og:title" content="List Available Workflows Templates at systemPipeRdata package — availableWF" />
-<meta property="og:description" content="This function checks the workflow templates availability from systemPipeRdata package and 
-also from systemPipeR Organization on GitHub." />
+<meta property="og:title" content="Subsetting fastq data — getSubsetReads" />
+<meta property="og:description" content="Returns subsets of fastq files data based on specific mapping regions or
+list of genes or GRanges object." />
 
 
 
@@ -133,56 +133,102 @@ also from systemPipeR Organization on GitHub." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>List Available Workflows Templates at <code>systemPipeRdata</code> package</h1>
+    <h1>Subsetting fastq data</h1>
     
-    <div class="hidden name"><code>availableWF.Rd</code></div>
+    <div class="hidden name"><code>getSubsetReads.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function checks the workflow templates availability from <code>systemPipeRdata</code> package and 
-also from <a href='https://github.com/systemPipeR/'>systemPipeR Organization</a> on GitHub.</p>
+    <p>Returns subsets of fastq files data based on specific mapping regions or
+list of genes or GRanges object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>availableWF</span><span class='op'>(</span>github <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>getSubsetReads</span><span class='op'>(</span><span class='va'>args</span>,
+  geneList <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gr <span class='op'>=</span> <span class='cn'>NULL</span>,
+  MappingRegion <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>1e+05</span>,
+  sample_range <span class='op'>=</span> <span class='fl'>90000</span><span class='op'>:</span><span class='fl'>1e+05</span>,
+  truncate_refs <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  id_read_number <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  annotation <span class='op'>=</span> <span class='st'>"data/tair10.gff"</span>,
+  reference <span class='op'>=</span> <span class='st'>"data/tair10.fasta"</span>,
+  annot_outname <span class='op'>=</span> <span class='st'>"tair10_sub.gff"</span>,
+  ref_outname <span class='op'>=</span> <span class='st'>"tair10_sub.fasta"</span>,
+  outdir <span class='op'>=</span> <span class='st'>"data/subset/"</span>,
+  silent <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>github</th>
-      <td><p>logical. If <code>TRUE</code>, it will return current workflow templates available on <code>systemPipeR</code> Organization.</p></td>
+      <th>args</th>
+      <td><p>object of class <code>SYSargs2</code>.</p></td>
+    </tr>
+    <tr>
+      <th>geneList</th>
+      <td><p>selected genes list to retrieve the reads from the fastq file.</p></td>
+    </tr>
+    <tr>
+      <th>gr</th>
+      <td><p>an object containing genomic ranges to retrieve the reads from the fastq file.</p></td>
+    </tr>
+    <tr>
+      <th>MappingRegion</th>
+      <td><p>integers ranges of start and end of chromosome position to retrieve the reads from the fastq file.</p></td>
+    </tr>
+    <tr>
+      <th>sample_range</th>
+      <td><p>random range to subsetted the fastq file.</p></td>
+    </tr>
+    <tr>
+      <th>truncate_refs</th>
+      <td><p>logical. If TRUE it will generate reference genome and annotation subset file.</p></td>
+    </tr>
+    <tr>
+      <th>id_read_number</th>
+      <td><p>if fastq file contains sequence name with read number (<code>$ri</code> - <code>--defline-seq '@$sn[_$rn]/$ri'</code>).
+@param annotation path to annotation file.</p></td>
+    </tr>
+    <tr>
+      <th>reference</th>
+      <td><p>path to reference genome.</p></td>
+    </tr>
+    <tr>
+      <th>annot_outname</th>
+      <td><p>character name of the annotation output file.</p></td>
+    </tr>
+    <tr>
+      <th>ref_outname</th>
+      <td><p>character name of the reference genome output file.</p></td>
+    </tr>
+    <tr>
+      <th>outdir</th>
+      <td><p>path to output directory.</p></td>
+    </tr>
+    <tr>
+      <th>silent</th>
+      <td><p>if set to TRUE, all messages returned by the function will be suppressed.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Return a list with the names of the workflows templates availabe at <code>systemPipeRdata</code> 
-package. If <code>github = TRUE</code>, it will return an addicional <code>data.frame</code>
-with current workflow templates available on <code>systemPipeR</code> Organization.</p>
+    <p>Workflow directory containing sample data and parameter files along with the following subdirectories:</p>
+<dt>param/</dt><dd><p>stores parameter files</p></dd>
+    <dt>data/</dt><dd><p>stores input data</p></dd>
+    <dt>results/</dt><dd><p>stores output results</p></dd>
+
+For more details, please consult the Overview Vignette (HTML) of the systemPipeR package (http://bioconductor.org/packages/systemPipeR).
+
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Daniela Cassol</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Internally, this function uses the GitHub API, and there is an access limit per hour. 
-For more details, please check: <code><a href='https://rdrr.io/r/base/system.html'>system("curl -i https://api.github.com/users/&lt;username&gt;")</a></code>.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p>We are assuming that workflow templates repositories under
-<a href='https://github.com/systemPipeR/'>systemPipeR Organization</a> content the keyword 
-"Workflow Template" on the Description section and "Topics" section, we expected 
-"systempiper" and "release" or "development" words.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='genWorkenvir.html'>genWorkenvir</a></code>.</p></div>
+    <p>Thomas Girke, Shiyuan Guo and Daniela Cassol</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>availableWF</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $systemPipeRdata
-#&gt; [1] "chipseq" "new"     "riboseq" "rnaseq"  "varseq" 
-#&gt; </div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'>## List Workflow Templates from \code{systemPipeR} Organization</span>
-<span class='fu'>availableWF</span><span class='op'>(</span>github <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'>getSubsetReads</span><span class='op'>(</span><span class='va'>args</span>, MappingRegion <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>900</span>, sample_range <span class='op'>=</span> <span class='fl'>800</span><span class='op'>:</span><span class='fl'>900</span>, outdir <span class='op'>=</span> <span class='st'>"data/subset/"</span>, silent <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'>getSubsetReads</span><span class='op'>(</span><span class='va'>args</span>, MappingRegion <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>900</span>, sample_range <span class='op'>=</span> <span class='cn'>NULL</span>, outdir <span class='op'>=</span> <span class='st'>"data/subset/"</span>, silent <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>

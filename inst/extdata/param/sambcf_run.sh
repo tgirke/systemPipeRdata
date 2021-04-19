@@ -24,3 +24,4 @@ module load bcftools/1.2
 samtools mpileup -uf $REF myfile.fastq.dedup.sorted.bam | bcftools call -cv - > sambcf.vcf
 #bcftools filter -sLowQual -g3 -G10 -e'%QUAL<10 || (RPB<0.1 && %QUAL<15) || (AC<2 && %QUAL<15) || %MAX(DV)<=3 || %MAX(DV)/%MAX(DP)<=0.3' sambcf.vcf > sambcf.vcf
 
+

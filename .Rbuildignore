@@ -1,0 +1,4 @@
+^_pkgdown\.yml$
+^inst\/extdata\/\.batchtools\.conf\.R$
+^\.github
+^docs

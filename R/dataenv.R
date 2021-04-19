@@ -95,9 +95,8 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
   print(paste("Generated", mydirname2, "directory. Next run in", workflow, "directory, the R code from *.Rmd template interactively. Alternatively, workflows can be exectued with a single command as instructed in the vignette."))
 }
 ## Usage:
-# genWorkenvir(workflow="varseq", mydirname=NULL)
-# genWorkenvir(workflow="systemPipeR/systemPipeVARseq", mydirname=NULL)
-# genWorkenvir(workflow="systemPipeR/systemPipeRNAseq", mydirname="rnaseq",
+# genWorkenvir(workflow="systemPipeR/SPvarseq", mydirname="varseq")
+# genWorkenvir(workflow="systemPipeR/SPrnaseq", mydirname="rnaseq",
 # url = "https://raw.githubusercontent.com/systemPipeR/systemPipeRNAseq/cluster/vignettes/systemPipeRNAseq.Rmd",
 # urlname = "rnaseq_V-cluster.Rmd")
 
