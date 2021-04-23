@@ -101,7 +101,7 @@
 <em>systemPipeRdata</em>: Workflow templates and sample data</h1>
                         <h4 class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
             
-            <h4 class="date">Last update: 22 April, 2021</h4>
+            <h4 class="date">Last update: 23 April, 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.Rmd"><code>vignettes/systemPipeRdata.Rmd</code></a></small>
       <div class="hidden name"><code>systemPipeRdata.Rmd</code></div>
@@ -274,40 +274,40 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/pathList.html">pathList</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## $targets
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/param/targets.txt"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/param/targets.txt"
 ## 
 ## $targetsPE
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/param/targetsPE.txt"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/param/targetsPE.txt"
 ## 
 ## $annotationdir
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/annotation/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/annotation/"
 ## 
 ## $fastqdir
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/fastq/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/fastq/"
 ## 
 ## $bamdir
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/bam/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/bam/"
 ## 
 ## $paramdir
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/param/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/param/"
 ## 
 ## $workflows
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/workflows/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/workflows/"
 ## 
 ## $chipseq
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/workflows/chipseq/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/workflows/chipseq/"
 ## 
 ## $rnaseq
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/workflows/rnaseq/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/workflows/rnaseq/"
 ## 
 ## $riboseq
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/workflows/riboseq/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/workflows/riboseq/"
 ## 
 ## $varseq
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/workflows/varseq/"
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/workflows/varseq/"
 ## 
 ## $new
-## [1] "/tmp/RtmprkuD7D/temp_libpatha693383618ea/systemPipeRdata/extdata/workflows/new/"</code></pre>
+## [1] "/tmp/RtmpVXwS7Y/temp_libpath3a9c46e0876fb/systemPipeRdata/extdata/workflows/new/"</code></pre>
 </div>
 </div>
 <div id="create-a-small-rna-seq-data" class="section level1">
@@ -321,9 +321,46 @@ document.addEventListener("DOMContentLoaded", function() {
 <code class="sourceCode R"><span class="co">## https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP010938&amp;o=acc_s%3Aa</span>
 <span class="va">targetspath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"targetsPE.txt"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">targets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="va">targetspath</span>, comment.char <span class="op">=</span> <span class="st">"#"</span><span class="op">)</span>
-<span class="fu">systemPipeR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/showDT.html">showDT</a></span><span class="op">(</span><span class="va">targets</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-df97d9b44aa1566228cc" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-df97d9b44aa1566228cc">{"x":{"filter":"none","extensions":["FixedColumns","Scroller"],"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"],["./data/SRR446027_1.fastq.gz","./data/SRR446028_1.fastq.gz","./data/SRR446029_1.fastq.gz","./data/SRR446030_1.fastq.gz","./data/SRR446031_1.fastq.gz","./data/SRR446032_1.fastq.gz","./data/SRR446033_1.fastq.gz","./data/SRR446034_1.fastq.gz","./data/SRR446035_1.fastq.gz","./data/SRR446036_1.fastq.gz","./data/SRR446037_1.fastq.gz","./data/SRR446038_1.fastq.gz","./data/SRR446039_1.fastq.gz","./data/SRR446040_1.fastq.gz","./data/SRR446041_1.fastq.gz","./data/SRR446042_1.fastq.gz","./data/SRR446043_1.fastq.gz","./data/SRR446044_1.fastq.gz"],["./data/SRR446027_2.fastq.gz","./data/SRR446028_2.fastq.gz","./data/SRR446029_2.fastq.gz","./data/SRR446030_2.fastq.gz","./data/SRR446031_2.fastq.gz","./data/SRR446032_2.fastq.gz","./data/SRR446033_2.fastq.gz","./data/SRR446034_2.fastq.gz","./data/SRR446035_2.fastq.gz","./data/SRR446036_2.fastq.gz","./data/SRR446037_2.fastq.gz","./data/SRR446038_2.fastq.gz","./data/SRR446039_2.fastq.gz","./data/SRR446040_2.fastq.gz","./data/SRR446041_2.fastq.gz","./data/SRR446042_2.fastq.gz","./data/SRR446043_2.fastq.gz","./data/SRR446044_2.fastq.gz"],["M1A","M1B","A1A","A1B","V1A","V1B","M6A","M6B","A6A","A6B","V6A","V6B","M12A","M12B","A12A","A12B","V12A","V12B"],["M1","M1","A1","A1","V1","V1","M6","M6","A6","A6","V6","V6","M12","M12","A12","A12","V12","V12"],["Mock.1h.A","Mock.1h.B","Avr.1h.A","Avr.1h.B","Vir.1h.A","Vir.1h.B","Mock.6h.A","Mock.6h.B","Avr.6h.A","Avr.6h.B","Vir.6h.A","Vir.6h.B","Mock.12h.A","Mock.12h.B","Avr.12h.A","Avr.12h.B","Vir.12h.A","Vir.12h.B"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],["23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>FileName1<\/th>\n      <th>FileName2<\/th>\n      <th>SampleName<\/th>\n      <th>Factor<\/th>\n      <th>SampleLong<\/th>\n      <th>Experiment<\/th>\n      <th>Date<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"fixedColumns":true,"deferRender":true,"scrollY":200,"scroller":true,"columnDefs":[{"className":"dt-right","targets":6},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<span class="va">targets</span></code></pre></div>
+<pre><code>##                      FileName1                   FileName2
+## 1  ./data/SRR446027_1.fastq.gz ./data/SRR446027_2.fastq.gz
+## 2  ./data/SRR446028_1.fastq.gz ./data/SRR446028_2.fastq.gz
+## 3  ./data/SRR446029_1.fastq.gz ./data/SRR446029_2.fastq.gz
+## 4  ./data/SRR446030_1.fastq.gz ./data/SRR446030_2.fastq.gz
+## 5  ./data/SRR446031_1.fastq.gz ./data/SRR446031_2.fastq.gz
+## 6  ./data/SRR446032_1.fastq.gz ./data/SRR446032_2.fastq.gz
+## 7  ./data/SRR446033_1.fastq.gz ./data/SRR446033_2.fastq.gz
+## 8  ./data/SRR446034_1.fastq.gz ./data/SRR446034_2.fastq.gz
+## 9  ./data/SRR446035_1.fastq.gz ./data/SRR446035_2.fastq.gz
+## 10 ./data/SRR446036_1.fastq.gz ./data/SRR446036_2.fastq.gz
+## 11 ./data/SRR446037_1.fastq.gz ./data/SRR446037_2.fastq.gz
+## 12 ./data/SRR446038_1.fastq.gz ./data/SRR446038_2.fastq.gz
+## 13 ./data/SRR446039_1.fastq.gz ./data/SRR446039_2.fastq.gz
+## 14 ./data/SRR446040_1.fastq.gz ./data/SRR446040_2.fastq.gz
+## 15 ./data/SRR446041_1.fastq.gz ./data/SRR446041_2.fastq.gz
+## 16 ./data/SRR446042_1.fastq.gz ./data/SRR446042_2.fastq.gz
+## 17 ./data/SRR446043_1.fastq.gz ./data/SRR446043_2.fastq.gz
+## 18 ./data/SRR446044_1.fastq.gz ./data/SRR446044_2.fastq.gz
+##    SampleName Factor SampleLong Experiment        Date
+## 1         M1A     M1  Mock.1h.A          1 23-Mar-2012
+## 2         M1B     M1  Mock.1h.B          1 23-Mar-2012
+## 3         A1A     A1   Avr.1h.A          1 23-Mar-2012
+## 4         A1B     A1   Avr.1h.B          1 23-Mar-2012
+## 5         V1A     V1   Vir.1h.A          1 23-Mar-2012
+## 6         V1B     V1   Vir.1h.B          1 23-Mar-2012
+## 7         M6A     M6  Mock.6h.A          1 23-Mar-2012
+## 8         M6B     M6  Mock.6h.B          1 23-Mar-2012
+## 9         A6A     A6   Avr.6h.A          1 23-Mar-2012
+## 10        A6B     A6   Avr.6h.B          1 23-Mar-2012
+## 11        V6A     V6   Vir.6h.A          1 23-Mar-2012
+## 12        V6B     V6   Vir.6h.B          1 23-Mar-2012
+## 13       M12A    M12 Mock.12h.A          1 23-Mar-2012
+## 14       M12B    M12 Mock.12h.B          1 23-Mar-2012
+## 15       A12A    A12  Avr.12h.A          1 23-Mar-2012
+## 16       A12B    A12  Avr.12h.B          1 23-Mar-2012
+## 17       V12A    V12  Vir.12h.A          1 23-Mar-2012
+## 18       V12B    V12  Vir.12h.B          1 23-Mar-2012</code></pre>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Create a SYSargs2 object and populate all the command-line</span>
 <span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/fastq-dump"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">WF</span> <span class="op">&lt;-</span> <span class="fu">systemPipeR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWF</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="va">targetspath</span>, wf_file <span class="op">=</span> <span class="st">"fastq-dump.cwl"</span>, 
@@ -337,18 +374,18 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="create-targets-file" class="section level2">
 <h2 class="hasAnchor">
 <a href="#create-targets-file" class="anchor"></a>Create targets file</h2>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">targetspath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"targetsPE.txt"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">targets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="va">targetspath</span>, comment.char <span class="op">=</span> <span class="st">"#"</span><span class="op">)</span>
 <span class="fu">systemPipeR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/showDT.html">showDT</a></span><span class="op">(</span><span class="va">targets</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-b59d545bf34cb1bd5411" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b59d545bf34cb1bd5411">{"x":{"filter":"none","extensions":["FixedColumns","Scroller"],"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"],["./data/SRR446027_1.fastq.gz","./data/SRR446028_1.fastq.gz","./data/SRR446029_1.fastq.gz","./data/SRR446030_1.fastq.gz","./data/SRR446031_1.fastq.gz","./data/SRR446032_1.fastq.gz","./data/SRR446033_1.fastq.gz","./data/SRR446034_1.fastq.gz","./data/SRR446035_1.fastq.gz","./data/SRR446036_1.fastq.gz","./data/SRR446037_1.fastq.gz","./data/SRR446038_1.fastq.gz","./data/SRR446039_1.fastq.gz","./data/SRR446040_1.fastq.gz","./data/SRR446041_1.fastq.gz","./data/SRR446042_1.fastq.gz","./data/SRR446043_1.fastq.gz","./data/SRR446044_1.fastq.gz"],["./data/SRR446027_2.fastq.gz","./data/SRR446028_2.fastq.gz","./data/SRR446029_2.fastq.gz","./data/SRR446030_2.fastq.gz","./data/SRR446031_2.fastq.gz","./data/SRR446032_2.fastq.gz","./data/SRR446033_2.fastq.gz","./data/SRR446034_2.fastq.gz","./data/SRR446035_2.fastq.gz","./data/SRR446036_2.fastq.gz","./data/SRR446037_2.fastq.gz","./data/SRR446038_2.fastq.gz","./data/SRR446039_2.fastq.gz","./data/SRR446040_2.fastq.gz","./data/SRR446041_2.fastq.gz","./data/SRR446042_2.fastq.gz","./data/SRR446043_2.fastq.gz","./data/SRR446044_2.fastq.gz"],["M1A","M1B","A1A","A1B","V1A","V1B","M6A","M6B","A6A","A6B","V6A","V6B","M12A","M12B","A12A","A12B","V12A","V12B"],["M1","M1","A1","A1","V1","V1","M6","M6","A6","A6","V6","V6","M12","M12","A12","A12","V12","V12"],["Mock.1h.A","Mock.1h.B","Avr.1h.A","Avr.1h.B","Vir.1h.A","Vir.1h.B","Mock.6h.A","Mock.6h.B","Avr.6h.A","Avr.6h.B","Vir.6h.A","Vir.6h.B","Mock.12h.A","Mock.12h.B","Avr.12h.A","Avr.12h.B","Vir.12h.A","Vir.12h.B"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],["23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>FileName1<\/th>\n      <th>FileName2<\/th>\n      <th>SampleName<\/th>\n      <th>Factor<\/th>\n      <th>SampleLong<\/th>\n      <th>Experiment<\/th>\n      <th>Date<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"fixedColumns":true,"deferRender":true,"scrollY":200,"scroller":true,"columnDefs":[{"className":"dt-right","targets":6},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b4671ae61095e228b1b3" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b4671ae61095e228b1b3">{"x":{"filter":"none","extensions":["FixedColumns","Scroller"],"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"],["./data/SRR446027_1.fastq.gz","./data/SRR446028_1.fastq.gz","./data/SRR446029_1.fastq.gz","./data/SRR446030_1.fastq.gz","./data/SRR446031_1.fastq.gz","./data/SRR446032_1.fastq.gz","./data/SRR446033_1.fastq.gz","./data/SRR446034_1.fastq.gz","./data/SRR446035_1.fastq.gz","./data/SRR446036_1.fastq.gz","./data/SRR446037_1.fastq.gz","./data/SRR446038_1.fastq.gz","./data/SRR446039_1.fastq.gz","./data/SRR446040_1.fastq.gz","./data/SRR446041_1.fastq.gz","./data/SRR446042_1.fastq.gz","./data/SRR446043_1.fastq.gz","./data/SRR446044_1.fastq.gz"],["./data/SRR446027_2.fastq.gz","./data/SRR446028_2.fastq.gz","./data/SRR446029_2.fastq.gz","./data/SRR446030_2.fastq.gz","./data/SRR446031_2.fastq.gz","./data/SRR446032_2.fastq.gz","./data/SRR446033_2.fastq.gz","./data/SRR446034_2.fastq.gz","./data/SRR446035_2.fastq.gz","./data/SRR446036_2.fastq.gz","./data/SRR446037_2.fastq.gz","./data/SRR446038_2.fastq.gz","./data/SRR446039_2.fastq.gz","./data/SRR446040_2.fastq.gz","./data/SRR446041_2.fastq.gz","./data/SRR446042_2.fastq.gz","./data/SRR446043_2.fastq.gz","./data/SRR446044_2.fastq.gz"],["M1A","M1B","A1A","A1B","V1A","V1B","M6A","M6B","A6A","A6B","V6A","V6B","M12A","M12B","A12A","A12B","V12A","V12B"],["M1","M1","A1","A1","V1","V1","M6","M6","A6","A6","V6","V6","M12","M12","A12","A12","V12","V12"],["Mock.1h.A","Mock.1h.B","Avr.1h.A","Avr.1h.B","Vir.1h.A","Vir.1h.B","Mock.6h.A","Mock.6h.B","Avr.6h.A","Avr.6h.B","Vir.6h.A","Vir.6h.B","Mock.12h.A","Mock.12h.B","Avr.12h.A","Avr.12h.B","Vir.12h.A","Vir.12h.B"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],["23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012","23-Mar-2012"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>FileName1<\/th>\n      <th>FileName2<\/th>\n      <th>SampleName<\/th>\n      <th>Factor<\/th>\n      <th>SampleLong<\/th>\n      <th>Experiment<\/th>\n      <th>Date<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"fixedColumns":true,"deferRender":true,"scrollY":200,"scroller":true,"columnDefs":[{"className":"dt-right","targets":6},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="mapping" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mapping" class="anchor"></a>Mapping</h2>
 <p>Build Index:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWF</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="cn">NULL</span>, wf_file <span class="op">=</span> <span class="st">"hisat2-index.cwl"</span>, input_file <span class="op">=</span> <span class="st">"hisat2-index.yml"</span>, 
     dir_path <span class="op">=</span> <span class="st">"param/cwl/hisat2/hisat2-idx/"</span><span class="op">)</span>
 <span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderWF.html">renderWF</a></span><span class="op">(</span><span class="va">idx</span><span class="op">)</span>
@@ -366,7 +403,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="mapping-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#mapping-1" class="anchor"></a>Mapping</h3>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Build WF</span>
 <span class="va">align</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWF</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="va">targetspath</span>, wf_file <span class="op">=</span> <span class="st">"hisat2-mapping-pe.cwl"</span>, 
     input_file <span class="op">=</span> <span class="st">"hisat2-mapping-pe.yml"</span>, dir_path <span class="op">=</span> <span class="st">"param/cwl/hisat2/hisat2-pe/"</span><span class="op">)</span>
@@ -392,7 +429,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="hasAnchor">
 <a href="#subset-reads-by-mapping-region" class="anchor"></a>Subset reads by Mapping Region</h2>
 <p>To minimize processing time during testing, each FASTQ file has been subsetted to 800-900 randomly sampled PE reads that map to the first 900 nucleotides of each chromosome of the <em>A. thalina</em> genome.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/getSubsetReads.html">getSubsetReads</a></span><span class="op">(</span><span class="va">align</span>, MappingRegion <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">900</span>, sample_range <span class="op">=</span> <span class="fl">800</span><span class="op">:</span><span class="fl">900</span>, 
     outdir <span class="op">=</span> <span class="st">"data/subset/"</span>, silent <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 </div>
@@ -400,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="hasAnchor">
 <a href="#subset-reads-by-genes-list" class="anchor"></a>Subset reads by Genes List</h2>
 <p>Select genes upregulated by DEG analysis with <em><code>DESeq2</code></em>.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span><span class="op">)</span>
 <span class="va">targets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="va">targetspath</span>, comment <span class="op">=</span> <span class="st">"#"</span><span class="op">)</span>
 <span class="va">cmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/readComp.html">readComp</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">targetspath</span>, format <span class="op">=</span> <span class="st">"matrix"</span>, delim <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span>
@@ -413,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="va">DEG_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html">filterDEGs</a></span><span class="op">(</span>degDF <span class="op">=</span> <span class="va">degseqDF</span>, filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>Fold <span class="op">=</span> <span class="fl">2</span>, 
     FDR <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span>  <span class="co">## filter</span>
 <span class="va">list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Up</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/getSubsetReads.html">getSubsetReads</a></span><span class="op">(</span><span class="va">align</span>, geneList <span class="op">=</span> <span class="va">list</span>, MappingRegion <span class="op">=</span> <span class="cn">NULL</span>, 
     sample_range <span class="op">=</span> <span class="cn">NULL</span>, outdir <span class="op">=</span> <span class="st">"data/subset/"</span>, silent <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 </div>
@@ -421,7 +458,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="version-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#version-information" class="anchor"></a>Version information</h1>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## R Under development (unstable) (2021-02-04 r79940)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
@@ -444,7 +481,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [6] methods   base     
 ## 
 ## other attached packages:
-## [1] systemPipeRdata_1.19.2 BiocStyle_2.19.2      
+## [1] systemPipeRdata_1.19.3 BiocStyle_2.19.2      
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] colorspace_2.0-0           

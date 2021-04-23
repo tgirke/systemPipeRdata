@@ -234,7 +234,7 @@ obtains 18 paired-end (PE) read sets from _Arabidposis thaliana_ [@Howard2013-fq
 ## https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP010938&o=acc_s%3Aa
 targetspath <- system.file("extdata", "targetsPE.txt", package = "systemPipeR")
 targets <- read.delim(targetspath, comment.char = "#")
-systemPipeR::showDT(targets)
+targets
 ```
 
 

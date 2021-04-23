@@ -1,5 +1,8 @@
 changelog
-    version 1.19.2
+    version 1.19.4
+	- Small updates, version up
+	
+    version 1.19.3
 	- Exported `getSubsetReads` function
 
     version 1.19.2
