@@ -8,5 +8,5 @@ importFrom("utils", "download.file", "install.packages")
 
 ## Functions
 export(
-    "pathList", "genWorkenvir", "availableWF"
+    "pathList", "genWorkenvir", "availableWF", "getSubsetReads" 
 ) 

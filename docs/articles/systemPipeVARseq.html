@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">systemPipeRdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.19.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.19.3</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@
       <h1 data-toc-skip>VAR-Seq Workflow Template</h1>
                         <h4 class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
             
-            <h4 class="date">Last update: 18 April, 2021</h4>
+            <h4 class="date">Last update: 22 April, 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeVARseq.Rmd"><code>vignettes/systemPipeVARseq.Rmd</code></a></small>
       <div class="hidden name"><code>systemPipeVARseq.Rmd</code></div>
@@ -733,7 +733,7 @@ Figure 2: Venn Diagram for 4 samples from GATK and BCFtools
 <p>The following plots a selected variant with <code>ggbio</code>.</p>
 <p>In this example, the input <code>BAM</code> file is from the <code>GATK</code> step 5, analysis ready bam. You can use other aligned <code>BAMs</code> as well, but make sure they are indexed. The <code>VCF</code> file is taken from <code>Inspect VCF file</code> section or you can load your own vcf.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ggbio</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tengfei.github.com/ggbio/">ggbio</a></span><span class="op">)</span>
 <span class="va">mychr</span> <span class="op">&lt;-</span> <span class="st">"ChrC"</span>
 <span class="va">mystart</span> <span class="op">&lt;-</span> <span class="fl">11000</span>
 <span class="va">myend</span> <span class="op">&lt;-</span> <span class="fl">13000</span>
@@ -744,15 +744,15 @@ Figure 2: Venn Diagram for 4 samples from GATK and BCFtools
 <span class="va">ga</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicAlignments/man/readGAlignments.html">readGAlignments</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/subsetWF.html">subsetWF</a></span><span class="op">(</span><span class="va">args</span>, slot <span class="op">=</span> <span class="st">"input"</span>, subset <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
     use.names <span class="op">=</span> <span class="cn">TRUE</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/ScanBamParam-class.html">ScanBamParam</a></span><span class="op">(</span>which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html">GRanges</a></span><span class="op">(</span><span class="va">mychr</span>, 
         <span class="fu">IRanges</span><span class="op">(</span><span class="va">mystart</span>, <span class="va">myend</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">ga</span>, geom <span class="op">=</span> <span class="st">"rect"</span><span class="op">)</span>
-<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">ga</span>, geom <span class="op">=</span> <span class="st">"line"</span>, stat <span class="op">=</span> <span class="st">"coverage"</span><span class="op">)</span>
-<span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="va">vcf</span><span class="op">[</span><span class="fu">seqnames</span><span class="op">(</span><span class="va">vcf</span><span class="op">)</span> <span class="op">==</span> <span class="va">mychr</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"fixed"</span><span class="op">)</span> <span class="op">+</span> 
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="va">mystart</span>, <span class="va">myend</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span>, axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>, 
+<span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggbio/man/autoplot-method.html">autoplot</a></span><span class="op">(</span><span class="va">ga</span>, geom <span class="op">=</span> <span class="st">"rect"</span><span class="op">)</span>
+<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggbio/man/autoplot-method.html">autoplot</a></span><span class="op">(</span><span class="va">ga</span>, geom <span class="op">=</span> <span class="st">"line"</span>, stat <span class="op">=</span> <span class="st">"coverage"</span><span class="op">)</span>
+<span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggbio/man/autoplot-method.html">autoplot</a></span><span class="op">(</span><span class="va">vcf</span><span class="op">[</span><span class="fu">seqnames</span><span class="op">(</span><span class="va">vcf</span><span class="op">)</span> <span class="op">==</span> <span class="va">mychr</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"fixed"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu"><a href="https://rdrr.io/pkg/ggbio/man/tracks.html">xlim</a></span><span class="op">(</span><span class="va">mystart</span>, <span class="va">myend</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span>, axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>, 
     axis.ticks.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span><span class="op">(</span><span class="fu">loadDb</span><span class="op">(</span><span class="st">"./data/tair10.sqlite"</span><span class="op">)</span>, which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html">GRanges</a></span><span class="op">(</span><span class="va">mychr</span>, 
+<span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggbio/man/autoplot-method.html">autoplot</a></span><span class="op">(</span><span class="fu">loadDb</span><span class="op">(</span><span class="st">"./data/tair10.sqlite"</span><span class="op">)</span>, which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html">GRanges</a></span><span class="op">(</span><span class="va">mychr</span>, 
     <span class="fu">IRanges</span><span class="op">(</span><span class="va">mystart</span>, <span class="va">myend</span><span class="op">)</span><span class="op">)</span>, names.expr <span class="op">=</span> <span class="st">"gene_id"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"./results/plot_variant.png"</span><span class="op">)</span>
-<span class="fu">tracks</span><span class="op">(</span>Reads <span class="op">=</span> <span class="va">p1</span>, Coverage <span class="op">=</span> <span class="va">p2</span>, Variant <span class="op">=</span> <span class="va">p3</span>, Transcripts <span class="op">=</span> <span class="va">p4</span>, 
+<span class="fu"><a href="https://rdrr.io/pkg/ggbio/man/tracks.html">tracks</a></span><span class="op">(</span>Reads <span class="op">=</span> <span class="va">p1</span>, Coverage <span class="op">=</span> <span class="va">p2</span>, Variant <span class="op">=</span> <span class="va">p3</span>, Transcripts <span class="op">=</span> <span class="va">p4</span>, 
     heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.35</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">""</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <img src="results/plot_variant.png"><div align="center">
@@ -786,83 +786,70 @@ Figure 3: Plot variants with programmatically.
 ## [6] utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] systemPipeR_1.25.12         ShortRead_1.49.2           
+##  [1] systemPipeR_1.25.11         ShortRead_1.49.2           
 ##  [3] GenomicAlignments_1.27.2    SummarizedExperiment_1.21.3
 ##  [5] Biobase_2.51.0              MatrixGenerics_1.3.1       
 ##  [7] matrixStats_0.58.0          BiocParallel_1.25.5        
 ##  [9] Rsamtools_2.7.2             Biostrings_2.59.2          
 ## [11] XVector_0.31.1              GenomicRanges_1.43.4       
-## [13] GenomeInfoDb_1.27.11        IRanges_2.25.8             
-## [15] S4Vectors_0.29.15           BiocGenerics_0.37.1        
+## [13] GenomeInfoDb_1.27.11        IRanges_2.25.9             
+## [15] S4Vectors_0.29.15           BiocGenerics_0.37.2        
 ## [17] BiocStyle_2.19.2           
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] backports_1.2.1          BiocFileCache_1.99.5    
-##   [3] systemfonts_1.0.1        plyr_1.8.6              
-##   [5] lazyeval_0.2.2           splines_4.1.0           
-##   [7] ggplot2_3.3.3            digest_0.6.27           
-##   [9] htmltools_0.5.1.1        fansi_0.4.2             
-##  [11] magrittr_2.0.1           checkmate_2.0.0         
-##  [13] memoise_2.0.0            BSgenome_1.59.2         
-##  [15] base64url_1.4            limma_3.47.12           
-##  [17] annotate_1.69.2          pkgdown_1.6.1           
-##  [19] prettyunits_1.1.1        jpeg_0.1-8.1            
-##  [21] colorspace_2.0-0         blob_1.2.1              
-##  [23] rappdirs_0.3.3           ggrepel_0.9.1           
-##  [25] textshaping_0.3.3        xfun_0.22               
-##  [27] dplyr_1.0.5              crayon_1.4.1            
-##  [29] RCurl_1.98-1.3           jsonlite_1.7.2          
-##  [31] genefilter_1.73.1        VariantAnnotation_1.37.1
-##  [33] brew_1.0-6               survival_3.2-10         
-##  [35] ape_5.4-1                glue_1.4.2              
-##  [37] gtable_0.3.0             zlibbioc_1.37.0         
-##  [39] DelayedArray_0.17.10     V8_3.4.0                
-##  [41] scales_1.1.1             pheatmap_1.0.12         
-##  [43] DBI_1.1.1                GGally_2.1.1            
-##  [45] edgeR_3.33.3             Rcpp_1.0.6              
-##  [47] viridisLite_0.4.0        xtable_1.8-4            
-##  [49] progress_1.2.2           tidytree_0.3.3          
-##  [51] bit_4.0.4                rsvg_2.1                
-##  [53] htmlwidgets_1.5.3        httr_1.4.2              
-##  [55] RColorBrewer_1.1-2       ellipsis_0.3.1          
-##  [57] pkgconfig_2.0.3          reshape_0.8.8           
-##  [59] XML_3.99-0.6             sass_0.3.1              
-##  [61] dbplyr_2.1.1             locfit_1.5-9.4          
-##  [63] utf8_1.2.1               tidyselect_1.1.0        
-##  [65] rlang_0.4.10             AnnotationDbi_1.53.1    
-##  [67] munsell_0.5.0            tools_4.1.0             
-##  [69] cachem_1.0.4             generics_0.1.0          
-##  [71] RSQLite_2.2.6            evaluate_0.14           
-##  [73] stringr_1.4.0            fastmap_1.1.0           
-##  [75] yaml_2.2.1               ragg_1.1.2              
-##  [77] ggtree_2.5.2             knitr_1.32              
-##  [79] bit64_4.0.5              fs_1.5.0                
-##  [81] purrr_0.3.4              KEGGREST_1.31.1         
-##  [83] nlme_3.1-152             formatR_1.9             
-##  [85] aplot_0.0.6              biomaRt_2.47.7          
-##  [87] compiler_4.1.0           plotly_4.9.3            
-##  [89] filelock_1.0.2           curl_4.3                
-##  [91] png_0.1-7                treeio_1.15.6           
-##  [93] tibble_3.1.0             geneplotter_1.69.0      
-##  [95] bslib_0.2.4              stringi_1.5.3           
-##  [97] GenomicFeatures_1.43.8   desc_1.3.0              
-##  [99] lattice_0.20-41          Matrix_1.3-2            
-## [101] glmpca_0.2.0             vctrs_0.3.7             
-## [103] pillar_1.6.0             lifecycle_1.0.0         
-## [105] BiocManager_1.30.12      jquerylib_0.1.3         
-## [107] data.table_1.14.0        bitops_1.0-6            
-## [109] patchwork_1.1.1          rtracklayer_1.51.5      
-## [111] R6_2.5.0                 BiocIO_1.1.2            
-## [113] latticeExtra_0.6-29      hwriter_1.3.2           
-## [115] bookdown_0.21            codetools_0.2-18        
-## [117] MASS_7.3-53.1            assertthat_0.2.1        
-## [119] DESeq2_1.31.18           rprojroot_2.0.2         
-## [121] rjson_0.2.20             withr_2.4.1             
-## [123] batchtools_0.9.15        GenomeInfoDbData_1.2.4  
-## [125] hms_1.0.0                grid_4.1.0              
-## [127] tidyr_1.1.3              DOT_0.1                 
-## [129] rmarkdown_2.7            rvcheck_0.1.8           
-## [131] Rtsne_0.15               restfulr_0.0.13</code></pre>
+##   [1] colorspace_2.0-0         rjson_0.2.20            
+##   [3] hwriter_1.3.2            ellipsis_0.3.1          
+##   [5] rprojroot_2.0.2          fs_1.5.0                
+##   [7] bit64_4.0.5              AnnotationDbi_1.53.1    
+##   [9] fansi_0.4.2              codetools_0.2-18        
+##  [11] cachem_1.0.4             knitr_1.32              
+##  [13] jsonlite_1.7.2           annotate_1.69.2         
+##  [15] dbplyr_2.1.1             png_0.1-7               
+##  [17] BiocManager_1.30.12      compiler_4.1.0          
+##  [19] httr_1.4.2               backports_1.2.1         
+##  [21] assertthat_0.2.1         Matrix_1.3-2            
+##  [23] fastmap_1.1.0            limma_3.47.12           
+##  [25] formatR_1.9              htmltools_0.5.1.1       
+##  [27] prettyunits_1.1.1        tools_4.1.0             
+##  [29] gtable_0.3.0             glue_1.4.2              
+##  [31] GenomeInfoDbData_1.2.4   dplyr_1.0.5             
+##  [33] rsvg_2.1.1               batchtools_0.9.15       
+##  [35] rappdirs_0.3.3           V8_3.4.0                
+##  [37] Rcpp_1.0.6               jquerylib_0.1.3         
+##  [39] pkgdown_1.6.1            vctrs_0.3.7             
+##  [41] rtracklayer_1.51.5       xfun_0.22               
+##  [43] stringr_1.4.0            lifecycle_1.0.0         
+##  [45] restfulr_0.0.13          XML_3.99-0.6            
+##  [47] edgeR_3.33.3             scales_1.1.1            
+##  [49] zlibbioc_1.37.0          BSgenome_1.59.2         
+##  [51] VariantAnnotation_1.37.1 ragg_1.1.2              
+##  [53] hms_1.0.0                RColorBrewer_1.1-2      
+##  [55] yaml_2.2.1               curl_4.3                
+##  [57] memoise_2.0.0            ggplot2_3.3.3           
+##  [59] sass_0.3.1               biomaRt_2.47.7          
+##  [61] latticeExtra_0.6-29      stringi_1.5.3           
+##  [63] RSQLite_2.2.7            BiocIO_1.1.2            
+##  [65] desc_1.3.0               checkmate_2.0.0         
+##  [67] GenomicFeatures_1.43.8   filelock_1.0.2          
+##  [69] DOT_0.1                  rlang_0.4.10            
+##  [71] pkgconfig_2.0.3          systemfonts_1.0.1       
+##  [73] bitops_1.0-6             evaluate_0.14           
+##  [75] lattice_0.20-41          purrr_0.3.4             
+##  [77] bit_4.0.4                tidyselect_1.1.0        
+##  [79] magrittr_2.0.1           bookdown_0.22           
+##  [81] R6_2.5.0                 generics_0.1.0          
+##  [83] base64url_1.4            DelayedArray_0.17.10    
+##  [85] DBI_1.1.1                pillar_1.6.0            
+##  [87] withr_2.4.2              KEGGREST_1.31.1         
+##  [89] RCurl_1.98-1.3           tibble_3.1.1            
+##  [91] crayon_1.4.1             utf8_1.2.1              
+##  [93] BiocFileCache_1.99.6     rmarkdown_2.7           
+##  [95] jpeg_0.1-8.1             progress_1.2.2          
+##  [97] locfit_1.5-9.4           grid_4.1.0              
+##  [99] data.table_1.14.0        blob_1.2.1              
+## [101] digest_0.6.27            xtable_1.8-4            
+## [103] brew_1.0-6               textshaping_0.3.3       
+## [105] munsell_0.5.0            bslib_0.2.4</code></pre>
 </div>
 <div id="funding" class="section level1">
 <h1 class="hasAnchor">

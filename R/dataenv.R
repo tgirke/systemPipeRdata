@@ -232,4 +232,3 @@ availableWF <- function(github = FALSE){
 # availableWF()
 # availableWF(github = TRUE)
 
-

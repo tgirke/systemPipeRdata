@@ -1,5 +1,8 @@
 changelog
     version 1.19.2
+	- Exported `getSubsetReads` function
+
+    version 1.19.2
 	- Added `getSubsetReads` function
 	- Added new cwl files
 	- Updated vignette

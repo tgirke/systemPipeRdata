@@ -2,3 +2,4 @@
 ^inst\/extdata\/\.batchtools\.conf\.R$
 ^\.github
 ^docs
+vignettes/*_cache
