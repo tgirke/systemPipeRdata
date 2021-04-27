@@ -1,4 +1,7 @@
 changelog
+    version 1.19.6
+	- Removed .batchtools.conf.R file from .Rbuildignore
+	
     version 1.19.5
 	- Copied the .batchtools.conf.R file to Github WF templates
 	

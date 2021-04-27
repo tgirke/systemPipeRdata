@@ -1,10 +1,5 @@
 ^_pkgdown\.yml$
-^inst/extdata/\.batchtools\.conf\.R$
 ^\.github
 ^docs
 vignettes/*_cache
-inst/extdata/param/.batchtools.conf.R
-inst/extdata/param/.batchtools.conf.R.sge
-inst/extdata/param/.batchtools.conf.R.torque
-inst/extdata/workflows/new/.batchtools.conf.R
-inst/rmarkdown/templates/systemPipeR_new/skeleton/.batchtools.conf.R
+
