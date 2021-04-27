@@ -1,4 +1,7 @@
 changelog
+    version 1.19.5
+	- Copied the .batchtools.conf.R file to Github WF templates
+	
     version 1.19.4
 	- Small updates, version up
 	

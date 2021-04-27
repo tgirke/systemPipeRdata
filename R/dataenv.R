@@ -95,7 +95,7 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
   print(paste("Generated", mydirname2, "directory. Next run in", workflow, "directory, the R code from *.Rmd template interactively. Alternatively, workflows can be exectued with a single command as instructed in the vignette."))
 }
 ## Usage:
-# genWorkenvir(workflow="systemPipeR/SPvarseq", mydirname="varseq")
+#genWorkenvir(workflow="systemPipeR/SPvarseq", mydirname="varseq")
 # genWorkenvir(workflow="systemPipeR/SPrnaseq", mydirname="rnaseq",
 # url = "https://raw.githubusercontent.com/systemPipeR/systemPipeRNAseq/cluster/vignettes/systemPipeRNAseq.Rmd",
 # urlname = "rnaseq_V-cluster.Rmd")
@@ -104,7 +104,7 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
 ## Generate data/param for SPR_packages ##
 ############################################
 genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
-  ## TODO: we can add a check if it is a sysproject
+  ## TODO: we can add a check if it is a spr_project
   suppressWarnings({
     data.path <- normalizePath(paste0(path, "/data/"))
     param.path <- normalizePath(paste0(path, "/param/"))
@@ -120,6 +120,7 @@ genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
     file.copy(pathList()$paramdir, normalizePath(path), recursive=TRUE)
     print("The 'param' directory was successfully copied to your project.")
   }
+  file.copy(c(paste0(pathList()$paramdir, "batchtools.slurm.tmpl"), paste0(pathList()$paramdir, ".batchtools.conf.R")), path)
 }
 
 ## Usage:
