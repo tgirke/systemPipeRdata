@@ -1,4 +1,7 @@
 changelog
+    version 1.18.2
+	- Updated MACS2 cwl module load
+	
     version 1.18.1
 	- Updated systemPipeRNAseq and systemPipeVARseq vignettes
 	

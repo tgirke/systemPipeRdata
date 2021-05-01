@@ -341,13 +341,6 @@ writeTargetsout(x=args_merge, file="targets_mergeBamByFactor.txt", step = 1,
                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE )
 ```
 
-```{r call_peaks_macs_envVar_settings, eval=FALSE}
-# Skip if a module system is not used
-module("list")
-module("unload", "miniconda2")
-module("load", "python/2.7.14") # Make sure to set up your enviroment variable for MACS2 
-```
-
 ## Peak calling without input/reference sample
 
 MACS2 can perform peak calling on ChIP-Seq data with and without input
