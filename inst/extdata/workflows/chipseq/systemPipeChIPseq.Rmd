@@ -376,7 +376,7 @@ writeTargetsRef(infile="targets_mergeBamByFactor.txt",
 dir_path <- system.file("extdata/cwl/MACS2/MACS2-input/", package="systemPipeR")
 args_input <- loadWF(targets = "targets_bam_ref.txt", wf_file = "macs2-input.cwl", 
     input_file = "macs2.yml", dir_path = dir_path)
-args_input <- renderWF(args_input, inputvars = c(SampleName = "_FASTQ_PATH1_", FileName2 = "_FASTQ_PATH2_", SampleName = "_SampleName_"))
+args_input <- renderWF(args_input, inputvars = c(FileName1 = "_FASTQ_PATH1_", FileName2 = "_FASTQ_PATH2_", SampleName = "_SampleName_"))
 cmdlist(args_input)[1]
 ## Run
 args_input <- runCommandline(args_input, make_bam = FALSE, force=T)
