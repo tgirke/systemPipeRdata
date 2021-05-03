@@ -1,4 +1,7 @@
 changelog
+    version 1.19.7
+	- Vignette 
+	
     version 1.19.6
 	- Removed .batchtools.conf.R file from .Rbuildignore
 	
