@@ -216,7 +216,6 @@ targets[1:4,-c(5,6)]
 
 
 ## ----consensus_peaks, eval=FALSE--------------------------
-## # source("http://faculty.ucr.edu/~tgirke/Documents/R_BioCond/My_R_Scripts/rangeoverlapper.R")
 ## outpaths <- subsetWF(args , slot="output", subset=1, index=1) ## escolher um dos outputs index
 ## peak_M1A <- outpaths["M1A"]
 ## peak_M1A <- as(read.delim(peak_M1A, comment="#")[,1:3], "GRanges")

@@ -1,6 +1,6 @@
 changelog
     version 1.19.7
-	- Vignette 
+	- Vignette ChIP-seq
 	
     version 1.19.6
 	- Removed .batchtools.conf.R file from .Rbuildignore
