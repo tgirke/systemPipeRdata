@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">systemPipeRdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.19.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.19.9</span>
       </span>
     </div>
 
@@ -88,13 +88,13 @@
 
       
 
-      </header><script src="systemPipeChIPseq_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
+      </header><script src="systemPipeChIPseq_files/header-attrs-2.7.12/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>ChIP-Seq Workflow Template</h1>
                         <h4 class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
             
-            <h4 class="date">Last update: 23 April, 2021</h4>
+            <h4 class="date">Last update: 04 May, 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeChIPseq.Rmd"><code>vignettes/systemPipeChIPseq.Rmd</code></a></small>
       <div class="hidden name"><code>systemPipeChIPseq.Rmd</code></div>
@@ -296,7 +296,8 @@ Figure 1: FASTQ quality report for 18 samples
 <p>Check whether all BAM files have been created and write out the new targets file.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/writeTargetsout.html">writeTargetsout</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">args</span>, file <span class="op">=</span> <span class="st">"targets_bam.txt"</span>, step <span class="op">=</span> <span class="fl">1</span>, 
-    new_col <span class="op">=</span> <span class="st">"FileName"</span>, new_col_output_index <span class="op">=</span> <span class="fl">1</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+    new_col <span class="op">=</span> <span class="st">"FileName"</span>, new_col_output_index <span class="op">=</span> <span class="fl">1</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, 
+    remove <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/subsetWF.html">subsetWF</a></span><span class="op">(</span><span class="va">args</span>, slot <span class="op">=</span> <span class="st">"output"</span>, subset <span class="op">=</span> <span class="fl">1</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">outpaths</span><span class="op">)</span></code></pre></div>
 </div>
@@ -378,18 +379,13 @@ Figure 1: FASTQ quality report for 18 samples
 <span class="va">args_merge</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/mergeBamByFactor.html">mergeBamByFactor</a></span><span class="op">(</span>args <span class="op">=</span> <span class="va">args</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/writeTargetsout.html">writeTargetsout</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">args_merge</span>, file <span class="op">=</span> <span class="st">"targets_mergeBamByFactor.txt"</span>, 
     step <span class="op">=</span> <span class="fl">1</span>, new_col <span class="op">=</span> <span class="st">"FileName"</span>, new_col_output_index <span class="op">=</span> <span class="fl">1</span>, 
-    overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Skip if a module system is not used</span>
-<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/moduleload.html">module</a></span><span class="op">(</span><span class="st">"list"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/moduleload.html">module</a></span><span class="op">(</span><span class="st">"unload"</span>, <span class="st">"miniconda2"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/moduleload.html">module</a></span><span class="op">(</span><span class="st">"load"</span>, <span class="st">"python/2.7.14"</span><span class="op">)</span>  <span class="co"># Make sure to set up your enviroment variable for MACS2 </span></code></pre></div>
+    overwrite <span class="op">=</span> <span class="cn">TRUE</span>, remove <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="peak-calling-without-inputreference-sample" class="section level2">
 <h2 class="hasAnchor">
 <a href="#peak-calling-without-inputreference-sample" class="anchor"></a>Peak calling without input/reference sample</h2>
 <p>MACS2 can perform peak calling on ChIP-Seq data with and without input samples <span class="citation">(Zhang et al. 2008)</span>. The following performs peak calling without input on all samples specified in the corresponding <code>args</code> object. Note, due to the small size of the sample data, MACS2 needs to be run here with the <code>nomodel</code> setting. For real data sets, users want to remove this parameter in the corresponding <code>*.param</code> file(s).</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/MACS2/MACS2-noinput/"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWF</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"targets_mergeBamByFactor.txt"</span>, wf_file <span class="op">=</span> <span class="st">"macs2.cwl"</span>, 
     input_file <span class="op">=</span> <span class="st">"macs2.yml"</span>, dir_path <span class="op">=</span> <span class="va">dir_path</span><span class="op">)</span>
@@ -406,7 +402,7 @@ Figure 1: FASTQ quality report for 18 samples
 <h2 class="hasAnchor">
 <a href="#peak-calling-with-inputreference-sample" class="anchor"></a>Peak calling with input/reference sample</h2>
 <p>To perform peak calling with input samples, they can be most conveniently specified in the <code>SampleReference</code> column of the initial <code>targets</code> file. The <code>writeTargetsRef</code> function uses this information to create a <code>targets</code> file intermediate for running MACS2 with the corresponding input samples.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/writeTargetsRef.html">writeTargetsRef</a></span><span class="op">(</span>infile <span class="op">=</span> <span class="st">"targets_mergeBamByFactor.txt"</span>, outfile <span class="op">=</span> <span class="st">"targets_bam_ref.txt"</span>, 
     silent <span class="op">=</span> <span class="cn">FALSE</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/MACS2/MACS2-input/"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
@@ -429,9 +425,8 @@ Figure 1: FASTQ quality report for 18 samples
 <h2 class="hasAnchor">
 <a href="#identify-consensus-peaks" class="anchor"></a>Identify consensus peaks</h2>
 <p>The following example shows how one can identify consensus preaks among two peak sets sharing either a minimum absolute overlap and/or minimum relative overlap using the <code>subsetByOverlaps</code> or <code>olRanges</code> functions, respectively. Note, the latter is a custom function imported below by sourcing it.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># source('http://faculty.ucr.edu/~tgirke/Documents/R_BioCond/My_R_Scripts/rangeoverlapper.R')</span>
-<span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/subsetWF.html">subsetWF</a></span><span class="op">(</span><span class="va">args</span>, slot <span class="op">=</span> <span class="st">"output"</span>, subset <span class="op">=</span> <span class="fl">1</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>  <span class="co">## escolher um dos outputs index</span>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/subsetWF.html">subsetWF</a></span><span class="op">(</span><span class="va">args</span>, slot <span class="op">=</span> <span class="st">"output"</span>, subset <span class="op">=</span> <span class="fl">1</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>  <span class="co">## escolher um dos outputs index</span>
 <span class="va">peak_M1A</span> <span class="op">&lt;-</span> <span class="va">outpaths</span><span class="op">[</span><span class="st">"M1A"</span><span class="op">]</span>
 <span class="va">peak_M1A</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="va">peak_M1A</span>, comment <span class="op">=</span> <span class="st">"#"</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, <span class="st">"GRanges"</span><span class="op">)</span>
 <span class="va">peak_A1A</span> <span class="op">&lt;-</span> <span class="va">outpaths</span><span class="op">[</span><span class="st">"A1A"</span><span class="op">]</span>
@@ -451,7 +446,7 @@ Figure 1: FASTQ quality report for 18 samples
 <h2 class="hasAnchor">
 <a href="#annotation-with-chippeakanno-package" class="anchor"></a>Annotation with <code>ChIPpeakAnno</code> package</h2>
 <p>The following annotates the identified peaks with genomic context information using the <code>ChIPpeakAnno</code> and <code>ChIPseeker</code> packages, respectively <span class="citation">(Zhu et al. 2010; Yu, Wang, and He 2015)</span>.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ChIPpeakAnno</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures">GenomicFeatures</a></span><span class="op">)</span>
 <span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/annotate_peaks"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
@@ -481,7 +476,7 @@ Figure 1: FASTQ quality report for 18 samples
 <h2 class="hasAnchor">
 <a href="#annotation-with-chipseeker-package" class="anchor"></a>Annotation with <code>ChIPseeker</code> package</h2>
 <p>Same as in previous step but using the <code>ChIPseeker</code> package for annotating the peaks.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ChIPseeker</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>along <span class="op">=</span> <span class="va">args</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
     <span class="va">peakAnno</span> <span class="op">&lt;-</span> <span class="fu">annotatePeak</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/sysargs.html">infile1</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, TxDb <span class="op">=</span> <span class="va">txdb</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
@@ -493,7 +488,7 @@ Figure 1: FASTQ quality report for 18 samples
 <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/writeTargetsout.html">writeTargetsout</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">args</span>, file <span class="op">=</span> <span class="st">"targets_peakanno.txt"</span>, step <span class="op">=</span> <span class="fl">1</span>, 
     new_col <span class="op">=</span> <span class="st">"FileName"</span>, new_col_output_index <span class="op">=</span> <span class="fl">1</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>Summary plots provided by the <code>ChIPseeker</code> package. Here applied only to one sample for demonstration purposes.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">peak</span> <span class="op">&lt;-</span> <span class="fu">readPeakFile</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/sysargs.html">infile1</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>
 <span class="fu">covplot</span><span class="op">(</span><span class="va">peak</span>, weightCol <span class="op">=</span> <span class="st">"X.log10.pvalue."</span><span class="op">)</span>
 <span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/subsetWF.html">subsetWF</a></span><span class="op">(</span><span class="va">args</span>, slot <span class="op">=</span> <span class="st">"output"</span>, subset <span class="op">=</span> <span class="fl">1</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
@@ -507,7 +502,7 @@ Figure 1: FASTQ quality report for 18 samples
 <h1 class="hasAnchor">
 <a href="#count-reads-overlapping-peaks" class="anchor"></a>Count reads overlapping peaks</h1>
 <p>The <code>countRangeset</code> function is a convenience wrapper to perform read counting iteratively over serveral range sets, here peak range sets. Internally, the read counting is performed with the <code>summarizeOverlaps</code> function from the <code>GenomicAlignments</code> package. The resulting count tables are directly saved to files, one for each peak set.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges">GenomicRanges</a></span><span class="op">)</span>
 <span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/count_rangesets"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWF</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"targets_macs.txt"</span>, wf_file <span class="op">=</span> <span class="st">"count_rangesets.cwl"</span>, 
@@ -520,7 +515,7 @@ Figure 1: FASTQ quality report for 18 samples
 <span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/bowtie2/bowtie2-pe"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">args_bam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWF</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="va">targets</span>, wf_file <span class="op">=</span> <span class="st">"bowtie2-mapping-pe.cwl"</span>, 
     input_file <span class="op">=</span> <span class="st">"bowtie2-mapping-pe.yml"</span>, dir_path <span class="op">=</span> <span class="va">dir_path</span><span class="op">)</span>
-<span class="va">args_bam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderWF.html">renderWF</a></span><span class="op">(</span><span class="va">args_bam</span>, inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>FileName <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>, 
+<span class="va">args_bam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderWF.html">renderWF</a></span><span class="op">(</span><span class="va">args_bam</span>, inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>FileName1 <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>, 
     SampleName <span class="op">=</span> <span class="st">"_SampleName_"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">args_bam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/output_update.html">output_update</a></span><span class="op">(</span><span class="va">args_bam</span>, dir <span class="op">=</span> <span class="cn">FALSE</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>, 
     extension <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">".sam"</span>, <span class="st">".bam"</span><span class="op">)</span><span class="op">)</span>
@@ -535,7 +530,7 @@ Figure 1: FASTQ quality report for 18 samples
 <h1 class="hasAnchor">
 <a href="#differential-binding-analysis" class="anchor"></a>Differential binding analysis</h1>
 <p>The <code>runDiff</code> function performs differential binding analysis in batch mode for several count tables using <code>edgeR</code> or <code>DESeq2</code> <span class="citation">(Robinson, McCarthy, and Smyth 2010; Love, Huber, and Anders 2014)</span>. Internally, it calls the functions <code>run_edgeR</code> and <code>run_DESeq2</code>. It also returns the filtering results and plots from the downstream <code>filterDEGs</code> function using the fold change and FDR cutoffs provided under the <code>dbrfilter</code> argument.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/rundiff"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">args_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWF</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"targets_countDF.txt"</span>, wf_file <span class="op">=</span> <span class="st">"rundiff.cwl"</span>, 
     input_file <span class="op">=</span> <span class="st">"rundiff.yml"</span>, dir_path <span class="op">=</span> <span class="va">dir_path</span><span class="op">)</span>
@@ -554,7 +549,7 @@ Figure 1: FASTQ quality report for 18 samples
 <h1 class="hasAnchor">
 <a href="#go-term-enrichment-analysis" class="anchor"></a>GO term enrichment analysis</h1>
 <p>The following performs GO term enrichment analysis for each annotated peak set.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dir_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl/annotate_peaks"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
 <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/loadWorkflow.html">loadWF</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"targets_bam_ref.txt"</span>, wf_file <span class="op">=</span> <span class="st">"annotate-peaks.cwl"</span>, 
     input_file <span class="op">=</span> <span class="st">"annotate-peaks.yml"</span>, dir_path <span class="op">=</span> <span class="va">dir_path</span><span class="op">)</span>
@@ -581,7 +576,7 @@ Figure 1: FASTQ quality report for 18 samples
 <h2 class="hasAnchor">
 <a href="#parse-dna-sequences-of-peak-regions-from-genome" class="anchor"></a>Parse DNA sequences of peak regions from genome</h2>
 <p>Enrichment analysis of known DNA binding motifs or <em>de novo</em> discovery of novel motifs requires the DNA sequences of the identified peak regions. To parse the corresponding sequences from the reference genome, the <code>getSeq</code> function from the <code>Biostrings</code> package can be used. The following example parses the sequences for each peak set and saves the results to separate FASTA files, one for each peak set. In addition, the sequences in the FASTA files are ranked (sorted) by increasing p-values as expected by some motif discovery tools, such as <code>BCRANK</code>.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biostrings">Biostrings</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">seqLogo</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">BCRANK</span><span class="op">)</span>
@@ -608,7 +603,7 @@ Figure 1: FASTQ quality report for 18 samples
 <a href="#motif-discovery-with-bcrank" class="anchor"></a>Motif discovery with <code>BCRANK</code>
 </h2>
 <p>The Bioconductor package <code>BCRANK</code> is one of the many tools available for <em>de novo</em> discovery of DNA binding motifs in peak regions of ChIP-Seq experiments. The given example applies this method on the first peak sample set and plots the sequence logo of the highest ranking motif.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>
 <span class="va">BCRANKout</span> <span class="op">&lt;-</span> <span class="fu">bcrank</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">rangefiles</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">".fasta"</span><span class="op">)</span>, restarts <span class="op">=</span> <span class="fl">25</span>, 
     use.P1 <span class="op">=</span> <span class="cn">TRUE</span>, use.P2 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -628,7 +623,7 @@ Figure 2: One of the motifs identified by <code>BCRANK</code>
 <div id="version-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#version-information" class="anchor"></a>Version Information</h1>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## R Under development (unstable) (2021-02-04 r79940)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
@@ -657,8 +652,8 @@ Figure 2: One of the motifs identified by <code>BCRANK</code>
 ##  [7] matrixStats_0.58.0          BiocParallel_1.25.5        
 ##  [9] Rsamtools_2.7.2             Biostrings_2.59.2          
 ## [11] XVector_0.31.1              GenomicRanges_1.43.4       
-## [13] GenomeInfoDb_1.27.11        IRanges_2.25.9             
-## [15] S4Vectors_0.29.15           BiocGenerics_0.37.2        
+## [13] GenomeInfoDb_1.27.11        IRanges_2.25.10            
+## [15] S4Vectors_0.29.17           BiocGenerics_0.37.4        
 ## [17] BiocStyle_2.19.2           
 ## 
 ## loaded via a namespace (and not attached):
@@ -667,7 +662,7 @@ Figure 2: One of the motifs identified by <code>BCRANK</code>
 ##   [5] rprojroot_2.0.2          fs_1.5.0                
 ##   [7] bit64_4.0.5              AnnotationDbi_1.53.1    
 ##   [9] fansi_0.4.2              codetools_0.2-18        
-##  [11] cachem_1.0.4             knitr_1.32              
+##  [11] cachem_1.0.4             knitr_1.33              
 ##  [13] jsonlite_1.7.2           annotate_1.69.2         
 ##  [15] dbplyr_2.1.1             png_0.1-7               
 ##  [17] BiocManager_1.30.12      compiler_4.1.0          
@@ -679,26 +674,26 @@ Figure 2: One of the motifs identified by <code>BCRANK</code>
 ##  [29] gtable_0.3.0             glue_1.4.2              
 ##  [31] GenomeInfoDbData_1.2.4   dplyr_1.0.5             
 ##  [33] rsvg_2.1.1               batchtools_0.9.15       
-##  [35] rappdirs_0.3.3           V8_3.4.0                
-##  [37] Rcpp_1.0.6               jquerylib_0.1.3         
+##  [35] rappdirs_0.3.3           V8_3.4.1                
+##  [37] Rcpp_1.0.6               jquerylib_0.1.4         
 ##  [39] pkgdown_1.6.1            vctrs_0.3.7             
 ##  [41] rtracklayer_1.51.5       xfun_0.22               
 ##  [43] stringr_1.4.0            lifecycle_1.0.0         
 ##  [45] restfulr_0.0.13          XML_3.99-0.6            
 ##  [47] edgeR_3.33.3             scales_1.1.1            
-##  [49] zlibbioc_1.37.0          BSgenome_1.59.2         
+##  [49] zlibbioc_1.37.0          BSgenome_1.59.4         
 ##  [51] VariantAnnotation_1.37.1 ragg_1.1.2              
 ##  [53] hms_1.0.0                RColorBrewer_1.1-2      
 ##  [55] yaml_2.2.1               curl_4.3                
 ##  [57] memoise_2.0.0            ggplot2_3.3.3           
-##  [59] sass_0.3.1               biomaRt_2.47.7          
+##  [59] sass_0.3.1               biomaRt_2.47.8          
 ##  [61] latticeExtra_0.6-29      stringi_1.5.3           
 ##  [63] RSQLite_2.2.7            BiocIO_1.1.2            
 ##  [65] desc_1.3.0               checkmate_2.0.0         
 ##  [67] GenomicFeatures_1.43.8   filelock_1.0.2          
 ##  [69] DOT_0.1                  rlang_0.4.10            
 ##  [71] pkgconfig_2.0.3          systemfonts_1.0.1       
-##  [73] bitops_1.0-6             evaluate_0.14           
+##  [73] bitops_1.0-7             evaluate_0.14           
 ##  [75] lattice_0.20-41          purrr_0.3.4             
 ##  [77] bit_4.0.4                tidyselect_1.1.0        
 ##  [79] magrittr_2.0.1           bookdown_0.22           
@@ -708,7 +703,7 @@ Figure 2: One of the motifs identified by <code>BCRANK</code>
 ##  [87] withr_2.4.2              KEGGREST_1.31.1         
 ##  [89] RCurl_1.98-1.3           tibble_3.1.1            
 ##  [91] crayon_1.4.1             utf8_1.2.1              
-##  [93] BiocFileCache_1.99.6     rmarkdown_2.7           
+##  [93] BiocFileCache_1.99.6     rmarkdown_2.7.12        
 ##  [95] jpeg_0.1-8.1             progress_1.2.2          
 ##  [97] locfit_1.5-9.4           grid_4.1.0              
 ##  [99] data.table_1.14.0        blob_1.2.1              
