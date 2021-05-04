@@ -1,5 +1,5 @@
 
-# systemPipeRdata: Workflow templates and sample data <img src="https://github.com/tgirke/systemPipeR/raw/gh-pages/images/systemPipeR.png" align="right" height="139" />
+# systemPipeRdata: Workflow templates and sample data 
 
 [![platforms](http://www.bioconductor.org/images/shields/availability/all.svg)](http://www.bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html#archives)
 [![rank](http://www.bioconductor.org/shields/downloads/devel/systemPipeRdata.svg)](http://bioconductor.org/packages/stats/data-experiment/systemPipeRdata/)
