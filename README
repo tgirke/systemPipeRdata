@@ -1,4 +1,7 @@
 changelog
+    version 1.19.10
+	- Vignette RIBO-seq
+	
     version 1.19.9
 	- Vignette ChIP-seq
 	
