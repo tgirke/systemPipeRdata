@@ -1,25 +1,20 @@
 #############################
-##        var-seq.yml      ##
+##        MACS2.yml        ##
 #############################
-
-SampleName: _SampleName_
-
-ref_name: "tair10.fasta"
-
-file1: 
+fq1:
   class: File
   path: _FASTQ_PATH1_
-
-file2:
+  
+fq2:
   class: File
   path: _FASTQ_PATH2_
-
-data_path:
-  class: Directory
-  path: ./data
+  
+SampleName: _SampleName_
 
 results_path:
   class: Directory
   path: ./results
 
 ModulesToLoad: 
+  module1: MACS2
+
