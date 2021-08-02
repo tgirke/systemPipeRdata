@@ -28,28 +28,14 @@ word-wrap: initial !important;
 }
 ```
 
+
 ```{r style, echo = FALSE, results = 'asis'}
 BiocStyle::markdown()
-options(width=60, max.print=1000)
+options(width = 60, max.print = 1000)
 knitr::opts_chunk$set(
-    eval=as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
-    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")), 
-    tidy.opts=list(width.cutoff=60), tidy=TRUE)
-```
-
-```{r setup_libraries, echo=FALSE, message=FALSE, warning=FALSE}
-suppressPackageStartupMessages({
-    library(systemPipeR)
-    library(BiocParallel)
-    library(Biostrings)
-    library(Rsamtools)
-    library(GenomicRanges)
-    library(ggplot2)
-    library(GenomicAlignments)
-    library(ShortRead)
-    library(ape)
-    library(batchtools)
-})
+    eval = as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
+    cache = as.logical(Sys.getenv("KNITR_CACHE", "TRUE")), 
+    tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 ```
 
 # Introduction
@@ -78,74 +64,74 @@ contains 18 paired-end (PE) read sets from *Arabidposis thaliana*
 [@Howard2013-fq]. To minimize processing time during testing, each FASTQ
 file has been subsetted to 90,000-100,000 randomly sampled PE reads that
 map to the first 100,000 nucleotides of each chromosome of the *A.
-thalina* genome. The corresponding reference genome sequence (FASTA) and
+thaliana* genome. The corresponding reference genome sequence (FASTA) and
 its GFF annotation files have been truncated accordingly. This way the entire 
 test sample data set is less than 200MB in storage space. A PE read set has been
 chosen for this test data set for flexibility, because it can be used for testing both types
 of analysis routines requiring either SE (single end) reads or PE reads.
 
+```{r genNew_wf, eval=FALSE}
+systemPipeRdata::genWorkenvir(workflow = "rnaseq", mydirname = "rnaseq")
+setwd("rnaseq")
+```
+
+# Create the workflow interactively
+
+This template provides some common steps for a RNAseq workflow. One can add, remove, modify 
+workflow steps by operating on the `sal` object. 
+For full documentation and details of SPR features and functions, please see the 
+[main vignette](http://bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
+
+```{r project, eval=FALSE}
+sal <- SPRproject() 
+```
+
+If you desire to import this entire workflow in one step, please skip this 
+tutorial and follow:
+
+```{r project_import, eval=FALSE}
+systemPipeRdata::genWorkenvir(workflow = "rnaseq")
+setwd("rnaseq")
+sal <- SPRproject() 
+sal <- importWF(sal, 
+                   file_path = "systemPipeRNAseq_import.Rmd", 
+                    verbose = FALSE)
+sal <- runWF(sal)
+plotWF(sal, rstudio = TRUE)
+sal <- renderLogs(sal)
+```
+
 ## Required packages and resources
 
-The `systemPipeR` package needs to be loaded to perform the analysis steps shown in
-this report [@H_Backman2016-bt].
+The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 
-```{r load_systempiper, eval=TRUE, message=FALSE}
+```{r load_SPR, message=FALSE, eval=FALSE, spr='r'}
 library(systemPipeR)
+appendStep(sal) <- LineWise({
+                            library(systemPipeR)
+                            }, step_name = "load_SPR")
 ```
 
-To apply workflows to custom data, the user needs to modify the _`targets`_ file and if
-necessary update the corresponding parameter (_`.cwl`_ and _`.yml`_) files. 
-A collection of pre-generated _`.cwl`_ and _`.yml`_ files are provided in the _`param/cwl`_ subdirectory 
-of each workflow template. They are also viewable in the GitHub repository of _`systemPipeRdata`_ ([see
-here](https://github.com/tgirke/systemPipeRdata/tree/master/inst/extdata/param/cwl)).
-For more information of the structure of the *targets* file, please consult the documentation 
-[here](http://www.bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#25_structure_of_targets_file). More details about the new parameter files from systemPipeR can be found [here](http://www.bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#26_structure_of_the_new_param_files_and_construct_sysargs2_container). 
+## Read preprocessing
 
-## Experiment definition provided by `targets` file
+### Read trimming with Trimmomatic
 
-The `targets` file defines all FASTQ files and sample
-comparisons of the analysis workflow.
+Next, we need to populate the object created with the first step in the
+workflow. Here, an example of how to perform this task using parameters template
+files for trimming FASTQ files with [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) software [@Bolger2014-yr].
 
-```{r load_targets, eval=TRUE}
-targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
-targets <- read.delim(targetspath, comment.char = "#")[,1:4]
-targets
+```{r trimming, eval=FALSE, spr='sysargs', spr.dep='load_SPR'}
+targetspath <- "targetsPE.txt"
+appendStep(sal) <- SYSargsList(
+    step_name = "trimming",
+    targets=targetspath, 
+    wf_file = "trimmomatic/trimmomatic-pe.cwl", input_file = "trimmomatic/trimmomatic-pe.yml",
+    dir_path= "param/cwl",
+    inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"), 
+    dependency = "load_SPR")
 ```
 
-# Read preprocessing
-
-## Read quality filtering and trimming
-
-The function `preprocessReads` allows to apply predefined or custom
-read preprocessing functions to all FASTQ files referenced in a
-`SYSargs2` container, such as quality filtering or adapter trimming
-routines. The paths to the resulting output FASTQ files are stored in the
-`output` slot of the `SYSargs2` object. The following example performs adapter trimming with
-the `trimLRPatterns` function from the `Biostrings` package.
-After the trimming step a new targets file is generated (here
-`targets_trim.txt`) containing the paths to the trimmed FASTQ files.
-The new targets file can be used for the next workflow step with an updated
-`SYSargs2` instance, _e.g._ running the NGS alignments using the
-trimmed FASTQ files.
-
-Construct _`SYSargs2`_ object from _`cwl`_ and _`yml`_ param and _`targets`_ files.
-
-```{r construct_SYSargs2_trim-se, eval=FALSE}
-dir_path <- system.file("extdata/cwl/preprocessReads/trim-pe", package="systemPipeR")
-trim <- loadWorkflow(targets=targetspath, wf_file="trim-pe.cwl", input_file="trim-pe.yml", dir_path=dir_path)
-trim <- renderWF(trim, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
-trim
-output(trim)[1:2]
-```
-
-```{r preprocessing, eval=FALSE}
-preprocessReads(args=trim, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA', 
-                subject=fq)", batchsize=100000, overwrite=TRUE, compress=TRUE)
-writeTargetsout(x=trim, file="targets_trim.txt", step = 1, 
-                new_col = c("FileName1", "FileName2"), new_col_output_index = c(1, 2), overwrite = TRUE)
-```
-
-## FASTQ quality report
+### FASTQ quality report
 
 The following `seeFastq` and `seeFastqPlot` functions generate and plot a series of useful 
 quality statistics for a set of FASTQ files including per cycle quality box
@@ -154,19 +140,24 @@ diversity, length and occurrence distribution of reads, number of reads
 above quality cutoffs and mean quality distribution. The results are
 written to a PDF file named `fastqReport.pdf`.
 
-```{r fastq_report, eval=FALSE}
-fqlist <- seeFastq(fastq=infile1(trim), batchsize=10000, klength=8)
-pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
-seeFastqPlot(fqlist)
-dev.off()
+```{r fastq_report, eval=FALSE, message=FALSE, spr='r', spr.dep='trimming'}
+appendStep(sal) <- LineWise({
+                            fastq <- getColumn(sal, step = "trimming", "targetsWF", column = 1)
+                            fqlist <- seeFastq(fastq=fastq, batchsize=10000, klength=8)
+                            pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
+                            seeFastqPlot(fqlist)
+                            dev.off()
+                            }, step_name = "fastq_report", 
+                            dependency = "trimming")
 ``` 
 
 ![](results/fastqReport.png)
+
 <div align="center">Figure 1: FASTQ quality report for 18 samples</div></br>
 
-# Alignments
+## Alignments
 
-## Read mapping with `HISAT2`
+### Read mapping with `HISAT2`
 
 The following steps will demonstrate how to use the short read aligner `Hisat2`
 [@Kim2015-ve] in both interactive job submissions and batch submissions to
@@ -174,163 +165,97 @@ queuing systems of clusters using the _`systemPipeR's`_ new CWL command-line int
 
 Build `Hisat2` index.
 
-```{r hisat_index, eval=FALSE}
-dir_path <- system.file("extdata/cwl/hisat2/hisat2-idx", package="systemPipeR")
-idx <- loadWorkflow(targets=NULL, wf_file="hisat2-index.cwl", input_file="hisat2-index.yml", dir_path=dir_path)
-idx <- renderWF(idx)
-idx
-cmdlist(idx)
-
-## Run 
-runCommandline(idx, make_bam = FALSE)
+```{r hisat2_index, eval=FALSE, spr='sysargs', spr.dep='load_SPR'}
+appendStep(sal) <- SYSargsList(
+  step_name = "hisat2_index", dir = FALSE, targets=NULL, 
+  wf_file = "hisat2/hisat2-index.cwl", 
+  input_file="hisat2/hisat2-index.yml",
+  dir_path="param/cwl", 
+  dependency = "load_SPR"
+)
 ```
+
+### HISAT2 mapping
 
 The parameter settings of the aligner are defined in the `hisat2-mapping-se.cwl` 
 and `hisat2-mapping-se.yml` files. The following shows how to construct the 
-corresponding *SYSargs2* object, here *args*.
+corresponding *SYSargsList* object.
 
-```{r hisat_SYSargs2_object, eval=TRUE}
-dir_path <- system.file("extdata/cwl/hisat2/hisat2-pe", package="systemPipeR")
-args <- loadWorkflow(targets=targetspath, wf_file="hisat2-mapping-pe.cwl", 
-                     input_file="hisat2-mapping-pe.yml", dir_path=dir_path)
-args <- renderWF(args, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
-args
-cmdlist(args)[1:2]
-output(args)[1:2]
+```{r hisat2_mapping, eval=FALSE, spr='sysargs', spr.dep='trimming;hisat2_index'}
+appendStep(sal) <- SYSargsList(
+  step_name = "hisat2_mapping",
+  targets ="trimming", dir = TRUE, 
+  wf_file = "workflow-hisat2/workflow_hisat2-pe.cwl",
+  input_file = "workflow-hisat2/workflow_hisat2-pe.yml",
+  dir_path = "param/cwl",
+  inputvars = c(trimmomatic_1_paired = "_FASTQ_PATH1_", trimmomatic_2_paired = "_FASTQ_PATH2_", 
+                SampleName = "_SampleName_"),
+  rm_targets_col = c("FileName1", "FileName2"), 
+  dependency = c("trimming", "hisat2_index")
+)
 ```
 
-### Interactive job submissions in a single machine
-
-To simplify the short read alignment execution for the user, the command-line 
-can be run with the *`runCommandline`* function.
-The execution will be on a single machine without submitting to a queuing system 
-of a computer cluster. This way, the input FASTQ files will be processed sequentially. 
-By default *`runCommandline`* auto detects SAM file outputs and converts them 
-to sorted and indexed BAM files, using internally the `Rsamtools` package 
-[@Rsamtools]. Besides, *`runCommandline`* allows the user to create a dedicated
-results folder for each workflow and a sub-folder for each sample 
-defined in the *targets* file. This includes all the output and log files for each 
-step. When these options are used, the output location will be updated by default 
-and can be assigned to the same object.
-
-```{r hisat_SYSargs2_singleM, eval=FALSE}
-## Run single Machine
-args <- runCommandline(args)
-```
-
-### Parallelization on clusters
-
-Alternatively, the computation can be greatly accelerated by processing many files 
-in parallel using several compute nodes of a cluster, where a scheduling/queuing
-system is used for load balancing. For this the *`clusterRun`* function submits 
-the computing requests to the scheduler using the run specifications
-defined by *`runCommandline`*. 
-
-To avoid over-subscription of CPU cores on the compute nodes, the value from 
-_`yamlinput(args)['thread']`_ is passed on to the submission command, here _`ncpus`_ 
-in the _`resources`_ list object. The number of independent parallel cluster 
-processes is defined under the _`Njobs`_ argument. The following example will run 
-18 processes in parallel using for each 4 CPU cores. If the resources available
-on a cluster allow running all 18 processes at the same time then the shown sample 
-submission will utilize in total 72 CPU cores. Note, *`clusterRun`* can be used
-with most queueing systems as it is based on utilities from the _`batchtools`_ 
-package which supports the use of template files (_`*.tmpl`_) for defining the 
-run parameters of different schedulers. To run the following code, one needs to 
-have both a conf file (see _`.batchtools.conf.R`_ samples [here](https://mllg.github.io/batchtools/)) 
-and a template file (see _`*.tmpl`_ samples [here](https://github.com/mllg/batchtools/tree/master/inst/templates)) 
-for the queueing available on a system. The following example uses the sample 
-conf and template files for the Slurm scheduler provided by this package.  
-
-```{r hisat2_clusterRun, eval=FALSE}
-library(batchtools)
-resources <- list(walltime=120, ntasks=1, ncpus=4, memory=1024)
-reg <- clusterRun(args, FUN = runCommandline, more.args = list(args=args, make_bam=TRUE, dir=FALSE), 
-                  conffile = ".batchtools.conf.R", template = "batchtools.slurm.tmpl", 
-                  Njobs=18, runid="01", resourceList=resources)
-getStatus(reg=reg)
-waitForJobs(reg=reg)
-args <- output_update(args, dir=FALSE, replace=TRUE, extension=c(".sam", ".bam")) ## Updates the output(args) to the right location in the subfolders
-output(args)
-```
-
-Check whether all BAM files have been created.
-
-```{r check_files_exist, eval=FALSE}
-outpaths <- subsetWF(args , slot="output", subset=1, index=1)
-file.exists(outpaths)
-```
-
-## Read and alignment stats
+### Read and alignment stats
 
 The following provides an overview of the number of reads in each sample
 and how many of them aligned to the reference.
 
-```{r align_stats, eval=FALSE}
-read_statsDF <- alignStats(args=args) 
-write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+```{r align_stats, eval=FALSE, spr='r', spr.dep='hisat2_mapping'}
+appendStep(sal) <- LineWise({
+                           bampaths <- getColumn(sal, step = "hisat2_mapping", "outfiles", column = "samtools_sort_bam")
+                           fqpaths <- getColumn(sal, step = "trimming", "targetsWF", column = "FileName1")
+                           read_statsDF <- alignStats(args=bampaths, fqpaths = fqpaths, pairEnd = TRUE)
+                           write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+                            }, step_name = "align_stats", 
+                            dependency = "hisat2_mapping")
 ```
 
-The following shows the alignment statistics for a sample file provided by the `systemPipeR` package. 
-
-```{r align_stats_view, eval=TRUE}
-read.table(system.file("extdata", "alignStats.xls", package="systemPipeR"), header=TRUE)[1:4,]
-```
-
-## Create symbolic links for viewing BAM files in IGV
-
-The `symLink2bam` function creates symbolic links to view the BAM alignment files in a
-genome browser such as IGV. The corresponding URLs are written to a file
-with a path specified under `urlfile` in the `results` directory.
-
-```{r bam_urls, eval=FALSE}
-symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"), 
-            urlbase="http://cluster.hpcc.ucr.edu/~tgirke/", 
-	        urlfile="./results/IGVurl.txt")
-```
-
-# Read quantification
-
-## Read counting with `summarizeOverlaps` in parallel mode using multiple cores
+## Read quantification
 
 Reads overlapping with annotation ranges of interest are counted for
 each sample using the `summarizeOverlaps` function [@Lawrence2013-kt]. The read counting is
-preformed for exonic gene regions in a non-strand-specific manner while
+preformed for exon gene regions in a non-strand-specific manner while
 ignoring overlaps among different genes. Subsequently, the expression
 count values are normalized by *reads per kp per million mapped reads*
 (RPKM). The raw read count table (`countDFeByg.xls`) and the corresponding 
 RPKM table (`rpkmDFeByg.xls`) are written to separate files in the directory of this project. Parallelization is achieved with the `BiocParallel` package, here using 8 CPU cores.
 
-```{r read_counting1, eval=FALSE}
-library("GenomicFeatures"); library(BiocParallel)
-txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff", dataSource="TAIR", organism="Arabidopsis thaliana")
-saveDb(txdb, file="./data/tair10.sqlite")
-txdb <- loadDb("./data/tair10.sqlite")
-outpaths <- subsetWF(args, slot="output", subset=1, index=1)
-(align <- readGAlignments(outpaths[1])) # Demonstrates how to read bam file into R
-eByg <- exonsBy(txdb, by=c("gene"))
-bfl <- BamFileList(outpaths, yieldSize=50000, index=character())
-multicoreParam <- MulticoreParam(workers=2); register(multicoreParam); registered()
-counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", 
-                                               ignore.strand=TRUE, 
-                                               inter.feature=FALSE, 
-                                               singleEnd=TRUE)) 
-countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
-rownames(countDFeByg) <- names(rowRanges(counteByg[[1]])); colnames(countDFeByg) <- names(bfl)
-rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
-write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
-write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
+### Create a database for gene annotation
+
+```{r create_db, eval=FALSE, spr='r', spr.dep='hisat2_mapping'}
+appendStep(sal) <- LineWise({
+                    library("GenomicFeatures"); library(BiocParallel)
+                    (function(){
+                    # if db is there, skip this step
+                    if(file.exists("./data/tair10.sqlite")) return(TRUE)
+                    # otherwise prepare the db
+                    txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff", dataSource="TAIR", organism="Arabidopsis thaliana")
+                    saveDb(txdb, file="./data/tair10.sqlite")
+                    })()
+                    }, step_name = "create_db", 
+                    dependency = "hisat2_mapping")
 ```
 
-Sample of data slice of count table
+### Read counting with `summarizeOverlaps` in parallel mode using multiple cores
 
-```{r view_counts, eval=FALSE}
-read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)[1:4,1:5]
-```
-
-Sample of data slice of RPKM table
-
-```{r view_rpkm, eval=FALSE}
-read.delim("results/rpkmDFeByg.xls", row.names=1, check.names=FALSE)[1:4,1:4]
+```{r read_counting, eval=FALSE, spr='r', spr.dep='create_db'}
+appendStep(sal) <- LineWise({
+                    txdb <- loadDb("./data/tair10.sqlite")
+                    outpaths <- getColumn(sal, step = "hisat2_mapping", "outfiles", column = "samtools_sort_bam")
+                    eByg <- exonsBy(txdb, by=c("gene"))
+                    bfl <- BamFileList(outpaths, yieldSize=50000, index=character())
+                    multicoreParam <- MulticoreParam(workers=2); register(multicoreParam); registered()
+                    counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode="Union", 
+                                                                   ignore.strand=TRUE, 
+                                                                   inter.feature=FALSE, 
+                                                                   singleEnd=TRUE)) 
+                    countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
+                    rownames(countDFeByg) <- names(rowRanges(counteByg[[1]])); colnames(countDFeByg) <- names(bfl)
+                    rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
+                    write.table(countDFeByg, "results/countDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
+                    write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
+                    }, step_name = "read_counting", 
+                    dependency = "create_db")
 ```
 
 Note, for most statistical differential expression or abundance analysis
@@ -339,7 +264,7 @@ usage of RPKM values should be restricted to specialty applications
 required by some users, *e.g.* manually comparing the expression levels
 among different genes or features.
 
-## Sample-wise correlation analysis
+### Sample-wise correlation analysis
 
 The following computes the sample-wise Spearman correlation coefficients from
 the `rlog` transformed expression values generated with the `DESeq2` package. After
@@ -347,68 +272,76 @@ transformation to a distance matrix, hierarchical clustering is performed with
 the `hclust` function and the result is plotted as a dendrogram
 (also see file `sample_tree.pdf`).
 
-```{r sample_tree, eval=FALSE}
-library(DESeq2, quietly=TRUE); library(ape,  warn.conflicts=FALSE)
-countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
-colData <- data.frame(row.names=targets.as.df(targets(args))$SampleName, condition=targets.as.df(targets(args))$Factor)
-dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
-d <- cor(assay(rlog(dds)), method="spearman")
-hc <- hclust(dist(1-d))
-pdf("results/sample_tree.pdf")
-plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
-dev.off()
+```{r sample_tree, eval=FALSE, spr='r', spr.dep='read_counting'}
+appendStep(sal) <- LineWise({
+                    library(DESeq2, quietly=TRUE); library(ape,  warn.conflicts=FALSE)
+                    countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
+                    colData <- data.frame(row.names=SampleName(sal, "hisat2_mapping"), condition=getColumn(sal, "hisat2_mapping", position = "targetsWF", column = "Factor" ))
+                    dds <- DESeqDataSetFromMatrix(countData = countDF, colData = colData, design = ~ condition)
+                    d <- cor(assay(rlog(dds)), method="spearman")
+                    hc <- hclust(dist(1-d))
+                    pdf("results/sample_tree.pdf")
+                    plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
+                    dev.off()
+                    }, step_name = "sample_tree", 
+                    dependency = "read_counting")
 ```
 
 ![](results/sample_tree.png)
 <div align="center">Figure 2: Correlation dendrogram of samples</div></br>
 
-# Analysis of DEGs
+## Analysis of DEGs
 
 The analysis of differentially expressed genes (DEGs) is performed with
-the glm method of the `edgeR` package [@Robinson2010-uk]. The sample
+the `glm` method of the `edgeR` package [@Robinson2010-uk]. The sample
 comparisons used by this analysis are defined in the header lines of the 
 `targets.txt` file starting with `<CMP>`.
 
-## Run `edgeR`
+### Run `edgeR`
 
-```{r run_edger, eval=FALSE}
-library(edgeR)
-countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE) 
-targets <- read.delim("targetsPE.txt", comment="#")
-cmp <- readComp(file="targetsPE.txt", format="matrix", delim="-")
-edgeDF <- run_edgeR(countDF=countDF, targets=targets, cmp=cmp[[1]], independent=FALSE, mdsplot="")
+```{r run_edger, eval=FALSE, spr='r', spr.dep='read_counting'}
+appendStep(sal) <- LineWise({
+                    library(edgeR)
+                    countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE) 
+                    cmp <- readComp(stepsWF(sal)[['hisat2_mapping']], format="matrix", delim="-")
+                    edgeDF <- run_edgeR(countDF=countDF, targets=targetsWF(sal)[['hisat2_mapping']], cmp=cmp[[1]], independent=FALSE, mdsplot="")
+                    }, step_name = "run_edger", 
+                    dependency = "read_counting")
 ```
 
-Add gene descriptions
+### Add gene descriptions
 
-```{r custom_annot, eval=FALSE}
-library("biomaRt")
-m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
-desc <- getBM(attributes=c("tair_locus", "description"), mart=m)
-desc <- desc[!duplicated(desc[,1]),]
-descv <- as.character(desc[,2]); names(descv) <- as.character(desc[,1])
-edgeDF <- data.frame(edgeDF, Desc=descv[rownames(edgeDF)], check.names=FALSE)
-write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
+```{r custom_annot, eval=FALSE, spr='r', spr.dep='run_edger'}
+appendStep(sal) <- LineWise({
+                    library("biomaRt")
+                    m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
+                    desc <- getBM(attributes=c("tair_locus", "description"), mart=m)
+                    desc <- desc[!duplicated(desc[,1]),]
+                    descv <- as.character(desc[,2]); names(descv) <- as.character(desc[,1])
+                    edgeDF <- data.frame(edgeDF, Desc=descv[rownames(edgeDF)], check.names=FALSE)
+                    write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
+                    }, step_name = "custom_annot", 
+                    dependency = "run_edger")
 ```
 
-## Plot DEG results
+### Plot DEG results
 
 Filter and plot DEG results for up and down regulated genes. The
 definition of *up* and *down* is given in the corresponding help
 file. To open it, type `?filterDEGs` in the R console.
 
-```{r filter_degs, eval=FALSE}
-edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE) 
-pdf("results/DEGcounts.pdf")
-DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=20))
-dev.off()
-write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
+```{r filter_degs, eval=FALSE, spr='r', spr.dep='custom_annot'}
+appendStep(sal) <- LineWise({
+                    edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE) 
+                    pdf("results/DEGcounts.pdf")
+                    DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=20))
+                    dev.off()
+                    write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
+                    }, step_name = "filter_degs", 
+                    dependency = "custom_annot")
 ```
 
-![](results/DEGcounts.png)
-<div align="center">Figure 3: Up and down regulated DEGs with FDR of 1%</div></br>
-
-## Venn diagrams of DEG sets
+### Venn diagrams of DEG sets
 
 The `overLapper` function can compute Venn intersects for large numbers of sample
 sets (up to 20 or more) and plots 2-5 way Venn diagrams. A useful
@@ -416,20 +349,20 @@ feature is the possibility to combine the counts from several Venn
 comparisons with the same number of sample sets in a single Venn diagram
 (here for 4 up and down DEG sets).
 
-```{r venn_diagram, eval=FALSE}
-vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
-vennsetdown <- overLapper(DEG_list$Down[6:9], type="vennsets")
-pdf("results/vennplot.pdf")
-vennPlot(list(vennsetup, vennsetdown), mymain="", mysub="", colmode=2, ccol=c("blue", "red"))
-dev.off()
+```{r venn_diagram, eval=FALSE, spr='r', spr.dep='filter_degs'}
+appendStep(sal) <- LineWise({
+                    vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
+                    vennsetdown <- overLapper(DEG_list$Down[6:9], type="vennsets")
+                    pdf("results/vennplot.pdf")
+                    vennPlot(list(vennsetup, vennsetdown), mymain="", mysub="", colmode=2, ccol=c("blue", "red"))
+                    dev.off()
+                    }, step_name = "venn_diagram", 
+                    dependency = "filter_degs")
 ```
 
-![](results/vennplot.png)
-<div align="center">Figure 4: Venn Diagram for 4 Up and Down DEG Sets</div></br>
+## GO term enrichment analysis
 
-# GO term enrichment analysis
-
-## Obtain gene-to-GO mappings
+### Obtain gene-to-GO mappings
 
 The following shows how to obtain gene-to-GO mappings from `biomaRt` (here for *A.
 thaliana*) and how to organize them for the downstream GO term
@@ -440,25 +373,31 @@ For each annotation this relatively slow preprocessing step needs to be
 performed only once. Subsequently, the preprocessed data can be loaded
 with the `load` function as shown in the next subsection.
 
-```{r get_go_annot, eval=FALSE}
-library("biomaRt")
-listMarts() # To choose BioMart database
-listMarts(host="plants.ensembl.org")
-m <- useMart("plants_mart", host="plants.ensembl.org")
-listDatasets(m)
-m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
-listAttributes(m) # Choose data types you want to download
-go <- getBM(attributes=c("go_id", "tair_locus", "namespace_1003"), mart=m)
-go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
-go[go[,3]=="molecular_function", 3] <- "F"; go[go[,3]=="biological_process", 3] <- "P"; go[go[,3]=="cellular_component", 3] <- "C"
-go[1:4,]
-dir.create("./data/GO")
-write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
-catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
-save(catdb, file="data/GO/catdb.RData")
+```{r get_go_annot, eval=FALSE, spr='r', spr.dep='filter_degs'}
+appendStep(sal) <- LineWise({
+                    library("biomaRt")
+                    (function(){
+                      if (file.exists("data/GO/catdb.RData")) return(TRUE)
+                      # listMarts() # To choose BioMart database
+                      # listMarts(host="plants.ensembl.org")
+                      m <- useMart("plants_mart", host="plants.ensembl.org")
+                      listDatasets(m)
+                      m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
+                      # listAttributes(m) # Choose data types you want to download
+                      go <- getBM(attributes=c("go_id", "tair_locus", "namespace_1003"), mart=m)
+                      go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
+                      go[go[,3]=="molecular_function", 3] <- "F"; go[go[,3]=="biological_process", 3] <- "P"; go[go[,3]=="cellular_component", 3] <- "C"
+                      go[1:4,]
+                      dir.create("./data/GO")
+                      write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
+                      catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
+                      save(catdb, file="data/GO/catdb.RData")
+                    })()
+                    }, step_name = "get_go_annot", 
+                    dependency = "filter_degs")
 ```
 
-## Batch GO term enrichment analysis
+### Batch GO term enrichment analysis
 
 Apply the enrichment analysis to the DEG sets obtained the above differential
 expression analysis. Note, in the following example the `FDR` filter is set
@@ -468,25 +407,28 @@ performed with the function. When `method=all`, it returns all GO terms passing
 the p-value cutoff specified under the `cutoff` arguments. When `method=slim`,
 it returns only the GO terms specified under the `myslimv` argument. The given
 example shows how a GO slim vector for a specific organism can be obtained from
-BioMart.
+`BioMart`.
 
-```{r go_enrich, eval=FALSE}
+```{r go_enrich, eval=FALSE, spr='r', spr.dep='get_go_annot'}
+appendStep(sal) <- LineWise({
 library("biomaRt")
-load("data/GO/catdb.RData")
-DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=50), plot=FALSE)
-up_down <- DEG_list$UporDown; names(up_down) <- paste(names(up_down), "_up_down", sep="")
-up <- DEG_list$Up; names(up) <- paste(names(up), "_up", sep="")
-down <- DEG_list$Down; names(down) <- paste(names(down), "_down", sep="")
-DEGlist <- c(up_down, up, down)
-DEGlist <- DEGlist[sapply(DEGlist, length) > 0]
-BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", id_type="gene", CLSZ=2, cutoff=0.9, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
-library("biomaRt")
-m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
-goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), mart=m)[,1])
-BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", id_type="gene", myslimv=goslimvec, CLSZ=10, cutoff=0.01, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+                    load("data/GO/catdb.RData")
+                    DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=50), plot=FALSE)
+                    up_down <- DEG_list$UporDown; names(up_down) <- paste(names(up_down), "_up_down", sep="")
+                    up <- DEG_list$Up; names(up) <- paste(names(up), "_up", sep="")
+                    down <- DEG_list$Down; names(down) <- paste(names(down), "_down", sep="")
+                    DEGlist <- c(up_down, up, down)
+                    DEGlist <- DEGlist[sapply(DEGlist, length) > 0]
+                    BatchResult <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="all", id_type="gene", CLSZ=2, cutoff=0.9, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+                    library("biomaRt")
+                    m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
+                    goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), mart=m)[,1])
+                    BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", id_type="gene", myslimv=goslimvec, CLSZ=10, cutoff=0.01, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+                    }, step_name = "go_enrich", 
+                    dependency = "get_go_annot")
 ```
 
-## Plot batch GO term results
+### Plot batch GO term results
 
 The `data.frame` generated by `GOCluster` can be plotted with the `goBarplot` function. Because of the
 variable size of the sample sets, it may not always be desirable to show
@@ -494,42 +436,75 @@ the results from different DEG sets in the same bar plot. Plotting
 single sample sets is achieved by subsetting the input data frame as
 shown in the first line of the following example.
 
-```{r go_plot, eval=FALSE}
-gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
-gos <- BatchResultslim
-pdf("GOslimbarplotMF.pdf", height=8, width=10)
-goBarplot(gos, gocat="MF")
-dev.off()
-goBarplot(gos, gocat="BP")
-goBarplot(gos, gocat="CC")
+```{r go_plot, eval=FALSE, spr='r', spr.dep='go_enrich'}
+appendStep(sal) <- LineWise({
+                    gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
+                    gos <- BatchResultslim
+                    pdf("results/GOslimbarplotMF.pdf", height=8, width=10)
+                    goBarplot(gos, gocat="MF")
+                    dev.off()
+                    goBarplot(gos, gocat="BP")
+                    goBarplot(gos, gocat="CC")
+                    }, step_name = "go_plot", 
+                    dependency = "go_enrich")
 ```
 
 ![](results/GOslimbarplotMF.png)
 <div align="center">Figure 5: GO Slim Barplot for MF Ontology</div></br>
 
-# Clustering and heat maps
+## Clustering and heat maps
 
 The following example performs hierarchical clustering on the `rlog`
 transformed expression matrix subsetted by the DEGs identified in the above
 differential expression analysis. It uses a Pearson correlation-based distance
 measure and complete linkage for cluster joining.
 
-```{r heatmap, eval=FALSE}
-library(pheatmap)
-geneids <- unique(as.character(unlist(DEG_list[[1]])))
-y <- assay(rlog(dds))[geneids, ]
-pdf("heatmap1.pdf")
-pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
-dev.off()
+```{r heatmap, eval=FALSE, spr='r', spr.dep='go_enrich'}
+appendStep(sal) <- LineWise({
+                    library(pheatmap)
+                    geneids <- unique(as.character(unlist(DEG_list[[1]])))
+                    y <- assay(rlog(dds))[geneids, ]
+                    pdf("results/heatmap1.pdf")
+                    pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
+                    dev.off()
+                    }, step_name = "heatmap", 
+                    dependency = "go_enrich")
 ```
 
 ![](results/heatmap1.png)
 <div align="center">Figure 6: Heat Map with Hierarchical Clustering Dendrograms of DEGs</div></br>
 
-# Version Information
+## Version Information
 
-```{r sessionInfo}
-sessionInfo()
+```{r sessionInfo, eval=FALSE, spr='r', spr.dep='heatmap'}
+appendStep(sal) <- LineWise({
+                    sessionInfo()
+                    }, step_name = "sessionInfo", 
+                    dependency = "heatmap")
+```
+
+# Running workflow
+
+```{r run_echo, eval=FALSE}
+sal <- runWF(sal)
+```
+
+## Visualize workflow
+
+```{r plot_echo, eval=FALSE}
+plotWF(sal, rstudio = TRUE)
+```
+
+## Checking workflow status
+
+```{r status_echo, eval=FALSE}
+statusWF(sal)
+```
+
+## Accessing logs report
+
+```{r logs_echo, eval=FALSE}
+sal <- renderLogs(sal)
 ```
 
 # Funding

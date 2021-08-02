@@ -1,4 +1,7 @@
 changelog
+    version 1.21.2
+	- New RNA-seq
+	
     version 1.21.1
 	- Updated CWL param files
 	
