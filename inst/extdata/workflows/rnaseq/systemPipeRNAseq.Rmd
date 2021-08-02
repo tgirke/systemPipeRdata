@@ -94,7 +94,7 @@ systemPipeRdata::genWorkenvir(workflow = "rnaseq")
 setwd("rnaseq")
 sal <- SPRproject() 
 sal <- importWF(sal, 
-                   file_path = "systemPipeRNAseq_import.Rmd", 
+                   file_path = "systemPipeRNAseq_importWF.Rmd", 
                     verbose = FALSE)
 sal <- runWF(sal)
 plotWF(sal, rstudio = TRUE)
