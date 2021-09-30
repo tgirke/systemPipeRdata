@@ -3,3 +3,5 @@
 ^docs
 vignettes/*_cache
 
+^.*\.Rproj$
+^\.Rproj\.user$
