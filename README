@@ -1,5 +1,8 @@
 changelog
-    version 1.21.2
+    version 1.21.4
+	- fastqc cwl files
+	
+    version 1.21.2/3
 	- New RNA-seq
 	
     version 1.21.1
