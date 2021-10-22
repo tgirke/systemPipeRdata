@@ -8,26 +8,21 @@ output:
     code_folding: show
 package: systemPipeR
 vignette: |
-  %\VignetteIndexEntry{WF: RNA-Seq Workflow Template}
   %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{WF: RNA-Seq Workflow Template}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib
 ---
 
-<!--
-Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRNAseq.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::pdf_document'))"
--->
-
 ```{css, echo=FALSE}
 pre code {
 white-space: pre !important;
 overflow-x: scroll !important;
-word-break: keep-all !important;
+# word-break: keep-all !important;
 word-wrap: initial !important;
 }
 ```
-
 
 ```{r style, echo = FALSE, results = 'asis'}
 BiocStyle::markdown()
@@ -36,6 +31,12 @@ knitr::opts_chunk$set(
     eval = as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
     cache = as.logical(Sys.getenv("KNITR_CACHE", "TRUE")), 
     tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE}
+suppressPackageStartupMessages({
+    library(systemPipeR)
+})
 ```
 
 # Introduction
@@ -75,30 +76,10 @@ systemPipeRdata::genWorkenvir(workflow = "rnaseq", mydirname = "rnaseq")
 setwd("rnaseq")
 ```
 
-# Create the workflow interactively
+# Create the workflow
 
-This template provides some common steps for a RNAseq workflow. One can add, remove, modify 
-workflow steps by operating on the `sal` object. 
-For full documentation and details of SPR features and functions, please see the 
-[main vignette](http://bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
-
-```{r project, eval=FALSE}
-sal <- SPRproject() 
-```
-
-If you desire to import this entire workflow in one step, please skip this 
-tutorial and follow:
-
-```{r project_import, eval=FALSE}
-systemPipeRdata::genWorkenvir(workflow = "rnaseq")
-setwd("rnaseq")
-sal <- SPRproject() 
-sal <- importWF(sal, 
-                   file_path = "systemPipeRNAseq_importWF.Rmd", 
-                    verbose = FALSE)
-sal <- runWF(sal)
-plotWF(sal, rstudio = TRUE)
-sal <- renderLogs(sal)
+```{r create_sal, message=FALSE, eval=FALSE}
+sal <- SPRproject()
 ```
 
 ## Required packages and resources
@@ -106,7 +87,6 @@ sal <- renderLogs(sal)
 The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 
 ```{r load_SPR, message=FALSE, eval=FALSE, spr='r'}
-library(systemPipeR)
 appendStep(sal) <- LineWise({
                             library(systemPipeR)
                             }, step_name = "load_SPR")
