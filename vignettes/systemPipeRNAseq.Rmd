@@ -89,7 +89,8 @@ The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 ```{r load_SPR, message=FALSE, eval=FALSE, spr='r'}
 appendStep(sal) <- LineWise({
                             library(systemPipeR)
-                            }, step_name = "load_SPR")
+                            }, 
+                            step_name = "load_SPR")
 ```
 
 ## Read preprocessing
