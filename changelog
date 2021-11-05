@@ -1,4 +1,7 @@
 changelog
+    version 1.23.1
+	- trim_galore cwl files
+	
     version 1.21.4
 	- fastqc cwl files
 	
