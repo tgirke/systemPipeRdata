@@ -1,6 +1,6 @@
 ---
 title: "Title" 
-author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
+author: "Author: YOUR NAMES"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
   BiocStyle::html_document:
@@ -48,32 +48,13 @@ suppressPackageStartupMessages({
 
 ## Load packages and sample data
 
-The `systemPipeR` package needs to be loaded to perform the analysis 
-steps shown in this report [@Girke2014-oy]. The package allows users
-to run the entire analysis workflow interactively or with a single command 
-while also generating the corresponding analysis report. For details
-see `systemPipeR's` main [vignette](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
+This is an empty template that contains only one demo step. 
+Refer to our [website](https://systempipe.org/sp/spr/spr_run/) for how to 
+add more steps. If you prefer a more enriched template, 
+[read this page](https://systempipe.org/sp/spr/templates/) for other 
+pre-configured templates.
 
-```{r load_systempiper, eval=TRUE, message=FALSE}
+```{r load_systempiper, eval=TRUE, spr='r'}
 library(systemPipeR)
 ```
 
-## Experiment definition provided by `targets` file
-
-The `targets` file defines all FASTQ files and sample comparisons of the analysis workflow. 
-
-```{r load_targets, eval=TRUE}
-targetspath <- system.file("extdata", "targets.txt", package="systemPipeR")
-targets <- read.delim(targetspath, comment.char = "#")[,1:4]
-targets
-```
-
-# Version Information
-
-```{r sessionInfo}
-sessionInfo()
-```
-
-# Funding
-
-# References
