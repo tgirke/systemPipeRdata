@@ -86,7 +86,7 @@ sal <- SPRproject()
 
 The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 
-```{r load_SPR, message=FALSE, eval=FALSE, spr='r'}
+```{r load_SPR, message=FALSE, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                             library(systemPipeR)
                             }, step_name = "load_SPR")
@@ -100,7 +100,7 @@ Next, we need to populate the object created with the first step in the
 workflow. Here, an example of how to perform this task using parameters template
 files for trimming FASTQ files with [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) software [@Bolger2014-yr].
 
-```{r trimming, eval=FALSE, spr='sysargs', spr.dep='load_SPR'}
+```{r trimming, eval=FALSE, spr=TRUE}
 targetspath <- "targetsPE.txt"
 appendStep(sal) <- SYSargsList(
     step_name = "trimming",
@@ -120,7 +120,7 @@ diversity, length and occurrence distribution of reads, number of reads
 above quality cutoffs and mean quality distribution. The results are
 written to a PDF file named `fastqReport.pdf`.
 
-```{r fastq_report, eval=FALSE, message=FALSE, spr='r', spr.dep='trimming'}
+```{r fastq_report, eval=FALSE, message=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                             fastq <- getColumn(sal, step = "trimming", "targetsWF", column = 1)
                             fqlist <- seeFastq(fastq=fastq, batchsize=10000, klength=8)
@@ -145,7 +145,7 @@ queuing systems of clusters using the _`systemPipeR's`_ new CWL command-line int
 
 Build `Hisat2` index.
 
-```{r hisat2_index, eval=FALSE, spr='sysargs', spr.dep='load_SPR'}
+```{r hisat2_index, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
   step_name = "hisat2_index", dir = FALSE, targets=NULL, 
   wf_file = "hisat2/hisat2-index.cwl", 
@@ -161,7 +161,7 @@ The parameter settings of the aligner are defined in the `hisat2-mapping-se.cwl`
 and `hisat2-mapping-se.yml` files. The following shows how to construct the 
 corresponding *SYSargsList* object.
 
-```{r hisat2_mapping, eval=FALSE, spr='sysargs', spr.dep='trimming;hisat2_index'}
+```{r hisat2_mapping, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
   step_name = "hisat2_mapping",
   targets ="trimming", dir = TRUE, 
@@ -180,7 +180,7 @@ appendStep(sal) <- SYSargsList(
 The following provides an overview of the number of reads in each sample
 and how many of them aligned to the reference.
 
-```{r align_stats, eval=FALSE, spr='r', spr.dep='hisat2_mapping'}
+```{r align_stats, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                            bampaths <- getColumn(sal, step = "hisat2_mapping", "outfiles", column = "samtools_sort_bam")
                            fqpaths <- getColumn(sal, step = "trimming", "targetsWF", column = "FileName1")
@@ -202,7 +202,7 @@ RPKM table (`rpkmDFeByg.xls`) are written to separate files in the directory of 
 
 ### Create a database for gene annotation
 
-```{r create_db, eval=FALSE, spr='r', spr.dep='hisat2_mapping'}
+```{r create_db, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     library("GenomicFeatures"); library(BiocParallel)
                     (function(){
@@ -218,7 +218,7 @@ appendStep(sal) <- LineWise({
 
 ### Read counting with `summarizeOverlaps` in parallel mode using multiple cores
 
-```{r read_counting, eval=FALSE, spr='r', spr.dep='create_db'}
+```{r read_counting, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     txdb <- loadDb("./data/tair10.sqlite")
                     outpaths <- getColumn(sal, step = "hisat2_mapping", "outfiles", column = "samtools_sort_bam")
@@ -252,7 +252,7 @@ transformation to a distance matrix, hierarchical clustering is performed with
 the `hclust` function and the result is plotted as a dendrogram
 (also see file `sample_tree.pdf`).
 
-```{r sample_tree, eval=FALSE, spr='r', spr.dep='read_counting'}
+```{r sample_tree, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     library(DESeq2, quietly=TRUE); library(ape,  warn.conflicts=FALSE)
                     countDF <- as.matrix(read.table("./results/countDFeByg.xls"))
@@ -279,7 +279,7 @@ comparisons used by this analysis are defined in the header lines of the
 
 ### Run `edgeR`
 
-```{r run_edger, eval=FALSE, spr='r', spr.dep='read_counting'}
+```{r run_edger, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     library(edgeR)
                     countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE) 
@@ -291,7 +291,7 @@ appendStep(sal) <- LineWise({
 
 ### Add gene descriptions
 
-```{r custom_annot, eval=FALSE, spr='r', spr.dep='run_edger'}
+```{r custom_annot, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     library("biomaRt")
                     m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="plants.ensembl.org")
@@ -310,7 +310,7 @@ Filter and plot DEG results for up and down regulated genes. The
 definition of *up* and *down* is given in the corresponding help
 file. To open it, type `?filterDEGs` in the R console.
 
-```{r filter_degs, eval=FALSE, spr='r', spr.dep='custom_annot'}
+```{r filter_degs, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE) 
                     pdf("results/DEGcounts.pdf")
@@ -329,7 +329,7 @@ feature is the possibility to combine the counts from several Venn
 comparisons with the same number of sample sets in a single Venn diagram
 (here for 4 up and down DEG sets).
 
-```{r venn_diagram, eval=FALSE, spr='r', spr.dep='filter_degs'}
+```{r venn_diagram, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
                     vennsetdown <- overLapper(DEG_list$Down[6:9], type="vennsets")
@@ -353,7 +353,7 @@ For each annotation this relatively slow preprocessing step needs to be
 performed only once. Subsequently, the preprocessed data can be loaded
 with the `load` function as shown in the next subsection.
 
-```{r get_go_annot, eval=FALSE, spr='r', spr.dep='filter_degs'}
+```{r get_go_annot, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     library("biomaRt")
                     (function(){
@@ -389,7 +389,7 @@ it returns only the GO terms specified under the `myslimv` argument. The given
 example shows how a GO slim vector for a specific organism can be obtained from
 `BioMart`.
 
-```{r go_enrich, eval=FALSE, spr='r', spr.dep='get_go_annot'}
+```{r go_enrich, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
 library("biomaRt")
                     load("data/GO/catdb.RData")
@@ -416,7 +416,7 @@ the results from different DEG sets in the same bar plot. Plotting
 single sample sets is achieved by subsetting the input data frame as
 shown in the first line of the following example.
 
-```{r go_plot, eval=FALSE, spr='r', spr.dep='go_enrich'}
+```{r go_plot, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
                     gos <- BatchResultslim
@@ -439,7 +439,7 @@ transformed expression matrix subsetted by the DEGs identified in the above
 differential expression analysis. It uses a Pearson correlation-based distance
 measure and complete linkage for cluster joining.
 
-```{r heatmap, eval=FALSE, spr='r', spr.dep='go_enrich'}
+```{r heatmap, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     library(pheatmap)
                     geneids <- unique(as.character(unlist(DEG_list[[1]])))
@@ -456,7 +456,7 @@ appendStep(sal) <- LineWise({
 
 ## Version Information
 
-```{r sessionInfo, eval=FALSE, spr='r', spr.dep='heatmap'}
+```{r sessionInfo, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise({
                     sessionInfo()
                     }, step_name = "sessionInfo", 
