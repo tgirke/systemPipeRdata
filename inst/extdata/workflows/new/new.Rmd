@@ -54,7 +54,12 @@ add more steps. If you prefer a more enriched template,
 [read this page](https://systempipe.org/sp/spr/templates/) for other 
 pre-configured templates.
 
-```{r load_systempiper, eval=TRUE, spr='r'}
-library(systemPipeR)
+```{r load_systempiper, eval=TRUE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        library(systemPipeR)
+    }, 
+    step_name = "load_SPR"
+)
 ```
 
