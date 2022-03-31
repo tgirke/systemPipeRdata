@@ -1,6 +1,6 @@
-###############################
-## Rsubread-Single_Read.yml ##
-###############################
+###########################
+## Bowtie2-Paired_end.yml ##
+###########################
 
 idx_basedir:
   class: Directory
@@ -11,6 +11,9 @@ idx_basename: tair10.fasta
 fq1:
   class: File
   path: _FASTQ_PATH1_
+fq2:
+  class: File
+  path: _FASTQ_PATH2_
   
 SampleName: _SampleName_
 
@@ -21,8 +24,6 @@ results_path:
 thread: 4
 
 ModulesToLoad: 
-
-rscript_rsubread_mapping:
-  class: File
-  path: ./param/docopt.R/rsubread/rsubread.doc.R
+  module1: bowtie2/2.4.5
+  module2: samtools/1.14
 

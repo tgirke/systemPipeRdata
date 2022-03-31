@@ -1,14 +1,16 @@
 #############################
-##    trim_galore.yml      ##
+## Bowtie2-Single_Read.yml ##
 #############################
+
+idx_basedir:
+  class: Directory
+  path: ./data
+
+idx_basename: tair10.fasta
 
 fq1:
   class: File
   path: _FASTQ_PATH1_
-
-fq2:
-  class: File
-  path: _FASTQ_PATH2_
   
 SampleName: _SampleName_
 
@@ -16,11 +18,8 @@ results_path:
   class: Directory
   path: ./results
 
+thread: 4
+
 ModulesToLoad: 
-  module1: trim_galore/0.6.5
-  
-length: 25
-
-quality: 20
-
-adapter_trim_galore: AGATCGGAAGAGC
+  module1: hisat2/2.2.1
+  module2: samtools/1.14
