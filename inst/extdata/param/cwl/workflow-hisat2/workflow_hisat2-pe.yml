@@ -25,5 +25,4 @@ thread: 4
 
 ModulesToLoad: 
   module1: hisat2/2.1.0
-  module2: samtools/1.9
-
+  module2: samtools/1.14

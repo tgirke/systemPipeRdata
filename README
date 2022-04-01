@@ -1,4 +1,7 @@
 changelog
+    version 1.22.1
+	- cwl files updates
+	
     version 1.21.4
 	- fastqc cwl files
 	

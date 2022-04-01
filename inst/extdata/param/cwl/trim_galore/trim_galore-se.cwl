@@ -5,7 +5,7 @@
 cwlVersion: v1.2.0
 class: CommandLineTool
 doc: "[TRIM_GALORE](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/)"
-label: Last updated 09/2021
+label: Last updated 03/2022
 hints:
   SoftwareRequirement:
     packages:

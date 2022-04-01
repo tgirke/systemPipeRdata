@@ -5,7 +5,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 doc: "[HISAT2](https://ccb.jhu.edu/software/hisat2/index.shtml): graph-based alignment of next generation sequencing reads to a population of genomes"
-label: Last updated 08/2019
+label: Last updated 03/2022
 hints:
   SoftwareRequirement:
     packages:
