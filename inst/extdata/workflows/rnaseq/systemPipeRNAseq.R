@@ -31,6 +31,12 @@ suppressPackageStartupMessages({
 ## setwd("rnaseq")
 
 
+## ----load_targets_file, eval=TRUE-------------------------
+targetspath <- system.file("extdata", "targetsPE.txt", package = "systemPipeR")
+targets <- read.delim(targetspath, comment.char = "#")
+targets[1:4,-c(5,6)]
+
+
 ## ----create_workflow, message=FALSE, eval=FALSE-----------
 ## library(systemPipeR)
 ## sal <- SPRproject()
@@ -43,26 +49,63 @@ suppressPackageStartupMessages({
 ##                             }, step_name = "load_SPR")
 
 
+## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE----
+## appendStep(sal) <- SYSargsList(
+##     step_name = "preprocessing",
+##     targets = "targetsPE.txt", dir = TRUE,
+##     wf_file = "preprocessReads/preprocessReads-pe.cwl",
+##     input_file = "preprocessReads/preprocessReads-pe.yml",
+##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
+##     inputvars = c(
+##         FileName1 = "_FASTQ_PATH1_",
+##         FileName2 = "_FASTQ_PATH2_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("load_SPR"))
+
+
+## ----custom_preprocessing_function, eval=FALSE------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         filterFct <- function(fq, cutoff = 20, Nexceptions = 0) {
+##             qcount <- rowSums(as(quality(fq), "matrix") <= cutoff, na.rm = TRUE)
+##             # Retains reads where Phred scores are >= cutoff with N exceptions
+##             fq[qcount <= Nexceptions]
+##         }
+##         save(list = ls(), file = "param/customFCT.RData")
+##     },
+##     step_name = "custom_preprocessing_function",
+##     dependency = "preprocessing"
+## )
+
+
+## ----editing_preprocessing, message=FALSE, eval=FALSE-----
+## yamlinput(sal, "preprocessing")$Fct
+## yamlinput(sal, "preprocessing", "Fct") <- "'filterFct(fq, cutoff=20, Nexceptions=0)'"
+## yamlinput(sal, "preprocessing")$Fct ## check the new function
+## cmdlist(sal, "preprocessing", targets = 1) ## check if the command line was updated with success
+
+
 ## ----trimming, eval=FALSE, spr=TRUE-----------------------
-## targetspath <- "targetsPE.txt"
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "trimming",
-##     targets=targetspath,
+##     targets = "targetsPE.txt",
 ##     wf_file = "trimmomatic/trimmomatic-pe.cwl", input_file = "trimmomatic/trimmomatic-pe.yml",
 ##     dir_path= "param/cwl",
 ##     inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"),
-##     dependency = "load_SPR")
+##     dependency = "load_SPR",
+##     run_step = "optional")
 
 
 ## ----fastq_report, eval=FALSE, message=FALSE, spr=TRUE----
 ## appendStep(sal) <- LineWise(code = {
-##                             fastq <- getColumn(sal, step = "trimming", "targetsWF", column = 1)
+##                             fastq <- getColumn(sal, step = "preprocessing", "targetsWF", column = 1)
 ##                             fqlist <- seeFastq(fastq = fastq, batchsize = 10000, klength = 8)
 ##                             pdf("./results/fastqReport.pdf", height = 18, width = 4*length(fqlist))
 ##                             seeFastqPlot(fqlist)
 ##                             dev.off()
 ##                             }, step_name = "fastq_report",
-##                             dependency = "trimming")
+##                             dependency = "preprocessing")
 
 
 ## ----hisat2_index, eval=FALSE, spr=TRUE-------------------
@@ -78,21 +121,21 @@ suppressPackageStartupMessages({
 ## ----hisat2_mapping, eval=FALSE, spr=TRUE-----------------
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "hisat2_mapping",
-##     targets ="trimming", dir = TRUE,
+##     targets ="preprocessing", dir = TRUE,
 ##     wf_file = "workflow-hisat2/workflow_hisat2-pe.cwl",
 ##     input_file = "workflow-hisat2/workflow_hisat2-pe.yml",
 ##     dir_path = "param/cwl",
-##     inputvars = c(trimmomatic_1_paired = "_FASTQ_PATH1_", trimmomatic_2_paired = "_FASTQ_PATH2_",
+##     inputvars = c(preprocessReads_1 = "_FASTQ_PATH1_", preprocessReads_2 = "_FASTQ_PATH2_",
 ##                   SampleName = "_SampleName_"),
 ##     rm_targets_col = c("FileName1", "FileName2"),
-##     dependency = c("trimming", "hisat2_index")
+##     dependency = c("preprocessing", "hisat2_index")
 ## )
 
 
 ## ----align_stats, eval=FALSE, spr=TRUE--------------------
 ## appendStep(sal) <- LineWise(code = {
 ##                            bampaths <- getColumn(sal, step = "hisat2_mapping", "outfiles", column = "samtools_sort_bam")
-##                            fqpaths <- getColumn(sal, step = "trimming", "targetsWF", column = "FileName1")
+##                            fqpaths <- getColumn(sal, step = "preprocessing", "targetsWF", column = "FileName1")
 ##                            read_statsDF <- alignStats(args=bampaths, fqpaths = fqpaths, pairEnd = TRUE)
 ##                            write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
 ##                             }, step_name = "align_stats",
@@ -269,19 +312,33 @@ suppressPackageStartupMessages({
 ##                     dependency = "heatmap")
 
 
-## ----run_echo, eval=FALSE---------------------------------
+## ----runWF, eval=FALSE------------------------------------
 ## sal <- runWF(sal)
 
 
-## ----plot_echo, eval=FALSE--------------------------------
+## ----runWF_cluster, eval=FALSE, spr=FALSE-----------------
+## resources <- list(conffile=".batchtools.conf.R",
+##                   template="batchtools.slurm.tmpl",
+##                   Njobs=18,
+##                   walltime=120, ## minutes
+##                   ntasks=1,
+##                   ncpus=4,
+##                   memory=1024, ## Mb,
+##                   partition = "short"
+##                   )
+## sal <- addResources(sal, c("hisat2_mapping"), resources = resources)
+## sal <- runWF(sal)
+
+
+## ----plotWF, eval=FALSE-----------------------------------
 ## plotWF(sal, rstudio = TRUE)
 
 
-## ----status_echo, eval=FALSE------------------------------
+## ----statusWF, eval=FALSE---------------------------------
 ## sal
 ## statusWF(sal)
 
 
-## ----logs_echo, eval=FALSE--------------------------------
+## ----logsWF, eval=FALSE-----------------------------------
 ## sal <- renderLogs(sal)
 
