@@ -1,4 +1,7 @@
 changelog
+    version 1.23.2
+	- RNA-seq template
+	
     version 1.23.1
 	- trim_galore cwl files
 	
