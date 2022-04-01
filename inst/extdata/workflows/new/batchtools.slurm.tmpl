@@ -35,7 +35,8 @@ log.file = normalizePath(log.file, winslash = "/", mustWork = FALSE)
 
 ## specify which queue on biocluster, one of 'batch', 'highmem', 'intel', 'gpu', 'mygroup'
 #SBATCH -p short
-##SBATCH -p batch,intel 
+##SBATCH -p batch
+##SBATCH -p intel 
 
 ## Initialize work environment like
 ## source /etc/profile
