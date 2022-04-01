@@ -46,5 +46,4 @@ Detailed user manuals are available here:
 + [_systemPipeRdata_ Vignette](http://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html)
 + [_systemPipeR_ Overview Vignette](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html)
 
-Additional information can be found on the corresponding Bioconductor package overview 
-[_page_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html).
+Additional information can be found on the corresponding [Bioconductor packages](https://systempipe.org/).
