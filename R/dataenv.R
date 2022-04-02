@@ -24,12 +24,12 @@ pathList <- function() {
 genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subdir=NULL, url=NULL, urlname=NULL) {
   ## Input validity check
   if(grepl("/", workflow)==TRUE) {
-      ## if the package is defined it
-      mydirname2 <- .genWorkenvirPKG(package_repo=workflow, ref=ref, subdir=subdir, mydirname=mydirname, build_env=TRUE, silent=TRUE)
-      genWorkdata(path = mydirname2)
+    ## if the package is defined it
+    mydirname2 <- .genWorkenvirPKG(package_repo=workflow, ref=ref, subdir=subdir, mydirname=mydirname, build_env=TRUE, silent=TRUE)
+    genWorkdata(path = mydirname2)
   } else {
     check_workflow <- dir(system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE))
-    if(!workflow %in% check_workflow) stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
+    if(!workflow %in% check_workflow) stop("workflow can only be assigned one of: ", paste(check_workflow, collapse=", "))
     if(workflow=="new" && is.null(mydirname)) warning("It is recommended to specify the workflow directory name, using 'mydirname' argument")
     if(all(!c(is.null(mydirname), is.character(mydirname)))) stop("mydirname can only be assigned 'NULL' or a character vector of length 1")
     ## If 'mydirname' is NULL (default) use value assigned to 'workflow' as directory name
@@ -46,38 +46,38 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
     if(workflow=="varseq") {
       file.copy(pathList()$varseq, mydirname2temp, recursive=TRUE)
       file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
-      unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-      # if we desire to rename *Rmd files... not sure if it is important...
+      unlink(mydirname2temp, recursive = TRUE) # removes temp dir
+      # if we desire to rename *Rmd files... 
       # if(!is.null(mydirname)){
       #   rename.files <- list.files(mydirname2, pattern = "systemPipeR*", full.names = T)
       #   sapply(rename.files, function(x) { file.rename(from=x, to=sub('.*\\.', paste0(mydirname2, "/systemPipeR_", mydirname2, "."), x))})
       # }
       file.copy(c(paste0(pathList()$paramdir, "gatk_run.sh"), paste0(pathList()$paramdir, "sambcf_run.sh")), paste0(mydirname2, "/"))
-      file.copy(c(paste0(pathList()$paramdir, "Makefile_varseq")), paste0(mydirname2, "/Makefile"))
+      #file.copy(c(paste0(pathList()$paramdir, "Makefile_varseq")), paste0(mydirname2, "/Makefile"))
     } else if(workflow=="rnaseq") {
       file.copy(pathList()$rnaseq, mydirname2temp, recursive=TRUE)
       file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
       unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-      file.copy(c(paste0(pathList()$paramdir, "Makefile_rnaseq")), paste0(mydirname2, "/Makefile"))
+      #file.copy(c(paste0(pathList()$paramdir, "Makefile_rnaseq")), paste0(mydirname2, "/Makefile"))
     } else if(workflow=="riboseq") {
       file.copy(pathList()$riboseq, mydirname2temp, recursive=TRUE)
       file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
       unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-      file.copy(c(paste0(pathList()$paramdir, "Makefile_riboseq")), paste0(mydirname2, "/Makefile"))
+      #file.copy(c(paste0(pathList()$paramdir, "Makefile_riboseq")), paste0(mydirname2, "/Makefile"))
       # file.copy(c(paste0(pathList()$paramdir, "bibtex.bib")), paste0(mydirname2, "/bibtex.bib"), overwrite=TRUE)
     } else if(workflow=="chipseq") {
       file.copy(pathList()$chipseq, mydirname2temp, recursive=TRUE)
       file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
       unlink(mydirname2temp, recursive=TRUE) # removes temp dir
       file.copy(c(paste0(pathList()$paramdir, "targetsPE_chip.txt"), paste0(pathList()$paramdir, "targets_chip.txt")), paste0(mydirname2, "/"))
-      file.copy(c(paste0(pathList()$paramdir, "Makefile_chipseq")), paste0(mydirname2, "/Makefile"))
+      #file.copy(c(paste0(pathList()$paramdir, "Makefile_chipseq")), paste0(mydirname2, "/Makefile"))
       # file.copy(c(paste0(pathList()$paramdir, "bibtex.bib")), paste0(mydirname2, "/bibtex.bib"), overwrite=TRUE)
     } else if(workflow=="new"){
       file.copy(pathList()$new, mydirname2temp, recursive=TRUE)
       file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
       unlink(mydirname2temp, recursive=TRUE) # removes temp dir
     } else {
-      stop(paste("workflow can only be assigned one of:", paste(check_workflow, collapse=", ")))
+      stop("workflow can only be assigned one of:", paste(check_workflow, collapse=", "))
     }
     ## Moving data and param common files
     file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
@@ -157,7 +157,7 @@ genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
     ## For an interactive() session
     if(interactive()){
       pkg_install <- readline(cat("There is no package called", paste0(pkgs, collapse = " OR "), "\n",
-                                  "Would you like to install this package now? Type a number: \n 1. Yes \n 2. No \n"))
+                    "Would you like to install this package now? Type a number: \n 1. Yes \n 2. No \n"))
     } else {
       ## For an non-interactive session
       pkg_install <-"1"
@@ -201,9 +201,9 @@ availableWF <- function(github = FALSE){
   if(github==TRUE){
     ## get all the repos
     tryCatch(get_repos <- jsonlite::fromJSON("https://api.github.com/orgs/systemPipeR/repos"),
-             error = function(e){
-               stop('You have reached the limit for GitHub API requests. The limit is 60 requests per hour.')
-             } 
+         error = function(e){
+           stop('You have reached the limit for GitHub API requests. The limit is 60 requests per hour.')
+         } 
     )  
     WFrepos <- data.frame(workflow=get_repos$name, html=get_repos$html_url, description=get_repos$description)
     ## Keep repos with the right description
