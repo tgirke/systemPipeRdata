@@ -69,7 +69,7 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
       file.copy(pathList()$chipseq, mydirname2temp, recursive=TRUE)
       file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
       unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-      file.copy(c(paste0(pathList()$paramdir, "targetsPE_chip.txt"), paste0(pathList()$paramdir, "targets_chip.txt")), paste0(mydirname2, "/"))
+      file.copy(c(paste0(pathList()$paramdir, "/targetsPE_chip.txt"), paste0(pathList()$paramdir, "/targets_chip.txt")), paste0(mydirname2, "/"))
       #file.copy(c(paste0(pathList()$paramdir, "Makefile_chipseq")), paste0(mydirname2, "/Makefile"))
       # file.copy(c(paste0(pathList()$paramdir, "bibtex.bib")), paste0(mydirname2, "/bibtex.bib"), overwrite=TRUE)
     } else if(workflow=="new"){

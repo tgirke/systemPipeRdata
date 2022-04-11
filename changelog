@@ -1,4 +1,9 @@
 changelog
+    version 1.22.3
+	- RNA-seq template
+	- Chip-seq template
+	- VAR-seq template
+	
     version 1.22.2
 	- RNAseq file update
 	

@@ -1,0 +1,10 @@
+FileName	SampleName	Factor	SampleLong	Experiment	Date	SampleReference
+./results/bowtie2_alignment/M1A.sorted_M1.bam	M1A	M1	Mock.1h.A	1	23-Mar-2012	
+./results/bowtie2_alignment/A1A.sorted_A1.bam	A1A	A1	Avr.1h.A	1	23-Mar-2012	M1A
+./results/bowtie2_alignment/V1A.sorted_V1.bam	V1A	V1	Vir.1h.A	1	23-Mar-2012	M1A
+./results/bowtie2_alignment/M6A.sorted_M6.bam	M6A	M6	Mock.6h.A	1	23-Mar-2012	
+./results/bowtie2_alignment/A6A.sorted_A6.bam	A6A	A6	Avr.6h.A	1	23-Mar-2012	M6A
+./results/bowtie2_alignment/V6A.sorted_V6.bam	V6A	V6	Vir.6h.A	1	23-Mar-2012	M6A
+./results/bowtie2_alignment/M12A.sorted_M12.bam	M12A	M12	Mock.12h.A	1	23-Mar-2012	
+./results/bowtie2_alignment/A12A.sorted_A12.bam	A12A	A12	Avr.12h.A	1	23-Mar-2012	M12A
+./results/bowtie2_alignment/V12A.sorted_V12.bam	V12A	V12	Vir.12h.A	1	23-Mar-2012	M12A

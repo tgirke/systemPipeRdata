@@ -13,419 +13,532 @@
 
 ## ----style, echo = FALSE, results = 'asis'----------------
 BiocStyle::markdown()
-options(width=60, max.print=1000)
+options(width = 60, max.print = 1000)
 knitr::opts_chunk$set(
-    eval=as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
-    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")), 
-    tidy.opts=list(width.cutoff=60), tidy=TRUE)
+    eval = as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
+    cache = as.logical(Sys.getenv("KNITR_CACHE", "TRUE")),
+    tidy.opts = list(width.cutoff = 60), tidy = TRUE
+)
 
 
-## ----setup, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE----
-## suppressPackageStartupMessages({
-##     library(systemPipeR)
-##     library(BiocParallel)
-##     library(Biostrings)
-##     library(Rsamtools)
-##     library(GenomicRanges)
-##     library(ggplot2)
-##     library(GenomicAlignments)
-##     library(ShortRead)
-##     library(ape)
-##     library(batchtools)
-## })
+## ----setup, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE----
+suppressPackageStartupMessages({
+    library(systemPipeR)
+})
 
 
-## ----load_systempiper, eval=TRUE, message=FALSE, warning=FALSE----
-library(systemPipeR)
+## ----genNew_wf, eval=FALSE--------------------------------
+## systemPipeRdata::genWorkenvir(workflow = "varseq", mydirname = "varseq")
+## setwd("varseq")
 
 
-## ----load_targets_file, eval=TRUE-------------------------
-targetspath <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
-targets <- read.delim(targetspath, comment.char = "#")
-targets[1:4, 1:4]
+## ----create_sal, message=FALSE, eval=FALSE----------------
+## sal <- SPRproject()
 
 
-## ----construct_SYSargs2_trim-pe, eval=FALSE---------------
-## targetsPE <- system.file("extdata", "targetsPE.txt", package="systemPipeR")
-## dir_path <- system.file("extdata/cwl/preprocessReads/trim-pe", package="systemPipeR")
-## trim <- loadWorkflow(targets=targetsPE, wf_file="trim-pe.cwl", input_file="trim-pe.yml", dir_path=dir_path)
-## trim <- renderWF(trim, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
-## trim
-## output(trim)[1:2]
-## 
-## preprocessReads(args=trim, Fct="trimLRPatterns(Rpattern='GCCCGGGTAA', subject=fq)",
-##                 batchsize=100000, overwrite=TRUE, compress=TRUE)
-## writeTargetsout(x=trim, file="targets_trimPE.txt", step=1, new_col = c("FileName1", "FileName2"),
-##                 new_col_output_index = c(1,2), overwrite = TRUE)
+## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE--------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         library(systemPipeR)
+##         },
+##     step_name = "load_SPR")
 
 
-## ----fastq_report, eval=FALSE-----------------------------
-## fqlist <- seeFastq(fastq=infile1(trim), batchsize=100000, klength=8)
-## pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
-## seeFastqPlot(fqlist)
-## dev.off()
+## ----fastq_report_pre, eval=FALSE, message=FALSE, spr=TRUE----
+## appendStep(sal) <- LineWise(
+##     code = {
+##         targets <- read.delim("targetsPE_varseq.txt", comment.char = "#")
+##         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
+##         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
+##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
+##         pdf("./results/fastqReport_pre.pdf", height = 18, width = 4 * length(fqlist))
+##         seeFastqPlot(fqlist)
+##         dev.off()
+##     },
+##     step_name = "fastq_report_pre",
+##     dependency = "load_SPR"
+## )
 
 
-## ----dir_path, eval=FALSE---------------------------------
-## dir_path <- system.file("extdata/cwl/gatk", package="systemPipeR")
+## ----trimmomatic, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "trimmomatic",
+##     targets = "targetsPE_varseq.txt",
+##     wf_file = "trimmomatic/trimmomatic-pe.cwl",
+##     input_file = "trimmomatic/trimmomatic-pe.yml",
+##     dir_path = "param/cwl",
+##     inputvars = c(
+##         FileName1 = "_FASTQ_PATH1_",
+##         FileName2 = "_FASTQ_PATH2_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("fastq_report_pre"),
+##     run_step = "optional"
+## )
 
 
-## ----index, eval=FALSE------------------------------------
-## ## Index for BWA
-## args <- loadWorkflow(targets = NULL, wf_file = "bwa-index.cwl", input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args)
-## cmdlist(args) # shows the command
-## output(args) # shows the expected output files
-## # Run single Machine
-## runCommandline(args, make_bam = FALSE)
-## 
-## ## Index needed for gatk tools
-## args <- loadWorkflow(wf_file = "fasta_dict.cwl", input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args)
-## args <- runCommandline(args, make_bam = FALSE)
-## 
-## ## Index
-## args <- loadWorkflow(wf_file = "fasta_faidx.cwl", input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args)
-## args <- runCommandline(args, make_bam = FALSE)
+## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE----
+## appendStep(sal) <- SYSargsList(
+##     step_name = "preprocessing",
+##     targets = "targetsPE_varseq.txt", dir = TRUE,
+##     wf_file = "preprocessReads/preprocessReads-pe.cwl",
+##     input_file = "preprocessReads/preprocessReads-pe.yml",
+##     dir_path = "param/cwl",
+##     inputvars = c(
+##         FileName1 = "_FASTQ_PATH1_",
+##         FileName2 = "_FASTQ_PATH2_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("fastq_report_pre"),
+##     run_step = "optional"
+## )
 
 
-## ----bwa-pe_alignment, eval=FALSE-------------------------
-## targetsPE <- system.file("extdata", "targetsPE.txt", package = "systemPipeR")
-## args <- loadWorkflow(targets = targetsPE, wf_file = "bwa-pe.cwl",
-##                        input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FASTQ_PATH1_", FileName2 = "_FASTQ_PATH2_",
-##                                      SampleName = "_SampleName_"))
-## cmdlist(args)[1:2]
-## output(args)[1:2]
+## ----custom_preprocessing_function, eval=FALSE------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         filterFct <- function(fq, cutoff = 20, Nexceptions = 0) {
+##             qcount <- rowSums(as(quality(fq), "matrix") <= cutoff, na.rm = TRUE)
+##             # Retains reads where Phred scores are >= cutoff with N exceptions
+##             fq[qcount <= Nexceptions]
+##         }
+##         save(list = ls(), file = "param/customFCT.RData")
+##     },
+##     step_name = "custom_preprocessing_function",
+##     dependency = "preprocessing"
+## )
 
 
-## ----start_BWA, eval=FALSE--------------------------------
-## args <- runCommandline(args = args, make_bam=FALSE)
-## writeTargetsout(x = args[1:2], file = "./results/targetsPE.txt",
-##                 step = 1, new_col = "BWA_SAM", new_col_output_index = 1, overwrite = TRUE)
+## ----editing_preprocessing, message=FALSE, eval=FALSE-----
+## yamlinput(sal, "preprocessing")$Fct
+## yamlinput(sal, "preprocessing", "Fct") <- "'filterFct(fq, cutoff=20, Nexceptions=0)'"
+## yamlinput(sal, "preprocessing")$Fct ## check the new function
+## cmdlist(sal, "preprocessing", targets = 1) ## check if the command line was updated with success
 
 
-## ----bwa_parallel, eval=FALSE-----------------------------
-## library(batchtools)
-## resources <- list(walltime = 120, ntasks = 1, ncpus = 4, memory = 1024)
-## reg <- clusterRun(args, FUN = runCommandline, more.args = list(args = args, dir = FALSE, make_bam=FALSE),
-##     conffile = ".batchtools.conf.R", template = "batchtools.slurm.tmpl", Njobs = 18,
-##     runid = "01", resourceList = resources)
-## getStatus(reg = reg)
-## writeTargetsout(x = args, file = "./results/targetsPE.txt",
-##                 step = 1, new_col = "BWA_SAM", new_col_output_index = 1, overwrite = TRUE)
+## ----fastq_report_pos, eval=FALSE, message=FALSE, spr=TRUE----
+## appendStep(sal) <- LineWise(
+##     code = {
+##         fq_files <- getColumn(sal, "preprocessing", "outfiles", column = 1) ## get outfiles path
+##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
+##         pdf("./results/fastqReport_pos.pdf", height = 18, width = 4 * length(fqlist))
+##         seeFastqPlot(fqlist)
+##         dev.off()
+##     },
+##     step_name = "fastq_report_pos",
+##     dependency = "trimmomatic",
+##     run_step = "optional"
+## )
 
 
-## ----check_files_exist, eval=FALSE------------------------
-## outpaths <- subsetWF(args , slot="output", subset=1, index=1)
-## file.exists(outpaths)
+## ----bwa_index, eval=FALSE, spr=TRUE----------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "bwa_index",
+##     dir = FALSE, targets = NULL,
+##     wf_file = "gatk/workflow_bwa-index.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     dependency = "load_SPR"
+## )
 
 
-## ----align_stats, eval=FALSE------------------------------
-## read_statsDF <- alignStats(args=args)
-## write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+## ----fasta_index, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "fasta_index",
+##     dir = FALSE, targets = NULL,
+##     wf_file = "gatk/workflow_fasta_dict.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     dependency = "bwa_index"
+## )
 
 
-## ----symbolic_links, eval=FALSE---------------------------
-## symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"),
-##             urlbase="http://cluster.hpcc.ucr.edu/~tgirke/", urlfile="IGVurl.txt")
+## ----faidx_index, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "faidx_index",
+##     dir = FALSE, targets = NULL,
+##     wf_file = "gatk/workflow_fasta_faidx.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     dependency = "fasta_index"
+## )
 
 
-## ----fastq2ubam, eval=FALSE-------------------------------
-## dir_path <- system.file("extdata/cwl/gatk", package="systemPipeR")
-## targets.gatk <- "./results/targetsPE.txt" ## targets generated from BWA
-## args <- loadWorkflow(targets = targets.gatk, wf_file = "gatk_fastq2ubam.cwl",
-##                        input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FASTQ_PATH1_", FileName2 = "_FASTQ_PATH2_",
-##                                      SampleName = "_SampleName_"))
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## args <- runCommandline(args= args[1:2],  make_bam=FALSE)
-## writeTargetsout(x = args, file = "./results/targets_gatk.txt",
-##                 step = 1, new_col = "GATK_UBAM", new_col_output_index = 1, overwrite = TRUE)
+## ----bwa_alignment, eval=FALSE, spr=TRUE------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "bwa_alignment",
+##     targets = "targetsPE_varseq.txt",
+##     wf_file = "gatk/workflow_bwa-pe.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     inputvars = c(
+##         FileName1 = "_FASTQ_PATH1_",
+##         FileName1 = "_FASTQ_PATH2_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("faidx_index")
+## )
 
 
-## ----merge_bam, eval=FALSE--------------------------------
-## targets.gatk <- "./results/targets_gatk.txt"
-## args <- loadWorkflow(targets = targets.gatk, wf_file = "gatk_mergebams.cwl",
-##                        input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(BWA_SAM = "_bwasam_", GATK_UBAM = "_ubam_",
-##                                      SampleName = "_SampleName_"))
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## args <- runCommandline(args= args,  make_bam=FALSE)
-## writeTargetsout(x = args, file = "./results/targets_gatk.txt",
-##                 step = 1, new_col = "GATK_MERGE", new_col_output_index = 1, overwrite = TRUE)
+## ----align_stats, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         bampaths <- getColumn(sal, step = "bwa_alignment", "outfiles", column = "samtools_sort_bam")
+##         fqpaths <- getColumn(sal, step = "bwa_alignment", "targetsWF", column = "FileName1")
+##         read_statsDF <- alignStats(args = bampaths, fqpaths = fqpaths, pairEnd = TRUE)
+##         write.table(read_statsDF, "results/alignStats.xls", row.names = FALSE, quote = FALSE, sep = "\t")
+##     },
+##     step_name = "align_stats",
+##     dependency = "bwa_alignment",
+##     run_step = "optional"
+## )
 
 
-## ----sort, eval=FALSE-------------------------------------
-## targets.gatk <- "./results/targets_gatk.txt"
-## args <- loadWorkflow(targets = targets.gatk, wf_file = "gatk_sort.cwl",
-##                      input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(SampleName = "_SampleName_", GATK_MERGE = "_mergebam_"))
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## args <- runCommandline(args= args,  make_bam=FALSE)
-## writeTargetsout(x = args, file = "./results/targets_gatk.txt",
-##                 step = 1, new_col = "GATK_SORT", new_col_output_index = 1, overwrite = TRUE)
+## ----bam_urls, eval=FALSE, spr=TRUE-----------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         bampaths <- getColumn(sal, step = "bwa_alignment", "outfiles", column = "samtools_sort_bam")
+##         symLink2bam(
+##             sysargs = bampaths, htmldir = c("~/.html/", "somedir/"),
+##             urlbase = "http://cluster.hpcc.ucr.edu/~tgirke/",
+##             urlfile = "./results/IGVurl.txt"
+##         )
+##     },
+##     step_name = "bam_urls",
+##     dependency = "bwa_alignment",
+##     run_step = "optional"
+## )
 
 
-## ----mark_dup, eval=FALSE---------------------------------
-## targets.gatk <- "./results/targets_gatk.txt"
-## args <- loadWorkflow(targets = targets.gatk, wf_file = "gatk_markduplicates.cwl",
-##                      input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(SampleName = "_SampleName_", GATK_SORT = "_sort_"))
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## args <- runCommandline(args= args,  make_bam=FALSE)
-## writeTargetsout(x = args, file = "./results/targets_gatk.txt",
-##                 step = 1, new_col = c("GATK_MARK", "GATK_MARK_METRICS"),
-##                 new_col_output_index = c(1,2), overwrite = TRUE)
+## ----fastq2ubam, eval=FALSE, spr=TRUE---------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "fastq2ubam",
+##     targets = "targetsPE_varseq.txt",
+##     wf_file = "gatk/workflow_gatk_fastq2ubam.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     inputvars = c(
+##         FileName1 = "_FASTQ_PATH1_",
+##         FileName2 = "_FASTQ_PATH2_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("faidx_index")
+## )
 
 
-## ----fix_tag, eval=FALSE----------------------------------
-## targets.gatk <- "./results/targets_gatk.txt"
-## args <- loadWorkflow(targets = targets.gatk, wf_file = "gatk_fixtag.cwl",
-##                      input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(SampleName = "_SampleName_", GATK_MARK = "_mark_"))
-## cmdlist(args)[1:2]
-##   output(args)[1:2]
-##   args <- runCommandline(args= args,  make_bam=FALSE)
-##   writeTargetsout(x = args, file = "./results/targets_gatk.txt",
-##                   step = 1, new_col = "GATK_FIXED", new_col_output_index = 1, overwrite = TRUE)
+## ----merge_bam, eval=FALSE, spr=TRUE----------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "merge_bam",
+##     targets = c("bwa_alignment", "fastq2ubam"),
+##     wf_file = "gatk/workflow_gatk_mergebams.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     inputvars = c(
+##         bwa_men_sam = "_bwasam_",
+##         ubam = "_ubam_",
+##         SampleName = "_SampleName_"
+##     ),
+##     rm_targets_col = c("preprocessReads_1", "preprocessReads_2"),
+##     dependency = c("bwa_alignment", "fastq2ubam")
+## )
 
 
-## ----hc, eval=FALSE---------------------------------------
-## targets.gatk <- "./results/targets_gatk.txt"
-## args <- loadWorkflow(targets = targets.gatk, wf_file = "gatk_haplotypecaller.cwl",
-##                      input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(SampleName = "_SampleName_", GATK_FIXED = "_fixed_"))
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## args <- runCommandline(args= args,  make_bam=FALSE)
-## writeTargetsout(x = args, file = "./results/targets_gatk.txt",
-##                 step = 1, new_col = "GVCF", new_col_output_index = 1, overwrite = TRUE)
+## ----sort, eval=FALSE, spr=TRUE---------------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "sort",
+##     targets = "merge_bam",
+##     wf_file = "gatk/workflow_gatk_sort.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     inputvars = c(merge_bam = "_mergebam_", SampleName = "_SampleName_"),
+##     rm_targets_col = c(
+##         "bwa_men_sam", "ubam", "SampleName_fastq2ubam",
+##         "Factor_fastq2ubam", "SampleLong_fastq2ubam",
+##         "Experiment_fastq2ubam", "Date_fastq2ubam"
+##     ),
+##     dependency = c("merge_bam")
+## )
 
 
-## ----import, eval=FALSE-----------------------------------
-## # drop all  *.g.vcf.gz files into results folder, make sure the tbi index is also there.
-## args <- loadWorkflow(targets = NULL, wf_file = "gatk_genomicsDBImport.cwl",
-##                      input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args)
-## cmdlist(args)
-## output(args)
-## args <- runCommandline(args= args,  make_bam=FALSE)
+## ----mark_dup, eval=FALSE, spr=TRUE-----------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "mark_dup",
+##     targets = "sort",
+##     wf_file = "gatk/workflow_gatk_markduplicates.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     inputvars = c(sort_bam = "_sort_", SampleName = "_SampleName_"),
+##     rm_targets_col = c("merge_bam"),
+##     dependency = c("sort")
+## )
 
 
-## ----call_variants, eval=FALSE----------------------------
-## args <- loadWorkflow(targets = NULL, wf_file = "gatk_genotypeGVCFs.cwl",
-##                        input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args)
-## cmdlist(args)
-## output(args)
-## args <- runCommandline(args= args,  make_bam=FALSE)
+## ----fix_tag, eval=FALSE, spr=TRUE------------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "fix_tag",
+##     targets = "mark_dup",
+##     wf_file = "gatk/workflow_gatk_fixtag.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     inputvars = c(mark_bam = "_mark_", SampleName = "_SampleName_"),
+##     rm_targets_col = c("sort_bam"),
+##     dependency = c("mark_dup")
+## )
 
 
-## ----filter, eval=FALSE-----------------------------------
-## args <- loadWorkflow(wf_file = "gatk_variantFiltration.cwl",
-##                        input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args)
-## cmdlist(args)
-## output(args)
-## args <- runCommandline(args= args,  make_bam=FALSE)
+## ----hap_caller, eval=FALSE, spr=TRUE---------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "hap_caller",
+##     targets = "fix_tag",
+##     wf_file = "gatk/workflow_gatk_haplotypecaller.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     inputvars = c(fixtag_bam = "_fixed_", SampleName = "_SampleName_"),
+##     rm_targets_col = c("mark_bam"),
+##     dependency = c("fix_tag")
+## )
 
 
-## ----extract_single_vcf, eval=F---------------------------
-## targets.gatk <- "./results/targets_gatk.txt"
-## args <- loadWorkflow(targets = targets.gatk, wf_file = "gatk_select_variant.cwl",
-##                        input_file = "gatk.yaml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(SampleName = "_SampleName_"))
-## cmdlist(args)[1:2]
-## output(args)[1:2]
-## args <- runCommandline(args= args, make_bam=FALSE)
-## writeTargetsout(x = args, file = "./results/targets_gatk.txt",
-##                 step = 1, new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
+## ----import, eval=FALSE, spr=TRUE-------------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "import",
+##     targets = NULL, dir = FALSE,
+##     wf_file = "gatk/workflow_gatk_genomicsDBImport.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     dependency = c("hap_caller")
+## )
 
 
-## ----run_bcftools, eval=FALSE-----------------------------
-## dir_path <- system.file("extdata/cwl/workflow-bcftools", package="systemPipeR")
-## targetsPE <- './results/targetsPE.txt'
-## args <- loadWorkflow(targets = targetsPE, wf_file = "workflow_bcftools.cwl",
-##                      input_file = "bcftools.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(SampleName = "_SampleName_", BWA_SAM = "_SAM_"))
-## cmdlist(args[1])
-## output(args[1])
-## args <- runCommandline(args= args, make_bam=FALSE)
-## writeTargetsout(x = args, file = "./results/targets_bcf.txt",
-##                 step = 5, new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
+## ----call_variants, eval=FALSE, spr=TRUE------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "call_variants",
+##     targets = NULL, dir = FALSE,
+##     wf_file = "gatk/workflow_gatk_genotypeGVCFs.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     dependency = c("import")
+## )
 
 
-## dir_path <- system.file("extdata/cwl/varseq", package="systemPipeR")
+## ----filter, eval=FALSE, spr=TRUE-------------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "filter",
+##     targets = NULL, dir = FALSE,
+##     wf_file = "gatk/workflow_gatk_variantFiltration.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     dependency = c("call_variants")
+## )
+
+
+## ----create_vcf, eval=FALSE, spr=TRUE---------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "create_vcf",
+##     targets = "hap_caller",
+##     wf_file = "gatk/workflow_gatk_select_variant.cwl",
+##     input_file = "gatk/gatk.yaml",
+##     dir_path = "param/cwl",
+##     inputvars = c(SampleName = "_SampleName_"),
+##     dependency = c("hap_caller", "filter")
+## )
+
+
+## ----create_vcf_BCFtool, eval=FALSE, spr=TRUE-------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "create_vcf_BCFtool",
+##     targets = "bwa_alignment", dir = TRUE,
+##     wf_file = "workflow-bcftools/workflow_bcftools.cwl",
+##     input_file = "workflow-bcftools/bcftools.yml",
+##     dir_path = "param/cwl",
+##     inputvars = c(bwa_men_sam = "_bwasam_", SampleName = "_SampleName_"),
+##     rm_targets_col = c("preprocessReads_1", "preprocessReads_2"),
+##     dependency = "bwa_alignment",
+##     run_step = "optional"
+## )
 
 
 ## ----inspect_vcf, eval=FALSE------------------------------
 ## library(VariantAnnotation)
-## args <- loadWorkflow(targets = './results/targets_gatk.txt', wf_file = "filter.cwl",
-##                      input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_"))
-## vcf <- readVcf(infile1(args)[1], "A. thaliana")
+## vcf_raw <- getColumn(sal, "create_vcf")
+## vcf <- readVcf(vcf_raw[1], "A. thaliana")
 ## vcf
 ## vr <- as(vcf, "VRanges")
 ## vr
 
 
-## ----filter_gatk, eval=FALSE------------------------------
-## dir_path <- system.file("extdata/cwl/varseq", package="systemPipeR")
-## library(VariantAnnotation)
-## library(BBmisc) # Defines suppressAll()
-## args <- loadWorkflow(targets = './results/targets_gatk.txt',
-##                      wf_file = "filter.cwl",input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName="_SampleName_"))
-## filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
-## # filter <- "totalDepth(vr) >= 20 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
-## suppressAll(filterVars(args, filter, varcaller="gatk", organism="A. thaliana"))
-## writeTargetsout(x = args, file = "./results/targets_filter_gatk.txt",
-##                 step = 1, new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
+## ----filter_vcf, eval=FALSE, spr=TRUE---------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         vcf_raw <- getColumn(sal, "create_vcf")
+##         library(VariantAnnotation)
+##         filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
+##         vcf_filter <- suppressWarnings(filterVars(vcf_raw, filter, organism = "A. thaliana", out_dir = "results/vcf_filter"))
+##         # updateColumn(sal, 'create_vcf', data.frame(vcf_filter=vcf_filter))
+##     },
+##     step_name = "filter_vcf",
+##     dependency = "create_vcf",
+##     run_step = "optional"
+## )
 
 
-## ----filter_bcftools, eval=FALSE--------------------------
-## args <- loadWorkflow(targets = './results/targets_bcf.txt',
-##                      wf_file = "filter.cwl",
-##                      input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## filter <- "rowSums(vr) >= 2 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
-## # filter <- "rowSums(vr) >= 20 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
-## suppressAll(filterVars(args, filter, varcaller="bcftools", organism="A. thaliana"))
-## writeTargetsout(x = args, file = "./results/targets_filter_bcf.txt",
-##                 step = 1, new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
+## ----filter_vcf_BCFtools, eval=FALSE, spr=TRUE------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         vcf_raw <- getColumn(sal, "create_vcf_BCFtool")
+##         library(VariantAnnotation)
+##         filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
+##         vcf_filter <- suppressWarnings(filterVars(vcf_raw, filter, organism = "A. thaliana", out_dir = "results/vcf_filter_BCFtools"))
+##         # updateColumn(sal, 'create_vcf', data.frame(vcf_filter=vcf_filter))
+##     },
+##     step_name = "filter_vcf_BCFtools",
+##     dependency = "create_vcf_BCFtool",
+##     run_step = "optional"
+## )
 
 
 ## ----check_filter, eval=FALSE-----------------------------
-## length(as(readVcf(infile1(args)[1], genome="Ath"), "VRanges")[,1])
-## length(as(readVcf(subsetWF(args, slot='output', subset = 1, index=1)[1], genome="Ath"), "VRanges")[,1])
+## copyEnvir(sal, "vcf_raw", globalenv())
+## copyEnvir(sal, "vcf_filter", globalenv())
+## length(as(readVcf(vcf_raw[1], genome = "Ath"), "VRanges")[, 1])
+## length(as(readVcf(vcf_filter[1], genome = "Ath"), "VRanges")[, 1])
 
 
 ## ----annotate_basics, eval=FALSE--------------------------
-## dir_path <- system.file("extdata/cwl/varseq", package="systemPipeR")
 ## library("GenomicFeatures")
-## args <- loadWorkflow(targets = './results/targets_filter_gatk.txt',
-##                      wf_file = "annotate.cwl", input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
+## # comment the next line if optional step "filter_vcf" is included
+## vcf_filter <- getColumn(sal, "create_vcf")
+## # uncomment the next line if optional step "filter_vcf" is included
+## # copyEnvir(sal, "vcf_filter", globalenv())
 ## txdb <- loadDb("./data/tair10.sqlite")
-## vcf <- readVcf(infile1(args)[1], "A. thaliana")
+## vcf <- readVcf(vcf_filter[1], "A. thaliana")
 ## locateVariants(vcf, txdb, CodingVariants())
 
 
 ## ----annotate_basics_non-synon, eval=FALSE----------------
-## fa <- FaFile(normalizePath(file.path(args$yamlinput$data_path$path,args$yamlinput$ref_name)))
-## predictCoding(vcf, txdb, seqSource=fa)
+## fa <- FaFile("data/tair10.fasta")
+## predictCoding(vcf, txdb, seqSource = fa)
 
 
-## ----annotate_gatk, eval=FALSE----------------------------
-## library("GenomicFeatures")
-## args <- loadWorkflow(targets = './results/targets_filter_gatk.txt',
-##                      wf_file = "annotate.cwl", input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## txdb <- loadDb("./data/tair10.sqlite")
-## fa <- FaFile(normalizePath(file.path(args$yamlinput$data_path$path,args$yamlinput$ref_name)))
-## suppressAll(variantReport(args=args, txdb=txdb, fa=fa, organism="A. thaliana"))
-## writeTargetsout(x = args, file = "./results/targets_report_gatk.txt",
-##                 step = 1, new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
-
-
-## ----annotate_bcf, eval=FALSE-----------------------------
-## library("GenomicFeatures")
-## args <- loadWorkflow(targets = './results/targets_filter_bcf.txt',
-##                      wf_file = "annotate.cwl",
-##                      input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## txdb <- loadDb("./data/tair10.sqlite")
-## fa <- FaFile(normalizePath(file.path(args$yamlinput$data_path$path,args$yamlinput$ref_name)))
-## suppressAll(variantReport(args=args, txdb=txdb, fa=fa, organism="A. thaliana"))
-## writeTargetsout(x = args, file = "./results/targets_report_bcf.txt",
-##                 step = 1, new_col = "FileName1", new_col_output_index = 1, overwrite = TRUE)
+## ----annotate_vcf, eval=FALSE, spr=TRUE-------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         # comment the next line if optional step "filter_vcf" is included
+##         vcf_filter <- getColumn(sal, "create_vcf")
+##         # uncomment the next line if optional step "filter_vcf" is included
+##         # copyEnvir(sal, "vcf_filter", globalenv())
+##         library("GenomicFeatures")
+##         txdb <- loadDb("./data/tair10.sqlite")
+##         fa <- FaFile("data/tair10.fasta")
+##         vcf_anno <- suppressMessages(suppressWarnings(variantReport(vcf_filter, txdb = txdb, fa = fa, organism = "A. thaliana", out_dir = "results/vcf_anno")))
+##     },
+##     step_name = "annotate_vcf",
+##     dependency = "create_vcf"
+## )
+## 
 
 
 ## ----view_annotation, eval=FALSE--------------------------
-## read.delim(output(args)[[1]][[1]])[38:40,]
+## copyEnvir(sal, "vcf_anno", globalenv())
+## read.delim(vcf_anno[1])[38:40, ]
 
 
-## ----combine_gatk, eval=FALSE-----------------------------
-## dir_path <- system.file("extdata/cwl/varseq", package="systemPipeR")
-## args <- loadWorkflow(targets = 'results/targets_report_gatk.txt',
-##                      wf_file = "combine.cwl", input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## combineDF <- combineVarReports(args, filtercol=c(Consequence="nonsynonymous"))
-## write.table(combineDF, "./results/combineDF_nonsyn_gatk.xls", quote=FALSE, row.names=FALSE, sep="\t")
+## ----combine_var, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         combineDF <- combineVarReports(vcf_anno, filtercol = c(Consequence = "nonsynonymous"))
+##         write.table(combineDF, "./results/combineDF_nonsyn.tsv", quote = FALSE, row.names = FALSE, sep = "\t")
+##     },
+##     step_name = "combine_var",
+##     dependency = "annotate_vcf"
+## )
 
 
-## ----combine_bcf, eval=FALSE------------------------------
-## args <- loadWorkflow(targets = 'results/targets_report_bcf.txt',
-##                      wf_file = "combine.cwl", input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## combineDF <- combineVarReports(args, filtercol=c(Consequence="nonsynonymous"))
-## write.table(combineDF, "./results/combineDF_nonsyn_bcf.xls", quote=FALSE, row.names=FALSE, sep="\t")
+## ----summary_var, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         write.table(varSummary(vcf_anno), "./results/variantStats.tsv", quote = FALSE, col.names = NA, sep = "\t")
+##     },
+##     step_name = "summary_var",
+##     dependency = "combine_var"
+## )
 
 
-## ----summary_gatk, eval=FALSE-----------------------------
-## args <- loadWorkflow(targets = './results/targets_report_gatk.txt',
-##                      wf_file = "combine.cwl", input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## varSummary(args)
-## write.table(varSummary(args), "./results/variantStats_gatk.xls", quote=FALSE, col.names = NA, sep="\t")
+## ----venn_diagram, eval=FALSE, spr=TRUE-------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         ## make a list of first three samples
+##         varlist <- sapply(names(vcf_anno[1:3]), function(x) as.character(read.delim(vcf_anno[x])$VARID))
+##         vennset <- overLapper(varlist, type = "vennsets")
+##         pdf("./results/vennplot_var.pdf")
+##         vennPlot(list(vennset), mymain = "Venn Plot of First 3 Samples", mysub = "", colmode = 2, ccol = c("red", "blue"))
+##         dev.off()
+##     },
+##     step_name = "venn_diagram",
+##     dependency = "annotate_vcf"
+## )
 
 
-## ----summary_bcf, eval=FALSE------------------------------
-## args <- loadWorkflow(targets = './results/targets_report_bcf.txt',
-##                      wf_file = "combine.cwl", input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## varSummary(args)
-## write.table(varSummary(args), "./results/variantStats_bcf.xls", quote=FALSE, col.names = NA, sep="\t")
-
-
-## ----venn_diagram, eval=FALSE-----------------------------
-## dir_path <- system.file("extdata/cwl/varseq", package="systemPipeR")
-## ## gatk
-## args <- loadWorkflow(targets = 'results/targets_report_gatk.txt',
-##                      wf_file = "combine.cwl",  input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## varlist <- sapply(names(subsetWF(args[1:2], slot='output', subset = 1, index=1)),
-##                   function(x) as.character(read.delim(subsetWF(args[1:2], slot='output', subset = 1, index=1)[x])$VARID))
-## vennset_gatk <- overLapper(varlist, type="vennsets")
-## 
-## ## bcf
-## args <- loadWorkflow(targets = './results/targets_report_bcf.txt',
-##                      wf_file = "combine.cwl", input_file = "varseq.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FILE1_", SampleName = '_SampleName_'))
-## varlist <- sapply(names(subsetWF(args[1:2], slot='output', subset=1, index=1)),
-##                   function(x) as.character(read.delim(subsetWF(args[1:2], slot='output', subset=1, index=1)[x])$VARID))
-## vennset_bcf <- overLapper(varlist, type="vennsets")
-## 
-## pdf("./results/vennplot_var.pdf")
-## vennPlot(list(vennset_gatk, vennset_bcf), mymain="", mysub="GATK: red; BCFtools: blue", colmode=2, ccol=c("red", "blue"))
-## dev.off()
-
-
-## ----plot_variant, eval=FALSE-----------------------------
-## library(ggbio)
-## mychr <- "ChrC"; mystart <- 11000; myend <- 13000
-## args <- loadWorkflow(targets = 'results/targets_gatk.txt', wf_file = "combine.cwl",
-##                        input_file = "varseq.yml", dir_path = 'param/cwl/varseq_downstream/')
-## args <- renderWF(args, inputvars = c(GATK_FIXED = "_FILE1_", SampleName = "_SampleName_"))
-## ga <- readGAlignments(subsetWF(args, slot='input', subset = 1)[1], use.names=TRUE,
-##                       param=ScanBamParam(which=GRanges(mychr, IRanges(mystart, myend))))
-## p1 <- autoplot(ga, geom = "rect")
-## p2 <- autoplot(ga, geom = "line", stat = "coverage")
-## p3 <- autoplot(vcf[seqnames(vcf)==mychr], type = "fixed") +
-##                 xlim(mystart, myend) + theme(legend.position = "none",
-##                     axis.text.y = element_blank(), axis.ticks.y=element_blank())
-## p4 <- autoplot(loadDb("./data/tair10.sqlite"), which=GRanges(mychr, IRanges(mystart, myend)), names.expr = "gene_id")
-## png("./results/plot_variant.png")
-## tracks(Reads=p1, Coverage=p2, Variant=p3, Transcripts=p4, heights = c(0.3, 0.2, 0.1, 0.35)) + ylab("")
-## dev.off()
+## ----plot_variant, eval=FALSE, spr=TRUE-------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         # comment the next line if optional step "filter_vcf" is included
+##         vcf_filter <- getColumn(sal, "create_vcf")
+##         # uncomment the next line if optional step "filter_vcf" is included
+##         # copyEnvir(sal, "vcf_filter", globalenv())
+##         library(ggbio)
+##         library(VariantAnnotation)
+##         mychr <- "ChrM"
+##         mystart <- 19000
+##         myend <- 21000
+##         bams <- getColumn(sal, "fix_tag")
+##         vcf <- suppressWarnings(readVcf(vcf_filter["M6B"], "A. thaliana"))
+##         ga <- readGAlignments(bams["M6B"], use.names = TRUE, param = ScanBamParam(which = GRanges(mychr, IRanges(mystart, myend))))
+##         p1 <- autoplot(ga, geom = "rect")
+##         p2 <- autoplot(ga, geom = "line", stat = "coverage")
+##         p3 <- autoplot(vcf[seqnames(vcf) == mychr], type = "fixed") +
+##             xlim(mystart, myend) +
+##             theme(legend.position = "none", axis.text.y = element_blank(), axis.ticks.y = element_blank())
+##         p4 <- autoplot(loadDb("./data/tair10.sqlite"), which = GRanges(mychr, IRanges(mystart, myend)), names.expr = "gene_id")
+##         p1_4 <- tracks(Reads = p1, Coverage = p2, Variant = p3, Transcripts = p4, heights = c(0.3, 0.2, 0.1, 0.35)) + ylab("")
+##         ggbio::ggsave(p1_4, filename = "./results/plot_variant.png", units = "in")
+##     },
+##     step_name = "plot_variant",
+##     dependency = "create_vcf"
+## )
 
 
 ## ----sessionInfo------------------------------------------
 sessionInfo()
+
+
+## ----runWF, eval=FALSE------------------------------------
+## sal <- runWF(sal)
+
+
+## ----runWF_cluster, eval=FALSE----------------------------
+## resources <- list(conffile=".batchtools.conf.R",
+##                   template="batchtools.slurm.tmpl",
+##                   Njobs=18,
+##                   walltime=120, ## minutes
+##                   ntasks=1,
+##                   ncpus=4,
+##                   memory=1024, ## Mb
+##                   partition = "short"
+##                   )
+## sal <- addResources(sal, c("hisat2_mapping"), resources = resources)
+## sal <- runWF(sal)
+
+
+## ----plotWF, eval=FALSE-----------------------------------
+## plotWF(sal, rstudio = TRUE)
+
+
+## ----statusWF, eval=FALSE---------------------------------
+## sal
+## statusWF(sal)
+
+
+## ----logsWF, eval=FALSE-----------------------------------
+## sal <- renderLogs(sal)
 
