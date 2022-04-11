@@ -13,139 +13,160 @@
 
 ## ----style, echo = FALSE, results = 'asis'----------------
 BiocStyle::markdown()
-options(width=60, max.print=1000)
+options(width = 60, max.print = 1000)
 knitr::opts_chunk$set(
-    eval=as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
-    cache=as.logical(Sys.getenv("KNITR_CACHE", "TRUE")), 
-    tidy.opts=list(width.cutoff=60), tidy=TRUE)
+    eval = as.logical(Sys.getenv("KNITR_EVAL", "TRUE")),
+    cache = as.logical(Sys.getenv("KNITR_CACHE", "TRUE")), 
+    tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 
 
-## ----setup, echo=FALSE, message=FALSE, wwarning=FALSE, eval=FALSE----
-## suppressPackageStartupMessages({
-##     library(systemPipeR)
-##     library(BiocParallel)
-##     library(Biostrings)
-##     library(Rsamtools)
-##     library(GenomicRanges)
-##     library(ggplot2)
-##     library(GenomicAlignments)
-##     library(ShortRead)
-##     library(ape)
-##     library(batchtools)
-## })
+## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE----
+suppressPackageStartupMessages({
+    library(systemPipeR)
+})
 
 
-## ----load_systempiper, eval=TRUE, message=FALSE, warning=FALSE----
-library(systemPipeR)
+## ----genNew_wf, eval=FALSE--------------------------------
+## systemPipeRdata::genWorkenvir(workflow = "chipseq", mydirname = "chipseq")
+## setwd("chipseq")
 
 
 ## ----load_targets_file, eval=TRUE-------------------------
-targetspath <- system.file("extdata", "targetsPE_chip.txt", package="systemPipeR")
+targetspath <- system.file("extdata", "targetsPE_chip.txt", package = "systemPipeR")
 targets <- read.delim(targetspath, comment.char = "#")
 targets[1:4,-c(5,6)]
 
 
-## ----construct_SYSargs2_trim-se, eval=FALSE---------------
-## dir_path <- system.file("extdata/cwl/preprocessReads/trim-pe", package="systemPipeR")
-## trim <- loadWF(targets=targetspath, wf_file="trim-pe.cwl", input_file="trim-pe.yml", dir_path=dir_path)
-## trim <- renderWF(trim, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
-## trim
-## output(trim)[1:2]
+## ----create_workflow, message=FALSE, eval=FALSE-----------
+## library(systemPipeR)
+## sal <- SPRproject()
+## sal
 
 
-## ----proprocess_reads, eval=FALSE, message=FALSE, warning=FALSE, cache=TRUE----
-## filterFct <- function(fq, cutoff=20, Nexceptions=0) {
-##     qcount <- rowSums(as(quality(fq), "matrix") <= cutoff, na.rm=TRUE)
-##     fq[qcount <= Nexceptions]
-##     # Retains reads where Phred scores are >= cutoff with N exceptions
-## }
-## preprocessReads(args=trim, Fct="filterFct(fq, cutoff=20, Nexceptions=0)",
-##                 batchsize=100000)
-## writeTargetsout(x=trim, file="targets_chip_trimPE.txt", step=1, new_col = c("FileName1", "FileName2"),
-##                 new_col_output_index = c(1,2), overwrite = TRUE)
+## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE--------
+## appendStep(sal) <- LineWise(code = {
+##                             library(systemPipeR)
+##                             }, step_name = "load_SPR")
 
 
-## ----fastq_report, eval=FALSE-----------------------------
-## library(BiocParallel); library(batchtools)
-## f <- function(x) {
-##   library(systemPipeR)
-##   targets <- system.file("extdata", "targetsPE_chip.txt", package="systemPipeR")
-##   dir_path <- system.file("extdata/cwl/preprocessReads/trim-pe", package="systemPipeR")
-##   trim <- loadWorkflow(targets=targets, wf_file="trim-pe.cwl", input_file="trim-pe.yml", dir_path=dir_path)
-##   trim <- renderWF(trim, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
-##   seeFastq(fastq=infile1(trim)[x], batchsize=100000, klength=8)
-## }
-## 
-## resources <- list(walltime=120, ntasks=1, ncpus=4, memory=1024)
-## param <- BatchtoolsParam(workers = 4, cluster = "slurm", template = "batchtools.slurm.tmpl", resources = resources)
-## fqlist <- bplapply(seq(along=trim), f, BPPARAM = param)
-## 
-## pdf("./results/fastqReport.pdf", height=18, width=4*length(fqlist))
-## seeFastqPlot(unlist(fqlist, recursive=FALSE))
-## dev.off()
+## ----fastq_report, eval=FALSE, message=FALSE, spr=TRUE----
+## appendStep(sal) <- LineWise(
+##     code = {
+##         targets <- read.delim("targetsPE_chip.txt", comment.char = "#")
+##         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
+##         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
+##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
+##         pdf("./results/fastqReport.pdf", height = 18, width = 4 * length(fqlist))
+##         seeFastqPlot(fqlist)
+##         dev.off()
+##     },
+##     step_name = "fastq_report",
+##     dependency = "load_SPR"
+## )
 
 
-## ----bowtie2_index, eval=FALSE----------------------------
-## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-idx", package="systemPipeR")
-## idx <- loadWorkflow(targets=NULL, wf_file="bowtie2-index.cwl", input_file="bowtie2-index.yml", dir_path=dir_path)
-## idx <- renderWF(idx)
-## idx
-## cmdlist(idx)
-## 
-## ## Run in single machine
-## runCommandline(idx, make_bam = FALSE)
+## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE----
+## appendStep(sal) <- SYSargsList(
+##     step_name = "preprocessing",
+##     targets = "targetsPE_chip.txt", dir = TRUE,
+##     wf_file = "preprocessReads/preprocessReads-pe.cwl",
+##     input_file = "preprocessReads/preprocessReads-pe.yml",
+##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
+##     inputvars = c(
+##         FileName1 = "_FASTQ_PATH1_",
+##         FileName2 = "_FASTQ_PATH2_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("fastq_report")
+## )
 
 
-## ----bowtie2_align, eval=FALSE----------------------------
-## targets <- system.file("extdata", "targetsPE_chip.txt", package="systemPipeR")
-## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-pe", package="systemPipeR")
-## args <- loadWF(targets = targets, wf_file = "bowtie2-mapping-pe.cwl",
-##     input_file = "bowtie2-mapping-pe.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars=c(FileName1="_FASTQ_PATH1_", FileName2="_FASTQ_PATH2_", SampleName="_SampleName_"))
-## args
-## cmdlist(args)[1:2]
-## output(args)[1:2]
+## ----custom_preprocessing_function, eval=FALSE------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         filterFct <- function(fq, cutoff = 20, Nexceptions = 0) {
+##             qcount <- rowSums(as(quality(fq), "matrix") <= cutoff, na.rm = TRUE)
+##             # Retains reads where Phred scores are >= cutoff with N exceptions
+##             fq[qcount <= Nexceptions]
+##         }
+##         save(list = ls(), file = "param/customFCT.RData")
+##     },
+##     step_name = "custom_preprocessing_function",
+##     dependency = "preprocessing"
+## )
 
 
-## ----bowtie2_align_cluster, eval=FALSE--------------------
-## moduleload(modules(args)) # Skip if a module system is not used
-## resources <- list(walltime=120, ntasks=1, ncpus=4, memory=1024)
-## reg <- clusterRun(args, FUN = runCommandline, more.args = list(args=args, dir = FALSE),
-##     conffile = ".batchtools.conf.R", template = "batchtools.slurm.tmpl", Njobs = 18, runid = "01", resourceList = resources)
-## getStatus(reg=reg)
-## waitForJobs(reg=reg)
-## args <- output_update(args, dir=FALSE, replace=TRUE, extension=c(".sam", ".bam")) ## Updates the output(args) to the right location in the subfolders
-## output(args)
+## ----editing_preprocessing, message=FALSE, eval=FALSE-----
+## yamlinput(sal, "preprocessing")$Fct
+## yamlinput(sal, "preprocessing", "Fct") <- "'filterFct(fq, cutoff=20, Nexceptions=0)'"
+## yamlinput(sal, "preprocessing")$Fct ## check the new function
+## cmdlist(sal, "preprocessing", targets = 1) ## check if the command line was updated with success
 
 
-## ----bowtie2_align_single, eval=FALSE---------------------
-## args <- runCommandline(args, force=F)
+## ----bowtie2_index, eval=FALSE, spr=TRUE------------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "bowtie2_index",
+##     dir = FALSE, targets = NULL,
+##     wf_file = "bowtie2/bowtie2-index.cwl",
+##     input_file = "bowtie2/bowtie2-index.yml",
+##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
+##     inputvars = NULL,
+##     dependency = c("preprocessing")
+## )
 
 
-## ----check_files_exist, eval=FALSE------------------------
-## writeTargetsout(x=args, file="targets_bam.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE, remove=TRUE)
-## outpaths <- subsetWF(args , slot="output", subset=1, index=1)
-## file.exists(outpaths)
+## ----bowtie2_alignment, eval=FALSE, spr=TRUE--------------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "bowtie2_alignment",
+##     dir = TRUE,
+##     targets = "targetsPE_chip.txt",
+##     wf_file = "workflow-bowtie2/workflow_bowtie2-pe.cwl",
+##     input_file = "workflow-bowtie2/workflow_bowtie2-pe.yml",
+##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
+##     inputvars = c(
+##         FileName1 = "_FASTQ_PATH1_",
+##         FileName2 = "_FASTQ_PATH2_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("bowtie2_index")
+## )
 
 
-## ----align_stats, eval=FALSE------------------------------
-## read_statsDF <- alignStats(args=args)
-## write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
-## read.delim("results/alignStats.xls")
+## ----bowtie2_alignment_check, eval=FALSE------------------
+## cmdlist(sal, step="bowtie2_alignment", targets=1)
 
 
-## ----symbol_links, eval=FALSE-----------------------------
-## symLink2bam(sysargs=args, htmldir=c("~/.html/", "somedir/"),
-##             urlbase="http://cluster.hpcc.ucr.edu/~tgirke/",
-##             urlfile="./results/IGVurl.txt")
+## ----align_stats, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         fqpaths <- getColumn(sal, step = "bowtie2_alignment", "targetsWF", column = "FileName1")
+##         bampaths <- getColumn(sal, step = "bowtie2_alignment", "outfiles", column = "samtools_sort_bam")
+##         read_statsDF <- alignStats(args = bampaths, fqpaths = fqpaths, pairEnd = TRUE)
+##         write.table(read_statsDF, "results/alignStats.xls", row.names=FALSE, quote=FALSE, sep="\t")
+##         },
+##     step_name = "align_stats",
+##     dependency = "bowtie2_alignment")
+
+
+## ----bam_IGV, eval=FALSE, spr=TRUE------------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         bampaths <- getColumn(sal, step = "bowtie2_alignment", "outfiles",
+##                               column = "samtools_sort_bam")
+##         symLink2bam(
+##             sysargs = bampaths, htmldir = c("~/.html/", "somedir/"),
+##             urlbase = "http://cluster.hpcc.ucr.edu/~tgirke/",
+##             urlfile = "./results/IGVurl.txt")
+##     },
+##     step_name = "bam_IGV",
+##     dependency = "bowtie2_alignment",
+##     run_step = "optional"
+## )
 
 
 ## ----rle_object, eval=FALSE-------------------------------
-## library(rtracklayer); library(GenomicRanges)
-## library(Rsamtools); library(GenomicAlignments)
-## outpaths <- subsetWF(args , slot="output", subset=1, index=1)
-## aligns <- readGAlignments(outpaths[1])
+## bampaths <- getColumn(sal, step = "bowtie2_alignment", "outfiles", column = "samtools_sort_bam")
+## aligns <- readGAlignments(bampaths[1])
 ## cov <- coverage(aligns)
 ## cov
 
@@ -162,209 +183,283 @@ targets[1:4,-c(5,6)]
 ## ----plot_coverage, eval=FALSE----------------------------
 ## library(ggbio)
 ## myloc <- c("Chr1", 1, 100000)
-## ga <- readGAlignments(outpaths[1], use.names=TRUE,
+## ga <- readGAlignments(bampaths[1], use.names=TRUE,
 ##                       param=ScanBamParam(which=GRanges(myloc[1],
 ##                         IRanges(as.numeric(myloc[2]), as.numeric(myloc[3])))))
 ## autoplot(ga, aes(color = strand, fill = strand), facets = strand ~ seqnames, stat = "coverage")
 
 
-## ----merge_bams, eval=FALSE-------------------------------
-## dir_path <- system.file("extdata/cwl/mergeBamByFactor", package="systemPipeR")
-## args <- loadWF(targets = "targets_bam.txt", wf_file = "merge-bam.cwl",
-##     input_file = "merge-bam.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName = "_BAM_PATH_", SampleName = "_SampleName_"))
-## 
-## args_merge <- mergeBamByFactor(args=args, overwrite=TRUE)
-## writeTargetsout(x=args_merge, file="targets_mergeBamByFactor.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE, remove=TRUE)
+## ----merge_bams, eval=FALSE, spr=TRUE---------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         bampaths <- getColumn(sal, step = "bowtie2_alignment", "outfiles", column = "samtools_sort_bam")
+##         merge_bams <- mergeBamByFactor(args=bampaths, targetsDF = targetsWF(sal)[["bowtie2_alignment"]], overwrite=TRUE)
+##         updateColumn(sal, step = "merge_bams", position = "targetsWF") <- merge_bams
+##         writeTargets(sal, step = "merge_bams", file = "targets_merge_bams.txt", overwrite = TRUE)
+##     },
+##     step_name = "merge_bams",
+##     dependency = "bowtie2_alignment"
+## )
 
 
-## ----call_peaks_macs_noref, eval=FALSE--------------------
-## dir_path <- system.file("extdata/cwl/MACS2/MACS2-noinput/", package="systemPipeR")
-## args <- loadWF(targets = "targets_mergeBamByFactor.txt", wf_file = "macs2.cwl",
-##     input_file = "macs2.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-## 
-## runCommandline(args, make_bam = FALSE, force=T)
-## outpaths <- subsetWF(args, slot="output", subset=1, index=1)
-## file.exists(outpaths)
-## writeTargetsout(x=args, file="targets_macs.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE)
+## ----call_peaks_macs_noref, eval=FALSE, spr=TRUE----------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "call_peaks_macs_noref",
+##     targets = "targets_merge_bams.txt",
+##     wf_file = "MACS2/macs2-noinput.cwl",
+##     input_file = "MACS2/macs2-noinput.yml",
+##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
+##     inputvars = c(
+##         FileName = "_FASTQ_PATH1_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("merge_bams")
+## )
 
 
-## ----call_peaks_macs_withref, eval=FALSE------------------
-## writeTargetsRef(infile="targets_mergeBamByFactor.txt",
-##                 outfile="targets_bam_ref.txt", silent=FALSE, overwrite=TRUE)
-## dir_path <- system.file("extdata/cwl/MACS2/MACS2-input/", package="systemPipeR")
-## args_input <- loadWF(targets = "targets_bam_ref.txt", wf_file = "macs2-input.cwl",
-##     input_file = "macs2.yml", dir_path = dir_path)
-## args_input <- renderWF(args_input, inputvars = c(FileName1 = "_FASTQ_PATH1_", FileName2 = "_FASTQ_PATH2_", SampleName = "_SampleName_"))
-## cmdlist(args_input)[1]
-## ## Run
-## args_input <- runCommandline(args_input, make_bam = FALSE, force=T)
-## outpaths_input <- subsetWF(args_input , slot="output", subset=1, index=1)
-## file.exists(outpaths_input)
-## writeTargetsout(x=args_input, file="targets_macs_input.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE)
+## ----writeTargetsRef, eval=FALSE, spr=TRUE----------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         writeTargetsRef(infile = "targets_merge_bams.txt",
+##                 outfile = "targets_bam_ref.txt", silent = FALSE, overwrite = TRUE)
+##     },
+##     step_name = "writeTargetsRef",
+##     dependency = "merge_bams"
+## )
 
 
-## ----consensus_peaks, eval=FALSE--------------------------
-## outpaths <- subsetWF(args , slot="output", subset=1, index=1) ## escolher um dos outputs index
-## peak_M1A <- outpaths["M1A"]
-## peak_M1A <- as(read.delim(peak_M1A, comment="#")[,1:3], "GRanges")
-## peak_A1A <- outpaths["A1A"]
-## peak_A1A <- as(read.delim(peak_A1A, comment="#")[,1:3], "GRanges")
-## (myol1 <- subsetByOverlaps(peak_M1A, peak_A1A, minoverlap=1))
+## ----call_peaks_macs_withref, eval=FALSE, spr=TRUE--------
+## appendStep(sal) <- SYSargsList(
+##     step_name = "call_peaks_macs_withref",
+##     targets = "targets_bam_ref.txt",
+##     wf_file = "MACS2/macs2-input.cwl",
+##     input_file = "MACS2/macs2-input.yml",
+##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
+##     inputvars = c(
+##         FileName1 = "_FASTQ_PATH1_",
+##         FileName2 = "_FASTQ_PATH2_",
+##         SampleName = "_SampleName_"
+##     ),
+##     dependency = c("writeTargetsRef")
+## )
+
+
+## ----consensus_peaks, eval=FALSE, spr=TRUE----------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         peaks_files <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles", column = "peaks_xls")
+##         peak_M1A <- peaks_files["M1A"]
+##         peak_M1A <- as(read.delim(peak_M1A, comment="#")[,1:3], "GRanges")
+##         peak_A1A <- peaks_files["A1A"]
+##         peak_A1A <- as(read.delim(peak_A1A, comment="#")[,1:3], "GRanges")
+##         (myol1 <- subsetByOverlaps(peak_M1A, peak_A1A, minoverlap=1))
 ##             # Returns any overlap
-## myol2 <- olRanges(query=peak_M1A, subject=peak_A1A, output="gr")
+##         myol2 <- olRanges(query=peak_M1A, subject=peak_A1A, output="gr")
 ##             # Returns any overlap with OL length information
-## myol2[values(myol2)["OLpercQ"][,1]>=50]
+##         myol2[values(myol2)["OLpercQ"][,1]>=50]
 ##             # Returns only query peaks with a minimum overlap of 50%
+##     },
+##     step_name = "consensus_peaks",
+##     dependency = "call_peaks_macs_noref"
+## )
 
 
-## ----chip_peak_anno, eval=FALSE---------------------------
-## library(ChIPpeakAnno); library(GenomicFeatures)
-## dir_path <- system.file("extdata/cwl/annotate_peaks", package="systemPipeR")
-## args <- loadWF(targets = "targets_macs.txt", wf_file = "annotate-peaks.cwl",
-##     input_file = "annotate-peaks.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
+## ----annotation_ChIPseeker, eval=FALSE, spr=TRUE----------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         library(ChIPseeker); library(GenomicFeatures)
+##         peaks_files <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles", column = "peaks_xls")
+##         txdb <- suppressWarnings(makeTxDbFromGFF(file="data/tair10.gff", format="gff", dataSource="TAIR",
+##                                 organism="Arabidopsis thaliana"))
+##         for(i in seq(along=peaks_files)) {
+##             peakAnno <- annotatePeak(peaks_files[i], TxDb=txdb, verbose=FALSE)
+##             df <- as.data.frame(peakAnno)
+##             outpaths <- paste0("./results/", names(peaks_files), "_ChIPseeker_annotated.xls")
+##             names(outpaths) <- names(peaks_files)
+##             write.table(df, outpaths[i], quote=FALSE, row.names=FALSE, sep="\t")
+##         }
+##         updateColumn(sal, step = "annotation_ChIPseeker", position = "outfiles") <- data.frame(outpaths)
+##     },
+##     step_name = "annotation_ChIPseeker",
+##     dependency = "call_peaks_macs_noref"
+## )
+
+
+## ----ChIPseeker_plots, eval=FALSE, spr=TRUE---------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         peaks_files <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles", column = "peaks_xls")
+##         peak <- readPeakFile(peaks_files[1])
+##         covplot(peak, weightCol="X.log10.pvalue.")
+##         peakHeatmap(peaks_files[1], TxDb=txdb, upstream=1000, downstream=1000,
+##                     color="red")
+##         pdf("results/peaksProfile.pdf")
+##         plotAvgProf2(peaks_files[1], TxDb=txdb, upstream=1000, downstream=1000,
+##                      xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency",
+##                      conf=0.05)
+##         dev.off()
+##     },
+##     step_name = "ChIPseeker_plots",
+##     dependency = "annotation_ChIPseeker"
+## )
+
+
+## ----annotation_ChIPpeakAnno, eval=FALSE, spr=TRUE--------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         library(ChIPpeakAnno); library(GenomicFeatures)
+##         peaks_files <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles", column = "peaks_xls")
+##         txdb <- suppressWarnings(makeTxDbFromGFF(file="data/tair10.gff", format="gff", dataSource="TAIR",
+##                                 organism="Arabidopsis thaliana"))
+##         ge <- genes(txdb, columns=c("tx_name", "gene_id", "tx_type"))
+##         for(i in seq(along=peaks_files)) {
+##             peaksGR <- as(read.delim(peaks_files[i], comment="#"), "GRanges")
+##             annotatedPeak <- annotatePeakInBatch(peaksGR, AnnotationData=genes(txdb))
+##             df <- data.frame(as.data.frame(annotatedPeak),
+##                              as.data.frame(values(ge[values(annotatedPeak)$feature,])))
+##             df$tx_name <- as.character(lapply(df$tx_name, function(x) paste(unlist(x), sep='', collapse=', ')))
+##             df$tx_type <- as.character(lapply(df$tx_type, function(x) paste(unlist(x), sep='', collapse=', ')))
+##             outpaths <- paste0("./results/", names(peaks_files), "_ChIPpeakAnno_annotated.xls")
+##             names(outpaths) <- names(peaks_files)
+##             write.table(df, outpaths[i], quote=FALSE, row.names=FALSE, sep="\t")
+##             }
+##     },
+##     step_name = "annotation_ChIPpeakAnno",
+##     dependency = "call_peaks_macs_noref",
+##     run_step = "optional"
+## )
+
+
+## ----count_peak_ranges, eval=FALSE, spr=TRUE--------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         library(GenomicRanges)
+##         bam_files <- getColumn(sal, step = "bowtie2_alignment", "outfiles", column = "samtools_sort_bam")
+##         args <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles", column = "peaks_xls")
+##         outfiles <- paste0("./results/", names(args), "_countDF.xls")
+##         bfl <- BamFileList(bam_files, yieldSize=50000, index=character())
+##         countDFnames <- countRangeset(bfl, args, outfiles, mode="Union", ignore.strand=TRUE)
+##         updateColumn(sal, step = "count_peak_ranges", position = "outfiles") <- data.frame(countDFnames)
+##     },
+##     step_name = "count_peak_ranges",
+##     dependency = "call_peaks_macs_noref",
+## )
+
+
+## ----diff_bind_analysis, eval=FALSE, spr=TRUE-------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         countDF_files <- getColumn(sal, step = "count_peak_ranges", "outfiles")
+##         outfiles <- paste0("./results/", names(countDF_files), "_peaks_edgeR.xls")
+##         names(outfiles) <- names(countDF_files)
+##         cmp <- readComp(file =stepsWF(sal)[["bowtie2_alignment"]],
+##                         format="matrix")
+##         dbrlist <- runDiff(args=countDF_files, outfiles = outfiles, diffFct=run_edgeR,
+##                            targets=targetsWF(sal)[["bowtie2_alignment"]], cmp=cmp[[1]],
+##                            independent=TRUE, dbrfilter=c(Fold=2, FDR=1))
+##     },
+##     step_name = "diff_bind_analysis",
+##     dependency = "count_peak_ranges",
+## )
+
+
+## ----go_enrich, eval=FALSE, spr=TRUE----------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         annofiles <- getColumn(sal, step = "annotation_ChIPseeker", "outfiles")
+##         gene_ids <- sapply(annofiles,
+##                            function(x) unique(as.character
+##                                               (read.delim(x)[,"geneId"])), simplify=FALSE)
+##         load("data/GO/catdb.RData")
+##         BatchResult <- GOCluster_Report(catdb=catdb, setlist=gene_ids, method="all",
+##                                         id_type="gene", CLSZ=2, cutoff=0.9,
+##                                         gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+##     },
+##     step_name = "go_enrich",
+##     dependency = "annotation_ChIPseeker",
+## )
+
+
+## ----parse_peak_sequences, eval=FALSE, spr=TRUE-----------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         library(Biostrings); library(seqLogo); library(BCRANK)
+##         rangefiles <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles")
+##         for(i in seq(along=rangefiles)) {
+##             df <- read.delim(rangefiles[i], comment="#")
+##             peaks <- as(df, "GRanges")
+##             names(peaks) <- paste0(as.character(seqnames(peaks)), "_", start(peaks),
+##                                    "-", end(peaks))
+##             peaks <- peaks[order(values(peaks)$X.log10.pvalue., decreasing=TRUE)]
+##             pseq <- getSeq(FaFile("./data/tair10.fasta"), peaks)
+##             names(pseq) <- names(peaks)
+##             writeXStringSet(pseq, paste0(rangefiles[i], ".fasta"))
+##             }
+##         },
+##     step_name = "parse_peak_sequences",
+##     dependency = "call_peaks_macs_noref",
+## )
 ## 
-## txdb <- makeTxDbFromGFF(file="data/tair10.gff", format="gff", dataSource="TAIR",
-##                         organism="Arabidopsis thaliana")
-## ge <- genes(txdb, columns=c("tx_name", "gene_id", "tx_type"))
-## for(i in seq(along=args)) {
-##     peaksGR <- as(read.delim(infile1(args)[i], comment="#"), "GRanges")
-##     annotatedPeak <- annotatePeakInBatch(peaksGR, AnnotationData=genes(txdb))
-##     df <- data.frame(as.data.frame(annotatedPeak),
-##                      as.data.frame(values(ge[values(annotatedPeak)$feature,])))
-##     outpaths <- subsetWF(args , slot="output", subset=1, index=1)
-##     write.table(df, outpaths[i], quote=FALSE, row.names=FALSE, sep="\t")
-## }
-## writeTargetsout(x=args, file="targets_peakanno.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE )
 
 
-## ----chip_peak_anno_full_annotation, include=FALSE, eval=FALSE----
-## ## Perform previous step with full genome annotation from Biomart
-## # txdb <- makeTxDbFromBiomart(biomart = "plants_mart", dataset = "athaliana_eg_gene", host="plants.ensembl.org")
-## # tx <- transcripts(txdb, columns=c("tx_name", "gene_id", "tx_type"))
-## # ge <- genes(txdb, columns=c("tx_name", "gene_id", "tx_type")) # works as well
-## # seqlevels(ge) <- c("Chr1", "Chr2", "Chr3", "Chr4", "Chr5", "ChrC", "ChrM")
-## # table(mcols(tx)$tx_type)
-## # tx <- tx[!duplicated(unstrsplit(values(tx)$gene_id, sep=","))] # Keeps only first transcript model for each gene]
-## # annotatedPeak <- annotatePeakInBatch(peaksGR, AnnotationData = tx)
+## ----bcrank_enrich, eval=FALSE, spr=TRUE------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         library(Biostrings); library(seqLogo); library(BCRANK)
+##         rangefiles <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles")
+##         set.seed(0)
+##         BCRANKout <- bcrank(paste0(rangefiles[1], ".fasta"), restarts=25,
+##                             use.P1=TRUE, use.P2=TRUE)
+##         toptable(BCRANKout)
+##         topMotif <- toptable(BCRANKout, 1)
+##         weightMatrix <- pwm(topMotif, normalize = FALSE)
+##         weightMatrixNormalized <- pwm(topMotif, normalize = TRUE)
+##         pdf("results/seqlogo.pdf")
+##         seqLogo(weightMatrixNormalized)
+##         dev.off()
+##         },
+##     step_name = "bcrank_enrich",
+##     dependency = "call_peaks_macs_noref",
+## )
 
 
-## ----chip_peak_seeker, eval=FALSE-------------------------
-## library(ChIPseeker)
-## for(i in seq(along=args)) {
-##     peakAnno <- annotatePeak(infile1(args)[i], TxDb=txdb, verbose=FALSE)
-##     df <- as.data.frame(peakAnno)
-##     outpaths <- subsetWF(args , slot="output", subset=1, index=1)
-##     write.table(df, outpaths[i], quote=FALSE, row.names=FALSE, sep="\t")
-## }
-## writeTargetsout(x=args, file="targets_peakanno.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE )
+## ----sessionInfo, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         sessionInfo()
+##         },
+##     step_name = "sessionInfo",
+##     dependency = "bcrank_enrich",
+## )
 
 
-## ----chip_peak_seeker_plots, eval=FALSE-------------------
-## peak <- readPeakFile(infile1(args)[1])
-## covplot(peak, weightCol="X.log10.pvalue.")
-## outpaths <- subsetWF(args , slot="output", subset=1, index=1)
-## peakHeatmap(outpaths[1], TxDb=txdb, upstream=1000, downstream=1000,
-##             color="red")
-## plotAvgProf2(outpaths[1], TxDb=txdb, upstream=1000, downstream=1000,
-##              xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency")
+## ----runWF, eval=FALSE------------------------------------
+## sal <- runWF(sal)
 
 
-## ----count_peak_ranges, eval=FALSE------------------------
-## library(GenomicRanges)
-## dir_path <- system.file("extdata/cwl/count_rangesets", package="systemPipeR")
-## args <- loadWF(targets = "targets_macs.txt", wf_file = "count_rangesets.cwl",
-##     input_file = "count_rangesets.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-## 
-## ## Bam Files
-## targets <- system.file("extdata", "targetsPE_chip.txt", package="systemPipeR")
-## dir_path <- system.file("extdata/cwl/bowtie2/bowtie2-pe", package="systemPipeR")
-## args_bam <- loadWF(targets = targets, wf_file = "bowtie2-mapping-pe.cwl",
-##     input_file = "bowtie2-mapping-pe.yml", dir_path = dir_path)
-## args_bam <- renderWF(args_bam, inputvars = c(FileName1 = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-## args_bam <- output_update(args_bam, dir=FALSE, replace=TRUE, extension=c(".sam", ".bam"))
-## outpaths <- subsetWF(args_bam, slot="output", subset=1, index=1)
-## 
-## bfl <- BamFileList(outpaths, yieldSize=50000, index=character())
-## countDFnames <- countRangeset(bfl, args, mode="Union", ignore.strand=TRUE)
-## writeTargetsout(x=args, file="targets_countDF.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE )
+## ----runWF_cluster, eval=FALSE----------------------------
+## resources <- list(conffile=".batchtools.conf.R",
+##                   template="batchtools.slurm.tmpl",
+##                   Njobs=18,
+##                   walltime=120, ## minutes
+##                   ntasks=1,
+##                   ncpus=4,
+##                   memory=1024, ## Mb
+##                   partition = "short"
+##                   )
+## sal <- addResources(sal, c("bowtie2_alignment"), resources = resources)
+## sal <- runWF(sal)
 
 
-## ----diff_bind_analysis, eval=FALSE-----------------------
-## dir_path <- system.file("extdata/cwl/rundiff", package="systemPipeR")
-## args_diff <- loadWF(targets = "targets_countDF.txt", wf_file = "rundiff.cwl",
-##     input_file = "rundiff.yml", dir_path = dir_path)
-## args_diff <- renderWF(args_diff, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-## 
-## cmp <- readComp(file=args_bam, format="matrix")
-## dbrlist <- runDiff(args=args_diff, diffFct=run_edgeR,
-##                    targets=targets.as.df(targets(args_bam)), cmp=cmp[[1]],
-##                    independent=TRUE, dbrfilter=c(Fold=2, FDR=1))
-## writeTargetsout(x=args_diff, file="targets_rundiff.txt", step = 1,
-##                 new_col = "FileName", new_col_output_index = 1, overwrite = TRUE )
+## ----plotWF, eval=FALSE-----------------------------------
+## plotWF(sal, rstudio = TRUE)
 
 
-## ----go_enrich, eval=FALSE--------------------------------
-## dir_path <- system.file("extdata/cwl/annotate_peaks", package="systemPipeR")
-## args <- loadWF(targets = "targets_bam_ref.txt", wf_file = "annotate-peaks.cwl",
-##     input_file = "annotate-peaks.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName1 = "_FASTQ_PATH1_", FileName2 = "_FASTQ_PATH2_", SampleName = "_SampleName_"))
-## 
-## args_anno <- loadWF(targets = "targets_macs.txt", wf_file = "annotate-peaks.cwl",
-##     input_file = "annotate-peaks.yml", dir_path = dir_path)
-## args_anno <- renderWF(args_anno, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-## annofiles <- subsetWF(args_anno, slot="output", subset=1, index=1)
-## gene_ids <- sapply(names(annofiles),
-##                    function(x) unique(as.character
-##                     (read.delim(annofiles[x])[,"geneId"])), simplify=FALSE)
-## load("data/GO/catdb.RData")
-## BatchResult <- GOCluster_Report(catdb=catdb, setlist=gene_ids, method="all",
-##                                 id_type="gene", CLSZ=2, cutoff=0.9,
-##                                 gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+## ----statusWF, eval=FALSE---------------------------------
+## sal
+## statusWF(sal)
 
 
-## ----parse_peak_sequences, eval=FALSE---------------------
-## library(Biostrings); library(seqLogo); library(BCRANK)
-## dir_path <- system.file("extdata/cwl/annotate_peaks", package="systemPipeR")
-## args <- loadWF(targets = "targets_macs.txt", wf_file = "annotate-peaks.cwl",
-##     input_file = "annotate-peaks.yml", dir_path = dir_path)
-## args <- renderWF(args, inputvars = c(FileName = "_FASTQ_PATH1_", SampleName = "_SampleName_"))
-## 
-## rangefiles <- infile1(args)
-## for(i in seq(along=rangefiles)) {
-##     df <- read.delim(rangefiles[i], comment="#")
-##     peaks <- as(df, "GRanges")
-##     names(peaks) <- paste0(as.character(seqnames(peaks)), "_", start(peaks),
-##                            "-", end(peaks))
-##     peaks <- peaks[order(values(peaks)$X.log10.pvalue., decreasing=TRUE)]
-##     pseq <- getSeq(FaFile("./data/tair10.fasta"), peaks)
-##     names(pseq) <- names(peaks)
-##     writeXStringSet(pseq, paste0(rangefiles[i], ".fasta"))
-## }
-
-
-## ----bcrank_enrich, eval=FALSE----------------------------
-## set.seed(0)
-## BCRANKout <- bcrank(paste0(rangefiles[1], ".fasta"), restarts=25,
-##                     use.P1=TRUE, use.P2=TRUE)
-## toptable(BCRANKout)
-## topMotif <- toptable(BCRANKout, 1)
-## weightMatrix <- pwm(topMotif, normalize = FALSE)
-## weightMatrixNormalized <- pwm(topMotif, normalize = TRUE)
-## pdf("results/seqlogo.pdf")
-## seqLogo(weightMatrixNormalized)
-## dev.off()
-
-
-## ----sessionInfo------------------------------------------
-sessionInfo()
+## ----logsWF, eval=FALSE-----------------------------------
+## sal <- renderLogs(sal)
 
