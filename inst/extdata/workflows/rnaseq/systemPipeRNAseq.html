@@ -281,7 +281,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">RNA-Seq Workflow Template</h1>
 <p class="author-name">Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)</p>
-<h4 class="date">Last update: 01 April, 2022</h4>
+<h4 class="date">Last update: 10 April, 2022</h4>
 <h4 class="package">Package</h4>
 <p>systemPipeR 2.1.14</p>
 
@@ -402,7 +402,7 @@ routines. Internally, <code>preprocessReads</code> uses the <code>FastqStreamer<
 the <code>ShortRead</code> package to stream through large FASTQ files in a
 memory-efficient manner. The following example performs adapter trimming with
 the <code>trimLRPatterns</code> function from the <code>Biostrings</code> package.</p>
-<p>Here, we are appending this step at the <code>SYSargsList</code> object created previously.
+<p>Here, we are appending this step to the <code>SYSargsList</code> object created previously.
 All the parameters are defined on the <code>preprocessReads/preprocessReads-pe.yml</code> file.</p>
 <pre class="r"><code>appendStep(sal) &lt;- SYSargsList(step_name = &quot;preprocessing&quot;, targets = &quot;targetsPE.txt&quot;,
     dir = TRUE, wf_file = &quot;preprocessReads/preprocessReads-pe.cwl&quot;,
@@ -413,17 +413,20 @@ All the parameters are defined on the <code>preprocessReads/preprocessReads-pe.y
 <p>After the preprocessing step, the <code>outfiles</code> files can be used to generate the new
 targets files containing the paths to the trimmed FASTQ files. The new targets
 information can be used for the next workflow step instance, <em>e.g.</em> running the
-NGS alignments with the trimmed FASTQ files.</p>
+NGS alignments with the trimmed FASTQ files. The <code>appendStep</code> function is
+automatically handling this connectivity between steps. Please check the next
+step for more details.</p>
 <p>The following example shows how one can design a custom read <em>‘preprocessReads’</em>
 function using utilities provided by the <code>ShortRead</code> package, and then run it
-in batch mode with the <em>‘preprocessReads’</em> function. For here, it is possible to
+in batch mode with the <em>‘preprocessReads’</em> function. Here, it is possible to
 replace the function used on the <code>preprocessing</code> step and modify the <code>sal</code> object.
 Because it is a custom function, it is necessary to save the part in the R object,
-and internally the <code>preprocessReads.doc.R</code> is loading the function. If the R object
-is saved with a different name (here <code>&quot;param/customFCT.RData&quot;</code>), please replace
-that accordingly in the <code>preprocessReads.doc.R</code>.</p>
-<p>Please, note that this step is not added to the workflow, here just for demonstration.</p>
-<p>First, we defined the function in the workflow:</p>
+and internally the <code>preprocessReads.doc.R</code> is loading the custom function.
+If the R object is saved with a different name (here <code>&quot;param/customFCT.RData&quot;</code>),
+please replace that accordingly in the <code>preprocessReads.doc.R</code>.</p>
+<p>Please, note that this step is not added to the workflow, here just for
+demonstration.</p>
+<p>First, we defined the custom function in the workflow:</p>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
     filterFct &lt;- function(fq, cutoff = 20, Nexceptions = 0) {
         qcount &lt;- rowSums(as(quality(fq), &quot;matrix&quot;) &lt;= cutoff,
@@ -442,21 +445,24 @@ cmdlist(sal, &quot;preprocessing&quot;, targets = 1)  ## check if the command li
 </div>
 <div id="read-trimming-with-trimmomatic" class="section level3" number="3.2.2">
 <h3><span class="header-section-number">3.2.2</span> Read trimming with Trimmomatic</h3>
-<p>Next, we need to populate the object created with the second step in the
-workflow. Here, an example of how to perform this task using parameters template
-files for trimming FASTQ files with <a href="http://www.usadellab.org/cms/?page=trimmomatic">Trimmomatic</a> software <span class="citation">(Bolger, Lohse, and Usadel 2014)</span>.</p>
+<p><a href="http://www.usadellab.org/cms/?page=trimmomatic">Trimmomatic</a> software <span class="citation">(Bolger, Lohse, and Usadel 2014)</span>
+performs a variety of useful trimming tasks for Illumina paired-end and single
+ended data. Here, an example of how to perform this task using parameters template
+files for trimming FASTQ files.</p>
+<p>This step is optional.</p>
 <pre class="r"><code>appendStep(sal) &lt;- SYSargsList(step_name = &quot;trimming&quot;, targets = &quot;targetsPE.txt&quot;,
     wf_file = &quot;trimmomatic/trimmomatic-pe.cwl&quot;, input_file = &quot;trimmomatic/trimmomatic-pe.yml&quot;,
-    dir_path = &quot;param/cwl&quot;, inputvars = c(FileName1 = &quot;_FASTQ_PATH1_&quot;,
-        FileName2 = &quot;_FASTQ_PATH2_&quot;, SampleName = &quot;_SampleName_&quot;),
-    dependency = &quot;load_SPR&quot;, run_step = &quot;optional&quot;)</code></pre>
+    dir_path = system.file(&quot;extdata/cwl&quot;, package = &quot;systemPipeR&quot;),
+    inputvars = c(FileName1 = &quot;_FASTQ_PATH1_&quot;, FileName2 = &quot;_FASTQ_PATH2_&quot;,
+        SampleName = &quot;_SampleName_&quot;), dependency = &quot;load_SPR&quot;,
+    run_step = &quot;optional&quot;)</code></pre>
 </div>
 <div id="fastq-quality-report" class="section level3" number="3.2.3">
 <h3><span class="header-section-number">3.2.3</span> FASTQ quality report</h3>
 <p>The following <code>seeFastq</code> and <code>seeFastqPlot</code> functions generate and plot a series of useful
-quality statistics for a set of FASTQ files including per cycle quality box
+quality statistics for a set of FASTQ files, including per cycle quality box
 plots, base proportions, base-level quality trends, relative k-mer
-diversity, length and occurrence distribution of reads, number of reads
+diversity, length, and occurrence distribution of reads, number of reads
 above quality cutoffs and mean quality distribution. The results are
 written to a PDF file named <code>fastqReport.pdf</code>.</p>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
@@ -491,21 +497,23 @@ Figure 1: FASTQ quality report for 18 samples
 and <code>workflow_hisat2-pe.yml</code> files. The following shows how to construct the
 corresponding <em>SYSargsList</em> object.</p>
 <pre class="r"><code>appendStep(sal) &lt;- SYSargsList(step_name = &quot;hisat2_mapping&quot;,
-    targets = &quot;preprocessing&quot;, dir = TRUE, wf_file = &quot;workflow-hisat2/workflow_hisat2-pe.cwl&quot;,
+    dir = TRUE, targets = &quot;preprocessing&quot;, wf_file = &quot;workflow-hisat2/workflow_hisat2-pe.cwl&quot;,
     input_file = &quot;workflow-hisat2/workflow_hisat2-pe.yml&quot;, dir_path = &quot;param/cwl&quot;,
     inputvars = c(preprocessReads_1 = &quot;_FASTQ_PATH1_&quot;, preprocessReads_2 = &quot;_FASTQ_PATH2_&quot;,
         SampleName = &quot;_SampleName_&quot;), rm_targets_col = c(&quot;FileName1&quot;,
         &quot;FileName2&quot;), dependency = c(&quot;preprocessing&quot;, &quot;hisat2_index&quot;))</code></pre>
+<p>To double-check the command line for each sample, please use the following:</p>
+<pre class="r"><code>cmdlist(sal, step = &quot;hisat2_mapping&quot;, targets = 1)</code></pre>
 </div>
 <div id="read-and-alignment-stats" class="section level3" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> Read and alignment stats</h3>
 <p>The following provides an overview of the number of reads in each sample
 and how many of them aligned to the reference.</p>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
-    bampaths &lt;- getColumn(sal, step = &quot;hisat2_mapping&quot;, &quot;outfiles&quot;,
-        column = &quot;samtools_sort_bam&quot;)
     fqpaths &lt;- getColumn(sal, step = &quot;preprocessing&quot;, &quot;targetsWF&quot;,
         column = &quot;FileName1&quot;)
+    bampaths &lt;- getColumn(sal, step = &quot;hisat2_mapping&quot;, &quot;outfiles&quot;,
+        column = &quot;samtools_sort_bam&quot;)
     read_statsDF &lt;- alignStats(args = bampaths, fqpaths = fqpaths,
         pairEnd = TRUE)
     write.table(read_statsDF, &quot;results/alignStats.xls&quot;, row.names = FALSE,
@@ -513,8 +521,22 @@ and how many of them aligned to the reference.</p>
 }, step_name = &quot;align_stats&quot;, dependency = &quot;hisat2_mapping&quot;)</code></pre>
 </div>
 </div>
-<div id="read-quantification" class="section level2" number="3.4">
-<h2><span class="header-section-number">3.4</span> Read quantification</h2>
+<div id="create-symbolic-links-for-viewing-bam-files-in-igv" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Create symbolic links for viewing BAM files in IGV</h2>
+<p>The <code>symLink2bam</code> function creates symbolic links to view the BAM alignment files in a
+genome browser such as IGV without moving these large files to a local
+system. The corresponding URLs are written to a file with a path
+specified under <code>urlfile</code>, here <code>IGVurl.txt</code>.
+Please replace the directory and the user name.</p>
+<pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
+    bampaths &lt;- getColumn(sal, step = &quot;hisat2_mapping&quot;, &quot;outfiles&quot;,
+        column = &quot;samtools_sort_bam&quot;)
+    symLink2bam(sysargs = bampaths, htmldir = c(&quot;~/.html/&quot;, &quot;somedir/&quot;),
+        urlbase = &quot;http://cluster.hpcc.ucr.edu/~tgirke/&quot;, urlfile = &quot;./results/IGVurl.txt&quot;)
+}, step_name = &quot;bam_IGV&quot;, dependency = &quot;hisat2_mapping&quot;, run_step = &quot;optional&quot;)</code></pre>
+</div>
+<div id="read-quantification" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Read quantification</h2>
 <p>Reads overlapping with annotation ranges of interest are counted for
 each sample using the <code>summarizeOverlaps</code> function <span class="citation">(Lawrence et al. 2013)</span>.
 The read counting is preformed for exon gene regions in a non-strand-specific
@@ -524,8 +546,8 @@ count values are normalized by <em>reads per kp per million mapped reads</em>
 RPKM table (<code>rpkmDFeByg.xls</code>) are written to separate files in the directory of
 this project. Parallelization is achieved with the <code>BiocParallel</code> package,
 here using 4 CPU cores.</p>
-<div id="create-a-database-for-gene-annotation" class="section level3" number="3.4.1">
-<h3><span class="header-section-number">3.4.1</span> Create a database for gene annotation</h3>
+<div id="create-a-database-for-gene-annotation" class="section level3" number="3.5.1">
+<h3><span class="header-section-number">3.5.1</span> Create a database for gene annotation</h3>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
     library(GenomicFeatures)
     library(BiocParallel)
@@ -534,8 +556,8 @@ here using 4 CPU cores.</p>
     saveDb(txdb, file = &quot;./data/tair10.sqlite&quot;)
 }, step_name = &quot;create_db&quot;, dependency = &quot;hisat2_mapping&quot;)</code></pre>
 </div>
-<div id="read-counting-with-summarizeoverlaps-in-parallel-mode-using-multiple-cores" class="section level3" number="3.4.2">
-<h3><span class="header-section-number">3.4.2</span> Read counting with <code>summarizeOverlaps</code> in parallel mode using multiple cores</h3>
+<div id="read-counting-with-summarizeoverlaps-in-parallel-mode-using-multiple-cores" class="section level3" number="3.5.2">
+<h3><span class="header-section-number">3.5.2</span> Read counting with <code>summarizeOverlaps</code> in parallel mode using multiple cores</h3>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
     library(GenomicFeatures)
     library(BiocParallel)
@@ -581,8 +603,8 @@ usage of RPKM values should be restricted to specialty applications
 required by some users, <em>e.g.</em> manually comparing the expression levels
 among different genes or features.</p>
 </div>
-<div id="sample-wise-correlation-analysis" class="section level3" number="3.4.3">
-<h3><span class="header-section-number">3.4.3</span> Sample-wise correlation analysis</h3>
+<div id="sample-wise-correlation-analysis" class="section level3" number="3.5.3">
+<h3><span class="header-section-number">3.5.3</span> Sample-wise correlation analysis</h3>
 <p>The following computes the sample-wise Spearman correlation coefficients from
 the <code>rlog</code> transformed expression values generated with the <code>DESeq2</code> package. After
 transformation to a distance matrix, hierarchical clustering is performed with
@@ -608,14 +630,14 @@ Figure 2: Correlation dendrogram of samples
 <p></br></p>
 </div>
 </div>
-<div id="analysis-of-degs" class="section level2" number="3.5">
-<h2><span class="header-section-number">3.5</span> Analysis of DEGs</h2>
+<div id="analysis-of-degs" class="section level2" number="3.6">
+<h2><span class="header-section-number">3.6</span> Analysis of DEGs</h2>
 <p>The analysis of differentially expressed genes (DEGs) is performed with
 the <code>glm</code> method of the <code>edgeR</code> package <span class="citation">(Robinson, McCarthy, and Smyth 2010)</span>. The sample
 comparisons used by this analysis are defined in the header lines of the
 <code>targets.txt</code> file starting with <code>&lt;CMP&gt;</code>.</p>
-<div id="run-edger" class="section level3" number="3.5.1">
-<h3><span class="header-section-number">3.5.1</span> Run <code>edgeR</code></h3>
+<div id="run-edger" class="section level3" number="3.6.1">
+<h3><span class="header-section-number">3.6.1</span> Run <code>edgeR</code></h3>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
     library(edgeR)
     countDF &lt;- read.delim(&quot;results/countDFeByg.xls&quot;, row.names = 1,
@@ -626,8 +648,8 @@ comparisons used by this analysis are defined in the header lines of the
         cmp = cmp[[1]], independent = FALSE, mdsplot = &quot;&quot;)
 }, step_name = &quot;run_edger&quot;, dependency = &quot;read_counting&quot;)</code></pre>
 </div>
-<div id="add-gene-descriptions" class="section level3" number="3.5.2">
-<h3><span class="header-section-number">3.5.2</span> Add gene descriptions</h3>
+<div id="add-gene-descriptions" class="section level3" number="3.6.2">
+<h3><span class="header-section-number">3.6.2</span> Add gene descriptions</h3>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
     library(&quot;biomaRt&quot;)
     m &lt;- useMart(&quot;plants_mart&quot;, dataset = &quot;athaliana_eg_gene&quot;,
@@ -643,8 +665,8 @@ comparisons used by this analysis are defined in the header lines of the
         sep = &quot;\t&quot;, col.names = NA)
 }, step_name = &quot;custom_annot&quot;, dependency = &quot;run_edger&quot;)</code></pre>
 </div>
-<div id="plot-deg-results" class="section level3" number="3.5.3">
-<h3><span class="header-section-number">3.5.3</span> Plot DEG results</h3>
+<div id="plot-deg-results" class="section level3" number="3.6.3">
+<h3><span class="header-section-number">3.6.3</span> Plot DEG results</h3>
 <p>Filter and plot DEG results for up and down regulated genes. The
 definition of <em>up</em> and <em>down</em> is given in the corresponding help
 file. To open it, type <code>?filterDEGs</code> in the R console.</p>
@@ -659,8 +681,8 @@ file. To open it, type <code>?filterDEGs</code> in the R console.</p>
         quote = FALSE, sep = &quot;\t&quot;, row.names = FALSE)
 }, step_name = &quot;filter_degs&quot;, dependency = &quot;custom_annot&quot;)</code></pre>
 </div>
-<div id="venn-diagrams-of-deg-sets" class="section level3" number="3.5.4">
-<h3><span class="header-section-number">3.5.4</span> Venn diagrams of DEG sets</h3>
+<div id="venn-diagrams-of-deg-sets" class="section level3" number="3.6.4">
+<h3><span class="header-section-number">3.6.4</span> Venn diagrams of DEG sets</h3>
 <p>The <code>overLapper</code> function can compute Venn intersects for large numbers of sample
 sets (up to 20 or more) and plots 2-5 way Venn diagrams. A useful
 feature is the possibility to combine the counts from several Venn
@@ -676,10 +698,10 @@ comparisons with the same number of sample sets in a single Venn diagram
 }, step_name = &quot;venn_diagram&quot;, dependency = &quot;filter_degs&quot;)</code></pre>
 </div>
 </div>
-<div id="go-term-enrichment-analysis" class="section level2" number="3.6">
-<h2><span class="header-section-number">3.6</span> GO term enrichment analysis</h2>
-<div id="obtain-gene-to-go-mappings" class="section level3" number="3.6.1">
-<h3><span class="header-section-number">3.6.1</span> Obtain gene-to-GO mappings</h3>
+<div id="go-term-enrichment-analysis" class="section level2" number="3.7">
+<h2><span class="header-section-number">3.7</span> GO term enrichment analysis</h2>
+<div id="obtain-gene-to-go-mappings" class="section level3" number="3.7.1">
+<h3><span class="header-section-number">3.7.1</span> Obtain gene-to-GO mappings</h3>
 <p>The following shows how to obtain gene-to-GO mappings from <code>biomaRt</code> (here for <em>A.
 thaliana</em>) and how to organize them for the downstream GO term
 enrichment analysis. Alternatively, the gene-to-GO mappings can be
@@ -715,8 +737,8 @@ with the <code>load</code> function as shown in the next subsection.</p>
     save(catdb, file = &quot;data/GO/catdb.RData&quot;)
 }, step_name = &quot;get_go_annot&quot;, dependency = &quot;filter_degs&quot;)</code></pre>
 </div>
-<div id="batch-go-term-enrichment-analysis" class="section level3" number="3.6.2">
-<h3><span class="header-section-number">3.6.2</span> Batch GO term enrichment analysis</h3>
+<div id="batch-go-term-enrichment-analysis" class="section level3" number="3.7.2">
+<h3><span class="header-section-number">3.7.2</span> Batch GO term enrichment analysis</h3>
 <p>Apply the enrichment analysis to the DEG sets obtained the above differential
 expression analysis. Note, in the following example the <code>FDR</code> filter is set
 here to an unreasonably high value, simply because of the small size of the toy
@@ -752,8 +774,8 @@ example shows how a GO slim vector for a specific organism can be obtained from
         recordSpecGO = NULL)
 }, step_name = &quot;go_enrich&quot;, dependency = &quot;get_go_annot&quot;)</code></pre>
 </div>
-<div id="plot-batch-go-term-results" class="section level3" number="3.6.3">
-<h3><span class="header-section-number">3.6.3</span> Plot batch GO term results</h3>
+<div id="plot-batch-go-term-results" class="section level3" number="3.7.3">
+<h3><span class="header-section-number">3.7.3</span> Plot batch GO term results</h3>
 <p>The <code>data.frame</code> generated by <code>GOCluster</code> can be plotted with the <code>goBarplot</code> function. Because of the
 variable size of the sample sets, it may not always be desirable to show
 the results from different DEG sets in the same bar plot. Plotting
@@ -776,8 +798,8 @@ Figure 5: GO Slim Barplot for MF Ontology
 <p></br></p>
 </div>
 </div>
-<div id="clustering-and-heat-maps" class="section level2" number="3.7">
-<h2><span class="header-section-number">3.7</span> Clustering and heat maps</h2>
+<div id="clustering-and-heat-maps" class="section level2" number="3.8">
+<h2><span class="header-section-number">3.8</span> Clustering and heat maps</h2>
 <p>The following example performs hierarchical clustering on the <code>rlog</code>
 transformed expression matrix subsetted by the DEGs identified in the above
 differential expression analysis. It uses a Pearson correlation-based distance
@@ -797,8 +819,8 @@ Figure 6: Heat Map with Hierarchical Clustering Dendrograms of DEGs
 </div>
 <p></br></p>
 </div>
-<div id="version-information" class="section level2" number="3.8">
-<h2><span class="header-section-number">3.8</span> Version Information</h2>
+<div id="version-information" class="section level2" number="3.9">
+<h2><span class="header-section-number">3.9</span> Version Information</h2>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
     sessionInfo()
 }, step_name = &quot;sessionInfo&quot;, dependency = &quot;heatmap&quot;)</code></pre>
@@ -839,7 +861,7 @@ function:</p>
                   walltime=120, ## minutes
                   ntasks=1,
                   ncpus=4, 
-                  memory=1024, ## Mb, 
+                  memory=1024, ## Mb
                   partition = &quot;short&quot;
                   )
 sal &lt;- addResources(sal, c(&quot;hisat2_mapping&quot;), resources = resources)
@@ -866,7 +888,7 @@ making it easier to check any standard output (<code>stdout</code>) or standard 
 </div>
 <div id="funding" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Funding</h1>
-<p>This project was supported by funds from the National Institutes of Health (NIH).</p>
+<p>This project is funded by NSF award <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1661152">ABI-1661152</a>.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
