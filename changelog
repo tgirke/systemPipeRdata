@@ -1,4 +1,7 @@
 changelog
+    version 1.23.6
+	- RIBO-seq template
+	
     version 1.23.3/4
 	- RNA-seq template
 	- Chip-seq template
