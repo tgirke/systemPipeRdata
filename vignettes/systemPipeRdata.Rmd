@@ -29,8 +29,6 @@ word-wrap: initial !important;
 - Compile from command-line
 Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRdata.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::pdf_document'))"
 
-- Commit to github
-git commit -am "some edits"; git push -u origin master
 -->
 
 ```{r style, echo = FALSE, results = 'asis'}

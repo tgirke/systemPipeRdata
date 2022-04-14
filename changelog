@@ -3,6 +3,7 @@ changelog
 	- RNA-seq template
 	- Chip-seq template
 	- VAR-seq template
+	- RIBO-seq template
 	
     version 1.22.2
 	- RNAseq file update

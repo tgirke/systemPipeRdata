@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">systemPipeRdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.21.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.23.6</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/systemPipeRdata.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -73,7 +69,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/tgirke/systemPipeRdata/">
+  <a href="https://github.com/tgirke/systemPipeRdata/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -88,15 +84,15 @@
 
       
 
-      </header><script src="systemPipeRNAseq_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>RNA-Seq Workflow Template</h1>
-                        <h4 class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
+                        <h4 data-toc-skip class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
             
-            <h4 class="date">Last update: 02 August, 2021</h4>
+            <h4 data-toc-skip class="date">Last update: 13 April, 2022</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRNAseq.Rmd"><code>vignettes/systemPipeRNAseq.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/HEAD/vignettes/systemPipeRNAseq.Rmd" class="external-link"><code>vignettes/systemPipeRNAseq.Rmd</code></a></small>
       <div class="hidden name"><code>systemPipeRNAseq.Rmd</code></div>
 
     </div>
@@ -104,7 +100,8 @@
     
     
 <!--
-Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRNAseq.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::pdf_document'))"
+# Compile from command-line
+Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::html_document'), clean=FALSE); knitr::knit('systemPipeRNAseq.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRNAseq.Rmd', c('BiocStyle::pdf_document'))"
 -->
 <style type="text/css">
 pre code {
@@ -125,79 +122,130 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
+</script><div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>Users want to provide here background information about the design of their RNA-Seq project.</p>
 </div>
-<div id="samples-and-environment-settings" class="section level1">
-<h1 class="hasAnchor">
-<a href="#samples-and-environment-settings" class="anchor"></a>Samples and environment settings</h1>
-<div id="environment-settings-and-input-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#environment-settings-and-input-data" class="anchor"></a>Environment settings and input data</h2>
-<p>Typically, the user wants to record here the sources and versions of the reference genome sequence along with the corresponding annotations. In the provided sample data set all data inputs are stored in a <code>data</code> subdirectory and all results will be written to a separate <code>results</code> directory, while the <code>systemPipeRNAseq.Rmd</code> script and the <code>targets</code> file are expected to be located in the parent directory. The R session is expected to run from this parent directory.</p>
-<p><a href="http://bioconductor.org/packages/release/data/experiment/html/systemPipeRdata.html"><em>systemPipeRdata</em></a> package is a helper package to generate a fully populated <a href="http://bioconductor.org/packages/release/bioc/html/systemPipeR.html"><em>systemPipeR</em></a> workflow environment in the current working directory with a single command. All the instruction for generating the workflow are provide in the <em>systemPipeRdata</em> vignette <a href="http://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html#1_Introduction">here</a>.</p>
-<p>The mini sample FASTQ files used by this report as well as the associated reference genome files can be loaded via the <em>systemPipeRdata</em> package. The chosen data set <a href="http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938">SRP010938</a> contains 18 paired-end (PE) read sets from <em>Arabidposis thaliana</em> <span class="citation">(Howard et al. 2013)</span>. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the <em>A. thaliana</em> genome. The corresponding reference genome sequence (FASTA) and its GFF annotation files have been truncated accordingly. This way the entire test sample data set is less than 200MB in storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single end) reads or PE reads.</p>
+<div class="section level2">
+<h2 id="samples-and-environment-settings">Samples and environment settings<a class="anchor" aria-label="anchor" href="#samples-and-environment-settings"></a>
+</h2>
+<div class="section level3">
+<h3 id="environment-settings-and-input-data">Environment settings and input data<a class="anchor" aria-label="anchor" href="#environment-settings-and-input-data"></a>
+</h3>
+<p><a href="http://bioconductor.org/packages/release/data/experiment/html/systemPipeRdata.html" class="external-link"><em>systemPipeRdata</em></a> package is a helper package to generate a fully populated <a href="http://bioconductor.org/packages/release/bioc/html/systemPipeR.html" class="external-link"><em>systemPipeR</em></a> workflow environment in the current working directory with a single command. All the instruction for generating the workflow are provide in the <em>systemPipeRdata</em> vignette <a href="http://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html#1_Introduction" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">systemPipeRdata</span><span class="fu">::</span><span class="fu"><a href="../reference/genWorkenvir.html">genWorkenvir</a></span><span class="op">(</span>workflow <span class="op">=</span> <span class="st">"rnaseq"</span>, mydirname <span class="op">=</span> <span class="st">"rnaseq"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/getwd.html">setwd</a></span><span class="op">(</span><span class="st">"rnaseq"</span><span class="op">)</span></code></pre></div>
-</div>
-</div>
-<div id="create-the-workflow-interactively" class="section level1">
-<h1 class="hasAnchor">
-<a href="#create-the-workflow-interactively" class="anchor"></a>Create the workflow interactively</h1>
-<p>This template provides some common steps for a RNAseq workflow. One can add, remove, modify workflow steps by operating on the <code>sal</code> object. For full documentation and details of SPR features and functions, please see the <a href="http://bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">main vignette</a>.</p>
+<span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">"rnaseq"</span><span class="op">)</span></code></pre></div>
+<p>Typically, the user wants to record here the sources and versions of the reference genome sequence along with the corresponding annotations. In the provided sample data set all data inputs are stored in a <code>data</code> subdirectory and all results will be written to a separate <code>results</code> directory, while the <code>systemPipeRNAseq.Rmd</code> workflow and the <code>targets</code> file are expected to be located in the parent directory.</p>
+<p>The chosen data set used by this report <a href="http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938" class="external-link">SRP010938</a> contains 18 paired-end (PE) read sets from <em>Arabidposis thaliana</em> <span class="citation">(Howard et al. 2013)</span>. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the <em>A. thaliana</em> genome. The corresponding reference genome sequence (FASTA) and its GFF annotation files have been truncated accordingly. This way the entire test sample data set is less than 200MB in storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single end) reads or PE reads.</p>
+<p>To work with real data, users want to organize their own data similarly and substitute all test data for their own data. To rerun an established workflow on new data, the initial <code>targets</code> file along with the corresponding FASTQ files are usually the only inputs the user needs to provide.</p>
+<p>For more details, please consult the documentation <a href="http://www.bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html" class="external-link">here</a>. More information about the <code>targets</code> files from <em>systemPipeR</em> can be found <a href="http://www.bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#42_Structure_of_initial_targets_data" class="external-link">here</a>.</p>
+<div class="section level4">
+<h4 id="experiment-definition-provided-by-targets-file">Experiment definition provided by <code>targets</code> file<a class="anchor" aria-label="anchor" href="#experiment-definition-provided-by-targets-file"></a>
+</h4>
+<p>The <code>targets</code> file defines all FASTQ files and sample comparisons of the analysis workflow.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SPRproject.html">SPRproject</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>If you desire to import this entire workflow in one step, please skip this tutorial and follow:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">systemPipeRdata</span><span class="fu">::</span><span class="fu"><a href="../reference/genWorkenvir.html">genWorkenvir</a></span><span class="op">(</span>workflow <span class="op">=</span> <span class="st">"rnaseq"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/getwd.html">setwd</a></span><span class="op">(</span><span class="st">"rnaseq"</span><span class="op">)</span>
-<span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SPRproject.html">SPRproject</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/importWF.html">importWF</a></span><span class="op">(</span><span class="va">sal</span>, file_path <span class="op">=</span> <span class="st">"systemPipeRNAseq_importWF.Rmd"</span>,
-    verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runWF.html">runWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/plotWF.html">plotWF</a></span><span class="op">(</span><span class="va">sal</span>, rstudio <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderLogs.html">renderLogs</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
-<div id="required-packages-and-resources" class="section level2">
-<h2 class="hasAnchor">
-<a href="#required-packages-and-resources" class="anchor"></a>Required packages and resources</h2>
-<p>The <code>systemPipeR</code> package needs to be loaded <span class="citation">(H Backman and Girke 2016)</span>.</p>
+<code class="sourceCode R"><span class="va">targetspath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"targetsPE.txt"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>
+<span class="va">targets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.delim</a></span><span class="op">(</span><span class="va">targetspath</span>, comment.char <span class="op">=</span> <span class="st">"#"</span><span class="op">)</span>
+<span class="va">targets</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">##                     FileName1                   FileName2</span>
+<span class="co">## 1 ./data/SRR446027_1.fastq.gz ./data/SRR446027_2.fastq.gz</span>
+<span class="co">## 2 ./data/SRR446028_1.fastq.gz ./data/SRR446028_2.fastq.gz</span>
+<span class="co">## 3 ./data/SRR446029_1.fastq.gz ./data/SRR446029_2.fastq.gz</span>
+<span class="co">## 4 ./data/SRR446030_1.fastq.gz ./data/SRR446030_2.fastq.gz</span>
+<span class="co">##   SampleName Factor        Date</span>
+<span class="co">## 1        M1A     M1 23-Mar-2012</span>
+<span class="co">## 2        M1B     M1 23-Mar-2012</span>
+<span class="co">## 3        A1A     A1 23-Mar-2012</span>
+<span class="co">## 4        A1B     A1 23-Mar-2012</span></code></pre>
+<p>To work with custom data, users need to generate a <em><code>targets</code></em> file containing the paths to their own FASTQ files.</p>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="workflow-environment">Workflow environment<a class="anchor" aria-label="anchor" href="#workflow-environment"></a>
+</h2>
+<p><em><code>systemPipeR</code></em> workflows can be designed and built from start to finish with a single command, importing from an R Markdown file or stepwise in interactive mode from the R console.</p>
+<p>This tutorial will demonstrate how to build the workflow in an interactive mode, appending each step. The workflow is constructed by connecting each step via <code>appendStep</code> method. Each <code>SYSargsList</code> instance contains instructions needed for processing a set of input files with a specific command-line or R software and the paths to the corresponding outfiles generated by a particular tool/step.</p>
+<p>To create a Workflow within <em><code>systemPipeR</code></em>, we can start by defining an empty container and checking the directory structure:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://systempipe.org/">systemPipeR</a></span><span class="op">)</span>
-<span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://systempipe.org/">systemPipeR</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://systempipe.org/" class="external-link">systemPipeR</a></span><span class="op">)</span>
+<span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SPRproject.html" class="external-link">SPRproject</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">sal</span></code></pre></div>
+<div class="section level3">
+<h3 id="required-packages-and-resources">Required packages and resources<a class="anchor" aria-label="anchor" href="#required-packages-and-resources"></a>
+</h3>
+<p>The <code>systemPipeR</code> package needs to be loaded <span class="citation">(H Backman and Girke 2016)</span>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://systempipe.org/" class="external-link">systemPipeR</a></span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"load_SPR"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="read-preprocessing" class="section level2">
-<h2 class="hasAnchor">
-<a href="#read-preprocessing" class="anchor"></a>Read preprocessing</h2>
-<div id="read-trimming-with-trimmomatic" class="section level3">
-<h3 class="hasAnchor">
-<a href="#read-trimming-with-trimmomatic" class="anchor"></a>Read trimming with Trimmomatic</h3>
-<p>Next, we need to populate the object created with the first step in the workflow. Here, an example of how to perform this task using parameters template files for trimming FASTQ files with <a href="http://www.usadellab.org/cms/?page=trimmomatic">Trimmomatic</a> software <span class="citation">(<strong>Bolger2014-yr?</strong>)</span>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">targetspath</span> <span class="op">&lt;-</span> <span class="st">"targetsPE.txt"</span>
-<span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">SYSargsList</a></span><span class="op">(</span>step_name <span class="op">=</span> <span class="st">"trimming"</span>, targets <span class="op">=</span> <span class="va">targetspath</span>,
-    wf_file <span class="op">=</span> <span class="st">"trimmomatic/trimmomatic-pe.cwl"</span>, input_file <span class="op">=</span> <span class="st">"trimmomatic/trimmomatic-pe.yml"</span>,
-    dir_path <span class="op">=</span> <span class="st">"param/cwl"</span>, inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>FileName1 <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>,
-        FileName2 <span class="op">=</span> <span class="st">"_FASTQ_PATH2_"</span>, SampleName <span class="op">=</span> <span class="st">"_SampleName_"</span><span class="op">)</span>,
-    dependency <span class="op">=</span> <span class="st">"load_SPR"</span><span class="op">)</span></code></pre></div>
-</div>
-<div id="fastq-quality-report" class="section level3">
-<h3 class="hasAnchor">
-<a href="#fastq-quality-report" class="anchor"></a>FASTQ quality report</h3>
-<p>The following <code>seeFastq</code> and <code>seeFastqPlot</code> functions generate and plot a series of useful quality statistics for a set of FASTQ files including per cycle quality box plots, base proportions, base-level quality trends, relative k-mer diversity, length and occurrence distribution of reads, number of reads above quality cutoffs and mean quality distribution. The results are written to a PDF file named <code>fastqReport.pdf</code>.</p>
+<div class="section level3">
+<h3 id="read-preprocessing">Read preprocessing<a class="anchor" aria-label="anchor" href="#read-preprocessing"></a>
+</h3>
+<div class="section level4">
+<h4 id="preprocessing-with-preprocessreads-function">Preprocessing with <code>preprocessReads</code> function<a class="anchor" aria-label="anchor" href="#preprocessing-with-preprocessreads-function"></a>
+</h4>
+<p>The function <code>preprocessReads</code> allows to apply predefined or custom read preprocessing functions to all FASTQ files referenced in a <code>SYSargsList</code> container, such as quality filtering or adapter trimming routines. Internally, <code>preprocessReads</code> uses the <code>FastqStreamer</code> function from the <code>ShortRead</code> package to stream through large FASTQ files in a memory-efficient manner. The following example performs adapter trimming with the <code>trimLRPatterns</code> function from the <code>Biostrings</code> package.</p>
+<p>Here, we are appending this step to the <code>SYSargsList</code> object created previously. All the parameters are defined on the <code>preprocessReads/preprocessReads-pe.yml</code> file.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="va">fastq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"trimming"</span>, <span class="st">"targetsWF"</span>, column <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-    <span class="va">fqlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/seeFastq.html">seeFastq</a></span><span class="op">(</span>fastq <span class="op">=</span> <span class="va">fastq</span>, batchsize <span class="op">=</span> <span class="fl">10000</span>, klength <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="st">"./results/fastqReport.pdf"</span>, height <span class="op">=</span> <span class="fl">18</span>, width <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span>
-        <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">fqlist</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/seeFastq.html">seeFastqPlot</a></span><span class="op">(</span><span class="va">fqlist</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"fastq_report"</span>, dependency <span class="op">=</span> <span class="st">"trimming"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList.html" class="external-link">SYSargsList</a></span><span class="op">(</span>step_name <span class="op">=</span> <span class="st">"preprocessing"</span>, targets <span class="op">=</span> <span class="st">"targetsPE.txt"</span>,
+    dir <span class="op">=</span> <span class="cn">TRUE</span>, wf_file <span class="op">=</span> <span class="st">"preprocessReads/preprocessReads-pe.cwl"</span>,
+    input_file <span class="op">=</span> <span class="st">"preprocessReads/preprocessReads-pe.yml"</span>, dir_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl"</span>,
+        package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>, inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span>FileName1 <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>,
+        FileName2 <span class="op">=</span> <span class="st">"_FASTQ_PATH2_"</span>, SampleName <span class="op">=</span> <span class="st">"_SampleName_"</span><span class="op">)</span>,
+    dependency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"load_SPR"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>After the preprocessing step, the <code>outfiles</code> files can be used to generate the new targets files containing the paths to the trimmed FASTQ files. The new targets information can be used for the next workflow step instance, <em>e.g.</em> running the NGS alignments with the trimmed FASTQ files. The <code>appendStep</code> function is automatically handling this connectivity between steps. Please check the next step for more details.</p>
+<p>The following example shows how one can design a custom read <em>‘preprocessReads’</em> function using utilities provided by the <code>ShortRead</code> package, and then run it in batch mode with the <em>‘preprocessReads’</em> function. Here, it is possible to replace the function used on the <code>preprocessing</code> step and modify the <code>sal</code> object. Because it is a custom function, it is necessary to save the part in the R object, and internally the <code>preprocessReads.doc.R</code> is loading the custom function. If the R object is saved with a different name (here <code>"param/customFCT.RData"</code>), please replace that accordingly in the <code>preprocessReads.doc.R</code>.</p>
+<p>Please, note that this step is not added to the workflow, here just for demonstration.</p>
+<p>First, we defined the custom function in the workflow:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="va">filterFct</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">fq</span>, <span class="va">cutoff</span> <span class="op">=</span> <span class="fl">20</span>, <span class="va">Nexceptions</span> <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
+        <span class="va">qcount</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/QualityScaledXStringSet-class.html" class="external-link">quality</a></span><span class="op">(</span><span class="va">fq</span><span class="op">)</span>, <span class="st">"matrix"</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">cutoff</span>,
+            na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+        <span class="co"># Retains reads where Phred scores are &gt;= cutoff</span>
+        <span class="co"># with N exceptions</span>
+        <span class="va">fq</span><span class="op">[</span><span class="va">qcount</span> <span class="op">&lt;=</span> <span class="va">Nexceptions</span><span class="op">]</span>
+    <span class="op">}</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/save.html" class="external-link">save</a></span><span class="op">(</span>list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/Bimap-envirAPI.html" class="external-link">ls</a></span><span class="op">(</span><span class="op">)</span>, file <span class="op">=</span> <span class="st">"param/customFCT.RData"</span><span class="op">)</span>
+<span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"custom_preprocessing_function"</span>, dependency <span class="op">=</span> <span class="st">"preprocessing"</span><span class="op">)</span></code></pre></div>
+<p>After, we can edit the input parameter:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">yamlinput</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"preprocessing"</span><span class="op">)</span><span class="op">$</span><span class="va">Fct</span>
+<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">yamlinput</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"preprocessing"</span>, <span class="st">"Fct"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"'filterFct(fq, cutoff=20, Nexceptions=0)'"</span>
+<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">yamlinput</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"preprocessing"</span><span class="op">)</span><span class="op">$</span><span class="va">Fct</span>  <span class="co">## check the new function</span>
+<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">cmdlist</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"preprocessing"</span>, targets <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>  <span class="co">## check if the command line was updated with success</span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="read-trimming-with-trimmomatic">Read trimming with Trimmomatic<a class="anchor" aria-label="anchor" href="#read-trimming-with-trimmomatic"></a>
+</h4>
+<p><a href="http://www.usadellab.org/cms/?page=trimmomatic" class="external-link">Trimmomatic</a> software <span class="citation">(Bolger, Lohse, and Usadel 2014)</span> performs a variety of useful trimming tasks for Illumina paired-end and single ended data. Here, an example of how to perform this task using parameters template files for trimming FASTQ files.</p>
+<p>This step is optional.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList.html" class="external-link">SYSargsList</a></span><span class="op">(</span>step_name <span class="op">=</span> <span class="st">"trimming"</span>, targets <span class="op">=</span> <span class="st">"targetsPE.txt"</span>,
+    wf_file <span class="op">=</span> <span class="st">"trimmomatic/trimmomatic-pe.cwl"</span>, input_file <span class="op">=</span> <span class="st">"trimmomatic/trimmomatic-pe.yml"</span>,
+    dir_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/cwl"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span>,
+    inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span>FileName1 <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>, FileName2 <span class="op">=</span> <span class="st">"_FASTQ_PATH2_"</span>,
+        SampleName <span class="op">=</span> <span class="st">"_SampleName_"</span><span class="op">)</span>, dependency <span class="op">=</span> <span class="st">"load_SPR"</span>,
+    run_step <span class="op">=</span> <span class="st">"optional"</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="fastq-quality-report">FASTQ quality report<a class="anchor" aria-label="anchor" href="#fastq-quality-report"></a>
+</h4>
+<p>The following <code>seeFastq</code> and <code>seeFastqPlot</code> functions generate and plot a series of useful quality statistics for a set of FASTQ files, including per cycle quality box plots, base proportions, base-level quality trends, relative k-mer diversity, length, and occurrence distribution of reads, number of reads above quality cutoffs and mean quality distribution. The results are written to a PDF file named <code>fastqReport.pdf</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="va">fastq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"preprocessing"</span>, <span class="st">"targetsWF"</span>,
+        column <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="va">fqlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/seeFastq.html" class="external-link">seeFastq</a></span><span class="op">(</span>fastq <span class="op">=</span> <span class="va">fastq</span>, batchsize <span class="op">=</span> <span class="fl">10000</span>, klength <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></span><span class="op">(</span><span class="st">"./results/fastqReport.pdf"</span>, height <span class="op">=</span> <span class="fl">18</span>, width <span class="op">=</span> <span class="fl">4</span> <span class="op">*</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">fqlist</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/seeFastq.html" class="external-link">seeFastqPlot</a></span><span class="op">(</span><span class="va">fqlist</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span>
+<span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"fastq_report"</span>, dependency <span class="op">=</span> <span class="st">"preprocessing"</span><span class="op">)</span></code></pre></div>
 <p><img src="results/fastqReport.png"></p>
 <div align="center">
 Figure 1: FASTQ quality report for 18 samples
@@ -205,119 +253,136 @@ Figure 1: FASTQ quality report for 18 samples
 <p></p>
 </div>
 </div>
-<div id="alignments" class="section level2">
-<h2 class="hasAnchor">
-<a href="#alignments" class="anchor"></a>Alignments</h2>
-<div id="read-mapping-with-hisat2" class="section level3">
-<h3 class="hasAnchor">
-<a href="#read-mapping-with-hisat2" class="anchor"></a>Read mapping with <code>HISAT2</code>
+<div class="section level3">
+<h3 id="alignments">Alignments<a class="anchor" aria-label="anchor" href="#alignments"></a>
 </h3>
-<p>The following steps will demonstrate how to use the short read aligner <code>Hisat2</code> <span class="citation">(Kim, Langmead, and Salzberg 2015)</span> in both interactive job submissions and batch submissions to queuing systems of clusters using the <em><code>systemPipeR's</code></em> new CWL command-line interface.</p>
-<p>Build <code>Hisat2</code> index.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">SYSargsList</a></span><span class="op">(</span>step_name <span class="op">=</span> <span class="st">"hisat2_index"</span>, dir <span class="op">=</span> <span class="cn">FALSE</span>,
+<div class="section level4">
+<h4 id="read-mapping-with-hisat2">Read mapping with <code>HISAT2</code><a class="anchor" aria-label="anchor" href="#read-mapping-with-hisat2"></a>
+</h4>
+<p>The following steps will demonstrate how to use the short read aligner <code>Hisat2</code> <span class="citation">(Kim, Langmead, and Salzberg 2015)</span>. First, the <code>Hisat2</code> index needs to be created.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList.html" class="external-link">SYSargsList</a></span><span class="op">(</span>step_name <span class="op">=</span> <span class="st">"hisat2_index"</span>, dir <span class="op">=</span> <span class="cn">FALSE</span>,
     targets <span class="op">=</span> <span class="cn">NULL</span>, wf_file <span class="op">=</span> <span class="st">"hisat2/hisat2-index.cwl"</span>, input_file <span class="op">=</span> <span class="st">"hisat2/hisat2-index.yml"</span>,
     dir_path <span class="op">=</span> <span class="st">"param/cwl"</span>, dependency <span class="op">=</span> <span class="st">"load_SPR"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="hisat2-mapping" class="section level3">
-<h3 class="hasAnchor">
-<a href="#hisat2-mapping" class="anchor"></a>HISAT2 mapping</h3>
-<p>The parameter settings of the aligner are defined in the <code>hisat2-mapping-se.cwl</code> and <code>hisat2-mapping-se.yml</code> files. The following shows how to construct the corresponding <em>SYSargsList</em> object.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">SYSargsList</a></span><span class="op">(</span>step_name <span class="op">=</span> <span class="st">"hisat2_mapping"</span>,
-    targets <span class="op">=</span> <span class="st">"trimming"</span>, dir <span class="op">=</span> <span class="cn">TRUE</span>, wf_file <span class="op">=</span> <span class="st">"workflow-hisat2/workflow_hisat2-pe.cwl"</span>,
+<div class="section level4">
+<h4 id="hisat2-mapping">
+<code>HISAT2</code> mapping<a class="anchor" aria-label="anchor" href="#hisat2-mapping"></a>
+</h4>
+<p>The parameter settings of the aligner are defined in the <code>workflow_hisat2-pe.cwl</code> and <code>workflow_hisat2-pe.yml</code> files. The following shows how to construct the corresponding <em>SYSargsList</em> object.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList.html" class="external-link">SYSargsList</a></span><span class="op">(</span>step_name <span class="op">=</span> <span class="st">"hisat2_mapping"</span>,
+    dir <span class="op">=</span> <span class="cn">TRUE</span>, targets <span class="op">=</span> <span class="st">"preprocessing"</span>, wf_file <span class="op">=</span> <span class="st">"workflow-hisat2/workflow_hisat2-pe.cwl"</span>,
     input_file <span class="op">=</span> <span class="st">"workflow-hisat2/workflow_hisat2-pe.yml"</span>, dir_path <span class="op">=</span> <span class="st">"param/cwl"</span>,
-    inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>trimmomatic_1_paired <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>, trimmomatic_2_paired <span class="op">=</span> <span class="st">"_FASTQ_PATH2_"</span>,
-        SampleName <span class="op">=</span> <span class="st">"_SampleName_"</span><span class="op">)</span>, rm_targets_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FileName1"</span>,
-        <span class="st">"FileName2"</span><span class="op">)</span>, dependency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"trimming"</span>, <span class="st">"hisat2_index"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    inputvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span>preprocessReads_1 <span class="op">=</span> <span class="st">"_FASTQ_PATH1_"</span>, preprocessReads_2 <span class="op">=</span> <span class="st">"_FASTQ_PATH2_"</span>,
+        SampleName <span class="op">=</span> <span class="st">"_SampleName_"</span><span class="op">)</span>, rm_targets_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FileName1"</span>,
+        <span class="st">"FileName2"</span><span class="op">)</span>, dependency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"preprocessing"</span>, <span class="st">"hisat2_index"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>To double-check the command line for each sample, please use the following:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">cmdlist</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"hisat2_mapping"</span>, targets <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="read-and-alignment-stats" class="section level3">
-<h3 class="hasAnchor">
-<a href="#read-and-alignment-stats" class="anchor"></a>Read and alignment stats</h3>
+<div class="section level4">
+<h4 id="read-and-alignment-stats">Read and alignment stats<a class="anchor" aria-label="anchor" href="#read-and-alignment-stats"></a>
+</h4>
 <p>The following provides an overview of the number of reads in each sample and how many of them aligned to the reference.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="va">bampaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"hisat2_mapping"</span>, <span class="st">"outfiles"</span>,
-        column <span class="op">=</span> <span class="st">"samtools_sort_bam"</span><span class="op">)</span>
-    <span class="va">fqpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"trimming"</span>, <span class="st">"targetsWF"</span>,
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="va">fqpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"preprocessing"</span>, <span class="st">"targetsWF"</span>,
         column <span class="op">=</span> <span class="st">"FileName1"</span><span class="op">)</span>
-    <span class="va">read_statsDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/alignStats.html">alignStats</a></span><span class="op">(</span>args <span class="op">=</span> <span class="va">bampaths</span>, fqpaths <span class="op">=</span> <span class="va">fqpaths</span>,
+    <span class="va">bampaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"hisat2_mapping"</span>, <span class="st">"outfiles"</span>,
+        column <span class="op">=</span> <span class="st">"samtools_sort_bam"</span><span class="op">)</span>
+    <span class="va">read_statsDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/alignStats.html" class="external-link">alignStats</a></span><span class="op">(</span>args <span class="op">=</span> <span class="va">bampaths</span>, fqpaths <span class="op">=</span> <span class="va">fqpaths</span>,
         pairEnd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">read_statsDF</span>, <span class="st">"results/alignStats.xls"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>,
+    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">read_statsDF</span>, <span class="st">"results/alignStats.xls"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>,
         quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"align_stats"</span>, dependency <span class="op">=</span> <span class="st">"hisat2_mapping"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="read-quantification" class="section level2">
-<h2 class="hasAnchor">
-<a href="#read-quantification" class="anchor"></a>Read quantification</h2>
-<p>Reads overlapping with annotation ranges of interest are counted for each sample using the <code>summarizeOverlaps</code> function <span class="citation">(Lawrence et al. 2013)</span>. The read counting is preformed for exon gene regions in a non-strand-specific manner while ignoring overlaps among different genes. Subsequently, the expression count values are normalized by <em>reads per kp per million mapped reads</em> (RPKM). The raw read count table (<code>countDFeByg.xls</code>) and the corresponding RPKM table (<code>rpkmDFeByg.xls</code>) are written to separate files in the directory of this project. Parallelization is achieved with the <code>BiocParallel</code> package, here using 8 CPU cores.</p>
-<div id="create-a-database-for-gene-annotation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#create-a-database-for-gene-annotation" class="anchor"></a>Create a database for gene annotation</h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.org/packages/GenomicFeatures">"GenomicFeatures"</a></span><span class="op">)</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel">BiocParallel</a></span><span class="op">)</span>
-    <span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-        <span class="co"># if db is there, skip this step</span>
-        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="st">"./data/tair10.sqlite"</span><span class="op">)</span><span class="op">)</span>
-            <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span>
-        <span class="co"># otherwise prepare the db</span>
-        <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/makeTxDbFromGFF.html">makeTxDbFromGFF</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"data/tair10.gff"</span>, format <span class="op">=</span> <span class="st">"gff"</span>,
-            dataSource <span class="op">=</span> <span class="st">"TAIR"</span>, organism <span class="op">=</span> <span class="st">"Arabidopsis thaliana"</span><span class="op">)</span>
-        <span class="fu">saveDb</span><span class="op">(</span><span class="va">txdb</span>, file <span class="op">=</span> <span class="st">"./data/tair10.sqlite"</span><span class="op">)</span>
-    <span class="op">}</span><span class="op">)</span><span class="op">(</span><span class="op">)</span>
+<div class="section level3">
+<h3 id="create-symbolic-links-for-viewing-bam-files-in-igv">Create symbolic links for viewing BAM files in IGV<a class="anchor" aria-label="anchor" href="#create-symbolic-links-for-viewing-bam-files-in-igv"></a>
+</h3>
+<p>The <code>symLink2bam</code> function creates symbolic links to view the BAM alignment files in a genome browser such as IGV without moving these large files to a local system. The corresponding URLs are written to a file with a path specified under <code>urlfile</code>, here <code>IGVurl.txt</code>. Please replace the directory and the user name.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="va">bampaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"hisat2_mapping"</span>, <span class="st">"outfiles"</span>,
+        column <span class="op">=</span> <span class="st">"samtools_sort_bam"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/symLink2bam.html" class="external-link">symLink2bam</a></span><span class="op">(</span>sysargs <span class="op">=</span> <span class="va">bampaths</span>, htmldir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"~/.html/"</span>, <span class="st">"somedir/"</span><span class="op">)</span>,
+        urlbase <span class="op">=</span> <span class="st">"http://cluster.hpcc.ucr.edu/~tgirke/"</span>, urlfile <span class="op">=</span> <span class="st">"./results/IGVurl.txt"</span><span class="op">)</span>
+<span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"bam_IGV"</span>, dependency <span class="op">=</span> <span class="st">"hisat2_mapping"</span>, run_step <span class="op">=</span> <span class="st">"optional"</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="read-quantification">Read quantification<a class="anchor" aria-label="anchor" href="#read-quantification"></a>
+</h3>
+<p>Reads overlapping with annotation ranges of interest are counted for each sample using the <code>summarizeOverlaps</code> function <span class="citation">(Lawrence et al. 2013)</span>. The read counting is preformed for exon gene regions in a non-strand-specific manner while ignoring overlaps among different genes. Subsequently, the expression count values are normalized by <em>reads per kp per million mapped reads</em> (RPKM). The raw read count table (<code>countDFeByg.xls</code>) and the corresponding RPKM table (<code>rpkmDFeByg.xls</code>) are written to separate files in the directory of this project. Parallelization is achieved with the <code>BiocParallel</code> package, here using 4 CPU cores.</p>
+<div class="section level4">
+<h4 id="create-a-database-for-gene-annotation">Create a database for gene annotation<a class="anchor" aria-label="anchor" href="#create-a-database-for-gene-annotation"></a>
+</h4>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures" class="external-link">GenomicFeatures</a></span><span class="op">)</span>
+    <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/makeTxDbFromGFF.html" class="external-link">makeTxDbFromGFF</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"data/tair10.gff"</span>,
+        format <span class="op">=</span> <span class="st">"gff"</span>, dataSource <span class="op">=</span> <span class="st">"TAIR"</span>, organism <span class="op">=</span> <span class="st">"Arabidopsis thaliana"</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">saveDb</a></span><span class="op">(</span><span class="va">txdb</span>, file <span class="op">=</span> <span class="st">"./data/tair10.sqlite"</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"create_db"</span>, dependency <span class="op">=</span> <span class="st">"hisat2_mapping"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="read-counting-with-summarizeoverlaps-in-parallel-mode-using-multiple-cores" class="section level3">
-<h3 class="hasAnchor">
-<a href="#read-counting-with-summarizeoverlaps-in-parallel-mode-using-multiple-cores" class="anchor"></a>Read counting with <code>summarizeOverlaps</code> in parallel mode using multiple cores</h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu">loadDb</span><span class="op">(</span><span class="st">"./data/tair10.sqlite"</span><span class="op">)</span>
-    <span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"hisat2_mapping"</span>, <span class="st">"outfiles"</span>,
+<div class="section level4">
+<h4 id="read-counting-with-summarizeoverlaps-in-parallel-mode-using-multiple-cores">Read counting with <code>summarizeOverlaps</code> in parallel mode using multiple cores<a class="anchor" aria-label="anchor" href="#read-counting-with-summarizeoverlaps-in-parallel-mode-using-multiple-cores"></a>
+</h4>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures" class="external-link">GenomicFeatures</a></span><span class="op">)</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel" class="external-link">BiocParallel</a></span><span class="op">)</span>
+    <span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">loadDb</a></span><span class="op">(</span><span class="st">"./data/tair10.sqlite"</span><span class="op">)</span>
+    <span class="va">outpaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, step <span class="op">=</span> <span class="st">"hisat2_mapping"</span>, <span class="st">"outfiles"</span>,
         column <span class="op">=</span> <span class="st">"samtools_sort_bam"</span><span class="op">)</span>
-    <span class="va">eByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/transcriptsBy.html">exonsBy</a></span><span class="op">(</span><span class="va">txdb</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gene"</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">bfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span>, yieldSize <span class="op">=</span> <span class="fl">50000</span>, index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">multicoreParam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="va">multicoreParam</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">registered</a></span><span class="op">(</span><span class="op">)</span>
-    <span class="va">counteByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html">bplapply</a></span><span class="op">(</span><span class="va">bfl</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicAlignments/man/summarizeOverlaps-methods.html">summarizeOverlaps</a></span><span class="op">(</span><span class="va">eByg</span>,
+    <span class="va">eByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/transcriptsBy.html" class="external-link">exonsBy</a></span><span class="op">(</span><span class="va">txdb</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene"</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">bfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html" class="external-link">BamFileList</a></span><span class="op">(</span><span class="va">outpaths</span>, yieldSize <span class="op">=</span> <span class="fl">50000</span>, index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">multicoreParam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="va">multicoreParam</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">registered</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="va">counteByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html" class="external-link">bplapply</a></span><span class="op">(</span><span class="va">bfl</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">summarizeOverlaps</span><span class="op">(</span><span class="va">eByg</span>,
         <span class="va">x</span>, mode <span class="op">=</span> <span class="st">"Union"</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span>, inter.feature <span class="op">=</span> <span class="cn">FALSE</span>,
-        singleEnd <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">countDFeByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>along <span class="op">=</span> <span class="va">counteByg</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">assays</span><span class="op">(</span><span class="va">counteByg</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">countDFeByg</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">counteByg</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">countDFeByg</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span>
-    <span class="va">rpkmDFeByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">countDFeByg</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/returnRPKM.html">returnRPKM</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">x</span>,
+        singleEnd <span class="op">=</span> <span class="cn">FALSE</span>, BPPARAM <span class="op">=</span> <span class="va">multicoreParam</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">countDFeByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>along <span class="op">=</span> <span class="va">counteByg</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">counteByg</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">countDFeByg</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">counteByg</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">countDFeByg</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span>
+    <span class="va">rpkmDFeByg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">countDFeByg</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/returnRPKM.html" class="external-link">returnRPKM</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">x</span>,
         ranges <span class="op">=</span> <span class="va">eByg</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">countDFeByg</span>, <span class="st">"results/countDFeByg.xls"</span>, col.names <span class="op">=</span> <span class="cn">NA</span>,
+    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">countDFeByg</span>, <span class="st">"results/countDFeByg.xls"</span>, col.names <span class="op">=</span> <span class="cn">NA</span>,
         quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">rpkmDFeByg</span>, <span class="st">"results/rpkmDFeByg.xls"</span>, col.names <span class="op">=</span> <span class="cn">NA</span>,
+    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">rpkmDFeByg</span>, <span class="st">"results/rpkmDFeByg.xls"</span>, col.names <span class="op">=</span> <span class="cn">NA</span>,
         quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span>
+    <span class="co">## Creating a SummarizedExperiment object</span>
+    <span class="va">colData</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">SampleName</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"hisat2_mapping"</span><span class="op">)</span>,
+        condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"hisat2_mapping"</span>, position <span class="op">=</span> <span class="st">"targetsWF"</span>,
+            column <span class="op">=</span> <span class="st">"Factor"</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">colData</span><span class="op">$</span><span class="va">condition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">colData</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span>
+    <span class="va">countDF_se</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></span><span class="op">(</span>assays <span class="op">=</span> <span class="va">countDFeByg</span>,
+        colData <span class="op">=</span> <span class="va">colData</span><span class="op">)</span>
+    <span class="co">## Add results as SummarizedExperiment to the workflow</span>
+    <span class="co">## object</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">SE</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"read_counting"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">countDF_se</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"read_counting"</span>, dependency <span class="op">=</span> <span class="st">"create_db"</span><span class="op">)</span></code></pre></div>
+<p>When providing a <code>BamFileList</code> as in the example above, <code>summarizeOverlaps</code> methods use by default <code>bplapply</code> and use the register interface from BiocParallel package. If the number of workers is not set, <code>MulticoreParam</code> will use the number of cores returned by <code><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">parallel::detectCores()</a></code>. For more information, please check <code>help("summarizeOverlaps")</code> documentation.</p>
 <p>Note, for most statistical differential expression or abundance analysis methods, such as <code>edgeR</code> or <code>DESeq2</code>, the raw count values should be used as input. The usage of RPKM values should be restricted to specialty applications required by some users, <em>e.g.</em> manually comparing the expression levels among different genes or features.</p>
 </div>
-<div id="sample-wise-correlation-analysis" class="section level3">
-<h3 class="hasAnchor">
-<a href="#sample-wise-correlation-analysis" class="anchor"></a>Sample-wise correlation analysis</h3>
+<div class="section level4">
+<h4 id="sample-wise-correlation-analysis">Sample-wise correlation analysis<a class="anchor" aria-label="anchor" href="#sample-wise-correlation-analysis"></a>
+</h4>
 <p>The following computes the sample-wise Spearman correlation coefficients from the <code>rlog</code> transformed expression values generated with the <code>DESeq2</code> package. After transformation to a distance matrix, hierarchical clustering is performed with the <code>hclust</code> function and the result is plotted as a dendrogram (also see file <code>sample_tree.pdf</code>).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2">DESeq2</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ape-package.ird.fr/">ape</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-    <span class="va">countDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span><span class="op">(</span><span class="st">"./results/countDFeByg.xls"</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">colData</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">SampleName</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"hisat2_mapping"</span><span class="op">)</span>,
-        condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">getColumn</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"hisat2_mapping"</span>, position <span class="op">=</span> <span class="st">"targetsWF"</span>,
-            column <span class="op">=</span> <span class="st">"Factor"</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">dds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeqDataSet.html">DESeqDataSetFromMatrix</a></span><span class="op">(</span>countData <span class="op">=</span> <span class="va">countDF</span>, colData <span class="op">=</span> <span class="va">colData</span>,
-        design <span class="op">=</span> <span class="op">~</span><span class="va">condition</span><span class="op">)</span>
-    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/rlog.html">rlog</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span>
-    <span class="va">hc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">d</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="st">"results/sample_tree.pdf"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/ape/man/plot.phylo.html">plot.phylo</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html">as.phylo</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"p"</span>, edge.col <span class="op">=</span> <span class="st">"blue"</span>, edge.width <span class="op">=</span> <span class="fl">2</span>,
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mikelove/DESeq2" class="external-link">DESeq2</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://ape-package.ird.fr/" class="external-link">ape</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+    <span class="co">## Extracting SummarizedExperiment object</span>
+    <span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">SE</a></span><span class="op">(</span><span class="va">sal</span>, <span class="st">"read_counting"</span><span class="op">)</span>
+    <span class="va">dds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeqDataSet.html" class="external-link">DESeqDataSet</a></span><span class="op">(</span><span class="va">se</span>, design <span class="op">=</span> <span class="op">~</span><span class="va">condition</span><span class="op">)</span>
+    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/rlog.html" class="external-link">rlog</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span>
+    <span class="va">hc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">d</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></span><span class="op">(</span><span class="st">"results/sample_tree.pdf"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/ape/man/plot.phylo.html" class="external-link">plot.phylo</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"p"</span>, edge.col <span class="op">=</span> <span class="st">"blue"</span>, edge.width <span class="op">=</span> <span class="fl">2</span>,
         show.node.label <span class="op">=</span> <span class="cn">TRUE</span>, no.margin <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"sample_tree"</span>, dependency <span class="op">=</span> <span class="st">"read_counting"</span><span class="op">)</span></code></pre></div>
 <img src="results/sample_tree.png"><div align="center">
 Figure 2: Correlation dendrogram of samples
@@ -325,160 +390,154 @@ Figure 2: Correlation dendrogram of samples
 <p></p>
 </div>
 </div>
-<div id="analysis-of-degs" class="section level2">
-<h2 class="hasAnchor">
-<a href="#analysis-of-degs" class="anchor"></a>Analysis of DEGs</h2>
-<p>The analysis of differentially expressed genes (DEGs) is performed with the <code>glm</code> method of the <code>edgeR</code> package <span class="citation">(Robinson, McCarthy, and Smyth 2010)</span>. The sample comparisons used by this analysis are defined in the header lines of the <code>targets.txt</code> file starting with <code>&lt;CMP&gt;</code>.</p>
-<div id="run-edger" class="section level3">
-<h3 class="hasAnchor">
-<a href="#run-edger" class="anchor"></a>Run <code>edgeR</code>
+<div class="section level3">
+<h3 id="analysis-of-degs">Analysis of DEGs<a class="anchor" aria-label="anchor" href="#analysis-of-degs"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/edgeR">edgeR</a></span><span class="op">)</span>
-    <span class="va">countDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/countDFeByg.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>,
+<p>The analysis of differentially expressed genes (DEGs) is performed with the <code>glm</code> method of the <code>edgeR</code> package <span class="citation">(Robinson, McCarthy, and Smyth 2010)</span>. The sample comparisons used by this analysis are defined in the header lines of the <code>targets.txt</code> file starting with <code>&lt;CMP&gt;</code>.</p>
+<div class="section level4">
+<h4 id="run-edger">Run <code>edgeR</code><a class="anchor" aria-label="anchor" href="#run-edger"></a>
+</h4>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/edgeR" class="external-link">edgeR</a></span><span class="op">)</span>
+    <span class="va">countDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.delim</a></span><span class="op">(</span><span class="st">"results/countDFeByg.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>,
         check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-    <span class="va">cmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/readComp.html">readComp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">stepsWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span><span class="op">[[</span><span class="st">"hisat2_mapping"</span><span class="op">]</span><span class="op">]</span>, format <span class="op">=</span> <span class="st">"matrix"</span>,
+    <span class="va">cmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/readComp.html" class="external-link">readComp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">stepsWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span><span class="op">[[</span><span class="st">"hisat2_mapping"</span><span class="op">]</span><span class="op">]</span>, format <span class="op">=</span> <span class="st">"matrix"</span>,
         delim <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span>
-    <span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/run_edgeR.html">run_edgeR</a></span><span class="op">(</span>countDF <span class="op">=</span> <span class="va">countDF</span>, targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">targetsWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span><span class="op">[[</span><span class="st">"hisat2_mapping"</span><span class="op">]</span><span class="op">]</span>,
+    <span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/run_edgeR.html" class="external-link">run_edgeR</a></span><span class="op">(</span>countDF <span class="op">=</span> <span class="va">countDF</span>, targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">targetsWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span><span class="op">[[</span><span class="st">"hisat2_mapping"</span><span class="op">]</span><span class="op">]</span>,
         cmp <span class="op">=</span> <span class="va">cmp</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, independent <span class="op">=</span> <span class="cn">FALSE</span>, mdsplot <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"run_edger"</span>, dependency <span class="op">=</span> <span class="st">"read_counting"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="add-gene-descriptions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#add-gene-descriptions" class="anchor"></a>Add gene descriptions</h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
-    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, dataset <span class="op">=</span> <span class="st">"athaliana_eg_gene"</span>,
-        host <span class="op">=</span> <span class="st">"plants.ensembl.org"</span><span class="op">)</span>
-    <span class="va">desc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tair_locus"</span>, <span class="st">"description"</span><span class="op">)</span>,
+<div class="section level4">
+<h4 id="add-gene-descriptions">Add gene descriptions<a class="anchor" aria-label="anchor" href="#add-gene-descriptions"></a>
+</h4>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
+    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html" class="external-link">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, dataset <span class="op">=</span> <span class="st">"athaliana_eg_gene"</span>,
+        host <span class="op">=</span> <span class="st">"https://plants.ensembl.org"</span><span class="op">)</span>
+    <span class="va">desc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tair_locus"</span>, <span class="st">"description"</span><span class="op">)</span>,
         mart <span class="op">=</span> <span class="va">m</span><span class="op">)</span>
-    <span class="va">desc</span> <span class="op">&lt;-</span> <span class="va">desc</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">desc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span>
-    <span class="va">descv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">desc</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">descv</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">desc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>
-    <span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">edgeDF</span>, Desc <span class="op">=</span> <span class="va">descv</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">edgeDF</span><span class="op">)</span><span class="op">]</span>,
+    <span class="va">desc</span> <span class="op">&lt;-</span> <span class="va">desc</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">desc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span>
+    <span class="va">descv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">desc</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">descv</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">desc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>
+    <span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">edgeDF</span>, Desc <span class="op">=</span> <span class="va">descv</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">edgeDF</span><span class="op">)</span><span class="op">]</span>,
         check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">edgeDF</span>, <span class="st">"./results/edgeRglm_allcomp.xls"</span>, quote <span class="op">=</span> <span class="cn">FALSE</span>,
+    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">edgeDF</span>, <span class="st">"./results/edgeRglm_allcomp.xls"</span>, quote <span class="op">=</span> <span class="cn">FALSE</span>,
         sep <span class="op">=</span> <span class="st">"\t"</span>, col.names <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"custom_annot"</span>, dependency <span class="op">=</span> <span class="st">"run_edger"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="plot-deg-results" class="section level3">
-<h3 class="hasAnchor">
-<a href="#plot-deg-results" class="anchor"></a>Plot DEG results</h3>
-<p>Filter and plot DEG results for up and down regulated genes. The definition of <em>up</em> and <em>down</em> is given in the corresponding help file. To open it, type <code><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html">?filterDEGs</a></code> in the R console.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"results/edgeRglm_allcomp.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>,
+<div class="section level4">
+<h4 id="plot-deg-results">Plot DEG results<a class="anchor" aria-label="anchor" href="#plot-deg-results"></a>
+</h4>
+<p>Filter and plot DEG results for up and down regulated genes. The definition of <em>up</em> and <em>down</em> is given in the corresponding help file. To open it, type <code><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html" class="external-link">?filterDEGs</a></code> in the R console.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="va">edgeDF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.delim</a></span><span class="op">(</span><span class="st">"results/edgeRglm_allcomp.xls"</span>, row.names <span class="op">=</span> <span class="fl">1</span>,
         check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="st">"results/DEGcounts.pdf"</span><span class="op">)</span>
-    <span class="va">DEG_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html">filterDEGs</a></span><span class="op">(</span>degDF <span class="op">=</span> <span class="va">edgeDF</span>, filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>Fold <span class="op">=</span> <span class="fl">2</span>,
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></span><span class="op">(</span><span class="st">"results/DEGcounts.pdf"</span><span class="op">)</span>
+    <span class="va">DEG_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html" class="external-link">filterDEGs</a></span><span class="op">(</span>degDF <span class="op">=</span> <span class="va">edgeDF</span>, filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span>Fold <span class="op">=</span> <span class="fl">2</span>,
         FDR <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Summary</span>, <span class="st">"./results/DEGcounts.xls"</span>,
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Summary</span>, <span class="st">"./results/DEGcounts.xls"</span>,
         quote <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"filter_degs"</span>, dependency <span class="op">=</span> <span class="st">"custom_annot"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="venn-diagrams-of-deg-sets" class="section level3">
-<h3 class="hasAnchor">
-<a href="#venn-diagrams-of-deg-sets" class="anchor"></a>Venn diagrams of DEG sets</h3>
+<div class="section level4">
+<h4 id="venn-diagrams-of-deg-sets">Venn diagrams of DEG sets<a class="anchor" aria-label="anchor" href="#venn-diagrams-of-deg-sets"></a>
+</h4>
 <p>The <code>overLapper</code> function can compute Venn intersects for large numbers of sample sets (up to 20 or more) and plots 2-5 way Venn diagrams. A useful feature is the possibility to combine the counts from several Venn comparisons with the same number of sample sets in a single Venn diagram (here for 4 up and down DEG sets).</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="va">vennsetup</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/overLapper.html">overLapper</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Up</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"vennsets"</span><span class="op">)</span>
-    <span class="va">vennsetdown</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/overLapper.html">overLapper</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Down</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"vennsets"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="st">"results/vennplot.pdf"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/vennPlot.html">vennPlot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">vennsetup</span>, <span class="va">vennsetdown</span><span class="op">)</span>, mymain <span class="op">=</span> <span class="st">""</span>, mysub <span class="op">=</span> <span class="st">""</span>,
-        colmode <span class="op">=</span> <span class="fl">2</span>, ccol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="va">vennsetup</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/overLapper.html" class="external-link">overLapper</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Up</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"vennsets"</span><span class="op">)</span>
+    <span class="va">vennsetdown</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/overLapper.html" class="external-link">overLapper</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">$</span><span class="va">Down</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"vennsets"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></span><span class="op">(</span><span class="st">"results/vennplot.pdf"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/vennPlot.html" class="external-link">vennPlot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vennsetup</span>, <span class="va">vennsetdown</span><span class="op">)</span>, mymain <span class="op">=</span> <span class="st">""</span>, mysub <span class="op">=</span> <span class="st">""</span>,
+        colmode <span class="op">=</span> <span class="fl">2</span>, ccol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"venn_diagram"</span>, dependency <span class="op">=</span> <span class="st">"filter_degs"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="go-term-enrichment-analysis" class="section level2">
-<h2 class="hasAnchor">
-<a href="#go-term-enrichment-analysis" class="anchor"></a>GO term enrichment analysis</h2>
-<div id="obtain-gene-to-go-mappings" class="section level3">
-<h3 class="hasAnchor">
-<a href="#obtain-gene-to-go-mappings" class="anchor"></a>Obtain gene-to-GO mappings</h3>
+<div class="section level3">
+<h3 id="go-term-enrichment-analysis">GO term enrichment analysis<a class="anchor" aria-label="anchor" href="#go-term-enrichment-analysis"></a>
+</h3>
+<div class="section level4">
+<h4 id="obtain-gene-to-go-mappings">Obtain gene-to-GO mappings<a class="anchor" aria-label="anchor" href="#obtain-gene-to-go-mappings"></a>
+</h4>
 <p>The following shows how to obtain gene-to-GO mappings from <code>biomaRt</code> (here for <em>A. thaliana</em>) and how to organize them for the downstream GO term enrichment analysis. Alternatively, the gene-to-GO mappings can be obtained for many organisms from Bioconductor’s <code>*.db</code> genome annotation packages or GO annotation files provided by various genome databases. For each annotation this relatively slow preprocessing step needs to be performed only once. Subsequently, the preprocessed data can be loaded with the <code>load</code> function as shown in the next subsection.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
-    <span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="st">"data/GO/catdb.RData"</span><span class="op">)</span><span class="op">)</span>
-            <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span>
-        <span class="co"># listMarts() # To choose BioMart database</span>
-        <span class="co"># listMarts(host='plants.ensembl.org')</span>
-        <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, host <span class="op">=</span> <span class="st">"plants.ensembl.org"</span><span class="op">)</span>
-        <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/listDatasets.html">listDatasets</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>
-        <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, dataset <span class="op">=</span> <span class="st">"athaliana_eg_gene"</span>,
-            host <span class="op">=</span> <span class="st">"plants.ensembl.org"</span><span class="op">)</span>
-        <span class="co"># listAttributes(m) # Choose data types you want to</span>
-        <span class="co"># download</span>
-        <span class="va">go</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"go_id"</span>, <span class="st">"tair_locus"</span>, <span class="st">"namespace_1003"</span><span class="op">)</span>,
-            mart <span class="op">=</span> <span class="va">m</span><span class="op">)</span>
-        <span class="va">go</span> <span class="op">&lt;-</span> <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">!=</span> <span class="st">""</span>, <span class="op">]</span>
-        <span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span><span class="op">)</span>
-        <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">==</span> <span class="st">"molecular_function"</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"F"</span>
-        <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">==</span> <span class="st">"biological_process"</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"P"</span>
-        <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">==</span> <span class="st">"cellular_component"</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"C"</span>
-        <span class="va">go</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span>
-        <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"./data/GO"</span><span class="op">)</span>
-        <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">go</span>, <span class="st">"data/GO/GOannotationsBiomart_mod.txt"</span>,
-            quote <span class="op">=</span> <span class="cn">FALSE</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, col.names <span class="op">=</span> <span class="cn">FALSE</span>,
-            sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span>
-        <span class="va">catdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">makeCATdb</a></span><span class="op">(</span>myfile <span class="op">=</span> <span class="st">"data/GO/GOannotationsBiomart_mod.txt"</span>,
-            lib <span class="op">=</span> <span class="cn">NULL</span>, org <span class="op">=</span> <span class="st">""</span>, colno <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, idconv <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-        <span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">catdb</span>, file <span class="op">=</span> <span class="st">"data/GO/catdb.RData"</span><span class="op">)</span>
-    <span class="op">}</span><span class="op">)</span><span class="op">(</span><span class="op">)</span>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
+    <span class="co"># listMarts() # To choose BioMart database</span>
+    <span class="co"># listMarts(host='plants.ensembl.org')</span>
+    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html" class="external-link">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, host <span class="op">=</span> <span class="st">"https://plants.ensembl.org"</span><span class="op">)</span>
+    <span class="co"># listDatasets(m)</span>
+    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html" class="external-link">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, dataset <span class="op">=</span> <span class="st">"athaliana_eg_gene"</span>,
+        host <span class="op">=</span> <span class="st">"https://plants.ensembl.org"</span><span class="op">)</span>
+    <span class="co"># listAttributes(m) # Choose data types you want to</span>
+    <span class="co"># download</span>
+    <span class="va">go</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"go_id"</span>, <span class="st">"tair_locus"</span>, <span class="st">"namespace_1003"</span><span class="op">)</span>,
+        mart <span class="op">=</span> <span class="va">m</span><span class="op">)</span>
+    <span class="va">go</span> <span class="op">&lt;-</span> <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">!=</span> <span class="st">""</span>, <span class="op">]</span>
+    <span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span><span class="op">)</span>
+    <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">==</span> <span class="st">"molecular_function"</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"F"</span>
+    <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">==</span> <span class="st">"biological_process"</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"P"</span>
+    <span class="va">go</span><span class="op">[</span><span class="va">go</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">==</span> <span class="st">"cellular_component"</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"C"</span>
+    <span class="va">go</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span>
+    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.exists</a></span><span class="op">(</span><span class="st">"./data/GO"</span><span class="op">)</span><span class="op">)</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"./data/GO"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">go</span>, <span class="st">"data/GO/GOannotationsBiomart_mod.txt"</span>, quote <span class="op">=</span> <span class="cn">FALSE</span>,
+        row.names <span class="op">=</span> <span class="cn">FALSE</span>, col.names <span class="op">=</span> <span class="cn">FALSE</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span>
+    <span class="va">catdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html" class="external-link">makeCATdb</a></span><span class="op">(</span>myfile <span class="op">=</span> <span class="st">"data/GO/GOannotationsBiomart_mod.txt"</span>,
+        lib <span class="op">=</span> <span class="cn">NULL</span>, org <span class="op">=</span> <span class="st">""</span>, colno <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, idconv <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/save.html" class="external-link">save</a></span><span class="op">(</span><span class="va">catdb</span>, file <span class="op">=</span> <span class="st">"data/GO/catdb.RData"</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"get_go_annot"</span>, dependency <span class="op">=</span> <span class="st">"filter_degs"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="batch-go-term-enrichment-analysis" class="section level3">
-<h3 class="hasAnchor">
-<a href="#batch-go-term-enrichment-analysis" class="anchor"></a>Batch GO term enrichment analysis</h3>
+<div class="section level4">
+<h4 id="batch-go-term-enrichment-analysis">Batch GO term enrichment analysis<a class="anchor" aria-label="anchor" href="#batch-go-term-enrichment-analysis"></a>
+</h4>
 <p>Apply the enrichment analysis to the DEG sets obtained the above differential expression analysis. Note, in the following example the <code>FDR</code> filter is set here to an unreasonably high value, simply because of the small size of the toy data set used in this vignette. Batch enrichment analysis of many gene sets is performed with the function. When <code>method=all</code>, it returns all GO terms passing the p-value cutoff specified under the <code>cutoff</code> arguments. When <code>method=slim</code>, it returns only the GO terms specified under the <code>myslimv</code> argument. The given example shows how a GO slim vector for a specific organism can be obtained from <code>BioMart</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="st">"data/GO/catdb.RData"</span><span class="op">)</span>
-    <span class="va">DEG_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html">filterDEGs</a></span><span class="op">(</span>degDF <span class="op">=</span> <span class="va">edgeDF</span>, filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>Fold <span class="op">=</span> <span class="fl">2</span>,
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"data/GO/catdb.RData"</span><span class="op">)</span>
+    <span class="va">DEG_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/filterDEGs.html" class="external-link">filterDEGs</a></span><span class="op">(</span>degDF <span class="op">=</span> <span class="va">edgeDF</span>, filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span>Fold <span class="op">=</span> <span class="fl">2</span>,
         FDR <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
     <span class="va">up_down</span> <span class="op">&lt;-</span> <span class="va">DEG_list</span><span class="op">$</span><span class="va">UporDown</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">up_down</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">up_down</span><span class="op">)</span>, <span class="st">"_up_down"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">up_down</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">up_down</span><span class="op">)</span>, <span class="st">"_up_down"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
     <span class="va">up</span> <span class="op">&lt;-</span> <span class="va">DEG_list</span><span class="op">$</span><span class="va">Up</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">up</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">up</span><span class="op">)</span>, <span class="st">"_up"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">up</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">up</span><span class="op">)</span>, <span class="st">"_up"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
     <span class="va">down</span> <span class="op">&lt;-</span> <span class="va">DEG_list</span><span class="op">$</span><span class="va">Down</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">down</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">down</span><span class="op">)</span>, <span class="st">"_down"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
-    <span class="va">DEGlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">up_down</span>, <span class="va">up</span>, <span class="va">down</span><span class="op">)</span>
-    <span class="va">DEGlist</span> <span class="op">&lt;-</span> <span class="va">DEGlist</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">DEGlist</span>, <span class="va">length</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span>
-    <span class="va">BatchResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">GOCluster_Report</a></span><span class="op">(</span>catdb <span class="op">=</span> <span class="va">catdb</span>, setlist <span class="op">=</span> <span class="va">DEGlist</span>,
+    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">down</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">down</span><span class="op">)</span>, <span class="st">"_down"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+    <span class="va">DEGlist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="va">up_down</span>, <span class="va">up</span>, <span class="va">down</span><span class="op">)</span>
+    <span class="va">DEGlist</span> <span class="op">&lt;-</span> <span class="va">DEGlist</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">DEGlist</span>, <span class="va">length</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span>
+    <span class="va">BatchResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html" class="external-link">GOCluster_Report</a></span><span class="op">(</span>catdb <span class="op">=</span> <span class="va">catdb</span>, setlist <span class="op">=</span> <span class="va">DEGlist</span>,
         method <span class="op">=</span> <span class="st">"all"</span>, id_type <span class="op">=</span> <span class="st">"gene"</span>, CLSZ <span class="op">=</span> <span class="fl">2</span>, cutoff <span class="op">=</span> <span class="fl">0.9</span>,
-        gocats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"MF"</span>, <span class="st">"BP"</span>, <span class="st">"CC"</span><span class="op">)</span>, recordSpecGO <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"biomaRt"</span><span class="op">)</span>
-    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, dataset <span class="op">=</span> <span class="st">"athaliana_eg_gene"</span>,
-        host <span class="op">=</span> <span class="st">"plants.ensembl.org"</span><span class="op">)</span>
-    <span class="va">goslimvec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"goslim_goa_accession"</span><span class="op">)</span>,
+        gocats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MF"</span>, <span class="st">"BP"</span>, <span class="st">"CC"</span><span class="op">)</span>, recordSpecGO <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
+    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html" class="external-link">useMart</a></span><span class="op">(</span><span class="st">"plants_mart"</span>, dataset <span class="op">=</span> <span class="st">"athaliana_eg_gene"</span>,
+        host <span class="op">=</span> <span class="st">"https://plants.ensembl.org"</span><span class="op">)</span>
+    <span class="va">goslimvec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html" class="external-link">getBM</a></span><span class="op">(</span>attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"goslim_goa_accession"</span><span class="op">)</span>,
         mart <span class="op">=</span> <span class="va">m</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>
-    <span class="va">BatchResultslim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">GOCluster_Report</a></span><span class="op">(</span>catdb <span class="op">=</span> <span class="va">catdb</span>, setlist <span class="op">=</span> <span class="va">DEGlist</span>,
+    <span class="va">BatchResultslim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html" class="external-link">GOCluster_Report</a></span><span class="op">(</span>catdb <span class="op">=</span> <span class="va">catdb</span>, setlist <span class="op">=</span> <span class="va">DEGlist</span>,
         method <span class="op">=</span> <span class="st">"slim"</span>, id_type <span class="op">=</span> <span class="st">"gene"</span>, myslimv <span class="op">=</span> <span class="va">goslimvec</span>,
-        CLSZ <span class="op">=</span> <span class="fl">10</span>, cutoff <span class="op">=</span> <span class="fl">0.01</span>, gocats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"MF"</span>, <span class="st">"BP"</span>, <span class="st">"CC"</span><span class="op">)</span>,
+        CLSZ <span class="op">=</span> <span class="fl">10</span>, cutoff <span class="op">=</span> <span class="fl">0.01</span>, gocats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MF"</span>, <span class="st">"BP"</span>, <span class="st">"CC"</span><span class="op">)</span>,
         recordSpecGO <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"go_enrich"</span>, dependency <span class="op">=</span> <span class="st">"get_go_annot"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="plot-batch-go-term-results" class="section level3">
-<h3 class="hasAnchor">
-<a href="#plot-batch-go-term-results" class="anchor"></a>Plot batch GO term results</h3>
+<div class="section level4">
+<h4 id="plot-batch-go-term-results">Plot batch GO term results<a class="anchor" aria-label="anchor" href="#plot-batch-go-term-results"></a>
+</h4>
 <p>The <code>data.frame</code> generated by <code>GOCluster</code> can be plotted with the <code>goBarplot</code> function. Because of the variable size of the sample sets, it may not always be desirable to show the results from different DEG sets in the same bar plot. Plotting single sample sets is achieved by subsetting the input data frame as shown in the first line of the following example.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="va">gos</span> <span class="op">&lt;-</span> <span class="va">BatchResultslim</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"M6-V6_up_down"</span>, <span class="va">BatchResultslim</span><span class="op">$</span><span class="va">CLID</span><span class="op">)</span>,
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="va">gos</span> <span class="op">&lt;-</span> <span class="va">BatchResultslim</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"M6-V6_up_down"</span>, <span class="va">BatchResultslim</span><span class="op">$</span><span class="va">CLID</span><span class="op">)</span>,
         <span class="op">]</span>
     <span class="va">gos</span> <span class="op">&lt;-</span> <span class="va">BatchResultslim</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="st">"results/GOslimbarplotMF.pdf"</span>, height <span class="op">=</span> <span class="fl">8</span>, width <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"MF"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"BP"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"CC"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></span><span class="op">(</span><span class="st">"results/GOslimbarplotMF.pdf"</span>, height <span class="op">=</span> <span class="fl">8</span>, width <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html" class="external-link">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"MF"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html" class="external-link">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"BP"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/GOHyperGAll.html" class="external-link">goBarplot</a></span><span class="op">(</span><span class="va">gos</span>, gocat <span class="op">=</span> <span class="st">"CC"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"go_plot"</span>, dependency <span class="op">=</span> <span class="st">"go_enrich"</span><span class="op">)</span></code></pre></div>
 <img src="results/GOslimbarplotMF.png"><div align="center">
 Figure 5: GO Slim Barplot for MF Ontology
@@ -486,81 +545,113 @@ Figure 5: GO Slim Barplot for MF Ontology
 <p></p>
 </div>
 </div>
-<div id="clustering-and-heat-maps" class="section level2">
-<h2 class="hasAnchor">
-<a href="#clustering-and-heat-maps" class="anchor"></a>Clustering and heat maps</h2>
+<div class="section level3">
+<h3 id="clustering-and-heat-maps">Clustering and heat maps<a class="anchor" aria-label="anchor" href="#clustering-and-heat-maps"></a>
+</h3>
 <p>The following example performs hierarchical clustering on the <code>rlog</code> transformed expression matrix subsetted by the DEGs identified in the above differential expression analysis. It uses a Pearson correlation-based distance measure and complete linkage for cluster joining.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span>
-    <span class="va">geneids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/rlog.html">rlog</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">geneids</span>, <span class="op">]</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></span><span class="op">(</span><span class="st">"results/heatmap1.pdf"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html">pheatmap</a></span><span class="op">(</span><span class="va">y</span>, scale <span class="op">=</span> <span class="st">"row"</span>, clustering_distance_rows <span class="op">=</span> <span class="st">"correlation"</span>,
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span>
+    <span class="va">geneids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">DEG_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/rlog.html" class="external-link">rlog</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">geneids</span>, <span class="op">]</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></span><span class="op">(</span><span class="st">"results/heatmap1.pdf"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html" class="external-link">pheatmap</a></span><span class="op">(</span><span class="va">y</span>, scale <span class="op">=</span> <span class="st">"row"</span>, clustering_distance_rows <span class="op">=</span> <span class="st">"correlation"</span>,
         clustering_distance_cols <span class="op">=</span> <span class="st">"correlation"</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"heatmap"</span>, dependency <span class="op">=</span> <span class="st">"go_enrich"</span><span class="op">)</span></code></pre></div>
 <img src="results/heatmap1.png"><div align="center">
 Figure 6: Heat Map with Hierarchical Clustering Dendrograms of DEGs
 </div>
 <p></p>
 </div>
-<div id="version-information" class="section level2">
-<h2 class="hasAnchor">
-<a href="#version-information" class="anchor"></a>Version Information</h2>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html">LineWise</a></span><span class="op">(</span><span class="op">{</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
+<div class="section level3">
+<h3 id="version-information">Version Information<a class="anchor" aria-label="anchor" href="#version-information"></a>
+</h3>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">appendStep</span><span class="op">(</span><span class="va">sal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/LineWise-class.html" class="external-link">LineWise</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">}</span>, step_name <span class="op">=</span> <span class="st">"sessionInfo"</span>, dependency <span class="op">=</span> <span class="st">"heatmap"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="running-workflow" class="section level1">
-<h1 class="hasAnchor">
-<a href="#running-workflow" class="anchor"></a>Running workflow</h1>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runWF.html">runWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
-<div id="visualize-workflow" class="section level2">
-<h2 class="hasAnchor">
-<a href="#visualize-workflow" class="anchor"></a>Visualize workflow</h2>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/plotWF.html">plotWF</a></span><span class="op">(</span><span class="va">sal</span>, rstudio <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<div class="section level2">
+<h2 id="running-workflow">Running workflow<a class="anchor" aria-label="anchor" href="#running-workflow"></a>
+</h2>
+<div class="section level3">
+<h3 id="interactive-job-submissions-in-a-single-machine">Interactive job submissions in a single machine<a class="anchor" aria-label="anchor" href="#interactive-job-submissions-in-a-single-machine"></a>
+</h3>
+<p>For running the workflow, <code>runWF</code> function will execute all the steps store in the workflow container. The execution will be on a single machine without submitting to a queuing system of a computer cluster.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runWF.html" class="external-link">runWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="checking-workflow-status" class="section level2">
-<h2 class="hasAnchor">
-<a href="#checking-workflow-status" class="anchor"></a>Checking workflow status</h2>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html">statusWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="parallelization-on-clusters">Parallelization on clusters<a class="anchor" aria-label="anchor" href="#parallelization-on-clusters"></a>
+</h3>
+<p>Alternatively, the computation can be greatly accelerated by processing many files in parallel using several compute nodes of a cluster, where a scheduling/queuing system is used for load balancing.</p>
+<p>The <code>resources</code> list object provides the number of independent parallel cluster processes defined under the <code>Njobs</code> element in the list. The following example will run 18 processes in parallel using each 4 CPU cores. If the resources available on a cluster allow running all 18 processes at the same time, then the shown sample submission will utilize in a total of 72 CPU cores.</p>
+<p>Note, <code>runWF</code> can be used with most queueing systems as it is based on utilities from the <code>batchtools</code> package, which supports the use of template files (<em><code>*.tmpl</code></em>) for defining the run parameters of different schedulers. To run the following code, one needs to have both a <code>conffile</code> (see <em><code>.batchtools.conf.R</code></em> samples <a href="https://mllg.github.io/batchtools/" class="external-link">here</a>) and a <code>template</code> file (see <em><code>*.tmpl</code></em> samples <a href="https://github.com/mllg/batchtools/tree/master/inst/templates" class="external-link">here</a>) for the queueing available on a system. The following example uses the sample <code>conffile</code> and <code>template</code> files for the Slurm scheduler provided by this package.</p>
+<p>The resources can be appended when the step is generated, or it is possible to add these resources later, as the following example using the <code>addResources</code> function:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">resources</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>conffile<span class="op">=</span><span class="st">".batchtools.conf.R"</span>,
+                  template<span class="op">=</span><span class="st">"batchtools.slurm.tmpl"</span>, 
+                  Njobs<span class="op">=</span><span class="fl">18</span>, 
+                  walltime<span class="op">=</span><span class="fl">120</span>, <span class="co">## minutes</span>
+                  ntasks<span class="op">=</span><span class="fl">1</span>,
+                  ncpus<span class="op">=</span><span class="fl">4</span>, 
+                  memory<span class="op">=</span><span class="fl">1024</span>, <span class="co">## Mb</span>
+                  partition <span class="op">=</span> <span class="st">"short"</span>
+                  <span class="op">)</span>
+<span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">addResources</a></span><span class="op">(</span><span class="va">sal</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hisat2_mapping"</span><span class="op">)</span>, resources <span class="op">=</span> <span class="va">resources</span><span class="op">)</span>
+<span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runWF.html" class="external-link">runWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="accessing-logs-report" class="section level2">
-<h2 class="hasAnchor">
-<a href="#accessing-logs-report" class="anchor"></a>Accessing logs report</h2>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderLogs.html">renderLogs</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="visualize-workflow">Visualize workflow<a class="anchor" aria-label="anchor" href="#visualize-workflow"></a>
+</h3>
+<p><em><code>systemPipeR</code></em> workflows instances can be visualized with the <code>plotWF</code> function.</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/plotWF.html" class="external-link">plotWF</a></span><span class="op">(</span><span class="va">sal</span>, rstudio <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="checking-workflow-status">Checking workflow status<a class="anchor" aria-label="anchor" href="#checking-workflow-status"></a>
+</h3>
+<p>To check the summary of the workflow, we can use:</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sal</span>
+<span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SYSargsList-class.html" class="external-link">statusWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="accessing-logs-report">Accessing logs report<a class="anchor" aria-label="anchor" href="#accessing-logs-report"></a>
+</h3>
+<p><em><code>systemPipeR</code></em> compiles all the workflow execution logs in one central location, making it easier to check any standard output (<code>stdout</code>) or standard error (<code>stderr</code>) for any command-line tools used on the workflow or the R code stdout.</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderLogs.html" class="external-link">renderLogs</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="funding" class="section level1">
-<h1 class="hasAnchor">
-<a href="#funding" class="anchor"></a>Funding</h1>
-<p>This project was supported by funds from the National Institutes of Health (NIH).</p>
+<div class="section level2">
+<h2 id="funding">Funding<a class="anchor" aria-label="anchor" href="#funding"></a>
+</h2>
+<p>This project is funded by NSF award <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1661152" class="external-link">ABI-1661152</a>.</p>
 </div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h1>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Bolger2014-yr" class="csl-entry">
+Bolger, Anthony M, Marc Lohse, and Bjoern Usadel. 2014. <span>“Trimmomatic: A Flexible Trimmer for Illumina Sequence Data.”</span> <em>Bioinformatics</em> 30 (15): 2114–20.
+</div>
 <div id="ref-H_Backman2016-bt" class="csl-entry">
-H Backman, Tyler W, and Thomas Girke. 2016. <span>“<span class="nocase">systemPipeR: NGS workflow and report generation environment</span>.”</span> <em>BMC Bioinformatics</em> 17 (1): 388. <a href="https://doi.org/10.1186/s12859-016-1241-0">https://doi.org/10.1186/s12859-016-1241-0</a>.
+H Backman, Tyler W, and Thomas Girke. 2016. <span>“<span class="nocase">systemPipeR: NGS workflow and report generation environment</span>.”</span> <em>BMC Bioinformatics</em> 17 (1): 388. <a href="https://doi.org/10.1186/s12859-016-1241-0" class="external-link">https://doi.org/10.1186/s12859-016-1241-0</a>.
 </div>
 <div id="ref-Howard2013-fq" class="csl-entry">
-Howard, Brian E, Qiwen Hu, Ahmet Can Babaoglu, Manan Chandra, Monica Borghi, Xiaoping Tan, Luyan He, et al. 2013. <span>“High-Throughput <span>RNA</span> Sequencing of Pseudomonas-Infected Arabidopsis Reveals Hidden Transcriptome Complexity and Novel Splice Variants.”</span> <em>PLoS One</em> 8 (10): e74183. <a href="https://doi.org/10.1371/journal.pone.0074183">https://doi.org/10.1371/journal.pone.0074183</a>.
+Howard, Brian E, Qiwen Hu, Ahmet Can Babaoglu, Manan Chandra, Monica Borghi, Xiaoping Tan, Luyan He, et al. 2013. <span>“High-Throughput <span>RNA</span> Sequencing of Pseudomonas-Infected Arabidopsis Reveals Hidden Transcriptome Complexity and Novel Splice Variants.”</span> <em>PLoS One</em> 8 (10): e74183. <a href="https://doi.org/10.1371/journal.pone.0074183" class="external-link">https://doi.org/10.1371/journal.pone.0074183</a>.
 </div>
 <div id="ref-Kim2015-ve" class="csl-entry">
 Kim, Daehwan, Ben Langmead, and Steven L Salzberg. 2015. <span>“<span>HISAT</span>: A Fast Spliced Aligner with Low Memory Requirements.”</span> <em>Nat. Methods</em> 12 (4): 357–60.
 </div>
 <div id="ref-Lawrence2013-kt" class="csl-entry">
-Lawrence, Michael, Wolfgang Huber, Hervé Pagès, Patrick Aboyoun, Marc Carlson, Robert Gentleman, Martin T Morgan, and Vincent J Carey. 2013. <span>“Software for Computing and Annotating Genomic Ranges.”</span> <em>PLoS Comput. Biol.</em> 9 (8): e1003118. <a href="https://doi.org/10.1371/journal.pcbi.1003118">https://doi.org/10.1371/journal.pcbi.1003118</a>.
+Lawrence, Michael, Wolfgang Huber, Hervé Pagès, Patrick Aboyoun, Marc Carlson, Robert Gentleman, Martin T Morgan, and Vincent J Carey. 2013. <span>“Software for Computing and Annotating Genomic Ranges.”</span> <em>PLoS Comput. Biol.</em> 9 (8): e1003118. <a href="https://doi.org/10.1371/journal.pcbi.1003118" class="external-link">https://doi.org/10.1371/journal.pcbi.1003118</a>.
 </div>
 <div id="ref-Robinson2010-uk" class="csl-entry">
-Robinson, M D, D J McCarthy, and G K Smyth. 2010. <span>“edgeR: A Bioconductor Package for Differential Expression Analysis of Digital Gene Expression Data.”</span> <em>Bioinformatics</em> 26 (1): 139–40. <a href="https://doi.org/10.1093/bioinformatics/btp616">https://doi.org/10.1093/bioinformatics/btp616</a>.
+Robinson, M D, D J McCarthy, and G K Smyth. 2010. <span>“edgeR: A Bioconductor Package for Differential Expression Analysis of Digital Gene Expression Data.”</span> <em>Bioinformatics</em> 26 (1): 139–40. <a href="https://doi.org/10.1093/bioinformatics/btp616" class="external-link">https://doi.org/10.1093/bioinformatics/btp616</a>.
 </div>
 </div>
 </div>
@@ -577,11 +668,13 @@ Robinson, M D, D J McCarthy, and G K Smyth. 2010. <span>“edgeR: A Bioconductor
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://girke.bioinformatics.ucr.edu/">Thomas Girke</a>.</p>
+  <p></p>
+<p>Developed by <a href="http://girke.bioinformatics.ucr.edu/" class="external-link">Thomas Girke</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -589,6 +682,8 @@ Robinson, M D, D J McCarthy, and G K Smyth. 2010. <span>“edgeR: A Bioconductor
 
   
 
+
+  
 
   </body>
 </html>
