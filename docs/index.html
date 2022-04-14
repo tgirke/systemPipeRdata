@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,18 +40,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">systemPipeRdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.21.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.23.6</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/systemPipeRdata.html">Get started</a>
 </li>
@@ -57,7 +53,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -80,7 +76,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/tgirke/systemPipeRdata/">
+  <a href="https://github.com/tgirke/systemPipeRdata/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -97,90 +93,100 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="systempiperdata-workflow-templates-and-sample-data" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#systempiperdata-workflow-templates-and-sample-data" class="anchor"></a>systemPipeRdata: Workflow templates and sample data</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="systempiperdata-workflow-templates-and-sample-data">systemPipeRdata: Workflow templates and sample data<a class="anchor" aria-label="anchor" href="#systempiperdata-workflow-templates-and-sample-data"></a>
+</h1></div>
 
-<p><img src="https://github.com/tgirke/systemPipeRdata/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></p>
-<p><a href="http://bioconductor.org/packages/devel/systemPipeRdata"><em>systemPipeRdata</em></a> is a helper package to generate with a single command NGS workflow templates that are intended to be used by its parent package <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em>systemPipeR</em></a>. The latter is an environment for building <em>end-to-end</em> analysis pipelines with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq, Ribo-Seq and many others.</p>
-<div id="installation" class="section level4">
-<h4 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h4>
-<p>To install the package, please use the <em><code><a href="https://rdrr.io/pkg/BiocManager/man/install.html">BiocManager::install</a></code></em> command:</p>
-<pre><code>if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager")
-BiocManager::install("systemPipeRdata")</code></pre>
-<p>To obtain the most recent updates immediately, one can install it directly from github as follow:</p>
-<pre><code>if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager")
-BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencies=TRUE)</code></pre>
-<p>Due to the large size of the sample data (~320 MB) provided by <em>systemPipeRdata</em>, its download/install may take some time.</p>
-<p>To install the parent package <em>systemPipeR</em> itself, please use the <em>BiocManager::install</em> method as instructed <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em>here</em></a>.</p>
+<div class="figure">
+<img src="https://github.com/tgirke/systemPipeRdata/workflows/R-CMD-check/badge.svg" alt=""><p class="caption">R-CMD-check</p>
 </div>
-<div id="usage" class="section level4">
-<h4 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h4>
+<p><a href="http://bioconductor.org/packages/devel/systemPipeRdata" class="external-link"><em>systemPipeRdata</em></a> is a helper package to generate with a single command NGS workflow templates that are intended to be used by its parent package <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html" class="external-link"><em>systemPipeR</em></a>. The latter is an environment for building <em>end-to-end</em> analysis pipelines with automated report generation for next generation sequence (NGS) applications such as RNA-Seq, ChIP-Seq, VAR-Seq, Ribo-Seq and many others.</p>
+<div class="section level4">
+<h4 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h4>
+<p>To install the package, please use the <em><code><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">BiocManager::install</a></code></em> command:</p>
+<pre><code><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"systemPipeRdata"</span><span class="op">)</span></code></pre>
+<p>To obtain the most recent updates immediately, one can install it directly from github as follow:</p>
+<pre><code><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"tgirke/systemPipeRdata"</span>, build_vignettes<span class="op">=</span><span class="cn">TRUE</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre>
+<p>Due to the large size of the sample data (~320 MB) provided by <em>systemPipeRdata</em>, its download/install may take some time.</p>
+<p>To install the parent package <em>systemPipeR</em> itself, please use the <em>BiocManager::install</em> method as instructed <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html" class="external-link"><em>here</em></a>.</p>
+</div>
+<div class="section level4">
+<h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h4>
 <p>Detailed user manuals are available here:</p>
 <ul>
-<li><a href="http://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html"><em>systemPipeRdata</em> Vignette</a></li>
-<li><a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html"><em>systemPipeR</em> Overview Vignette</a></li>
+<li><a href="http://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html" class="external-link"><em>systemPipeRdata</em> Vignette</a></li>
+<li><a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html" class="external-link"><em>systemPipeR</em> Overview Vignette</a></li>
 </ul>
-<p>Additional information can be found on the corresponding Bioconductor package overview <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html"><em>page</em></a>.</p>
+<p>Additional information can be found on the corresponding <a href="https://systempipe.org/" class="external-link">Bioconductor packages</a>.</p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from BIOC at <br><a href="https://www.bioconductor.org/packages/systemPipeRdata">https://​www.bioconductor.org/​packages/​systemPipeRdata</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/tgirke/systemPipeRdata/">https://​github.com/​tgirke/​systemPipeRdata/​</a>
-</li>
-<li>Download from GitHub at <br><a href="https://github.com/tgirke/systemPipeRdata">https://​github.com/​tgirke/​systemPipeRdata</a>
-</li>
-<li>Ask a question about systemPipeRdata at <br><a href="https://support.bioconductor.org/">https://​support.bioconductor.org/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/tgirke/systemPipeRdata/issues">https://​github.com/​tgirke/​systemPipeRdata/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="https://www.r-project.org/Licenses/Artistic-2.0">Artistic-2.0</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>
-<a href="http://girke.bioinformatics.ucr.edu/">Thomas Girke</a> <br><small class="roles"> Maintainer </small>  </li>
+<li><a href="https://www.bioconductor.org/packages/systemPipeRdata" class="external-link">View on Bioconductor</a></li>
+<li><a href="https://github.com/tgirke/systemPipeRdata/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/tgirke/systemPipeRdata" class="external-link">Download from GitHub</a></li>
+<li><a href="https://support.bioconductor.org/" class="external-link">Ask a question about systemPipeRdata</a></li>
+<li><a href="https://github.com/tgirke/systemPipeRdata/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="http://www.bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html#archives"><img src="http://www.bioconductor.org/images/shields/availability/all.svg" alt="platforms"></a></li>
-<li><a href="http://bioconductor.org/packages/stats/data-experiment/systemPipeRdata/"><img src="http://www.bioconductor.org/shields/downloads/devel/systemPipeRdata.svg" alt="rank"></a></li>
-<li><a href="https://support.bioconductor.org/t/systempiperdata/"><img src="http://www.bioconductor.org/shields/posts/systemPipeRdata.svg" alt="posts"></a></li>
-<li><a href="http://bioconductor.org/checkResults/devel/data-experiment-LATEST/systemPipeRdata/"><img src="http://www.bioconductor.org/shields/build/devel/data-experiment/systemPipeRdata.svg" alt="build"></a></li>
-<li><a href="http://bioconductor.org/checkResults/devel/data-experiment-LATEST/systemPipeRdata/"><img src="http://www.bioconductor.org/shields/lastcommit/devel/data-experiment/systemPipeRdata.svg" alt="updated"></a></li>
-<li><a href="http://www.bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html#since"><img src="http://www.bioconductor.org/shields/dependencies/devel/systemPipeRdata.svg" alt="dependencies"></a></li>
+<li><a href="https://www.r-project.org/Licenses/Artistic-2.0" class="external-link">Artistic-2.0</a></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing systemPipeRdata</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>
+<a href="http://girke.bioinformatics.ucr.edu/" class="external-link">Thomas Girke</a> <br><small class="roles"> Maintainer </small>  </li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="http://www.bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html#archives" class="external-link"><img src="http://www.bioconductor.org/images/shields/availability/all.svg" alt="platforms"></a></li>
+<li><a href="http://bioconductor.org/packages/stats/data-experiment/systemPipeRdata/" class="external-link"><img src="http://www.bioconductor.org/shields/downloads/devel/systemPipeRdata.svg" alt="rank"></a></li>
+<li><a href="https://support.bioconductor.org/t/systempiperdata/" class="external-link"><img src="http://www.bioconductor.org/shields/posts/systemPipeRdata.svg" alt="posts"></a></li>
+<li><a href="http://bioconductor.org/checkResults/devel/data-experiment-LATEST/systemPipeRdata/" class="external-link"><img src="http://www.bioconductor.org/shields/build/devel/data-experiment/systemPipeRdata.svg" alt="build"></a></li>
+<li><a href="http://bioconductor.org/checkResults/devel/data-experiment-LATEST/systemPipeRdata/" class="external-link"><img src="http://www.bioconductor.org/shields/lastcommit/devel/data-experiment/systemPipeRdata.svg" alt="updated"></a></li>
+<li><a href="http://www.bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html#since" class="external-link"><img src="http://www.bioconductor.org/shields/dependencies/devel/systemPipeRdata.svg" alt="dependencies"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://girke.bioinformatics.ucr.edu/">Thomas Girke</a>.</p>
+  <p></p>
+<p>Developed by <a href="http://girke.bioinformatics.ucr.edu/" class="external-link">Thomas Girke</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -188,6 +194,8 @@ BiocManager::install("tgirke/systemPipeRdata", build_vignettes=TRUE, dependencie
 
   
 
+
+  
 
   </body>
 </html>

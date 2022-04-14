@@ -17,7 +17,7 @@ bibliography: bibtex.bib
 
 <!--
 - Compile from command-line
-Rscript -e "rmarkdown::render('systemPipeRIBOseq.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRIBOseq.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRIBOseq.Rmd', c('BiocStyle::pdf_document'))"
+Rscript -e "rmarkdown::render('systemPipeRIBOseq.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRIBOseq.Rmd', tangle=TRUE)"
 -->
 
 ```{css, echo=FALSE}
@@ -248,7 +248,7 @@ defines the shortest adapter match to consider in this iterative process. In
 addition, the function removes reads containing Ns or homopolymer regions. 
 More detailed information on read preprocessing is provided in `systemPipeR's` main vignette.
 
-```{r preprocessing, message=FALSE, eval=FALSE}
+```{r preprocessing_check, message=FALSE, eval=FALSE}
 yamlinput(sal, step="preprocessing")$Fct
 # [1] "'trimbatch(fq, pattern=\"ACACGTCT\", internalmatch=FALSE, minpatternlength=6, Nnumber=1, polyhomo=50, minreadlength=16, maxreadlength=101)'"
 cmdlist(sal, step = "preprocessing", targets = 1 )
@@ -737,7 +737,7 @@ hierarchical clustering is performed with the `hclust` function and
 the result is plotted as a dendrogram and written to a file named `sample_tree.png`
 in the `results` directory. 
 
-```{r sample_tree, eval=FALSE, eval=TRUE, , spr=TRUE}
+```{r sample_tree, eval=FALSE, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
         ## Extracting SummarizedExperiment object 
@@ -1094,7 +1094,7 @@ sal <- renderLogs(sal)
 
 # Version Information
 
-```{r sessionInfo}
+```{r sessionInfo_final}
 sessionInfo()
 ```
 
