@@ -20,6 +20,7 @@ getSubsetReads <- function(args,
     dir.create(outdir)
     if (!(silent)) cat(paste0("Creating '", outdir, "' directory"), "\n")
   }
+    if (!requireNamespace("systemPipeR", quietly = TRUE)) stop("Package systemPipeR should be installed.", "\n", call. = FALSE)
   ## obtain bam PATH
   outpaths <- systemPipeR::subsetWF(args, slot = "output", subset = 1, index = 1)
   ## Create `txdb` for annontation
@@ -110,13 +111,13 @@ getSubsetReads <- function(args,
 .subsetRef <- function(reference, truncate_refs, gr, gr_outer, ref_outname) {
   refpath <- normalizePath(reference)
   if (truncate_refs){
-    sref <- getSeq(FaFile(refpath), gr)
+    sref <- Biostrings::getSeq(Rsamtools::FaFile(refpath), gr)
     srefl <- split(sref, names(sref))
-    subsetRef <- DNAStringSet(lapply(srefl, unlist))
-    writeXStringSet(subsetRef, filepath = ref_outname)
+    subsetRef <- Biostrings::DNAStringSet(lapply(srefl, unlist))
+    Biostrings::writeXStringSet(subsetRef, filepath = ref_outname)
   } else {
-    sref <- getSeq(FaFile(refpath), gr_outer)
-    writeXStringSet(sref, filepath = ref_outname)
+    sref <- Biostrings::getSeq(Rsamtools::FaFile(refpath), gr_outer)
+    Biostrings::writeXStringSet(sref, filepath = ref_outname)
   }
 }
 
@@ -124,19 +125,20 @@ getSubsetReads <- function(args,
 ## .subsetAnno function ##
 #############################
 .subsetAnno <- function(annotation, truncate_refs, gr, gr_outer, annot_outname) {
+    if (!requireNamespace(c("IRanges", "rtracklayer"), quietly = TRUE)) stop("Package IRanges OR rtracklayer should be installed.", "\n", call. = FALSE)
   anno <- rtracklayer::import(annotation)
   if (truncate_refs){
     annosub <- anno[anno %within% gr]
-    rdc <- reduce(annosub, with.revmap = TRUE, ignore.strand = TRUE)
-    rmp <- mcols(rdc)$revmap
+    rdc <- GenomicRanges::reduce(annosub, with.revmap = TRUE, ignore.strand = TRUE)
+    rmp <- GenomicRanges::mcols(rdc)$revmap
     grl <- relist(annosub[unlist(rmp)], rmp)
-    widthList <- split(width(rdc), as.character(seqnames(rdc))) # base:split since width(rdc) is a vector
+    widthList <- split(BiocGenerics::width(rdc), as.character(GenomicRanges::seqnames(rdc))) # base:split since width(rdc) is a vector
     new_end <- unlist(unname(lapply(widthList, cumsum)))
-    subsetGFF <- unlist(shift(grl, new_end - end(rdc)))           
+    subsetGFF <- unlist(shift(grl, new_end - BiocGenerics::end(rdc)))           
   } else {
     annosub <- anno[anno %within% gr_outer]
-    grl <- split(annosub, seqnames(annosub), drop = TRUE)
-    subsetGFF <- unlist(shift(grl, 1 - start(gr_outer)))
+    grl <- split(annosub, GenomicRanges::seqnames(annosub), drop = TRUE)
+    subsetGFF <- unlist(shift(grl, 1 - BiocGenerics::start(gr_outer)))
   }
   con <- file(annot_outname, open = "w")
   rtracklayer::export(subsetGFF, con, format = "gff3")
