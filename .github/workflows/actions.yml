@@ -79,25 +79,25 @@ jobs:
       - name: Dispatch event systemPipeR/SPrnaseq
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.CWL }}
+          token: ${{ secrets.SPR_DATA }}
           repository: 'systemPipeR/SPrnaseq'
           event-type: rmd-updated
       - name: Dispatch event systemPipeR/SPriboseq
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.CWL }}
+          token: ${{ secrets.SPR_DATA }}
           repository: 'systemPipeR/SPriboseq'
           event-type: rmd-update
       - name: Dispatch event systemPipeR/SPvarseq
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.CWL }}
+          token: ${{ secrets.SPR_DATA }}
           repository: 'systemPipeR/SPvarseq'
           event-type: rmd-updated
       - name: Dispatch event systemPipeR/SPchipseq
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.CWL }}
+          token: ${{ secrets.SPR_DATA }}
           repository: 'systemPipeR/SPchipseq'
           event-type: rmd-updated
         ## Build and check the package
