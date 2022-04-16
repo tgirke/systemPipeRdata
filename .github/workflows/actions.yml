@@ -1,4 +1,3 @@
-## This is a test
 ## Template from here: https://github.com/r-lib/actions/tree/master/examples#standard-ci-workflow
 on:
   push:
@@ -9,40 +8,31 @@ on:
       - master
 
 name: R-CMD-check
-
 jobs:
   R-CMD-check:
     if: "contains(toJSON(github.event.commits.*.message), 'build_check')"
     runs-on: ${{ matrix.config.os }}
-
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-
     strategy:
       fail-fast: false
       matrix:
         config:
          - {os: ubuntu-20.04, r: '4.1.3', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
+      GITHUB_PAT: ${{ secrets.SPR_DATA }}
     steps:
       - uses: actions/checkout@v2
-
       - uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
-
       - uses: r-lib/actions/setup-pandoc@master
-
       - name: Query dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
-
       - name: Cache R packages
         if: runner.os != 'Windows'
         uses: actions/cache@v1
@@ -50,7 +40,6 @@ jobs:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
-     
       - name: Install system dependencies
         if: runner.os == 'Linux'
         env:
@@ -58,7 +47,6 @@ jobs:
         run: |
           sudo apt-get install libcurl4-openssl-dev
           sudo apt-get install libv8-dev
-
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
@@ -68,13 +56,56 @@ jobs:
           BiocManager::install("tgirke/systemPipeR")
           BiocManager::install("tgirke/systemPipeRdata")
         shell: Rscript {0}
-
+        ## Update the workflows temapltes...
+      - name: update version number
+        run: |
+            git pull
+            awk -F. '{$3++;print > ".github/ref_vignette/vignette_version.txt"}' OFS=. .github/ref_vignette/vignette_version.txt
+      - name: Update inst
+        run: |
+          bash .github/bash/update_inst.sh https://github.com/tgirke/systemPipeRdata.git inst/
+      - name: Update github
+        run: |
+          git config --local user.name "dcassol"
+          git config --local user.email "danicassol@gmail.com"
+          git add -A
+          git commit -m "Bot update RMD/HTML files" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.SPR_DATA }}
+          branch: ${{ github.ref }}
+        ## Update the individuals single packages
+      - name: Dispatch event systemPipeR/SPrnaseq
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CWL }}
+          repository: 'systemPipeR/SPrnaseq'
+          event-type: rmd-updated
+      - name: Dispatch event systemPipeR/SPriboseq
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CWL }}
+          repository: 'systemPipeR/SPriboseq'
+          event-type: rmd-update
+      - name: Dispatch event systemPipeR/SPvarseq
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CWL }}
+          repository: 'systemPipeR/SPvarseq'
+          event-type: rmd-updated
+      - name: Dispatch event systemPipeR/SPchipseq
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CWL }}
+          repository: 'systemPipeR/SPchipseq'
+          event-type: rmd-updated
+        ## Build and check the package
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: rcmdcheck::rcmdcheck(build_args = c('--compact-vignettes=gs+qpdf'), args = c("--no-manual", "--no-build-vignettes", "--timings"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
-
       - name: Upload check results
         if: failure()
         uses: actions/upload-artifact@master
