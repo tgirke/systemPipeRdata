@@ -170,7 +170,7 @@ targets[1:4,-c(5,6)]
 ## ----create_db, eval=FALSE, spr=TRUE----------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
-##         library(GenomicFeatures); library(BiocParallel)
+##         library(GenomicFeatures)
 ##         txdb <- suppressWarnings(makeTxDbFromGFF(file="data/tair10.gff", format="gff", dataSource="TAIR", organism="Arabidopsis thaliana"))
 ##         saveDb(txdb, file="./data/tair10.sqlite")
 ##         },
@@ -188,10 +188,10 @@ targets[1:4,-c(5,6)]
 ##         bfl <- BamFileList(outpaths, yieldSize = 50000, index = character())
 ##         multicoreParam <- MulticoreParam(workers = 4); register(multicoreParam); registered()
 ##         counteByg <- bplapply(bfl, function(x) summarizeOverlaps(eByg, x, mode = "Union",
-##                    ignore.strand = TRUE,
-##                                inter.feature = FALSE,
-##                                singleEnd = FALSE,
-##                                BPPARAM = multicoreParam))
+##                                                                  ignore.strand = TRUE,
+##                                                                  inter.feature = FALSE,
+##                                                                  singleEnd = FALSE,
+##                                                                  BPPARAM = multicoreParam))
 ##         countDFeByg <- sapply(seq(along=counteByg), function(x) assays(counteByg[[x]])$counts)
 ##         rownames(countDFeByg) <- names(rowRanges(counteByg[[1]])); colnames(countDFeByg) <- names(bfl)
 ##         rpkmDFeByg <- apply(countDFeByg, 2, function(x) returnRPKM(counts=x, ranges=eByg))
@@ -199,10 +199,10 @@ targets[1:4,-c(5,6)]
 ##         write.table(rpkmDFeByg, "results/rpkmDFeByg.xls", col.names=NA, quote=FALSE, sep="\t")
 ##         ## Creating a SummarizedExperiment object
 ##         colData <- data.frame(row.names=SampleName(sal, "hisat2_mapping"),
-##                   condition=getColumn(sal, "hisat2_mapping", position = "targetsWF", column = "Factor"))
+##                               condition=getColumn(sal, "hisat2_mapping", position = "targetsWF", column = "Factor"))
 ##         colData$condition <- factor(colData$condition)
 ##         countDF_se <- SummarizedExperiment::SummarizedExperiment(assays = countDFeByg,
-##                                          colData = colData)
+##                                                                  colData = colData)
 ##         ## Add results as SummarizedExperiment to the workflow object
 ##         SE(sal, "read_counting") <- countDF_se
 ##         },
@@ -284,20 +284,20 @@ targets[1:4,-c(5,6)]
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library("biomaRt")
-##           # listMarts() # To choose BioMart database
-##           # listMarts(host="plants.ensembl.org")
-##           m <- useMart("plants_mart", host="https://plants.ensembl.org")
-##           #listDatasets(m)
-##           m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="https://plants.ensembl.org")
-##           # listAttributes(m) # Choose data types you want to download
-##           go <- getBM(attributes=c("go_id", "tair_locus", "namespace_1003"), mart=m)
-##           go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
-##           go[go[,3]=="molecular_function", 3] <- "F"; go[go[,3]=="biological_process", 3] <- "P"; go[go[,3]=="cellular_component", 3] <- "C"
-##           go[1:4,]
-##           if(!dir.exists("./data/GO")) dir.create("./data/GO")
-##           write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
-##           catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
-##           save(catdb, file="data/GO/catdb.RData")
+##         # listMarts() # To choose BioMart database
+##         # listMarts(host="plants.ensembl.org")
+##         m <- useMart("plants_mart", host="https://plants.ensembl.org")
+##         #listDatasets(m)
+##         m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="https://plants.ensembl.org")
+##         # listAttributes(m) # Choose data types you want to download
+##         go <- getBM(attributes=c("go_id", "tair_locus", "namespace_1003"), mart=m)
+##         go <- go[go[,3]!="",]; go[,3] <- as.character(go[,3])
+##         go[go[,3]=="molecular_function", 3] <- "F"; go[go[,3]=="biological_process", 3] <- "P"; go[go[,3]=="cellular_component", 3] <- "C"
+##         go[1:4,]
+##         if(!dir.exists("./data/GO")) dir.create("./data/GO")
+##         write.table(go, "data/GO/GOannotationsBiomart_mod.txt", quote=FALSE, row.names=FALSE, col.names=FALSE, sep="\t")
+##         catdb <- makeCATdb(myfile="data/GO/GOannotationsBiomart_mod.txt", lib=NULL, org="", colno=c(1,2,3), idconv=NULL)
+##         save(catdb, file="data/GO/catdb.RData")
 ##         },
 ##     step_name = "get_go_annot",
 ##     dependency = "filter_degs")
