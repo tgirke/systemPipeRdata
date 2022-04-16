@@ -2190,7 +2190,7 @@ above to verify your real data first.</p>
 <pre class="r"><code>appendStep(sal) &lt;- SYSargsList(step_name = &quot;bwa_alignment&quot;, targets = &quot;targetsPE_varseq.txt&quot;,
     wf_file = &quot;gatk/workflow_bwa-pe.cwl&quot;, input_file = &quot;gatk/gatk.yaml&quot;,
     dir_path = &quot;param/cwl&quot;, inputvars = c(FileName1 = &quot;_FASTQ_PATH1_&quot;,
-        FileName1 = &quot;_FASTQ_PATH2_&quot;, SampleName = &quot;_SampleName_&quot;),
+        FileName2 = &quot;_FASTQ_PATH2_&quot;, SampleName = &quot;_SampleName_&quot;),
     dependency = c(&quot;faidx_index&quot;))</code></pre>
 </div>
 </div>
