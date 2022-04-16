@@ -1,7 +1,9 @@
 ## Imports
-import(BiocGenerics, methods)
+import(methods)
 
 ## Importing functions
+importFrom("BiocGenerics", "unlist", "basename", "width", "end", "start")
+importFrom("Biostrings", "getSeq", "DNAStringSet", "writeXStringSet")
 importFrom("jsonlite", "fromJSON")
 importFrom("remotes", "install_github")
 importFrom("utils", "download.file", "install.packages")
