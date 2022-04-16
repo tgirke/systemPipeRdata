@@ -87,7 +87,7 @@ jobs:
         with:
           token: ${{ secrets.SPR_DATA }}
           repository: 'systemPipeR/SPriboseq'
-          event-type: rmd-update
+          event-type: rmd-updated
       - name: Dispatch event systemPipeR/SPvarseq
         uses: peter-evans/repository-dispatch@v2
         with:
