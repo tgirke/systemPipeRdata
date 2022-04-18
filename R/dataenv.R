@@ -47,12 +47,7 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
       file.copy(pathList()$varseq, mydirname2temp, recursive=TRUE)
       file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
       unlink(mydirname2temp, recursive = TRUE) # removes temp dir
-      # if we desire to rename *Rmd files... 
-      # if(!is.null(mydirname)){
-      #   rename.files <- list.files(mydirname2, pattern = "systemPipeR*", full.names = T)
-      #   sapply(rename.files, function(x) { file.rename(from=x, to=sub('.*\\.', paste0(mydirname2, "/systemPipeR_", mydirname2, "."), x))})
-      # }
-      file.copy(c(paste0(pathList()$paramdir, "gatk_run.sh"), paste0(pathList()$paramdir, "sambcf_run.sh")), paste0(mydirname2, "/"))
+      #file.copy(c(paste0(pathList()$paramdir, "gatk_run.sh"), paste0(pathList()$paramdir, "sambcf_run.sh")), paste0(mydirname2, "/"))
       #file.copy(c(paste0(pathList()$paramdir, "Makefile_varseq")), paste0(mydirname2, "/Makefile"))
     } else if(workflow=="rnaseq") {
       file.copy(pathList()$rnaseq, mydirname2temp, recursive=TRUE)

@@ -1,4 +1,17 @@
 changelog
+    version 1.99.10
+	- remove old script from gatk.
+	
+    version 1.99.9
+	- batchtools.slurm.tmpl --> requires partition specification on the resources list.
+	- avoid x11 for chipseq template.
+	
+    version 1.99.8
+	- Cleanup NAMESPACE
+	- Set up actions: If vignettes/*Rmd are updated, automatically inst/extdata/workflows/*/*.Rmd and
+			inst/extdata/workflows/*/*.R, inst/extdata/workflows/*/*.html are updated. 
+			Also, the individual packages are updated on the SP organization.
+	
     version 1.23.6/7
 	- RIBO-seq template
 	
