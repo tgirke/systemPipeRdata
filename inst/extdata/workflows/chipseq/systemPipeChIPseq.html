@@ -1936,7 +1936,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ChIP-Seq Workflow Template</h1>
 <p class="author-name">Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)</p>
-<h4 class="date">Last update: 16 April, 2022</h4>
+<h4 class="date">Last update: 18 April, 2022</h4>
 <h4 class="package">Package</h4>
 <p>systemPipeR 2.1.26</p>
 
@@ -1945,7 +1945,7 @@ function toggle_visibility(id1) {
 
 <!--
 # Compile from command-line
-Rscript -e "rmarkdown::render('systemPipeChIPseq.Rmd', c('BiocStyle::html_document'), clean=FALSE); knitr::knit('systemPipeChIPseq.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeChIPseq.Rmd', c('BiocStyle::pdf_document'))"
+Rscript -e "rmarkdown::render('systemPipeChIPseq.Rmd', c('BiocStyle::html_document'), clean=FALSE)"
 -->
 <style type="text/css">
 pre code {
@@ -2346,9 +2346,13 @@ for demonstration purposes.</p>
     peaks_files &lt;- getColumn(sal, step = &quot;call_peaks_macs_noref&quot;,
         &quot;outfiles&quot;, column = &quot;peaks_xls&quot;)
     peak &lt;- readPeakFile(peaks_files[1])
+    pdf(&quot;results/peakscoverage.pdf&quot;)
     covplot(peak, weightCol = &quot;X.log10.pvalue.&quot;)
+    dev.off()
+    pdf(&quot;results/peaksHeatmap.pdf&quot;)
     peakHeatmap(peaks_files[1], TxDb = txdb, upstream = 1000,
         downstream = 1000, color = &quot;red&quot;)
+    dev.off()
     pdf(&quot;results/peaksProfile.pdf&quot;)
     plotAvgProf2(peaks_files[1], TxDb = txdb, upstream = 1000,
         downstream = 1000, xlab = &quot;Genomic Region (5&#39;-&gt;3&#39;)&quot;,
