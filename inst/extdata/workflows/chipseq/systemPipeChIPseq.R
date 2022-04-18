@@ -290,9 +290,13 @@ targets[1:4,-c(5,6)]
 ##     code = {
 ##         peaks_files <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles", column = "peaks_xls")
 ##         peak <- readPeakFile(peaks_files[1])
+##         pdf("results/peakscoverage.pdf")
 ##         covplot(peak, weightCol="X.log10.pvalue.")
+##         dev.off()
+##         pdf("results/peaksHeatmap.pdf")
 ##         peakHeatmap(peaks_files[1], TxDb=txdb, upstream=1000, downstream=1000,
 ##                     color="red")
+##         dev.off()
 ##         pdf("results/peaksProfile.pdf")
 ##         plotAvgProf2(peaks_files[1], TxDb=txdb, upstream=1000, downstream=1000,
 ##                      xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency",
