@@ -37,17 +37,25 @@ suppressPackageStartupMessages({
 
 
 ## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE--------
+## # Some samples in the test dataset do not work well in VARseq, and VARseq workflow
+## # takes long time to process each sample. To better test and speed up the test workflow,
+## # sample set is reduced to the first 8 samples.
+## # Please REMOVE the next two lines in your real analysis
+## cat(crayon::red$bold("Some samples in targets are removed for test workflow. Please change the template to disable this in your real analysis.\n"))
+## writeLines(readLines("targetsPE.txt")[1:13], "targetsPE.txt")
+## 
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library(systemPipeR)
 ##         },
-##     step_name = "load_SPR")
+##     step_name = "load_SPR"
+## )
 
 
 ## ----fastq_report_pre, eval=FALSE, message=FALSE, spr=TRUE----
 ## appendStep(sal) <- LineWise(
 ##     code = {
-##         targets <- read.delim("targetsPE_varseq.txt", comment.char = "#")
+##         targets <- read.delim("targetsPE.txt", comment.char = "#")
 ##         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
 ##         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
 ##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
@@ -63,7 +71,7 @@ suppressPackageStartupMessages({
 ## ----trimmomatic, eval=FALSE, spr=TRUE--------------------
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "trimmomatic",
-##     targets = "targetsPE_varseq.txt",
+##     targets = "targetsPE.txt",
 ##     wf_file = "trimmomatic/trimmomatic-pe.cwl",
 ##     input_file = "trimmomatic/trimmomatic-pe.yml",
 ##     dir_path = "param/cwl",
@@ -80,7 +88,7 @@ suppressPackageStartupMessages({
 ## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE----
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "preprocessing",
-##     targets = "targetsPE_varseq.txt", dir = TRUE,
+##     targets = "targetsPE.txt", dir = TRUE,
 ##     wf_file = "preprocessReads/preprocessReads-pe.cwl",
 ##     input_file = "preprocessReads/preprocessReads-pe.yml",
 ##     dir_path = "param/cwl",
@@ -167,7 +175,7 @@ suppressPackageStartupMessages({
 ## ----bwa_alignment, eval=FALSE, spr=TRUE------------------
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "bwa_alignment",
-##     targets = "targetsPE_varseq.txt",
+##     targets = "targetsPE.txt",
 ##     wf_file = "gatk/workflow_bwa-pe.cwl",
 ##     input_file = "gatk/gatk.yaml",
 ##     dir_path = "param/cwl",
@@ -213,7 +221,7 @@ suppressPackageStartupMessages({
 ## ----fastq2ubam, eval=FALSE, spr=TRUE---------------------
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "fastq2ubam",
-##     targets = "targetsPE_varseq.txt",
+##     targets = "targetsPE.txt",
 ##     wf_file = "gatk/workflow_gatk_fastq2ubam.cwl",
 ##     input_file = "gatk/gatk.yaml",
 ##     dir_path = "param/cwl",
@@ -374,22 +382,25 @@ suppressPackageStartupMessages({
 ##         library(VariantAnnotation)
 ##         filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
 ##         vcf_filter <- suppressWarnings(filterVars(vcf_raw, filter, organism = "A. thaliana", out_dir = "results/vcf_filter"))
-##         # updateColumn(sal, 'create_vcf', data.frame(vcf_filter=vcf_filter))
+##         # dump the filtered path variable to running enviornment so
+##         # other sysArg steps can get its values
+##         updateColumn(sal, 'create_vcf', "outfiles") <- data.frame(vcf_filter=vcf_filter)
 ##     },
 ##     step_name = "filter_vcf",
-##     dependency = "create_vcf",
-##     run_step = "optional"
+##     dependency = "create_vcf"
 ## )
 
 
 ## ----filter_vcf_BCFtools, eval=FALSE, spr=TRUE------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
-##         vcf_raw <- getColumn(sal, "create_vcf_BCFtool")
+##         vcf_raw <- getColumn(sal, step = "create_vcf_BCFtool",
+##                              position = "outfiles", column = "bcftools_call")
 ##         library(VariantAnnotation)
-##         filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
-##         vcf_filter <- suppressWarnings(filterVars(vcf_raw, filter, organism = "A. thaliana", out_dir = "results/vcf_filter_BCFtools"))
-##         # updateColumn(sal, 'create_vcf', data.frame(vcf_filter=vcf_filter))
+##         filter <- "rowSums(vr) >= 2 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
+##         vcf_filter_bcf <- suppressWarnings(filterVars(vcf_raw, filter, organism = "A. thaliana", out_dir = "results/vcf_filter_BCFtools", varcaller = "bcftools"))
+## 
+##         updateColumn(sal, 'create_vcf', "outfiles") <- data.frame(vcf_filter_bcf=vcf_filter_bcf)
 ##     },
 ##     step_name = "filter_vcf_BCFtools",
 ##     dependency = "create_vcf_BCFtool",
@@ -423,19 +434,16 @@ suppressPackageStartupMessages({
 ## ----annotate_vcf, eval=FALSE, spr=TRUE-------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
-##         # comment the next line if optional step "filter_vcf" is included
-##         vcf_filter <- getColumn(sal, "create_vcf")
-##         # uncomment the next line if optional step "filter_vcf" is included
-##         # copyEnvir(sal, "vcf_filter", globalenv())
+##         # get the filtered vcf path from R running environment
+##         copyEnvir(sal, "vcf_filter", globalenv())
 ##         library("GenomicFeatures")
 ##         txdb <- loadDb("./data/tair10.sqlite")
 ##         fa <- FaFile("data/tair10.fasta")
 ##         vcf_anno <- suppressMessages(suppressWarnings(variantReport(vcf_filter, txdb = txdb, fa = fa, organism = "A. thaliana", out_dir = "results/vcf_anno")))
 ##     },
 ##     step_name = "annotate_vcf",
-##     dependency = "create_vcf"
+##     dependency = "filter_vcf"
 ## )
-## 
 
 
 ## ----view_annotation, eval=FALSE--------------------------
@@ -482,10 +490,8 @@ suppressPackageStartupMessages({
 ## ----plot_variant, eval=FALSE, spr=TRUE-------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
-##         # comment the next line if optional step "filter_vcf" is included
-##         vcf_filter <- getColumn(sal, "create_vcf")
-##         # uncomment the next line if optional step "filter_vcf" is included
-##         # copyEnvir(sal, "vcf_filter", globalenv())
+##         # get the filtered vcf path from R running environment
+##         copyEnvir(sal, "vcf_filter", globalenv())
 ##         library(ggbio)
 ##         library(VariantAnnotation)
 ##         mychr <- "ChrM"
@@ -504,7 +510,7 @@ suppressPackageStartupMessages({
 ##         ggbio::ggsave(p1_4, filename = "./results/plot_variant.png", units = "in")
 ##     },
 ##     step_name = "plot_variant",
-##     dependency = "create_vcf"
+##     dependency = "filter_vcf"
 ## )
 
 

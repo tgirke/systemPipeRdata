@@ -1936,9 +1936,9 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">RIBO-Seq Workflow Template</h1>
 <p class="author-name">Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)</p>
-<h4 class="date">Last update: 18 April, 2022</h4>
+<h4 class="date">Last update: 21 April, 2022</h4>
 <h4 class="package">Package</h4>
-<p>systemPipeR 2.1.26</p>
+<p>systemPipeR 2.1.27</p>
 
 </div>
 
@@ -2446,8 +2446,11 @@ the downstream <code>plotfeatureCoverage</code> function.</p>
         Nbins = NULL, method = mean, fixedmatrix = TRUE, resizefeatures = TRUE,
         upstream = 20, downstream = 20, outfile = &quot;results/featureCoverage.xls&quot;,
         overwrite = TRUE)
+    png(&quot;./results/coverage_upstream_downstream.png&quot;, height = 12,
+        width = 24, units = &quot;in&quot;, res = 72)
     plotfeatureCoverage(covMA = fcov, method = mean, scales = &quot;fixed&quot;,
         extendylim = 2, scale_count_val = 10^6)
+    dev.off()
 }, step_name = &quot;coverage_upstream_downstream&quot;, dependency = c(&quot;binned_CDS_coverage&quot;))</code></pre>
 </div>
 <div id="combined-coverage-for-both-binned-cds-and-startstop-codons" class="section level3">
@@ -2892,10 +2895,10 @@ making it easier to check any standard output (<code>stdout</code>) or standard 
 ## [6] datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] systemPipeR_2.1.26          ShortRead_1.52.0           
+##  [1] systemPipeR_2.1.27          ShortRead_1.52.0           
 ##  [3] GenomicAlignments_1.30.0    SummarizedExperiment_1.24.0
 ##  [5] Biobase_2.54.0              MatrixGenerics_1.6.0       
-##  [7] matrixStats_0.61.0          BiocParallel_1.28.3        
+##  [7] matrixStats_0.62.0          BiocParallel_1.28.3        
 ##  [9] Rsamtools_2.10.0            Biostrings_2.62.0          
 ## [11] XVector_0.34.0              GenomicRanges_1.46.1       
 ## [13] GenomeInfoDb_1.30.1         IRanges_2.28.0             

@@ -318,6 +318,7 @@ targets[1:4,-c(5,6)]
 ##         m <- useMart("plants_mart", dataset="athaliana_eg_gene", host="https://plants.ensembl.org")
 ##         goslimvec <- as.character(getBM(attributes=c("goslim_goa_accession"), mart=m)[,1])
 ##         BatchResultslim <- GOCluster_Report(catdb=catdb, setlist=DEGlist, method="slim", id_type="gene", myslimv=goslimvec, CLSZ=10, cutoff=0.01, gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+##         write.table(BatchResultslim, "results/GOBatchSlim.xls", row.names=FALSE, quote=FALSE, sep="\t")
 ##         },
 ##     step_name = "go_enrich",
 ##     dependency = "get_go_annot")

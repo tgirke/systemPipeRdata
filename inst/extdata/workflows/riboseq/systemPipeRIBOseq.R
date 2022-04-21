@@ -290,8 +290,10 @@ targets
 ##                                 readlengthrange=NULL, Nbins=NULL, method=mean, fixedmatrix=TRUE,
 ##                                 resizefeatures=TRUE, upstream=20, downstream=20,
 ##                                 outfile="results/featureCoverage.xls", overwrite=TRUE)
+##         png("./results/coverage_upstream_downstream.png", height=12, width=24, units="in", res=72)
 ##         plotfeatureCoverage(covMA=fcov, method=mean, scales="fixed", extendylim=2,
 ##                             scale_count_val=10^6)
+##         dev.off()
 ##     },
 ##     step_name = "coverage_upstream_downstream",
 ##     dependency = c("binned_CDS_coverage")
