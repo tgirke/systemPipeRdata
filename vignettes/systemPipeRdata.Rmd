@@ -6,7 +6,6 @@ output:
   BiocStyle::html_document:
     toc_float: true
     code_folding: show
-  BiocStyle::pdf_document: default
 package: systemPipeRdata
 vignette: |
   %\VignetteEncoding{UTF-8}
@@ -27,7 +26,7 @@ word-wrap: initial !important;
 
 <!---
 - Compile from command-line
-Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRdata.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::pdf_document'))"
+Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRdata.Rmd', tangle=TRUE)"
 
 -->
 
@@ -67,6 +66,19 @@ and parameter files required for running a chosen workflow.
 Pre-configured directory structure of the workflow environment and the sample data 
 used by _`systemPipeRdata`_ are described [here](http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
 
+_`systemPipeRdata`_ package provides a demo sample FASTQ files used in the 
+workflow reporting vignettes. The chosen data set [`SRP010938`](http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938) obtains 18
+paired-end (PE) read sets from _Arabidposis thaliana_ [@Howard2013-fq]. To
+minimize processing time during testing, each FASTQ file has been subsetted to
+90,000-100,000 randomly sampled PE reads that map to the first 100,000
+nucleotides of each chromosome of the _A. thalina_ genome. The corresponding
+reference genome sequence (FASTA) and its GFF annotation files (provided in the
+same download) have been truncated accordingly. This way the entire test sample
+data set requires less than 200MB disk storage space. A PE read set has been
+chosen for this test data set for flexibility, because it can be used for
+testing both types of analysis routines requiring either SE (single-end) reads
+or PE reads. 
+
 # Getting started
 
 ## Installation
@@ -97,23 +109,67 @@ library(help="systemPipeRdata") # Lists package info
 vignette("systemPipeRdata") # Opens vignette
 ```
 
-## Starting with pre-configured workflow templates
+# Starting with pre-configured workflow templates
 
 Load one of the available workflows into your current working directory. 
-The following does this for the _`varseq`_ workflow template. The name of the resulting 
+The following does this for the _`rnaseq`_ workflow template. The name of the resulting 
 workflow directory can be specified under the _`mydirname`_ argument. The default _`NULL`_ 
 uses the name of the chosen workflow. An error is issued if a directory of the same 
 name and path exists already. 
 
 ```{r generate_workenvir, eval=FALSE}
-genWorkenvir(workflow="systemPipeR/SPvarseq", mydirname="varseq")
-setwd("varseq")
+genWorkenvir(workflow="systemPipeR/SPrnaseq", mydirname="rnaseq")
+setwd("rnaseq")
 ```
 
 On Linux and OS X systems the same can be achieved from the command-line of a terminal with the following commands.
 
 ```{bash generate_workenvir_from_shell, eval=FALSE}
-$ Rscript -e "systemPipeRdata::genWorkenvir(workflow='systemPipeR/SPvarseq', mydirname='varseq')"
+$ Rscript -e "systemPipeRdata::genWorkenvir(workflow='systemPipeR/SPrnaseq', mydirname='rnaseq')"
+```
+
+## Build, run and visualize the workflow template
+
+- Build workflow from RMarkdown file
+
+This template provides some common steps for a `RNAseq` workflow. One can add, remove, modify 
+workflow steps by operating on the `sal` object. 
+
+```{r project_rnaseq, eval=FALSE}
+sal <- SPRproject() 
+sal <- importWF(sal, file_path = "systemPipeVARseq.Rmd", verbose = FALSE)
+```
+
+- Running workflow
+
+Next, we can run the entire workflow from R with one command: 
+
+```{r run_rnaseq, eval=FALSE}
+sal <- runWF(sal)
+```
+
+- Visualize workflow
+
+_`systemPipeR`_ workflows instances can be visualized with the `plotWF` function.
+
+```{r plot_rnaseq, eval=FALSE}
+plotWF(sal)
+```
+
+- Report generation
+
+_`systemPipeR`_ compiles all the workflow execution logs in one central location,
+making it easier to check any standard output (`stdout`) or standard error
+(`stderr`) for any command-line tools used on the workflow or the R code stdout.
+
+```{r report_rnaseq, eval=FALSE}
+sal <- renderLogs(sal)
+```
+
+Also, the technical report can be generated using `renderReport` function.
+
+```{r reporttech_rnaseq, eval=FALSE}
+sal <- renderReport(sal)
 ```
 
 # Workflow templates collection
@@ -197,28 +253,12 @@ accordingly.
 
 **Figure 2:** *systemPipeR's* preconfigured directory structure.
 
-# Run workflows
-
-Next, run from within R the chosen sample workflow by executing the code provided 
-in the corresponding _`*.Rmd`_ template file. 
-Much more detailed information on running and customizing [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) 
-workflows is available in its overview vignette [here](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html). 
-This vignette can also be opened from R with the following command. 
-
-```{r load_systemPipeR, eval=FALSE, messages=FALSE}
-library("systemPipeR") # Loads systemPipeR which needs to be installed via BiocManager::install() from Bioconductor
-```
-
-```{r documentation_systemPipeR, eval=FALSE}
-vignette("systemPipeR", package = "systemPipeR")
-```
-
 ## Return paths to sample data
 
 The location of the sample data provided by _`systemPipeRdata`_ can be returned as a _`list`_.
 
 ```{r return_samplepaths, eval=TRUE}
-pathList()
+pathList()[1:2]
 ```
 
 # Version information

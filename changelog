@@ -1,4 +1,7 @@
 changelog
+    version 1.99.12
+	- Update systemPipeRdata vignette
+	
     version 1.99.10
 	- remove old script from gatk.
 	
