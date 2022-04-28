@@ -1,4 +1,7 @@
 changelog
+    version 2.0.1
+	- Update Chip-seq template 
+	
     version 1.99.12
 	- Update systemPipeRdata vignette
 	

@@ -512,7 +512,7 @@ appendStep(sal) <- LineWise(
 ### Annotation with `ChIPseeker` package
 
 The following annotates the identified peaks with genomic context information
-using the  `ChIPseeker` package [@Yu2015-xu].
+using the `ChIPseeker` package [@Yu2015-xu].
 
 ```{r annotation_ChIPseeker, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -662,6 +662,7 @@ appendStep(sal) <- LineWise(
         BatchResult <- GOCluster_Report(catdb=catdb, setlist=gene_ids, method="all", 
                                         id_type="gene", CLSZ=2, cutoff=0.9, 
                                         gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+        write.table(BatchResult, "results/GOBatchAll.xls", quote=FALSE, row.names=FALSE, sep="\t")
     },
     step_name = "go_enrich",
     dependency = "annotation_ChIPseeker",
@@ -700,7 +701,6 @@ appendStep(sal) <- LineWise(
     step_name = "parse_peak_sequences",
     dependency = "call_peaks_macs_noref",
 )
-
 ```
 
 ### Motif discovery with `BCRANK`
@@ -743,7 +743,7 @@ appendStep(sal) <- LineWise(
         sessionInfo()
         },
     step_name = "sessionInfo",
-    dependency = "bcrank_enrich",
+    dependency = "bcrank_enrich"
 )
 ```
 
