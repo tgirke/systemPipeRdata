@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">systemPipeRdata</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.23.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.1</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
 <em>systemPipeRdata</em>: Workflow templates and sample data</h1>
                         <h4 data-toc-skip class="author">Author: Daniela Cassol (<a href="mailto:danielac@ucr.edu" class="email">danielac@ucr.edu</a>) and Thomas Girke (<a href="mailto:thomas.girke@ucr.edu" class="email">thomas.girke@ucr.edu</a>)</h4>
             
-            <h4 data-toc-skip class="date">Last update: 13 April, 2022</h4>
+            <h4 data-toc-skip class="date">Last update: 27 April, 2022</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tgirke/systemPipeRdata/blob/HEAD/vignettes/systemPipeRdata.Rmd" class="external-link"><code>vignettes/systemPipeRdata.Rmd</code></a></small>
       <div class="hidden name"><code>systemPipeRdata.Rmd</code></div>
@@ -110,7 +110,7 @@ word-wrap: initial !important;
 </style>
 <!---
 - Compile from command-line
-Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRdata.Rmd', tangle=TRUE)"; Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::pdf_document'))"
+Rscript -e "rmarkdown::render('systemPipeRdata.Rmd', c('BiocStyle::html_document'), clean=F); knitr::knit('systemPipeRdata.Rmd', tangle=TRUE)"
 
 --><script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
@@ -131,6 +131,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </h2>
 <p><a href="https://github.com/tgirke/systemPipeRdata" class="external-link"><em><code>systemPipeRdata</code></em></a> is a helper package to generate with a single command workflow templates that are intended to be used by its parent package <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html" class="external-link"><em><code>systemPipeR</code></em></a> <span class="citation">(H Backman and Girke 2016)</span>. The <em>systemPipeR</em> project provides a suite of R/Bioconductor packages for designing, building and running end-to-end analysis workflows on local machines, HPC clusters and cloud systems, while generating at the same time publication quality analysis reports.</p>
 <p>To test workflows quickly or design new ones from existing templates, users can generate with a single command workflow instances fully populated with sample data and parameter files required for running a chosen workflow. Pre-configured directory structure of the workflow environment and the sample data used by <em><code>systemPipeRdata</code></em> are described <a href="http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates" class="external-link">here</a>.</p>
+<p><em><code>systemPipeRdata</code></em> package provides a demo sample FASTQ files used in the workflow reporting vignettes. The chosen data set <a href="http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938" class="external-link"><code>SRP010938</code></a> obtains 18 paired-end (PE) read sets from <em>Arabidposis thaliana</em> <span class="citation">(Howard et al. 2013)</span>. To minimize processing time during testing, each FASTQ file has been subsetted to 90,000-100,000 randomly sampled PE reads that map to the first 100,000 nucleotides of each chromosome of the <em>A. thalina</em> genome. The corresponding reference genome sequence (FASTA) and its GFF annotation files (provided in the same download) have been truncated accordingly. This way the entire test sample data set requires less than 200MB disk storage space. A PE read set has been chosen for this test data set for flexibility, because it can be used for testing both types of analysis routines requiring either SE (single-end) reads or PE reads.</p>
 </div>
 <div class="section level2">
 <h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
@@ -156,37 +157,69 @@ document.addEventListener("DOMContentLoaded", function() {
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span>help <span class="op">=</span> <span class="st">"systemPipeRdata"</span><span class="op">)</span>  <span class="co"># Lists package info</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"systemPipeRdata"</span><span class="op">)</span>  <span class="co"># Opens vignette</span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="starting-with-pre-configured-workflow-templates">Starting with pre-configured workflow templates<a class="anchor" aria-label="anchor" href="#starting-with-pre-configured-workflow-templates"></a>
-</h3>
-<p>Load one of the available workflows into your current working directory. The following does this for the <em><code>varseq</code></em> workflow template. The name of the resulting workflow directory can be specified under the <em><code>mydirname</code></em> argument. The default <em><code>NULL</code></em> uses the name of the chosen workflow. An error is issued if a directory of the same name and path exists already.</p>
+</div>
+<div class="section level2">
+<h2 id="starting-with-pre-configured-workflow-templates">Starting with pre-configured workflow templates<a class="anchor" aria-label="anchor" href="#starting-with-pre-configured-workflow-templates"></a>
+</h2>
+<p>Load one of the available workflows into your current working directory. The following does this for the <em><code>rnaseq</code></em> workflow template. The name of the resulting workflow directory can be specified under the <em><code>mydirname</code></em> argument. The default <em><code>NULL</code></em> uses the name of the chosen workflow. An error is issued if a directory of the same name and path exists already.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/genWorkenvir.html">genWorkenvir</a></span><span class="op">(</span>workflow <span class="op">=</span> <span class="st">"systemPipeR/SPvarseq"</span>, mydirname <span class="op">=</span> <span class="st">"varseq"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">"varseq"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/genWorkenvir.html">genWorkenvir</a></span><span class="op">(</span>workflow <span class="op">=</span> <span class="st">"systemPipeR/SPrnaseq"</span>, mydirname <span class="op">=</span> <span class="st">"rnaseq"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">"rnaseq"</span><span class="op">)</span></code></pre></div>
 <p>On Linux and OS X systems the same can be achieved from the command-line of a terminal with the following commands.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> Rscript <span class="at">-e</span> <span class="st">"systemPipeRdata::genWorkenvir(workflow='systemPipeR/SPvarseq', mydirname='varseq')"</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> Rscript <span class="at">-e</span> <span class="st">"systemPipeRdata::genWorkenvir(workflow='systemPipeR/SPrnaseq', mydirname='rnaseq')"</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="build-run-and-visualize-the-workflow-template">Build, run and visualize the workflow template<a class="anchor" aria-label="anchor" href="#build-run-and-visualize-the-workflow-template"></a>
+</h3>
+<ul>
+<li>Build workflow from RMarkdown file</li>
+</ul>
+<p>This template provides some common steps for a <code>RNAseq</code> workflow. One can add, remove, modify workflow steps by operating on the <code>sal</code> object.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/SPRproject.html" class="external-link">SPRproject</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/importWF.html" class="external-link">importWF</a></span><span class="op">(</span><span class="va">sal</span>, file_path <span class="op">=</span> <span class="st">"systemPipeVARseq.Rmd"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<ul>
+<li>Running workflow</li>
+</ul>
+<p>Next, we can run the entire workflow from R with one command:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/runWF.html" class="external-link">runWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
+<ul>
+<li>Visualize workflow</li>
+</ul>
+<p><em><code>systemPipeR</code></em> workflows instances can be visualized with the <code>plotWF</code> function.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/plotWF.html" class="external-link">plotWF</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
+<ul>
+<li>Report generation</li>
+</ul>
+<p><em><code>systemPipeR</code></em> compiles all the workflow execution logs in one central location, making it easier to check any standard output (<code>stdout</code>) or standard error (<code>stderr</code>) for any command-line tools used on the workflow or the R code stdout.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderLogs.html" class="external-link">renderLogs</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
+<p>Also, the technical report can be generated using <code>renderReport</code> function.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/systemPipeR/man/renderReport.html" class="external-link">renderReport</a></span><span class="op">(</span><span class="va">sal</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="workflow-templates-collection">Workflow templates collection<a class="anchor" aria-label="anchor" href="#workflow-templates-collection"></a>
 </h2>
 <p>A collection of workflow templates are available, and it is possible to browse the current availability, as follows:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/availableWF.html">availableWF</a></span><span class="op">(</span>github <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>This function returns the list of workflow templates available within the package and <a href="https://github.com/systemPipeR" class="external-link">systemPipeR Organization</a> on GitHub. Each one listed template can be created as described above.</p>
 <p>The workflow template choose from Github will be installed as an R package, and also it creates the environment with all the settings and files to run the demo analysis.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/genWorkenvir.html">genWorkenvir</a></span><span class="op">(</span>workflow<span class="op">=</span><span class="st">"systemPipeR/SPrnaseq"</span>, mydirname<span class="op">=</span><span class="st">"NULL"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">"SPrnaseq"</span><span class="op">)</span></code></pre></div>
 <p>Besides, it is possible to choose different versions of the workflow template, defined through other branches on the GitHub Repository. By default, the <em><code>master</code></em> branch is selected, however, it is possible to define a different branch with the <em><code>ref</code></em> argument.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/genWorkenvir.html">genWorkenvir</a></span><span class="op">(</span>workflow<span class="op">=</span><span class="st">"systemPipeR/SPrnaseq"</span>, ref <span class="op">=</span> <span class="st">"singleMachine"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">"SPrnaseq"</span><span class="op">)</span></code></pre></div>
 <div class="section level3">
 <h3 id="download-a-specific-r-markdown-file">Download a specific R Markdown file<a class="anchor" aria-label="anchor" href="#download-a-specific-r-markdown-file"></a>
 </h3>
 <p>Also, it is possible to download a specific workflow script for your analysis. The URL can be specified under <em><code>url</code></em> argument and the R Markdown file name in the <em><code>urlname</code></em> argument. The default <em><code>NULL</code></em> copies the current version available in the chose template.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/genWorkenvir.html">genWorkenvir</a></span><span class="op">(</span>workflow<span class="op">=</span><span class="st">"systemPipeR/SPrnaseq"</span>, url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/systemPipeR/systemPipeRNAseq/cluster/vignettes/systemPipeRNAseq.Rmd"</span>, 
              urlname <span class="op">=</span> <span class="st">"rnaseq_V-cluster.Rmd"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">"rnaseq"</span><span class="op">)</span></code></pre></div>
@@ -246,62 +279,23 @@ document.addEventListener("DOMContentLoaded", function() {
 <img src="results/directory.png">
 </center>
 <p><strong>Figure 2:</strong> <em>systemPipeR’s</em> preconfigured directory structure.</p>
-</div>
-<div class="section level2">
-<h2 id="run-workflows">Run workflows<a class="anchor" aria-label="anchor" href="#run-workflows"></a>
-</h2>
-<p>Next, run from within R the chosen sample workflow by executing the code provided in the corresponding <em><code>*.Rmd</code></em> template file. Much more detailed information on running and customizing <a href="http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html" class="external-link"><em><code>systemPipeR</code></em></a> workflows is available in its overview vignette <a href="http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html" class="external-link">here</a>. This vignette can also be opened from R with the following command.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://systempipe.org/" class="external-link">"systemPipeR"</a></span><span class="op">)</span>  <span class="co"># Loads systemPipeR which needs to be installed via BiocManager::install() from Bioconductor</span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"systemPipeR"</span>, package <span class="op">=</span> <span class="st">"systemPipeR"</span><span class="op">)</span></code></pre></div>
 <div class="section level3">
 <h3 id="return-paths-to-sample-data">Return paths to sample data<a class="anchor" aria-label="anchor" href="#return-paths-to-sample-data"></a>
 </h3>
 <p>The location of the sample data provided by <em><code>systemPipeRdata</code></em> can be returned as a <em><code>list</code></em>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/pathList.html">pathList</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/pathList.html">pathList</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">## $targets</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/param/targets.txt"</span>
+<span class="co">## [1] "/tmp/Rtmp0LR5iI/temp_libpathb28204df172e1/systemPipeRdata/extdata/param/targets.txt"</span>
 <span class="co">## </span>
 <span class="co">## $targetsPE</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/param/targetsPE.txt"</span>
-<span class="co">## </span>
-<span class="co">## $annotationdir</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/annotation/"</span>
-<span class="co">## </span>
-<span class="co">## $fastqdir</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/fastq/"</span>
-<span class="co">## </span>
-<span class="co">## $bamdir</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/bam/"</span>
-<span class="co">## </span>
-<span class="co">## $paramdir</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/param/"</span>
-<span class="co">## </span>
-<span class="co">## $workflows</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/workflows/"</span>
-<span class="co">## </span>
-<span class="co">## $chipseq</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/workflows/chipseq/"</span>
-<span class="co">## </span>
-<span class="co">## $rnaseq</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/workflows/rnaseq/"</span>
-<span class="co">## </span>
-<span class="co">## $riboseq</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/workflows/riboseq/"</span>
-<span class="co">## </span>
-<span class="co">## $varseq</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/workflows/varseq/"</span>
-<span class="co">## </span>
-<span class="co">## $new</span>
-<span class="co">## [1] "/tmp/RtmpTap65H/temp_libpath16cb1601ae5cf/systemPipeRdata/extdata/workflows/new/"</span></code></pre>
+<span class="co">## [1] "/tmp/Rtmp0LR5iI/temp_libpathb28204df172e1/systemPipeRdata/extdata/param/targetsPE.txt"</span></code></pre>
 </div>
 </div>
 <div class="section level2">
 <h2 id="version-information">Version information<a class="anchor" aria-label="anchor" href="#version-information"></a>
 </h2>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## R Under development (unstable) (2021-10-25 r81105)</span>
 <span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span>
@@ -324,27 +318,33 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [6] methods   base     </span>
 <span class="co">## </span>
 <span class="co">## other attached packages:</span>
-<span class="co">## [1] systemPipeRdata_1.23.6 BiocStyle_2.23.1      </span>
+<span class="co">## [1] systemPipeRdata_2.1.1 BiocStyle_2.23.1     </span>
 <span class="co">## </span>
 <span class="co">## loaded via a namespace (and not attached):</span>
-<span class="co">##  [1] knitr_1.38          magrittr_2.0.3     </span>
-<span class="co">##  [3] BiocGenerics_0.41.2 R6_2.5.1           </span>
-<span class="co">##  [5] ragg_1.2.2          rlang_1.0.2        </span>
-<span class="co">##  [7] fastmap_1.1.0       stringr_1.4.0      </span>
-<span class="co">##  [9] tools_4.2.0         xfun_0.30          </span>
-<span class="co">## [11] cli_3.2.0           jquerylib_0.1.4    </span>
-<span class="co">## [13] remotes_2.4.2       systemfonts_1.0.4  </span>
-<span class="co">## [15] htmltools_0.5.2     yaml_2.3.5         </span>
-<span class="co">## [17] digest_0.6.29       rprojroot_2.0.3    </span>
-<span class="co">## [19] pkgdown_2.0.2       bookdown_0.25      </span>
-<span class="co">## [21] textshaping_0.3.6   formatR_1.12       </span>
-<span class="co">## [23] BiocManager_1.30.16 purrr_0.3.4        </span>
-<span class="co">## [25] codetools_0.2-18    sass_0.4.1         </span>
-<span class="co">## [27] fs_1.5.2            memoise_2.0.1      </span>
-<span class="co">## [29] cachem_1.0.6        evaluate_0.15      </span>
-<span class="co">## [31] rmarkdown_2.13      stringi_1.7.6      </span>
-<span class="co">## [33] compiler_4.2.0      bslib_0.3.1        </span>
-<span class="co">## [35] desc_1.4.1          jsonlite_1.8.0</span></code></pre>
+<span class="co">##  [1] formatR_1.12           XVector_0.35.0        </span>
+<span class="co">##  [3] bslib_0.3.1            compiler_4.2.0        </span>
+<span class="co">##  [5] BiocManager_1.30.17    jquerylib_0.1.4       </span>
+<span class="co">##  [7] GenomeInfoDb_1.31.10   remotes_2.4.2         </span>
+<span class="co">##  [9] zlibbioc_1.41.0        bitops_1.0-7          </span>
+<span class="co">## [11] tools_4.2.0            digest_0.6.29         </span>
+<span class="co">## [13] jsonlite_1.8.0         evaluate_0.15         </span>
+<span class="co">## [15] memoise_2.0.1          rlang_1.0.2           </span>
+<span class="co">## [17] cli_3.3.0              yaml_2.3.5            </span>
+<span class="co">## [19] pkgdown_2.0.3          xfun_0.30             </span>
+<span class="co">## [21] fastmap_1.1.0          GenomeInfoDbData_1.2.8</span>
+<span class="co">## [23] stringr_1.4.0          knitr_1.38            </span>
+<span class="co">## [25] desc_1.4.1             Biostrings_2.63.3     </span>
+<span class="co">## [27] fs_1.5.2               sass_0.4.1            </span>
+<span class="co">## [29] S4Vectors_0.33.17      systemfonts_1.0.4     </span>
+<span class="co">## [31] IRanges_2.29.1         stats4_4.2.0          </span>
+<span class="co">## [33] rprojroot_2.0.3        R6_2.5.1              </span>
+<span class="co">## [35] textshaping_0.3.6      rmarkdown_2.14        </span>
+<span class="co">## [37] bookdown_0.26          purrr_0.3.4           </span>
+<span class="co">## [39] magrittr_2.0.3         codetools_0.2-18      </span>
+<span class="co">## [41] htmltools_0.5.2        BiocGenerics_0.41.2   </span>
+<span class="co">## [43] ragg_1.2.2             stringi_1.7.6         </span>
+<span class="co">## [45] RCurl_1.98-1.6         cachem_1.0.6          </span>
+<span class="co">## [47] crayon_1.5.1</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="funding">Funding<a class="anchor" aria-label="anchor" href="#funding"></a>
@@ -357,6 +357,9 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-H_Backman2016-bt" class="csl-entry">
 H Backman, Tyler W, and Thomas Girke. 2016. <span>“<span class="nocase">systemPipeR: NGS workflow and report generation environment</span>.”</span> <em>BMC Bioinformatics</em> 17 (1): 388. <a href="https://doi.org/10.1186/s12859-016-1241-0" class="external-link">https://doi.org/10.1186/s12859-016-1241-0</a>.
+</div>
+<div id="ref-Howard2013-fq" class="csl-entry">
+Howard, Brian E, Qiwen Hu, Ahmet Can Babaoglu, Manan Chandra, Monica Borghi, Xiaoping Tan, Luyan He, et al. 2013. <span>“High-Throughput <span>RNA</span> Sequencing of Pseudomonas-Infected Arabidopsis Reveals Hidden Transcriptome Complexity and Novel Splice Variants.”</span> <em>PLoS One</em> 8 (10): e74183. <a href="https://doi.org/10.1371/journal.pone.0074183" class="external-link">https://doi.org/10.1371/journal.pone.0074183</a>.
 </div>
 </div>
 </div>
@@ -379,7 +382,7 @@ H Backman, Tyler W, and Thomas Girke. 2016. <span>“<span class="nocase">system
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
