@@ -378,6 +378,7 @@ targets[1:4,-c(5,6)]
 ##         BatchResult <- GOCluster_Report(catdb=catdb, setlist=gene_ids, method="all",
 ##                                         id_type="gene", CLSZ=2, cutoff=0.9,
 ##                                         gocats=c("MF", "BP", "CC"), recordSpecGO=NULL)
+##         write.table(BatchResult, "results/GOBatchAll.xls", quote=FALSE, row.names=FALSE, sep="\t")
 ##     },
 ##     step_name = "go_enrich",
 ##     dependency = "annotation_ChIPseeker",
@@ -403,7 +404,6 @@ targets[1:4,-c(5,6)]
 ##     step_name = "parse_peak_sequences",
 ##     dependency = "call_peaks_macs_noref",
 ## )
-## 
 
 
 ## ----bcrank_enrich, eval=FALSE, spr=TRUE------------------
@@ -433,7 +433,7 @@ targets[1:4,-c(5,6)]
 ##         sessionInfo()
 ##         },
 ##     step_name = "sessionInfo",
-##     dependency = "bcrank_enrich",
+##     dependency = "bcrank_enrich"
 ## )
 
 
