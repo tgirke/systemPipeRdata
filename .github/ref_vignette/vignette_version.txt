@@ -1,1 +1,1 @@
-vignette_version: 1.0.14
+vignette_version: 1.0.15

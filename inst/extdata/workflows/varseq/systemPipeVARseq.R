@@ -43,7 +43,7 @@ suppressPackageStartupMessages({
 ## # Please REMOVE the next two lines in your real analysis
 ## cat(crayon::red$bold("Some samples in targets are removed for test workflow. Please change the template to disable this in your real analysis.\n"))
 ## writeLines(readLines("targetsPE.txt")[1:13], "targetsPE.txt")
-## 
+## ###pre-end
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library(systemPipeR)
@@ -59,7 +59,7 @@ suppressPackageStartupMessages({
 ##         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
 ##         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
 ##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-##         pdf("./results/fastqReport_pre.pdf", height = 18, width = 4 * length(fqlist))
+##         png("./results/fastqReport.png", height = 162, width = 288 * length(fqlist))
 ##         seeFastqPlot(fqlist)
 ##         dev.off()
 ##     },
@@ -129,7 +129,7 @@ suppressPackageStartupMessages({
 ##     code = {
 ##         fq_files <- getColumn(sal, "preprocessing", "outfiles", column = 1) ## get outfiles path
 ##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-##         pdf("./results/fastqReport_pos.pdf", height = 18, width = 4 * length(fqlist))
+##         png("./results/fastqReport_pos.png", height = 18, width = 4 * length(fqlist))
 ##         seeFastqPlot(fqlist)
 ##         dev.off()
 ##     },
@@ -478,7 +478,7 @@ suppressPackageStartupMessages({
 ##         ## make a list of first three samples
 ##         varlist <- sapply(names(vcf_anno[1:3]), function(x) as.character(read.delim(vcf_anno[x])$VARID))
 ##         vennset <- overLapper(varlist, type = "vennsets")
-##         pdf("./results/vennplot_var.pdf")
+##         png("./results/vennplot_var.png")
 ##         vennPlot(list(vennset), mymain = "Venn Plot of First 3 Samples", mysub = "", colmode = 2, ccol = c("red", "blue"))
 ##         dev.off()
 ##     },
@@ -547,4 +547,8 @@ sessionInfo()
 
 ## ----logsWF, eval=FALSE-----------------------------------
 ## sal <- renderLogs(sal)
+
+
+## ----report_session_info, eval=TRUE-----------------------
+sessionInfo()
 

@@ -56,7 +56,7 @@ targets[1:4,-c(5,6)]
 ##         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
 ##         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
 ##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-##         pdf("./results/fastqReport.pdf", height = 18, width = 4 * length(fqlist))
+##         png("./results/fastqReport.png", height = 162, width = 288 * length(fqlist))
 ##         seeFastqPlot(fqlist)
 ##         dev.off()
 ##     },
@@ -193,9 +193,8 @@ targets[1:4,-c(5,6)]
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         bampaths <- getColumn(sal, step = "bowtie2_alignment", "outfiles", column = "samtools_sort_bam")
-##         merge_bams <- mergeBamByFactor(args=bampaths, targetsDF = targetsWF(sal)[["bowtie2_alignment"]], overwrite=TRUE)
+##         merge_bams <- mergeBamByFactor(args=bampaths, targetsDF = targetsWF(sal)[["bowtie2_alignment"]], out_dir = file.path("results", "merge_bam") ,overwrite=TRUE)
 ##         updateColumn(sal, step = "merge_bams", position = "targetsWF") <- merge_bams
-##         writeTargets(sal, step = "merge_bams", file = "targets_merge_bams.txt", overwrite = TRUE)
 ##     },
 ##     step_name = "merge_bams",
 ##     dependency = "bowtie2_alignment"
@@ -203,9 +202,25 @@ targets[1:4,-c(5,6)]
 
 
 ## ----call_peaks_macs_noref, eval=FALSE, spr=TRUE----------
+## cat("Running preprocessing for call_peaks_macs_noref\n")
+## # Previous Linewise step is not run at workflow building time,
+## # but we need the output as input for this sysArgs step. So
+## # we use some preprocess code to predict the output paths
+## # to update the output targets of merge_bams, and then
+## # them into this next step during workflow building phase.
+## mergebam_out_dir = file.path("results", "merge_bam") # make sure this is the same output directory used in merge_bams
+## targets_merge_bam <- targetsWF(sal)$bowtie2_alignment
+## targets_merge_bam <- targets_merge_bam[, -which(colnames(targets_merge_bam) %in% c("FileName1", "FileName2", "FileName"))]
+## targets_merge_bam <- targets_merge_bam[!duplicated(targets_merge_bam$Factor), ]
+## targets_merge_bam <- cbind(FileName = file.path(mergebam_out_dir, paste0(targets_merge_bam$Factor, "_merged.bam")), targets_merge_bam)
+## updateColumn(sal, step = "merge_bams", position = "targetsWF") <- targets_merge_bam
+## # write it out as backup, so you do not need to use preprocess code above again
+## writeTargets(sal, step = "merge_bams", file = "targets_merge_bams.txt", overwrite = TRUE)
+## 
+## ###pre-end
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "call_peaks_macs_noref",
-##     targets = "targets_merge_bams.txt",
+##     targets = "targets_merge_bams.txt", # or use "merge_bams" to directly grab from the previous step
 ##     wf_file = "MACS2/macs2-noinput.cwl",
 ##     input_file = "MACS2/macs2-noinput.yml",
 ##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
@@ -217,18 +232,14 @@ targets[1:4,-c(5,6)]
 ## )
 
 
-## ----writeTargetsRef, eval=FALSE, spr=TRUE----------------
-## appendStep(sal) <- LineWise(
-##     code = {
-##         writeTargetsRef(infile = "targets_merge_bams.txt",
-##                 outfile = "targets_bam_ref.txt", silent = FALSE, overwrite = TRUE)
-##     },
-##     step_name = "writeTargetsRef",
-##     dependency = "merge_bams"
-## )
-
-
 ## ----call_peaks_macs_withref, eval=FALSE, spr=TRUE--------
+## cat("Running preprocessing for call_peaks_macs_withref\n")
+## # To generate the reference targets file for the next step, use `writeTargetsRef`,
+## # this file needs to be present at workflow building time
+## # Use following preprocess code to do so:
+## writeTargetsRef(infile = "targets_merge_bams.txt", outfile = "targets_bam_ref.txt", silent = FALSE, overwrite = TRUE)
+## 
+## ###pre-end
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "call_peaks_macs_withref",
 ##     targets = "targets_bam_ref.txt",
@@ -240,7 +251,7 @@ targets[1:4,-c(5,6)]
 ##         FileName2 = "_FASTQ_PATH2_",
 ##         SampleName = "_SampleName_"
 ##     ),
-##     dependency = c("writeTargetsRef")
+##     dependency = c("merge_bams")
 ## )
 
 
@@ -290,14 +301,14 @@ targets[1:4,-c(5,6)]
 ##     code = {
 ##         peaks_files <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles", column = "peaks_xls")
 ##         peak <- readPeakFile(peaks_files[1])
-##         pdf("results/peakscoverage.pdf")
+##         png("results/peakscoverage.png")
 ##         covplot(peak, weightCol="X.log10.pvalue.")
 ##         dev.off()
-##         pdf("results/peaksHeatmap.pdf")
+##         png("results/peaksHeatmap.png")
 ##         peakHeatmap(peaks_files[1], TxDb=txdb, upstream=1000, downstream=1000,
 ##                     color="red")
 ##         dev.off()
-##         pdf("results/peaksProfile.pdf")
+##         png("results/peaksProfile.png")
 ##         plotAvgProf2(peaks_files[1], TxDb=txdb, upstream=1000, downstream=1000,
 ##                      xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency",
 ##                      conf=0.05)
@@ -418,7 +429,7 @@ targets[1:4,-c(5,6)]
 ##         topMotif <- toptable(BCRANKout, 1)
 ##         weightMatrix <- pwm(topMotif, normalize = FALSE)
 ##         weightMatrixNormalized <- pwm(topMotif, normalize = TRUE)
-##         pdf("results/seqlogo.pdf")
+##         png("results/seqlogo.png")
 ##         seqLogo(weightMatrixNormalized)
 ##         dev.off()
 ##         },
@@ -466,4 +477,8 @@ targets[1:4,-c(5,6)]
 
 ## ----logsWF, eval=FALSE-----------------------------------
 ## sal <- renderLogs(sal)
+
+
+## ----eval=TRUE--------------------------------------------
+sessionInfo()
 
