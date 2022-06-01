@@ -746,6 +746,7 @@ appendStep(sal) <- LineWise(
 
 <div align="center">Figure 3: One of the motifs identified by `BCRANK`</div></br>
 
+
 ## Version Information
 
 ```{r sessionInfo, eval=FALSE, spr=TRUE}
@@ -757,6 +758,17 @@ appendStep(sal) <- LineWise(
     dependency = "bcrank_enrich"
 )
 ```
+
+```{r sessionInfo2, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        sessionInfo()
+        },
+    step_name = "sessionInfo2",
+    dependency = "bcrank_enrich"
+)
+```
+
 
 # Running workflow
 
@@ -838,6 +850,13 @@ sal <- renderLogs(sal)
 If you are running on a single machine, use following code as an example to check 
 if some tools used in this workflow are in your environment **PATH**. No warning 
 message should be shown if all tools are installed.
+
+## Session Info
+This is the session information for rendering this report. To access the session information
+of workflow running, check HTML report of `renderLogs`. 
+```{r eval=TRUE}
+sessionInfo()
+```
 
 # Funding
 
