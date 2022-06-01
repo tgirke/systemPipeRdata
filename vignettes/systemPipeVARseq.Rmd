@@ -147,7 +147,7 @@ The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 # Please REMOVE the next two lines in your real analysis
 cat(crayon::red$bold("Some samples in targets are removed for test workflow. Please change the template to disable this in your real analysis.\n"))
 writeLines(readLines("targetsPE.txt")[1:13], "targetsPE.txt")
-
+###pre-end
 appendStep(sal) <- LineWise(
     code = {
         library(systemPipeR)
@@ -1037,6 +1037,13 @@ making it easier to check any standard output (`stdout`) or standard error
 
 ```{r logsWF, eval=FALSE}
 sal <- renderLogs(sal)
+```
+
+## Session Info
+This is the session information for rendering this report. To access the session information
+of workflow running, check HTML report of `renderLogs`. 
+```{r report_session_info, eval=TRUE}
+sessionInfo()
 ```
 
 # Funding
