@@ -62,7 +62,7 @@ jobs:
             awk -F. '{$3++;print > ".github/ref_vignette/vignette_version.txt"}' OFS=. .github/ref_vignette/vignette_version.txt
       - name: Update inst
         run: |
-          bash .github/bash/update_inst.sh https://github.com/tgirke/systemPipeRdata.git inst/
+          bash .github/bash/update_inst.sh https://github.com/systemPipeR/systemPipeRdata.git inst/
       - name: Update github
         run: |
           git config --local user.name "Github Action Bot"
