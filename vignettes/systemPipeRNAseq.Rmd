@@ -724,6 +724,13 @@ making it easier to check any standard output (`stdout`) or standard error
 sal <- renderLogs(sal)
 ```
 
+## Session Info
+This is the session information for rendering this report. To access the session information
+of workflow running, check HTML report of `renderLogs`. 
+```{r report_session_info, eval=TRUE}
+sessionInfo()
+```
+
 # Funding
 
 This project is funded by NSF award [ABI-1661152](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1661152). 
