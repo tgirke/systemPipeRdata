@@ -759,17 +759,6 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-```{r sessionInfo2, eval=FALSE, spr=TRUE}
-appendStep(sal) <- LineWise(
-    code = {
-        sessionInfo()
-        },
-    step_name = "sessionInfo2",
-    dependency = "bcrank_enrich"
-)
-```
-
-
 # Running workflow
 
 ## Interactive job submissions in a single machine
