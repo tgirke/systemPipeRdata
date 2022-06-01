@@ -66,8 +66,8 @@ jobs:
           bash .github/bash/update_inst.sh https://github.com/tgirke/systemPipeRdata.git inst/
       - name: Update github
         run: |
-          git config --local user.name "dcassol"
-          git config --local user.email "danicassol@gmail.com"
+          git config --local user.name "Github Action Bot"
+          git config --local user.email "gh-action-bot@protonmail.com"
           git add -A
           git commit -m "Bot update RMD/HTML files" -a
       - name: Push changes
