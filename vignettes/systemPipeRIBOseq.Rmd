@@ -1097,7 +1097,7 @@ sal <- renderLogs(sal)
 # Version Information
 This is the session information for rendering this report. To access the session information
 of workflow running, check HTML report of `renderLogs`. 
-```{r sessionInfo_final}
+```{r sessionInfo_final, eval=TRUE}
 sessionInfo()
 ```
 
