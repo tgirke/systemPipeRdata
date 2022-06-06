@@ -1938,9 +1938,9 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">ChIP-Seq Workflow Template</h1>
 <p class="author-name">Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)</p>
-<h4 class="date">Last update: 28 April, 2022</h4>
+<h4 class="date">Last update: 01 June, 2022</h4>
 <h4 class="package">Package</h4>
-<p>systemPipeR 2.3.1</p>
+<p>systemPipeR 2.3.4</p>
 
 </div>
 
@@ -2070,7 +2070,7 @@ quality statistics for a set of FASTQ files, including per cycle quality box
 plots, base proportions, base-level quality trends, relative k-mer
 diversity, length, and occurrence distribution of reads, number of reads
 above quality cutoffs and mean quality distribution. The results are
-written to a PDF file named <code>fastqReport.pdf</code>.</p>
+written to a png file named <code>fastqReport.png</code>.</p>
 <p>This is the pre-trimming fastq report. Another post-trimming fastq report step
 is not included in the default. It is recommended to run this step first to
 decide whether the trimming is needed.</p>
@@ -2082,7 +2082,7 @@ later, we used the <code>getColumn</code> function to extract a named vector.</p
     updateColumn(sal, step = &quot;load_SPR&quot;, position = &quot;targetsWF&quot;) &lt;- targets
     fq_files &lt;- getColumn(sal, &quot;load_SPR&quot;, &quot;targetsWF&quot;, column = 1)
     fqlist &lt;- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-    pdf(&quot;./results/fastqReport.pdf&quot;, height = 18, width = 4 *
+    png(&quot;./results/fastqReport.png&quot;, height = 162, width = 288 *
         length(fqlist))
     seeFastqPlot(fqlist)
     dev.off()
@@ -2254,10 +2254,8 @@ The updated <code>targets</code> object can be used to update the <code>SYSargsL
     bampaths &lt;- getColumn(sal, step = &quot;bowtie2_alignment&quot;, &quot;outfiles&quot;,
         column = &quot;samtools_sort_bam&quot;)
     merge_bams &lt;- mergeBamByFactor(args = bampaths, targetsDF = targetsWF(sal)[[&quot;bowtie2_alignment&quot;]],
-        overwrite = TRUE)
+        out_dir = file.path(&quot;results&quot;, &quot;merge_bam&quot;), overwrite = TRUE)
     updateColumn(sal, step = &quot;merge_bams&quot;, position = &quot;targetsWF&quot;) &lt;- merge_bams
-    writeTargets(sal, step = &quot;merge_bams&quot;, file = &quot;targets_merge_bams.txt&quot;,
-        overwrite = TRUE)
 }, step_name = &quot;merge_bams&quot;, dependency = &quot;bowtie2_alignment&quot;)</code></pre>
 </div>
 <div id="peak-calling-without-inputreference-sample" class="section level3">
@@ -2268,11 +2266,34 @@ input on all samples specified in the corresponding <code>targets</code> object.
 the small size of the sample data, MACS2 needs to be run here with the
 <code>nomodel</code> setting. For real data sets, users want to remove this parameter
 in the corresponding <code>*.param</code> file(s).</p>
-<pre class="r"><code>appendStep(sal) &lt;- SYSargsList(step_name = &quot;call_peaks_macs_noref&quot;,
-    targets = &quot;targets_merge_bams.txt&quot;, wf_file = &quot;MACS2/macs2-noinput.cwl&quot;,
-    input_file = &quot;MACS2/macs2-noinput.yml&quot;, dir_path = system.file(&quot;extdata/cwl&quot;,
-        package = &quot;systemPipeR&quot;), inputvars = c(FileName = &quot;_FASTQ_PATH1_&quot;,
-        SampleName = &quot;_SampleName_&quot;), dependency = c(&quot;merge_bams&quot;))</code></pre>
+<pre class="r"><code>cat(&quot;Running preprocessing for call_peaks_macs_noref\n&quot;)
+# Previous Linewise step is not run at workflow building time, 
+# but we need the output as input for this sysArgs step. So 
+# we use some preprocess code to predict the output paths 
+# to update the output targets of merge_bams, and then
+# them into this next step during workflow building phase.
+mergebam_out_dir = file.path(&quot;results&quot;, &quot;merge_bam&quot;) # make sure this is the same output directory used in merge_bams
+targets_merge_bam &lt;- targetsWF(sal)$bowtie2_alignment
+targets_merge_bam &lt;- targets_merge_bam[, -which(colnames(targets_merge_bam) %in% c(&quot;FileName1&quot;, &quot;FileName2&quot;, &quot;FileName&quot;))]
+targets_merge_bam &lt;- targets_merge_bam[!duplicated(targets_merge_bam$Factor), ]
+targets_merge_bam &lt;- cbind(FileName = file.path(mergebam_out_dir, paste0(targets_merge_bam$Factor, &quot;_merged.bam&quot;)), targets_merge_bam)
+updateColumn(sal, step = &quot;merge_bams&quot;, position = &quot;targetsWF&quot;) &lt;- targets_merge_bam
+# write it out as backup, so you do not need to use preprocess code above again
+writeTargets(sal, step = &quot;merge_bams&quot;, file = &quot;targets_merge_bams.txt&quot;, overwrite = TRUE) 
+
+###pre-end
+appendStep(sal) &lt;- SYSargsList(
+    step_name = &quot;call_peaks_macs_noref&quot;,
+    targets = &quot;targets_merge_bams.txt&quot;, # or use &quot;merge_bams&quot; to directly grab from the previous step
+    wf_file = &quot;MACS2/macs2-noinput.cwl&quot;,
+    input_file = &quot;MACS2/macs2-noinput.yml&quot;,
+    dir_path = system.file(&quot;extdata/cwl&quot;, package = &quot;systemPipeR&quot;),
+    inputvars = c(
+        FileName = &quot;_FASTQ_PATH1_&quot;,
+        SampleName = &quot;_SampleName_&quot;
+    ),
+    dependency = c(&quot;merge_bams&quot;)
+)</code></pre>
 </div>
 <div id="peak-calling-with-inputreference-sample" class="section level3">
 <h3><span class="header-section-number">3.5.3</span> Peak calling with input/reference sample</h3>
@@ -2280,16 +2301,21 @@ in the corresponding <code>*.param</code> file(s).</p>
 conveniently specified in the <code>SampleReference</code> column of the initial
 <code>targets</code> file. The <code>writeTargetsRef</code> function uses this information to create a <code>targets</code>
 file intermediate for running MACS2 with the corresponding input samples.</p>
-<pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
-    writeTargetsRef(infile = &quot;targets_merge_bams.txt&quot;, outfile = &quot;targets_bam_ref.txt&quot;,
-        silent = FALSE, overwrite = TRUE)
-}, step_name = &quot;writeTargetsRef&quot;, dependency = &quot;merge_bams&quot;)</code></pre>
-<pre class="r"><code>appendStep(sal) &lt;- SYSargsList(step_name = &quot;call_peaks_macs_withref&quot;,
+<pre class="r"><code>cat(&quot;Running preprocessing for call_peaks_macs_withref\n&quot;)
+# To generate the reference targets file for the next step,
+# use `writeTargetsRef`, this file needs to be present at
+# workflow building time Use following preprocess code to
+# do so:
+writeTargetsRef(infile = &quot;targets_merge_bams.txt&quot;, outfile = &quot;targets_bam_ref.txt&quot;,
+    silent = FALSE, overwrite = TRUE)
+
+### pre-end
+appendStep(sal) &lt;- SYSargsList(step_name = &quot;call_peaks_macs_withref&quot;,
     targets = &quot;targets_bam_ref.txt&quot;, wf_file = &quot;MACS2/macs2-input.cwl&quot;,
     input_file = &quot;MACS2/macs2-input.yml&quot;, dir_path = system.file(&quot;extdata/cwl&quot;,
         package = &quot;systemPipeR&quot;), inputvars = c(FileName1 = &quot;_FASTQ_PATH1_&quot;,
         FileName2 = &quot;_FASTQ_PATH2_&quot;, SampleName = &quot;_SampleName_&quot;),
-    dependency = c(&quot;writeTargetsRef&quot;))</code></pre>
+    dependency = c(&quot;merge_bams&quot;))</code></pre>
 <p>The peak calling results from MACS2 are written for each sample to
 separate files in the <code>results/call_peaks_macs_withref</code> directory. They are named after the corresponding files with extensions used by MACS2.</p>
 </div>
@@ -2348,14 +2374,14 @@ for demonstration purposes.</p>
     peaks_files &lt;- getColumn(sal, step = &quot;call_peaks_macs_noref&quot;,
         &quot;outfiles&quot;, column = &quot;peaks_xls&quot;)
     peak &lt;- readPeakFile(peaks_files[1])
-    pdf(&quot;results/peakscoverage.pdf&quot;)
+    png(&quot;results/peakscoverage.png&quot;)
     covplot(peak, weightCol = &quot;X.log10.pvalue.&quot;)
     dev.off()
-    pdf(&quot;results/peaksHeatmap.pdf&quot;)
+    png(&quot;results/peaksHeatmap.png&quot;)
     peakHeatmap(peaks_files[1], TxDb = txdb, upstream = 1000,
         downstream = 1000, color = &quot;red&quot;)
     dev.off()
-    pdf(&quot;results/peaksProfile.pdf&quot;)
+    png(&quot;results/peaksProfile.png&quot;)
     plotAvgProf2(peaks_files[1], TxDb = txdb, upstream = 1000,
         downstream = 1000, xlab = &quot;Genomic Region (5&#39;-&gt;3&#39;)&quot;,
         ylab = &quot;Read Count Frequency&quot;, conf = 0.05)
@@ -2505,7 +2531,7 @@ sample set and plots the sequence logo of the highest ranking motif.</p>
     topMotif &lt;- toptable(BCRANKout, 1)
     weightMatrix &lt;- pwm(topMotif, normalize = FALSE)
     weightMatrixNormalized &lt;- pwm(topMotif, normalize = TRUE)
-    pdf(&quot;results/seqlogo.pdf&quot;)
+    png(&quot;results/seqlogo.png&quot;)
     seqLogo(weightMatrixNormalized)
     dev.off()
 }, step_name = &quot;bcrank_enrich&quot;, dependency = &quot;call_peaks_macs_noref&quot;,
@@ -2585,6 +2611,74 @@ making it easier to check any standard output (<code>stdout</code>) or standard 
 <p>If you are running on a single machine, use following code as an example to check
 if some tools used in this workflow are in your environment <strong>PATH</strong>. No warning
 message should be shown if all tools are installed.</p>
+</div>
+<div id="session-info" class="section level2">
+<h2><span class="header-section-number">4.6</span> Session Info</h2>
+<p>This is the session information for rendering this report. To access the session information
+of workflow running, check HTML report of <code>renderLogs</code>.</p>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.1.3 (2022-03-10)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 20.04.4 LTS
+## 
+## Matrix products: default
+## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
+## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
+## 
+## locale:
+##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C          
+##  [3] LC_TIME=C.UTF-8        LC_COLLATE=C.UTF-8    
+##  [5] LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+##  [7] LC_PAPER=C.UTF-8       LC_NAME=C             
+##  [9] LC_ADDRESS=C           LC_TELEPHONE=C        
+## [11] LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+## 
+## attached base packages:
+## [1] stats4    stats     graphics  grDevices utils    
+## [6] datasets  methods   base     
+## 
+## other attached packages:
+##  [1] systemPipeR_2.3.4           ShortRead_1.52.0           
+##  [3] GenomicAlignments_1.30.0    SummarizedExperiment_1.24.0
+##  [5] Biobase_2.54.0              MatrixGenerics_1.6.0       
+##  [7] matrixStats_0.62.0          BiocParallel_1.28.3        
+##  [9] Rsamtools_2.10.0            Biostrings_2.62.0          
+## [11] XVector_0.34.0              GenomicRanges_1.46.1       
+## [13] GenomeInfoDb_1.30.1         IRanges_2.28.0             
+## [15] S4Vectors_0.32.4            BiocGenerics_0.40.0        
+## [17] BiocStyle_2.22.0           
+## 
+## loaded via a namespace (and not attached):
+##  [1] lattice_0.20-45        png_0.1-7             
+##  [3] assertthat_0.2.1       digest_0.6.29         
+##  [5] utf8_1.2.2             R6_2.5.1              
+##  [7] evaluate_0.15          ggplot2_3.3.6         
+##  [9] pillar_1.7.0           zlibbioc_1.40.0       
+## [11] rlang_1.0.2            jquerylib_0.1.4       
+## [13] Matrix_1.4-0           rmarkdown_2.14        
+## [15] stringr_1.4.0          htmlwidgets_1.5.4     
+## [17] RCurl_1.98-1.6         munsell_0.5.0         
+## [19] DelayedArray_0.20.0    compiler_4.1.3        
+## [21] xfun_0.31              pkgconfig_2.0.3       
+## [23] htmltools_0.5.2        tidyselect_1.1.2      
+## [25] tibble_3.1.7           GenomeInfoDbData_1.2.7
+## [27] bookdown_0.26          codetools_0.2-18      
+## [29] fansi_1.0.3            dplyr_1.0.9           
+## [31] crayon_1.5.1           bitops_1.0-7          
+## [33] grid_4.1.3             DBI_1.1.2             
+## [35] jsonlite_1.8.0         gtable_0.3.0          
+## [37] lifecycle_1.0.1        formatR_1.12          
+## [39] magrittr_2.0.3         scales_1.2.0          
+## [41] cli_3.3.0              stringi_1.7.6         
+## [43] hwriter_1.3.2.1        latticeExtra_0.6-29   
+## [45] bslib_0.3.1            generics_0.1.2        
+## [47] ellipsis_0.3.2         vctrs_0.4.1           
+## [49] RColorBrewer_1.1-3     tools_4.1.3           
+## [51] glue_1.6.2             purrr_0.3.4           
+## [53] jpeg_0.1-9             parallel_4.1.3        
+## [55] fastmap_1.1.0          yaml_2.3.5            
+## [57] colorspace_2.0-3       BiocManager_1.30.18   
+## [59] knitr_1.39             sass_0.4.1</code></pre>
 </div>
 </div>
 <div id="funding" class="section level1">

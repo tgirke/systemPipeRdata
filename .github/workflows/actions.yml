@@ -52,9 +52,8 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           install.packages(c("BiocManager", "knitcitations"))
-          BiocManager::install("Bioconductor/BiocStyle")
-          BiocManager::install("tgirke/systemPipeR")
-          BiocManager::install("tgirke/systemPipeRdata")
+          BiocManager::install("BiocStyle")
+          BiocManager::install("lz100/systemPipeR")
         shell: Rscript {0}
         ## Update the workflows temapltes...
       - name: update version number
@@ -63,11 +62,11 @@ jobs:
             awk -F. '{$3++;print > ".github/ref_vignette/vignette_version.txt"}' OFS=. .github/ref_vignette/vignette_version.txt
       - name: Update inst
         run: |
-          bash .github/bash/update_inst.sh https://github.com/tgirke/systemPipeRdata.git inst/
+          bash .github/bash/update_inst.sh https://github.com/systemPipeR/systemPipeRdata.git inst/
       - name: Update github
         run: |
-          git config --local user.name "dcassol"
-          git config --local user.email "danicassol@gmail.com"
+          git config --local user.name "Github Action Bot"
+          git config --local user.email "gh-action-bot@protonmail.com"
           git add -A
           git commit -m "Bot update RMD/HTML files" -a
       - name: Push changes

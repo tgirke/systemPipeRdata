@@ -1938,9 +1938,9 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">RIBO-Seq Workflow Template</h1>
 <p class="author-name">Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)</p>
-<h4 class="date">Last update: 28 April, 2022</h4>
+<h4 class="date">Last update: 01 June, 2022</h4>
 <h4 class="package">Package</h4>
-<p>systemPipeR 2.3.1</p>
+<p>systemPipeR 2.3.4</p>
 
 </div>
 
@@ -2188,7 +2188,7 @@ quality statistics for a set of FASTQ files, including per cycle quality box
 plots, base proportions, base-level quality trends, relative k-mer
 diversity, length, and occurrence distribution of reads, number of reads
 above quality cutoffs and mean quality distribution. The results are
-written to a PDF file named <code>fastqReport.pdf</code>.</p>
+written to a png file named <code>fastqReport.png</code>.</p>
 <p>This is the pre-trimming fastq report. Another post-trimming fastq report step
 is not included in the default. It is recommended to run this step first to
 decide whether the trimming is needed.</p>
@@ -2198,7 +2198,7 @@ we used the <code>getColumn</code> function to extract a named vector.</p>
     fq_files &lt;- getColumn(sal, &quot;preprocessing&quot;, &quot;targetsWF&quot;,
         column = 1)
     fqlist &lt;- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-    pdf(&quot;./results/fastqReport.pdf&quot;, height = 18, width = 4 *
+    png(&quot;./results/fastqReport.png&quot;, height = 162, width = 288 *
         length(fqlist))
     seeFastqPlot(fqlist)
     dev.off()
@@ -2564,7 +2564,7 @@ in the <code>results</code> directory.</p>
     dds &lt;- DESeqDataSet(se, design = ~condition)
     d &lt;- cor(assay(rlog(dds)), method = &quot;spearman&quot;)
     hc &lt;- hclust(dist(1 - d))
-    pdf(&quot;results/sample_tree.pdf&quot;)
+    png(&quot;results/sample_tree.png&quot;)
     plot.phylo(as.phylo(hc), type = &quot;p&quot;, edge.col = &quot;blue&quot;, edge.width = 2,
         show.node.label = TRUE, no.margin = TRUE)
     dev.off()
@@ -2612,7 +2612,7 @@ file. To open it, type <code>?filterDEGs</code> in the R console.</p>
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
     edgeDF &lt;- read.delim(&quot;results/edgeRglm_allcomp.xls&quot;, row.names = 1,
         check.names = FALSE)
-    pdf(&quot;results/DEGcounts.pdf&quot;)
+    png(&quot;results/DEGcounts.png&quot;)
     DEG_list &lt;- filterDEGs(degDF = edgeDF, filter = c(Fold = 2,
         FDR = 20))
     dev.off()
@@ -2635,7 +2635,7 @@ comparisons with the same number of sample sets in a single Venn diagram
 <pre class="r"><code>appendStep(sal) &lt;- LineWise(code = {
     vennsetup &lt;- overLapper(DEG_list$Up[6:9], type = &quot;vennsets&quot;)
     vennsetdown &lt;- overLapper(DEG_list$Down[6:9], type = &quot;vennsets&quot;)
-    pdf(&quot;results/vennplot.pdf&quot;)
+    png(&quot;results/vennplot.png&quot;)
     vennPlot(list(vennsetup, vennsetdown), mymain = &quot;&quot;, mysub = &quot;&quot;,
         colmode = 2, ccol = c(&quot;blue&quot;, &quot;red&quot;))
     dev.off()
@@ -2732,7 +2732,7 @@ of the following example.</p>
     gos &lt;- BatchResultslim[grep(&quot;M6-V6_up_down&quot;, BatchResultslim$CLID),
         ]
     gos &lt;- BatchResultslim
-    pdf(&quot;results/GOslimbarplotMF.pdf&quot;, height = 8, width = 10)
+    png(&quot;results/GOslimbarplotMF.png&quot;, height = 8, width = 10)
     goBarplot(gos, gocat = &quot;MF&quot;)
     goBarplot(gos, gocat = &quot;BP&quot;)
     goBarplot(gos, gocat = &quot;CC&quot;)
@@ -2795,7 +2795,7 @@ complete linkage for cluster joining.</p>
     geneids &lt;- unique(as.character(unlist(DEG_list[[1]])))
     y &lt;- assay(rlog(dds))[geneids, ]
     y &lt;- y[rowSums(y[]) &gt; 0, ]
-    pdf(&quot;results/heatmap1.pdf&quot;)
+    png(&quot;results/heatmap1.png&quot;)
     pheatmap(y, scale = &quot;row&quot;, clustering_distance_rows = &quot;correlation&quot;,
         clustering_distance_cols = &quot;correlation&quot;)
     dev.off()
@@ -2875,6 +2875,8 @@ making it easier to check any standard output (<code>stdout</code>) or standard 
 </div>
 <div id="version-information-1" class="section level1">
 <h1><span class="header-section-number">5</span> Version Information</h1>
+<p>This is the session information for rendering this report. To access the session information
+of workflow running, check HTML report of <code>renderLogs</code>.</p>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>## R version 4.1.3 (2022-03-10)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
@@ -2897,7 +2899,7 @@ making it easier to check any standard output (<code>stdout</code>) or standard 
 ## [6] datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] systemPipeR_2.3.1           ShortRead_1.52.0           
+##  [1] systemPipeR_2.3.4           ShortRead_1.52.0           
 ##  [3] GenomicAlignments_1.30.0    SummarizedExperiment_1.24.0
 ##  [5] Biobase_2.54.0              MatrixGenerics_1.6.0       
 ##  [7] matrixStats_0.62.0          BiocParallel_1.28.3        
@@ -2905,24 +2907,24 @@ making it easier to check any standard output (<code>stdout</code>) or standard 
 ## [11] XVector_0.34.0              GenomicRanges_1.46.1       
 ## [13] GenomeInfoDb_1.30.1         IRanges_2.28.0             
 ## [15] S4Vectors_0.32.4            BiocGenerics_0.40.0        
-## [17] BiocStyle_2.25.0           
+## [17] BiocStyle_2.22.0           
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] lattice_0.20-45        png_0.1-7             
 ##  [3] assertthat_0.2.1       digest_0.6.29         
 ##  [5] utf8_1.2.2             R6_2.5.1              
-##  [7] evaluate_0.15          ggplot2_3.3.5         
+##  [7] evaluate_0.15          ggplot2_3.3.6         
 ##  [9] pillar_1.7.0           zlibbioc_1.40.0       
 ## [11] rlang_1.0.2            jquerylib_0.1.4       
 ## [13] Matrix_1.4-0           rmarkdown_2.14        
 ## [15] stringr_1.4.0          htmlwidgets_1.5.4     
 ## [17] RCurl_1.98-1.6         munsell_0.5.0         
 ## [19] DelayedArray_0.20.0    compiler_4.1.3        
-## [21] xfun_0.30              pkgconfig_2.0.3       
+## [21] xfun_0.31              pkgconfig_2.0.3       
 ## [23] htmltools_0.5.2        tidyselect_1.1.2      
-## [25] tibble_3.1.6           GenomeInfoDbData_1.2.7
+## [25] tibble_3.1.7           GenomeInfoDbData_1.2.7
 ## [27] bookdown_0.26          codetools_0.2-18      
-## [29] fansi_1.0.3            dplyr_1.0.8           
+## [29] fansi_1.0.3            dplyr_1.0.9           
 ## [31] crayon_1.5.1           bitops_1.0-7          
 ## [33] grid_4.1.3             DBI_1.1.2             
 ## [35] jsonlite_1.8.0         gtable_0.3.0          
@@ -2936,7 +2938,7 @@ making it easier to check any standard output (<code>stdout</code>) or standard 
 ## [51] glue_1.6.2             purrr_0.3.4           
 ## [53] jpeg_0.1-9             parallel_4.1.3        
 ## [55] fastmap_1.1.0          yaml_2.3.5            
-## [57] colorspace_2.0-3       BiocManager_1.30.17   
+## [57] colorspace_2.0-3       BiocManager_1.30.18   
 ## [59] knitr_1.39             sass_0.4.1</code></pre>
 </div>
 <div id="funding" class="section level1">

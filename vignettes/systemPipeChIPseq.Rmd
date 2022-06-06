@@ -155,7 +155,7 @@ quality statistics for a set of FASTQ files, including per cycle quality box
 plots, base proportions, base-level quality trends, relative k-mer
 diversity, length, and occurrence distribution of reads, number of reads
 above quality cutoffs and mean quality distribution. The results are
-written to a PDF file named `fastqReport.pdf`.
+written to a png file named `fastqReport.png`.
 
 This is the pre-trimming fastq report. Another post-trimming fastq report step 
 is not included in the default. It is recommended to run this step first to
@@ -172,7 +172,7 @@ appendStep(sal) <- LineWise(
         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-        pdf("./results/fastqReport.pdf", height = 18, width = 4 * length(fqlist))
+        png("./results/fastqReport.png", height = 162, width = 288 * length(fqlist))
         seeFastqPlot(fqlist)
         dev.off()
     },
@@ -413,9 +413,8 @@ This step can be skipped if merging of BAM files is not desired.
 appendStep(sal) <- LineWise(
     code = {
         bampaths <- getColumn(sal, step = "bowtie2_alignment", "outfiles", column = "samtools_sort_bam")
-        merge_bams <- mergeBamByFactor(args=bampaths, targetsDF = targetsWF(sal)[["bowtie2_alignment"]], overwrite=TRUE)
+        merge_bams <- mergeBamByFactor(args=bampaths, targetsDF = targetsWF(sal)[["bowtie2_alignment"]], out_dir = file.path("results", "merge_bam") ,overwrite=TRUE)
         updateColumn(sal, step = "merge_bams", position = "targetsWF") <- merge_bams
-        writeTargets(sal, step = "merge_bams", file = "targets_merge_bams.txt", overwrite = TRUE)
     },
     step_name = "merge_bams",
     dependency = "bowtie2_alignment"
@@ -432,9 +431,25 @@ the small size of the sample data, MACS2 needs to be run here with the
 in the corresponding `*.param` file(s).
 
 ```{r call_peaks_macs_noref, eval=FALSE, spr=TRUE}
+cat("Running preprocessing for call_peaks_macs_noref\n")
+# Previous Linewise step is not run at workflow building time, 
+# but we need the output as input for this sysArgs step. So 
+# we use some preprocess code to predict the output paths 
+# to update the output targets of merge_bams, and then
+# them into this next step during workflow building phase.
+mergebam_out_dir = file.path("results", "merge_bam") # make sure this is the same output directory used in merge_bams
+targets_merge_bam <- targetsWF(sal)$bowtie2_alignment
+targets_merge_bam <- targets_merge_bam[, -which(colnames(targets_merge_bam) %in% c("FileName1", "FileName2", "FileName"))]
+targets_merge_bam <- targets_merge_bam[!duplicated(targets_merge_bam$Factor), ]
+targets_merge_bam <- cbind(FileName = file.path(mergebam_out_dir, paste0(targets_merge_bam$Factor, "_merged.bam")), targets_merge_bam)
+updateColumn(sal, step = "merge_bams", position = "targetsWF") <- targets_merge_bam
+# write it out as backup, so you do not need to use preprocess code above again
+writeTargets(sal, step = "merge_bams", file = "targets_merge_bams.txt", overwrite = TRUE) 
+
+###pre-end
 appendStep(sal) <- SYSargsList(
     step_name = "call_peaks_macs_noref",
-    targets = "targets_merge_bams.txt",
+    targets = "targets_merge_bams.txt", # or use "merge_bams" to directly grab from the previous step
     wf_file = "MACS2/macs2-noinput.cwl",
     input_file = "MACS2/macs2-noinput.yml",
     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
@@ -453,18 +468,14 @@ conveniently specified in the `SampleReference` column of the initial
 `targets` file. The `writeTargetsRef` function uses this information to create a `targets` 
 file intermediate for running MACS2 with the corresponding input samples.
 
-```{r writeTargetsRef, eval=FALSE, spr=TRUE}
-appendStep(sal) <- LineWise(
-    code = {
-        writeTargetsRef(infile = "targets_merge_bams.txt", 
-                outfile = "targets_bam_ref.txt", silent = FALSE, overwrite = TRUE)
-    },
-    step_name = "writeTargetsRef",
-    dependency = "merge_bams"
-)
-```
-
 ```{r call_peaks_macs_withref, eval=FALSE, spr=TRUE}
+cat("Running preprocessing for call_peaks_macs_withref\n")
+# To generate the reference targets file for the next step, use `writeTargetsRef`,
+# this file needs to be present at workflow building time
+# Use following preprocess code to do so:
+writeTargetsRef(infile = "targets_merge_bams.txt", outfile = "targets_bam_ref.txt", silent = FALSE, overwrite = TRUE)
+
+###pre-end
 appendStep(sal) <- SYSargsList(
     step_name = "call_peaks_macs_withref",
     targets = "targets_bam_ref.txt",
@@ -476,7 +487,7 @@ appendStep(sal) <- SYSargsList(
         FileName2 = "_FASTQ_PATH2_", 
         SampleName = "_SampleName_"
     ),
-    dependency = c("writeTargetsRef")
+    dependency = c("merge_bams")
 )
 ```
 
@@ -546,14 +557,14 @@ appendStep(sal) <- LineWise(
     code = {
         peaks_files <- getColumn(sal, step = "call_peaks_macs_noref", "outfiles", column = "peaks_xls")
         peak <- readPeakFile(peaks_files[1])
-        pdf("results/peakscoverage.pdf")
+        png("results/peakscoverage.png")
         covplot(peak, weightCol="X.log10.pvalue.")
         dev.off()
-        pdf("results/peaksHeatmap.pdf")
+        png("results/peaksHeatmap.png")
         peakHeatmap(peaks_files[1], TxDb=txdb, upstream=1000, downstream=1000, 
                     color="red")
         dev.off()
-        pdf("results/peaksProfile.pdf")
+        png("results/peaksProfile.png")
         plotAvgProf2(peaks_files[1], TxDb=txdb, upstream=1000, downstream=1000, 
                      xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency", 
                      conf=0.05)
@@ -722,7 +733,7 @@ appendStep(sal) <- LineWise(
         topMotif <- toptable(BCRANKout, 1)
         weightMatrix <- pwm(topMotif, normalize = FALSE)
         weightMatrixNormalized <- pwm(topMotif, normalize = TRUE)
-        pdf("results/seqlogo.pdf")
+        png("results/seqlogo.png")
         seqLogo(weightMatrixNormalized)
         dev.off()
         },
@@ -734,6 +745,7 @@ appendStep(sal) <- LineWise(
 ![](results/seqlogo.png)
 
 <div align="center">Figure 3: One of the motifs identified by `BCRANK`</div></br>
+
 
 ## Version Information
 
@@ -827,6 +839,13 @@ sal <- renderLogs(sal)
 If you are running on a single machine, use following code as an example to check 
 if some tools used in this workflow are in your environment **PATH**. No warning 
 message should be shown if all tools are installed.
+
+## Session Info
+This is the session information for rendering this report. To access the session information
+of workflow running, check HTML report of `renderLogs`. 
+```{r eval=TRUE}
+sessionInfo()
+```
 
 # Funding
 

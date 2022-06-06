@@ -147,7 +147,7 @@ The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 # Please REMOVE the next two lines in your real analysis
 cat(crayon::red$bold("Some samples in targets are removed for test workflow. Please change the template to disable this in your real analysis.\n"))
 writeLines(readLines("targetsPE.txt")[1:13], "targetsPE.txt")
-
+###pre-end
 appendStep(sal) <- LineWise(
     code = {
         library(systemPipeR)
@@ -163,7 +163,7 @@ quality statistics for a set of FASTQ files including per cycle quality box
 plots, base proportions, base-level quality trends, relative k-mer
 diversity, length, and occurrence distribution of reads, number of reads
 above quality cutoffs and mean quality distribution. The results are
-written to a PDF file named `fastqReport.pdf`.
+written to a png file named `fastqReport.png`.
 
 This is the pre-trimming fastq report. Another post-trimming fastq report step 
 is not included in the default. It is recommended to run this step first to
@@ -180,7 +180,7 @@ appendStep(sal) <- LineWise(
         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-        pdf("./results/fastqReport_pre.pdf", height = 18, width = 4 * length(fqlist))
+        png("./results/fastqReport.png", height = 162, width = 288 * length(fqlist))
         seeFastqPlot(fqlist)
         dev.off()
     },
@@ -306,7 +306,7 @@ appendStep(sal) <- LineWise(
     code = {
         fq_files <- getColumn(sal, "preprocessing", "outfiles", column = 1) ## get outfiles path
         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-        pdf("./results/fastqReport_pos.pdf", height = 18, width = 4 * length(fqlist))
+        png("./results/fastqReport_pos.png", height = 18, width = 4 * length(fqlist))
         seeFastqPlot(fqlist)
         dev.off()
     },
@@ -315,6 +315,7 @@ appendStep(sal) <- LineWise(
     run_step = "optional"
 )
 ```
+
 
 ## Read mapping with `BWA-MEM` 
 
@@ -904,7 +905,7 @@ appendStep(sal) <- LineWise(
         ## make a list of first three samples
         varlist <- sapply(names(vcf_anno[1:3]), function(x) as.character(read.delim(vcf_anno[x])$VARID))
         vennset <- overLapper(varlist, type = "vennsets")
-        pdf("./results/vennplot_var.pdf")
+        png("./results/vennplot_var.png")
         vennPlot(list(vennset), mymain = "Venn Plot of First 3 Samples", mysub = "", colmode = 2, ccol = c("red", "blue"))
         dev.off()
     },
@@ -1037,6 +1038,13 @@ making it easier to check any standard output (`stdout`) or standard error
 
 ```{r logsWF, eval=FALSE}
 sal <- renderLogs(sal)
+```
+
+## Session Info
+This is the session information for rendering this report. To access the session information
+of workflow running, check HTML report of `renderLogs`. 
+```{r report_session_info, eval=TRUE}
+sessionInfo()
 ```
 
 # Funding

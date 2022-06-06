@@ -92,7 +92,7 @@ targets
 ##     code = {
 ##         fq_files <- getColumn(sal, "preprocessing", "targetsWF", column = 1)
 ##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-##         pdf("./results/fastqReport.pdf", height = 18, width = 4 * length(fqlist))
+##         png("./results/fastqReport.png", height = 162, width = 288 * length(fqlist))
 ##         seeFastqPlot(fqlist)
 ##         dev.off()
 ##     },
@@ -381,7 +381,7 @@ read.delim(system.file("extdata/countDFeByg.xls", package = "systemPipeR"),
 ##         dds <- DESeqDataSet(se, design = ~ condition)
 ##         d <- cor(assay(rlog(dds)), method="spearman")
 ##         hc <- hclust(dist(1-d))
-##         pdf("results/sample_tree.pdf")
+##         png("results/sample_tree.png")
 ##         plot.phylo(as.phylo(hc), type="p", edge.col="blue", edge.width=2, show.node.label=TRUE, no.margin=TRUE)
 ##         dev.off()
 ##         },
@@ -418,7 +418,7 @@ read.delim(system.file("extdata/countDFeByg.xls", package = "systemPipeR"),
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
-##         pdf("results/DEGcounts.pdf")
+##         png("results/DEGcounts.png")
 ##         DEG_list <- filterDEGs(degDF=edgeDF, filter=c(Fold=2, FDR=20))
 ##         dev.off()
 ##         write.table(DEG_list$Summary, "./results/DEGcounts.xls", quote=FALSE, sep="\t", row.names=FALSE)
@@ -432,7 +432,7 @@ read.delim(system.file("extdata/countDFeByg.xls", package = "systemPipeR"),
 ##     code = {
 ##         vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
 ##         vennsetdown <- overLapper(DEG_list$Down[6:9], type="vennsets")
-##         pdf("results/vennplot.pdf")
+##         png("results/vennplot.png")
 ##         vennPlot(list(vennsetup, vennsetdown), mymain="", mysub="", colmode=2, ccol=c("blue", "red"))
 ##         dev.off()
 ##         },
@@ -486,7 +486,7 @@ read.delim(system.file("extdata/countDFeByg.xls", package = "systemPipeR"),
 ##     code = {
 ##         gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
 ##         gos <- BatchResultslim
-##         pdf("results/GOslimbarplotMF.pdf", height=8, width=10)
+##         png("results/GOslimbarplotMF.png", height=8, width=10)
 ##         goBarplot(gos, gocat="MF")
 ##         goBarplot(gos, gocat="BP")
 ##         goBarplot(gos, gocat="CC")
@@ -531,7 +531,7 @@ read.delim(system.file("extdata/countDFeByg.xls", package = "systemPipeR"),
 ##         geneids <- unique(as.character(unlist(DEG_list[[1]])))
 ##         y <- assay(rlog(dds))[geneids, ]
 ##         y <- y[rowSums(y[])>0,]
-##         pdf("results/heatmap1.pdf")
+##         png("results/heatmap1.png")
 ##         pheatmap(y, scale="row", clustering_distance_rows="correlation", clustering_distance_cols="correlation")
 ##         dev.off()
 ##         },
@@ -579,6 +579,6 @@ read.delim(system.file("extdata/countDFeByg.xls", package = "systemPipeR"),
 ## sal <- renderLogs(sal)
 
 
-## ----sessionInfo_final------------------------------------
+## ----sessionInfo_final, eval=TRUE-------------------------
 sessionInfo()
 
