@@ -316,6 +316,7 @@ appendStep(sal) <- LineWise(
 )
 ```
 
+
 ## Read mapping with `BWA-MEM` 
 
 The NGS reads of this project are aligned against the reference genome
