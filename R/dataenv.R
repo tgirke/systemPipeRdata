@@ -81,7 +81,7 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
     file.copy(c(paste0(pathList()$paramdir, "bibtex.bib")), paste0(mydirname2, "/bibtex.bib"), overwrite=TRUE)
     if(bam==TRUE) file.copy(normalizePath(list.files(pathList()$bamdir, "*", full.names=TRUE)), paste0(mydirname2, "/results"), overwrite=TRUE, recursive=TRUE)
     file.copy(pathList()$paramdir, paste0(mydirname2, "/"), recursive=TRUE)
-    file.copy(c(paste0(pathList()$paramdir, "batchtools.slurm.tmpl"), paste0(pathList()$paramdir, ".batchtools.conf.R")), paste0(mydirname2, "/"))
+    file.copy(c(file.path(pathList()$paramdir, "batchtools.slurm.tmpl"), file.path(pathList()$paramdir, ".batchtools.conf.R")), paste0(mydirname2, "/"))
   }
   if(all(c(!is.null(url), is.null(urlname)))) stop("argument 'urlname' missing. The argument can only be assigned 'NULL' when no url is provided. The argument should be assigned as a character vector of length 1")
   if(!is.null(url)){
@@ -115,7 +115,7 @@ genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
     file.copy(pathList()$paramdir, normalizePath(path), recursive=TRUE)
     print("The 'param' directory was successfully copied to your project.")
   }
-  file.copy(c(paste0(pathList()$paramdir, "batchtools.slurm.tmpl"), paste0(pathList()$paramdir, ".batchtools.conf.R")), path)
+  file.copy(c(file.path(pathList()$paramdir, "batchtools.slurm.tmpl"), file.path(pathList()$paramdir, ".batchtools.conf.R")), path)
 }
 
 ## Usage:
