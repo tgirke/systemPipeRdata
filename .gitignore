@@ -11,3 +11,4 @@ docs/articles/systemPipeVARseq_files/*
 
 *.Rproj
 .Rproj.user
+.Rhistory

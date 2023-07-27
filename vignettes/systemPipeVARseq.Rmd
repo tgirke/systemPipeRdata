@@ -957,10 +957,15 @@ appendStep(sal) <- LineWise(
 ![](results/plot_variant.png)
 <div align="center">Figure 3: Plot variants with programmatically.</div></br>
 
-## Version Information
-
-```{r sessionInfo}
-sessionInfo()
+## Workflow Information
+```{r wf_session, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        sessionInfo()
+    },
+    step_name = "wf_session",
+    dependency = "plot_variant"
+)
 ```
 
 # Running workflow
