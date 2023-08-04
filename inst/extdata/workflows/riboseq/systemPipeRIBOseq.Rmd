@@ -1,6 +1,6 @@
 ---
 title: "RIBO-Seq Workflow Template" 
-author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
+author: "Author: First Last Name"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
   BiocStyle::html_document:
@@ -8,11 +8,13 @@ output:
     code_folding: show
 package: systemPipeR
 vignette: |
-  %\VignetteIndexEntry{WF: RIBO-Seq Workflow Template}
   %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{WF: RIBO-Seq Workflow Template}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!--
@@ -194,6 +196,10 @@ sal
 The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 
 ```{r load_SPR, message=FALSE, eval=FALSE, spr=TRUE}
+cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
+cat(c("'rtracklayer", "GenomicFeatures", "grid", "BiocParallel", "DESeq2",
+       "ape", "edgeR", "biomaRt", "BBmisc", "pheatmap","ggplot2'\n"), sep = "', '")
+###pre-end
 appendStep(sal) <- LineWise(
     code = {
         library(systemPipeR)
@@ -201,7 +207,6 @@ appendStep(sal) <- LineWise(
         library(GenomicFeatures)
         library(ggplot2)
         library(grid)
-        library(BiocParallel)
         library(DESeq2, quietly=TRUE)
         library(ape, warn.conflicts=FALSE)
         library(edgeR)
@@ -1094,7 +1099,27 @@ making it easier to check any standard output (`stdout`) or standard error
 sal <- renderLogs(sal)
 ```
 
-# Version Information
+## Tools used 
+To check command-line tools used in this workflow, use `listCmdTools`, and use `listCmdModules`
+to check if you have a modular system.
+
+The following code will print out tools required in your custom SPR project in the report. 
+In case you are running the workflow for the first and do not have a project yet, or you 
+just want to browser this workflow, following code displays the tools required by default.
+```{r list_tools}
+if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
+    local({
+        sal <- systemPipeR::SPRproject(resume = TRUE)
+        systemPipeR::listCmdTools(sal)
+        systemPipeR::listCmdModules(sal)
+    })
+} else {
+    cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
+    cat(c("hisat2/2.1.0", "samtools/1.14"), sep = "\n")
+}
+```
+
+## Report  Information
 This is the session information for rendering this report. To access the session information
 of workflow running, check HTML report of `renderLogs`. 
 ```{r sessionInfo_final, eval=TRUE}

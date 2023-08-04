@@ -1,6 +1,6 @@
 ---
 title: "VAR-Seq Workflow Template" 
-author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
+author: "Author: First Last Name"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
   BiocStyle::html_document:
@@ -143,10 +143,13 @@ The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 ```{r load_SPR, message=FALSE, eval=FALSE, spr=TRUE}
 # Some samples in the test dataset do not work well in VARseq, and VARseq workflow 
 # takes long time to process each sample. To better test and speed up the test workflow,
-# sample set is reduced to the first 8 samples.
+# sample set is reduced to the first 13 samples.
 # Please REMOVE the next two lines in your real analysis
 cat(crayon::red$bold("Some samples in targets are removed for test workflow. Please change the template to disable this in your real analysis.\n"))
 writeLines(readLines("targetsPE.txt")[1:13], "targetsPE.txt")
+
+cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
+cat(c("'GenomicFeatures", "VariantAnnotation", "GenomicFeatures", "ggbio", "ggplot2'\n"), sep = "', '")
 ###pre-end
 appendStep(sal) <- LineWise(
     code = {
@@ -957,10 +960,15 @@ appendStep(sal) <- LineWise(
 ![](results/plot_variant.png)
 <div align="center">Figure 3: Plot variants with programmatically.</div></br>
 
-## Version Information
+## Workflow Information
 
-```{r sessionInfo}
-sessionInfo()
+```{r sessionInfo, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        sessionInfo()
+        }, 
+    step_name = "sessionInfo", 
+    dependency = "plot_variant")
 ```
 
 # Running workflow
@@ -1040,7 +1048,28 @@ making it easier to check any standard output (`stdout`) or standard error
 sal <- renderLogs(sal)
 ```
 
-## Session Info
+## Tools used 
+To check command-line tools used in this workflow, use `listCmdTools`, and use `listCmdModules`
+to check if you have a modular system.
+
+The following code will print out tools required in your custom SPR project in the report. 
+In case you are running the workflow for the first and do not have a project yet, or you 
+just want to browser this workflow, following code displays the tools required by default.
+```{r list_tools}
+if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
+    local({
+        sal <- systemPipeR::SPRproject(resume = TRUE)
+        systemPipeR::listCmdTools(sal)
+        systemPipeR::listCmdModules(sal)
+    })
+} else {
+    cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
+    cat(c("trimmomatic/0.39", "samtools/1.14", "gatk/4.2.0.0", "bcftools/1.15", 
+          "bwa/0.7.17"), sep = "\n")
+}
+```
+
+## Report Session Info
 This is the session information for rendering this report. To access the session information
 of workflow running, check HTML report of `renderLogs`. 
 ```{r report_session_info, eval=TRUE}

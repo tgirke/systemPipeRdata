@@ -2,6 +2,6 @@
 ^\.github
 ^docs
 vignettes/*_cache
-
+^\.Rhistory
 ^.*\.Rproj$
 ^\.Rproj\.user$
