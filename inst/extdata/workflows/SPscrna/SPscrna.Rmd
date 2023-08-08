@@ -50,11 +50,24 @@ suppressPackageStartupMessages({
 This section provides general description and how to use this single cell RNAseq (scRNAseq) workflow. 
 In the actual analysis report, this  section is usually **removed**. 
 
-This scRNAseq workflow template is based on the 
-
+This scRNAseq workflow template is based on the counted 10x scRNA data. It means 
+this workflow expect users have output from cell counting programs, like cell ranger. 
+If you have the raw sequencing data and would like to count the cell gene counts, 
+please use another workflow in systemPipeR, such as `SPcellranger`. 
 
 This workflow does:
-1. 
+
+1. Read in single cell count data.
+2. Basic stats on input data.
+3. Create some basic QC on cell counting. 
+4. Normalization.
+5. Find high variable genes. 
+6. Scaling.
+7. dim reduction, PCA.
+8. Clustering with tSNE, uMAP.
+9. Find clustering markers (marker gene).
+10. Find cell types. 
+11. Visualize cell types and clustering together.
 
 
 ![](results/plotwf_spscrna.jpg)
@@ -104,14 +117,37 @@ pre-configured templates.
 
 ```{r load_packages, eval=FALSE, spr=TRUE}
 cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
-cat(c("'Seurat", "readr'\n"), sep = "', '")
+cat(c("'Seurat", "dplyr", "readr'\n"), sep = "', '")
 ###pre-end
 appendStep(sal) <- LineWise(
     code = {
         library(systemPipeR)
-        library(rBLAST)
+        library(Seurat)
+        library(dplyr)
     }, 
     step_name = "load_packages"
+)
+```
+
+## Load data
+In this example, the single cell data is preprocessed/filtered 10x data from a healthy donor.
+Samples taken from peripheral blood mononuclear cells (PBMCs), about 3000 cells. 
+
+Dataset can be downloaded with this link:
+https://s3-us-west-2.amazonaws.com/10x.files/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz
+
+If the link is not working, visit [10x website](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/pbmc3k?)
+for updated links.
+
+For your real data, please preprocess and put the dataset inside `data` directory
+
+```{r load_data, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        unzip("data/")
+    }, 
+    step_name = "load_data",
+    dependency = "load_packages"
 )
 ```
 
