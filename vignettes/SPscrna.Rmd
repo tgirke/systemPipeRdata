@@ -484,9 +484,93 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-
 ![](results/plot_clusters.png)
 
+## Find cluster biomarkers
+Find genes that represent different clusters.
+```{r find_markers, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        # find markers for every cluster compared to all remaining cells, report only the positive ones
+        sce.markers <- FindAllMarkers(sce, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+        sce.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_log2FC)
+    }, 
+    step_name = "find_markers",
+    dependency = "find_clusters"
+)
+```
+
+
+## Visualize markers
+```{r plot_markers, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        png("results/vlnplot.png", 600, 600)
+        VlnPlot(sce, features = c("MS4A1", "CD79A"))
+        dev.off()
+        
+        png("results/marker_features.png", 700, 500)
+        FeaturePlot(sce, features = c("MS4A1", "GNLY", "CD3E", "CD14"))
+        dev.off()    
+        
+        # plot top 10 DEG genes in each cluster as a heatmap
+        top10_markers <- sce.markers %>% group_by(cluster) %>% top_n(n = 10, wt = avg_log2FC)
+        png("results/marker_heatmap.png", 1100, 700)
+        DoHeatmap(sce, features = top10_markers$gene) + NoLegend()
+        dev.off()
+    }, 
+    step_name = "plot_markers",
+    dependency = "find_markers"
+)
+```
+
+![](results/vlnplot.png)
+
+![](results/marker_features.png)
+
+![](results/marker_heatmap.png)
+
+## Classify cell types 
+There are a few ways one can classify different clusters into different cell types. 
+The best way is you know what are the markers for targeting cell types. 
+CellMarker(http://biocc.hrbmu.edu.cn/CellMarker/) is a great source to find 
+markers of different cell types. If you do not know the markers, use `singleR` 
+package may be helpful. This package automatically classify clusters into cell 
+types. However, the accuracy is not promised. 
+
+
+For example, if we know the markers of different cell types as following:
+
+| Cluster | Markers    | Cell Type |
+|---|---------------|--------------|
+| 0 | IL7R, CCR7    | Naive CD4+ T |
+| 1 | CD14, LYZ     | CD14+ Mono   |
+| 2 | IL7R, S100A4  | Memory CD4+  |
+| 3 | MS4A1         | B            |
+| 4 | CD8A          | CD8+ T       |
+| 5 | FCGR3A, MS4A7 | FCGR3A+ Mono |
+| 6 | GNLY, NKG7    | NK           |
+| 7 | FCER1A, CST3  | DC           |
+| 8 | PPBP          | Platelet     |
+
+```{r label_cell_type, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        new.cluster.ids <- c("Naive CD4 T", "CD14+ Mono", "Memory CD4 T", "B", 
+                             "CD8 T", "FCGR3A+ Mono","NK", "DC", "Platelet")
+        names(new.cluster.ids) <- levels(sce)
+        sce<- RenameIdents(sce, new.cluster.ids)
+        png("results/marker_labels.png", 700, 700)
+        DimPlot(sce, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+        dev.off()
+        
+    }, 
+    step_name = "label_cell_type",
+    dependency = c("plot_cluster", "find_markers")
+)
+```
+
+![](results/marker_labels.png)
 
 ## Workflow session
 
@@ -496,7 +580,7 @@ appendStep(sal) <- LineWise(
         sessionInfo()
     }, 
     step_name = "wf_session", 
-    dependency = "xxx")
+    dependency = "label_cell_type")
 ```
 
 # Manage the workflow
