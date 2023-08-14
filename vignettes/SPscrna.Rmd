@@ -9,7 +9,7 @@ output:
   BiocStyle::pdf_document: default
 package: systemPipeR
 vignette: |
-  %\VignetteIndexEntry{RIBO-Seq Workflow Template}
+  %\VignetteIndexEntry{WF: Basic Single Cell Template}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
@@ -174,7 +174,7 @@ appendStep(sal) <- LineWise(
                 scale_x_continuous(expand = c(0, 0)) +
                 labs(title = "Distribution of detected genes", x = "Genes with at least one tag")
         
-        count_p2 <- tibble::as_tibble(colSums(pbmc.data)) %>% 
+        count_p2 <- tibble::as_tibble(BiocGenerics::colSums(pbmc.data)) %>% 
             ggplot() +
                 geom_histogram(aes(x = value), bins = floor(ncol(pbmc.data)/50), fill = "#6b97c2", color = "white") +
                 theme_pubr(16) +
@@ -294,7 +294,7 @@ appendStep(sal) <- LineWise(
         sce <- NormalizeData(sce, normalization.method = "LogNormalize", scale.factor = 10000)
         
         # compare counts before and after
-        count_p_norm <- tibble::as_tibble(colSums(sce$RNA@data)) %>% 
+        count_p_norm <- tibble::as_tibble(BiocGenerics::colSums(sce$RNA@data)) %>% 
             ggplot() +
                 geom_histogram(aes(x = value), bins = floor(ncol(pbmc.data)/50), fill = "#6b97c2", color = "white") +
                 theme_pubr(16) +
@@ -574,7 +574,7 @@ appendStep(sal) <- LineWise(
 
 ## Workflow session
 
-```{r wf_session, eval=FALSE, spr=F}
+```{r wf_session, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
         sessionInfo()
