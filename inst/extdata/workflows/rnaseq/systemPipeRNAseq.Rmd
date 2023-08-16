@@ -688,13 +688,14 @@ add these resources later, as the following example using the `addResources`
 function:
 
 ```{r runWF_cluster, eval=FALSE}
+# wall time in mins, memory in MB
 resources <- list(conffile=".batchtools.conf.R",
                   template="batchtools.slurm.tmpl", 
                   Njobs=18, 
-                  walltime=120, ## minutes
+                  walltime=120,
                   ntasks=1,
                   ncpus=4, 
-                  memory=1024, ## Mb
+                  memory=1024,
                   partition = "short"
                   )
 sal <- addResources(sal, c("hisat2_mapping"), resources = resources)

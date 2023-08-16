@@ -39,10 +39,13 @@ suppressPackageStartupMessages({
 ## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE--------
 ## # Some samples in the test dataset do not work well in VARseq, and VARseq workflow
 ## # takes long time to process each sample. To better test and speed up the test workflow,
-## # sample set is reduced to the first 8 samples.
+## # sample set is reduced to the first 13 samples.
 ## # Please REMOVE the next two lines in your real analysis
 ## cat(crayon::red$bold("Some samples in targets are removed for test workflow. Please change the template to disable this in your real analysis.\n"))
 ## writeLines(readLines("targetsPE.txt")[1:13], "targetsPE.txt")
+## 
+## cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
+## cat(c("'GenomicFeatures", "VariantAnnotation", "GenomicFeatures", "ggbio", "ggplot2'\n"), sep = "', '")
 ## ###pre-end
 ## appendStep(sal) <- LineWise(
 ##     code = {
@@ -514,8 +517,13 @@ suppressPackageStartupMessages({
 ## )
 
 
-## ----sessionInfo------------------------------------------
-sessionInfo()
+## ----sessionInfo, eval=FALSE, spr=TRUE--------------------
+## appendStep(sal) <- LineWise(
+##     code = {
+##         sessionInfo()
+##         },
+##     step_name = "sessionInfo",
+##     dependency = "plot_variant")
 
 
 ## ----runWF, eval=FALSE------------------------------------
@@ -523,13 +531,14 @@ sessionInfo()
 
 
 ## ----runWF_cluster, eval=FALSE----------------------------
+## # wall time in mins, memory in MB
 ## resources <- list(conffile=".batchtools.conf.R",
 ##                   template="batchtools.slurm.tmpl",
 ##                   Njobs=18,
-##                   walltime=120, ## minutes
+##                   walltime=120,
 ##                   ntasks=1,
 ##                   ncpus=4,
-##                   memory=1024, ## Mb
+##                   memory=1024,
 ##                   partition = "short"
 ##                   )
 ## sal <- addResources(sal, c("hisat2_mapping"), resources = resources)
@@ -547,6 +556,20 @@ sessionInfo()
 
 ## ----logsWF, eval=FALSE-----------------------------------
 ## sal <- renderLogs(sal)
+
+
+## ----list_tools-------------------------------------------
+if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
+    local({
+        sal <- systemPipeR::SPRproject(resume = TRUE)
+        systemPipeR::listCmdTools(sal)
+        systemPipeR::listCmdModules(sal)
+    })
+} else {
+    cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
+    cat(c("trimmomatic/0.39", "samtools/1.14", "gatk/4.2.0.0", "bcftools/1.15", 
+          "bwa/0.7.17"), sep = "\n")
+}
 
 
 ## ----report_session_info, eval=TRUE-----------------------
