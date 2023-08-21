@@ -44,6 +44,11 @@ targets[1:4,-c(5,6)]
 
 
 ## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE--------
+## cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
+## cat(c("'ggbio", "ChIPseeker", "GenomicFeatures", "GenomicRanges", "Biostrings",
+##        "seqLogo", "BCRANK", "readr'\n"), sep = "', '")
+## targetspath <- system.file("extdata", "targetsPE_chip.txt", package = "systemPipeR")
+## ###pre-end
 ## appendStep(sal) <- LineWise(code = {
 ##                             library(systemPipeR)
 ##                             }, step_name = "load_SPR")
@@ -52,7 +57,7 @@ targets[1:4,-c(5,6)]
 ## ----fastq_report, eval=FALSE, message=FALSE, spr=TRUE----
 ## appendStep(sal) <- LineWise(
 ##     code = {
-##         targets <- read.delim("targetsPE_chip.txt", comment.char = "#")
+##         targets <- read.delim(targetspath, comment.char = "#")
 ##         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
 ##         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
 ##         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
@@ -68,7 +73,7 @@ targets[1:4,-c(5,6)]
 ## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE----
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "preprocessing",
-##     targets = "targetsPE_chip.txt", dir = TRUE,
+##     targets = targetspath, dir = TRUE,
 ##     wf_file = "preprocessReads/preprocessReads-pe.cwl",
 ##     input_file = "preprocessReads/preprocessReads-pe.yml",
 ##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
@@ -119,7 +124,7 @@ targets[1:4,-c(5,6)]
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "bowtie2_alignment",
 ##     dir = TRUE,
-##     targets = "targetsPE_chip.txt",
+##     targets = targetspath,
 ##     wf_file = "workflow-bowtie2/workflow_bowtie2-pe.cwl",
 ##     input_file = "workflow-bowtie2/workflow_bowtie2-pe.yml",
 ##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
@@ -220,7 +225,7 @@ targets[1:4,-c(5,6)]
 ## ###pre-end
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "call_peaks_macs_noref",
-##     targets = "targets_merge_bams.txt", # or use "merge_bams" to directly grab from the previous step
+##     targets = "targets_merge_bams.txt",
 ##     wf_file = "MACS2/macs2-noinput.cwl",
 ##     input_file = "MACS2/macs2-noinput.yml",
 ##     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
@@ -453,13 +458,14 @@ targets[1:4,-c(5,6)]
 
 
 ## ----runWF_cluster, eval=FALSE----------------------------
+## # wall time in mins, memory in MB
 ## resources <- list(conffile=".batchtools.conf.R",
 ##                   template="batchtools.slurm.tmpl",
 ##                   Njobs=18,
-##                   walltime=120, ## minutes
+##                   walltime=120,
 ##                   ntasks=1,
 ##                   ncpus=4,
-##                   memory=1024, ## Mb
+##                   memory=1024,
 ##                   partition = "short"
 ##                   )
 ## sal <- addResources(sal, c("bowtie2_alignment"), resources = resources)
@@ -479,6 +485,19 @@ targets[1:4,-c(5,6)]
 ## sal <- renderLogs(sal)
 
 
-## ----eval=TRUE--------------------------------------------
+## ----list_tools-------------------------------------------
+if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
+    local({
+        sal <- systemPipeR::SPRproject(resume = TRUE)
+        systemPipeR::listCmdTools(sal)
+        systemPipeR::listCmdModules(sal)
+    })
+} else {
+    cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
+    cat(c("BLAST 2.14.0+"), sep = "\n")
+}
+
+
+## ----report_session_info, eval=TRUE-----------------------
 sessionInfo()
 

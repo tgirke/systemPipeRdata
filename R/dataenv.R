@@ -8,16 +8,9 @@ pathList <- function() {
     annotationdir=system.file("extdata/annotation", "", package="systemPipeRdata", mustWork=TRUE),
     fastqdir=system.file("extdata/fastq", "", package="systemPipeRdata", mustWork=TRUE),
     bamdir=system.file("extdata/bam", "", package="systemPipeRdata", mustWork=TRUE),
-    paramdir=system.file("extdata/param", "", package="systemPipeRdata", mustWork=TRUE),
-    workflows=system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE),
-    chipseq=system.file("extdata/workflows/chipseq", "", package="systemPipeRdata", mustWork=TRUE),
-    rnaseq=system.file("extdata/workflows/rnaseq", "", package="systemPipeRdata", mustWork=TRUE),
-    riboseq=system.file("extdata/workflows/riboseq", "", package="systemPipeRdata", mustWork=TRUE),
-    varseq=system.file("extdata/workflows/varseq", "", package="systemPipeRdata", mustWork=TRUE),
-    new=system.file("extdata/workflows/new", "", package="systemPipeRdata", mustWork=TRUE)
+    paramdir=system.file("extdata/param", "", package="systemPipeRdata", mustWork=TRUE)
   )
 }
-
 #########################################
 ## Generate environments for workflows ##
 #########################################
@@ -29,12 +22,11 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
     genWorkdata(path = mydirname2)
   } else {
     check_workflow <- dir(system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE))
-    if(!workflow %in% check_workflow) stop("workflow can only be assigned one of: ", paste(check_workflow, collapse=", "))
+    workflow <- match.arg(workflow, check_workflow)
     if(workflow=="new" && is.null(mydirname)) warning("It is recommended to specify the workflow directory name, using 'mydirname' argument")
     if(all(!c(is.null(mydirname), is.character(mydirname)))) stop("mydirname can only be assigned 'NULL' or a character vector of length 1")
-    ## If 'mydirname' is NULL (default) use value assigned to 'workflow' as directory name
     if(is.null(mydirname)) {
-      mydirname2 <- workflow 
+      mydirname2 <- workflow
     } else {
       mydirname2 <- mydirname
     }
@@ -43,37 +35,9 @@ genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subd
     if(dir.exists(mydirname2) | dir.exists(mydirname2temp)) stop("Directory name assigned to 'mydirname' or its temp variant exists already. Please assign to 'mydirname' a different name or rename/delete existing one.")
     dir.create(mydirname2temp)
     ## Move workflow templates into workflow directory
-    if(workflow=="varseq") {
-      file.copy(pathList()$varseq, mydirname2temp, recursive=TRUE)
-      file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
-      unlink(mydirname2temp, recursive = TRUE) # removes temp dir
-      #file.copy(c(paste0(pathList()$paramdir, "gatk_run.sh"), paste0(pathList()$paramdir, "sambcf_run.sh")), paste0(mydirname2, "/"))
-      #file.copy(c(paste0(pathList()$paramdir, "Makefile_varseq")), paste0(mydirname2, "/Makefile"))
-    } else if(workflow=="rnaseq") {
-      file.copy(pathList()$rnaseq, mydirname2temp, recursive=TRUE)
-      file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
-      unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-      #file.copy(c(paste0(pathList()$paramdir, "Makefile_rnaseq")), paste0(mydirname2, "/Makefile"))
-    } else if(workflow=="riboseq") {
-      file.copy(pathList()$riboseq, mydirname2temp, recursive=TRUE)
-      file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
-      unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-      #file.copy(c(paste0(pathList()$paramdir, "Makefile_riboseq")), paste0(mydirname2, "/Makefile"))
-      # file.copy(c(paste0(pathList()$paramdir, "bibtex.bib")), paste0(mydirname2, "/bibtex.bib"), overwrite=TRUE)
-    } else if(workflow=="chipseq") {
-      file.copy(pathList()$chipseq, mydirname2temp, recursive=TRUE)
-      file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
-      unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-      file.copy(c(paste0(pathList()$paramdir, "/targetsPE_chip.txt"), paste0(pathList()$paramdir, "/targets_chip.txt")), paste0(mydirname2, "/"))
-      #file.copy(c(paste0(pathList()$paramdir, "Makefile_chipseq")), paste0(mydirname2, "/Makefile"))
-      # file.copy(c(paste0(pathList()$paramdir, "bibtex.bib")), paste0(mydirname2, "/bibtex.bib"), overwrite=TRUE)
-    } else if(workflow=="new"){
-      file.copy(pathList()$new, mydirname2temp, recursive=TRUE)
-      file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
-      unlink(mydirname2temp, recursive=TRUE) # removes temp dir
-    } else {
-      stop("workflow can only be assigned one of:", paste(check_workflow, collapse=", "))
-    }
+    file.copy(system.file("extdata/workflows/", workflow, package="systemPipeRdata", mustWork=TRUE), mydirname2temp, recursive=TRUE)
+    file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
+    unlink(mydirname2temp, recursive=TRUE) # removes temp dir
     ## Moving data and param common files
     file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
     file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
@@ -124,9 +88,9 @@ genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
 ############################################
 ## Generate environments for SPR_packages ##
 ############################################
-# This function installs packages from GitHub. Internally, it is used remotes::install_github(), which also requires remotes to be installed. 
+# This function installs packages from GitHub. Internally, it is used remotes::install_github(), which also requires remotes to be installed.
 ## Arguments
-# package_repo Repository Github address in the format `username/repo`. 
+# package_repo Repository Github address in the format `username/repo`.
 # ref Desired GitHub reference for the `"branch"` name. Default to `"master"`.
 # subdir subdirectory within GitHub repo that contains the R package.
 # mydirname Specifies the name of the workflow directory and the *Rmd file. Default is NULL, using the workflow/package name.
@@ -143,7 +107,7 @@ genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
   pkg_req <- sapply(pkgs, function(x) !requireNamespace(x, quietly=TRUE))
   ## If 'mydirname' is NULL (default) use value assigned to 'pkg_name' as directory/*Rmd name
   if(is.null(mydirname)) {
-    mydirname2 <- pkg_name 
+    mydirname2 <- pkg_name
   } else {
     mydirname2 <- mydirname
   }
@@ -183,8 +147,8 @@ genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
 ############################################
 ## Check Workflow Templates Availability ##
 ############################################
-# This function checks the workflow templates availability from systemPipeRdata package and 
-# also from GitHub. 
+# This function checks the workflow templates availability from systemPipeRdata package and
+# also from GitHub.
 ## Arguments
 # github if TRUE, it will return the available Workflow Templates packages from https://github.com/systemPipeR
 ## Note:
@@ -198,8 +162,8 @@ availableWF <- function(github = FALSE){
     tryCatch(get_repos <- jsonlite::fromJSON("https://api.github.com/orgs/systemPipeR/repos"),
          error = function(e){
            stop('You have reached the limit for GitHub API requests. The limit is 60 requests per hour.')
-         } 
-    )  
+         }
+    )
     WFrepos <- data.frame(workflow=get_repos$name, html=get_repos$html_url, description=get_repos$description)
     ## Keep repos with the right description
     WFrepos <- WFrepos[WFrepos$description %in% "Workflow Template", ]

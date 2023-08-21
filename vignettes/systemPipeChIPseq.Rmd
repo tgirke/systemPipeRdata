@@ -1,6 +1,6 @@
 ---
 title: "ChIP-Seq Workflow Template" 
-author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
+author: "Author: First Last Name"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
   BiocStyle::html_document:
@@ -141,6 +141,11 @@ sal
 The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
 
 ```{r load_SPR, message=FALSE, eval=FALSE, spr=TRUE}
+cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
+cat(c("'ggbio", "ChIPseeker", "GenomicFeatures", "GenomicRanges", "Biostrings",
+       "seqLogo", "BCRANK", "readr'\n"), sep = "', '")
+targetspath <- system.file("extdata", "targetsPE_chip.txt", package = "systemPipeR")
+###pre-end
 appendStep(sal) <- LineWise(code = {
                             library(systemPipeR)
                             }, step_name = "load_SPR")
@@ -168,7 +173,7 @@ later, we used the `getColumn` function to extract a named vector.
 ```{r fastq_report, eval=FALSE, message=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
-        targets <- read.delim("targetsPE_chip.txt", comment.char = "#")
+        targets <- read.delim(targetspath, comment.char = "#")
         updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
         fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
         fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
@@ -200,7 +205,7 @@ All the parameters are defined on the `preprocessReads-pe.yml` file.
 ```{r preprocessing, message=FALSE, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
     step_name = "preprocessing",
-    targets = "targetsPE_chip.txt", dir = TRUE,
+    targets = targetspath, dir = TRUE,
     wf_file = "preprocessReads/preprocessReads-pe.cwl",
     input_file = "preprocessReads/preprocessReads-pe.yml",
     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
@@ -292,7 +297,7 @@ to multiple locations. To achieve this, users want to remove the argument settin
 appendStep(sal) <- SYSargsList(
     step_name = "bowtie2_alignment",
     dir = TRUE,
-    targets = "targetsPE_chip.txt",
+    targets = targetspath,
     wf_file = "workflow-bowtie2/workflow_bowtie2-pe.cwl",
     input_file = "workflow-bowtie2/workflow_bowtie2-pe.yml",
     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
@@ -449,7 +454,7 @@ writeTargets(sal, step = "merge_bams", file = "targets_merge_bams.txt", overwrit
 ###pre-end
 appendStep(sal) <- SYSargsList(
     step_name = "call_peaks_macs_noref",
-    targets = "targets_merge_bams.txt", # or use "merge_bams" to directly grab from the previous step
+    targets = "targets_merge_bams.txt",
     wf_file = "MACS2/macs2-noinput.cwl",
     input_file = "MACS2/macs2-noinput.yml",
     dir_path = system.file("extdata/cwl", package = "systemPipeR"),
@@ -796,13 +801,14 @@ add these resources later, as the following example using the `addResources`
 function:
 
 ```{r runWF_cluster, eval=FALSE}
+# wall time in mins, memory in MB
 resources <- list(conffile=".batchtools.conf.R",
                   template="batchtools.slurm.tmpl", 
-                  Njobs=18, 
-                  walltime=120, ## minutes
+                  Njobs=18,
+                  walltime=120,
                   ntasks=1,
-                  ncpus=4, 
-                  memory=1024, ## Mb
+                  ncpus=4,
+                  memory=1024,
                   partition = "short"
                   )
 sal <- addResources(sal, c("bowtie2_alignment"), resources = resources)
@@ -840,13 +846,33 @@ If you are running on a single machine, use following code as an example to chec
 if some tools used in this workflow are in your environment **PATH**. No warning 
 message should be shown if all tools are installed.
 
+## Tools used 
+To check command-line tools used in this workflow, use `listCmdTools`, and use `listCmdModules`
+to check if you have a modular system.
+
+The following code will print out tools required in your custom SPR project in the report. 
+In case you are running the workflow for the first and do not have a project yet, or you 
+just want to browser this workflow, following code displays the tools required by default.
+```{r list_tools}
+if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
+    local({
+        sal <- systemPipeR::SPRproject(resume = TRUE)
+        systemPipeR::listCmdTools(sal)
+        systemPipeR::listCmdModules(sal)
+    })
+} else {
+    cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
+    cat(c("BLAST 2.14.0+"), sep = "\n")
+}
+```
+
+
 ## Session Info
 This is the session information for rendering this report. To access the session information
 of workflow running, check HTML report of `renderLogs`. 
-```{r eval=TRUE}
+```{r report_session_info, eval=TRUE}
 sessionInfo()
 ```
-
 # Funding
 
 This project was supported by funds from the National Institutes of

@@ -8,6 +8,5 @@ docs/articles/systemPipeRIBOseq_files/*
 docs/articles/systemPipeRNAseq_files/*
 docs/articles/systemPipeRdata_files/*
 docs/articles/systemPipeVARseq_files/*
-
-*.Rproj
 .Rproj.user
+.Rhistory

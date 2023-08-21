@@ -44,6 +44,10 @@ targets[1:4,-c(5,6)]
 
 
 ## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE--------
+## cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
+## cat(c("'GenomicFeatures", "BiocParallel", "DESeq2",
+##        "ape", "edgeR", "biomaRt", "pheatmap","ggplot2'\n"), sep = "', '")
+## ###pre-end
 ## appendStep(sal) <- LineWise(code = {
 ##                 library(systemPipeR)
 ##                 }, step_name = "load_SPR")
@@ -367,13 +371,14 @@ targets[1:4,-c(5,6)]
 
 
 ## ----runWF_cluster, eval=FALSE----------------------------
+## # wall time in mins, memory in MB
 ## resources <- list(conffile=".batchtools.conf.R",
 ##                   template="batchtools.slurm.tmpl",
 ##                   Njobs=18,
-##                   walltime=120, ## minutes
+##                   walltime=120,
 ##                   ntasks=1,
 ##                   ncpus=4,
-##                   memory=1024, ## Mb
+##                   memory=1024,
 ##                   partition = "short"
 ##                   )
 ## sal <- addResources(sal, c("hisat2_mapping"), resources = resources)
@@ -391,6 +396,19 @@ targets[1:4,-c(5,6)]
 
 ## ----logsWF, eval=FALSE-----------------------------------
 ## sal <- renderLogs(sal)
+
+
+## ----list_tools-------------------------------------------
+if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
+    local({
+        sal <- systemPipeR::SPRproject(resume = TRUE)
+        systemPipeR::listCmdTools(sal)
+        systemPipeR::listCmdModules(sal)
+    })
+} else {
+    cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
+    cat(c("trimmomatic/0.39", "samtools/1.14", "hisat2/2.1.0"), sep = "\n")
+}
 
 
 ## ----report_session_info, eval=TRUE-----------------------
