@@ -11,12 +11,32 @@ pathList <- function() {
     paramdir=system.file("extdata/param", "", package="systemPipeRdata", mustWork=TRUE)
   )
 }
+wf_name_map <- list(
+  "chipseq" = "ChIP-seq",
+  "new" = "New Empty Workflow",
+  "riboseq" = "Ribosome Profiling",
+  "rnaseq" = "RNA-seq",
+  "SPblast" = "BLAST",
+  "SPcheminfo" = "Chemical Informatics",
+  "SPscrna" = "Single-cell RNA-seq",
+  "varseq" = "Variant Calling"
+)
 #########################################
 ## Generate environments for workflows ##
 #########################################
-genWorkenvir <- function(workflow, mydirname=NULL, bam=FALSE, ref="master", subdir=NULL, url=NULL, urlname=NULL) {
+genWorkenvir <- function(
+    workflow,
+    mydirname=NULL,
+    bam=FALSE
+    # ref="master",
+    # subdir=NULL,
+    # url=NULL,
+    # urlname=NULL
+    ) {
+  url <- NULL
   ## Input validity check
-  if(grepl("/", workflow)==TRUE) {
+  if(FALSE) {
+  # if(grepl("/", workflow)==TRUE) {
     ## if the package is defined it
     mydirname2 <- .genWorkenvirPKG(package_repo=workflow, ref=ref, subdir=subdir, mydirname=mydirname, build_env=TRUE, silent=TRUE)
     genWorkdata(path = mydirname2)
@@ -157,7 +177,9 @@ genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
 
 availableWF <- function(github = FALSE){
   check_workflow <- dir(system.file("extdata/workflows", "", package="systemPipeRdata", mustWork=TRUE))
-  if(github==TRUE){
+  wf_list <- list(systemPipeRdata=check_workflow)
+  if(github == TRUE){
+    cat("Checking templates in systemPipeR GitHub, please wait ...\n")
     ## get all the repos
     tryCatch(get_repos <- jsonlite::fromJSON("https://api.github.com/orgs/systemPipeR/repos"),
          error = function(e){
@@ -173,19 +195,33 @@ availableWF <- function(github = FALSE){
       WFrepos$branches[i] <- list(branches)
     }
     ## Searching for topics
-    release <- data.frame(workflow=jsonlite::fromJSON("https://api.github.com/search/repositories?q=topic:systempiper+topic:release")$items$name)
+    # release <- data.frame(workflow=jsonlite::fromJSON("https://api.github.com/search/repositories?q=topic:systempiper+topic:release")$items$name)
     devel <- data.frame(workflow=jsonlite::fromJSON("https://api.github.com/search/repositories?q=topic:systempiper+topic:development")$items$name)
     ## Merge topics and version
     WFrepos_devel <- cbind(merge(WFrepos, devel, by="workflow"), version=rep("devel"))
-    WFrepos_release <- cbind(merge(WFrepos, release, by="workflow"), version=rep("release"))
+    # WFrepos_release <- cbind(merge(WFrepos, release, by="workflow"), version=rep("release"))
     ## final
-    WFrepos <- rbind(WFrepos_release, WFrepos_devel)
-    WFrepos$workflow <- paste0("systemPipeR/", WFrepos$workflow)
-    WFrepos <- WFrepos[c("workflow", "branches", "version", "html", "description")]
-    list <- list(systemPipeRdata=check_workflow, github=WFrepos)
-    return(list)
+    # WFrepos <- rbind(WFrepos_release, WFrepos_devel)
+    WFrepos <- WFrepos_devel
+    # WFrepos$workflow <- paste0("systemPipeR/", WFrepos$workflow)
+    WFrepos <- WFrepos[c("workflow",  "html")]
+    names(WFrepos) <- c("Workflow", "Download URL")
+    WFrepos$`Download URL` <- paste0(WFrepos$`Download URL`, ".git")
+    WFrepos <- WFrepos[!WFrepos$Workflow %in% c('SPrnaseq', 'SPchipseq', 'SPriboseq', 'SPvarseq'), ]
+    wf_list <- list(systemPipeRdata=check_workflow, github=WFrepos)
   }
-  return(list(systemPipeRdata=check_workflow))
+
+  cat("Available Workflow Templates in systemPipeRdata:\n")
+  cat("Name         Description\n")
+  cat("------------------------------------\n")
+  wf_name_map <- wf_name_map[wf_list$systemPipeRdata]
+  cat(paste0(names(wf_name_map), strrep(" ", 12 - nchar(names(wf_name_map)) + 1), wf_name_map), sep = "\n")
+  # cat(paste(names(wf_name_map), collapse = "\n"), sep = "")
+  if(!is.null(wf_list$github)) {
+    cat("Experimental Workflow Templates in systemPipeR GitHub Organization:\n")
+    print(wf_list$github)
+  }
+  return(invisible(wf_list))
 }
 
 ## Usage:
