@@ -59,18 +59,20 @@ genWorkenvir <- function(
     file.rename(paste0(normalizePath(mydirname2temp), "/", workflow), mydirname2) # generates final dir
     unlink(mydirname2temp, recursive=TRUE) # removes temp dir
     ## Moving data and param common files
-    file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
-    file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
+    if(workflow != "new") {
+      file.copy(normalizePath(list.files(pathList()$fastqdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
+      file.copy(normalizePath(list.files(pathList()$annotationdir, "*", full.names=TRUE)), paste0(mydirname2, "/data"), overwrite=TRUE, recursive=TRUE)
+    }
     file.copy(c(normalizePath(paste0(pathList()$paramdir, "/targetsPE.txt")), normalizePath(paste0(pathList()$paramdir, "/targets.txt"))), paste0(mydirname2, "/"))
     file.copy(c(paste0(pathList()$paramdir, "bibtex.bib")), paste0(mydirname2, "/bibtex.bib"), overwrite=TRUE)
     if(bam==TRUE) file.copy(normalizePath(list.files(pathList()$bamdir, "*", full.names=TRUE)), paste0(mydirname2, "/results"), overwrite=TRUE, recursive=TRUE)
     file.copy(pathList()$paramdir, paste0(mydirname2, "/"), recursive=TRUE)
     file.copy(c(file.path(pathList()$paramdir, "batchtools.slurm.tmpl"), file.path(pathList()$paramdir, ".batchtools.conf.R")), paste0(mydirname2, "/"))
   }
-  if(all(c(!is.null(url), is.null(urlname)))) stop("argument 'urlname' missing. The argument can only be assigned 'NULL' when no url is provided. The argument should be assigned as a character vector of length 1")
-  if(!is.null(url)){
-    download.file(url=url, destfile = paste0("./", mydirname2, "/", urlname), quiet = TRUE)
-  }
+  # if(all(c(!is.null(url), is.null(urlname)))) stop("argument 'urlname' missing. The argument can only be assigned 'NULL' when no url is provided. The argument should be assigned as a character vector of length 1")
+  # if(!is.null(url)){
+  #   download.file(url=url, destfile = paste0("./", mydirname2, "/", urlname), quiet = TRUE)
+  # }
   print(paste("Generated", mydirname2, "directory. Next run in", workflow, "directory, the R code from *.Rmd template interactively. Alternatively, workflows can be exectued with a single command as instructed in the vignette."))
 }
 ## Usage:
@@ -207,7 +209,7 @@ availableWF <- function(github = FALSE){
     WFrepos <- WFrepos[c("workflow",  "html")]
     names(WFrepos) <- c("Workflow", "Download URL")
     WFrepos$`Download URL` <- paste0(WFrepos$`Download URL`, ".git")
-    WFrepos <- WFrepos[!WFrepos$Workflow %in% c('SPrnaseq', 'SPchipseq', 'SPriboseq', 'SPvarseq'), ]
+    WFrepos <- WFrepos[!WFrepos$Workflow %in% c('SPrnaseq', 'SPchipseq', 'SPriboseq', 'SPvarseq', 'SPscrnaseq'), ]
     wf_list <- list(systemPipeRdata=check_workflow, github=WFrepos)
   }
 
@@ -220,6 +222,10 @@ availableWF <- function(github = FALSE){
   if(!is.null(wf_list$github)) {
     cat("Experimental Workflow Templates in systemPipeR GitHub Organization:\n")
     print(wf_list$github)
+    cat("------------------------------------\n")
+    cat("To install a workflow template from GitHub, use:\n")
+    cat("git clone <URL>\n")
+    cat("e.g. git clone https://github.com/systemPipeR/SPatacseq.git\n")
   }
   return(invisible(wf_list))
 }

@@ -16,7 +16,7 @@ fontsize: 14pt
 bibliography: bibtex.bib
 ---
 
-<!--
+<!-
 Config css and r style
 -->
 
@@ -64,6 +64,7 @@ library(systemPipeR)
 sal <- SPRproject()
 sal
 ```
+
 ## Load packages 
 
 This is an empty template that contains only one demo step. 
@@ -130,5 +131,6 @@ making it easier to check any standard output (`stdout`) or standard error
 ```{r logsWF, eval=FALSE}
 sal <- renderLogs(sal)
 ```
+
 
 # References

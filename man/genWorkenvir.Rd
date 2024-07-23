@@ -54,7 +54,7 @@ Thomas Girke and Daniela Cassol
 samplepaths <- pathList()
 \dontrun{
 ## Generate varseq workflow environment
-genWorkenvir(workflow="varseq", mydirname=NULL, url=NULL, urlname=NULL)
+genWorkenvir(workflow="varseq", mydirname=NULL)
 setwd("varseq")
 }
 }
