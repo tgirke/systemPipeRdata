@@ -1,11 +1,12 @@
 ---
 title: "_systemPipeRdata_: Workflow templates and sample data"
-author: "Author: Daniela Cassol (danielac@ucr.edu) and Thomas Girke (thomas.girke@ucr.edu)"
+author: "Author: Le Zhang, Daniela Cassol, and Thomas Girke"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
   BiocStyle::html_document:
     toc_float: true
     code_folding: show
+    toc_depth: 4
 package: systemPipeRdata
 vignette: |
   %\VignetteEncoding{UTF-8}
@@ -45,39 +46,25 @@ suppressPackageStartupMessages({
 })
 ```
 
-**Note:** the most recent version of this vignette can be found <a href="https://github.com/tgirke/systemPipeRdata/blob/master/vignettes/systemPipeRdata.Rmd">here</a>.
-
-**Note:** if you use _`systemPipeR`_ and _`systemPipeRdata`_ in published research, please cite:
-
-Backman, T.W.H and Girke, T. (2016). *systemPipeR*: Workflow and Report Generation Environment. *BMC Bioinformatics*, 17: 388. [10.1186/s12859-016-1241-0](https://doi.org/10.1186/s12859-016-1241-0).
-
 # Introduction
 
-[_`systemPipeRdata`_](https://github.com/tgirke/systemPipeRdata) is a helper package 
-to generate with a single command  workflow templates that are intended to be 
-used by its parent package [_`systemPipeR`_](http://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt]. 
-The *systemPipeR* project provides a suite of R/Bioconductor packages for designing,
-building and running end-to-end analysis workflows on local machines, HPC clusters 
-and cloud systems, while generating at the same time publication quality analysis reports.
+[`systemPipeRdata`](https://www.bioconductor.org/packages/release/data/experiment/html/systemPipeRdata.html)
+provides data analysis workflow templates compatible with the
+[`systemPipeR`](https://www.bioconductor.org/packages/release/bioc/html/systemPipeR.html)
+software package [@H_Backman2016-bt]. The latter is a Workflow Management
+System (WMS) for designing and running end-to-end analysis workflows with
+automated report generation for a wide range of data analysis applications.
+These workflow templates come equipped with sample data and the necessary
+parameter files required to run a selected workflow. This setup simplifies the
+learning process of using `systemPipeR`, facilitates testing of workflows, and
+serves as a foundation for designing new workflows. The standardized directory
+structure (Figure 1) utilized by the workflow templates and their sample data is outlined
+in the ['Directory Structure'](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#3_Directory_structure) 
+section of `systemPipeR's` main vignette.
 
-To test workflows quickly or design new ones from existing templates, users can
-generate with a single command workflow instances fully populated with sample data 
-and parameter files required for running a chosen workflow.
-Pre-configured directory structure of the workflow environment and the sample data 
-used by _`systemPipeRdata`_ are described [here](http://bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#load-sample-data-and-workflow-templates).
+<center><img src="results/directory.png"></center>
 
-_`systemPipeRdata`_ package provides a demo sample FASTQ files used in the 
-workflow reporting vignettes. The chosen data set [`SRP010938`](http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938) obtains 18
-paired-end (PE) read sets from _Arabidposis thaliana_ [@Howard2013-fq]. To
-minimize processing time during testing, each FASTQ file has been subsetted to
-90,000-100,000 randomly sampled PE reads that map to the first 100,000
-nucleotides of each chromosome of the _A. thalina_ genome. The corresponding
-reference genome sequence (FASTA) and its GFF annotation files (provided in the
-same download) have been truncated accordingly. This way the entire test sample
-data set requires less than 200MB disk storage space. A PE read set has been
-chosen for this test data set for flexibility, because it can be used for
-testing both types of analysis routines requiring either SE (single-end) reads
-or PE reads. 
+__Figure 1:__ Directory structure of`systemPipeR's` workflows. 
 
 # Getting started
 
@@ -91,13 +78,6 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
 BiocManager::install("systemPipeRdata") 
 ```
 
-Also, it is possible to install the development version from [Bioconductor](http://www.bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html).
-
-```{r install_devel, eval=FALSE}
-BiocManager::install("systemPipeRdata", version = "devel", build_vignettes=TRUE,
-                     dependencies=TRUE)  # Installs Devel version from Bioconductor
-```
-
 ## Loading package and documentation
 
 ```{r load_systemPipeRdata, eval=TRUE, messages=FALSE, warnings=FALSE}
@@ -109,79 +89,92 @@ library(help="systemPipeRdata") # Lists package info
 vignette("systemPipeRdata") # Opens vignette
 ```
 
-# Starting with pre-configured workflow templates
+# List workflow templates
+A list of workflow templates included in `systemPipeRdata` can be generated as follows.
 
-## Check available workflow templates
 ```{r check_availableWF, eval=TRUE}
 availableWF()
 ```
 
-## Generate a workflow template
-Load one of the available workflows into your current working directory. 
-The following does this for the _`rnaseq`_ workflow template. The name of the resulting 
-workflow directory can be specified under the _`mydirname`_ argument. The default _`NULL`_ 
-uses the name of the chosen workflow. An error is issued if a directory of the same 
-name and path exists already. 
+# Use workflow templates
+
+## Load a workflow
+The chosen example below uses the `genWorkenvir` function from the
+`systemPipeRdata` package to create an RNA-Seq workflow environment (selected
+under `workflow="rnaseq"`) that is fully populated with a small test data set,
+including FASTQ files, reference genome and annotation data. The name of the
+resulting workflow directory can be specified under the `mydirname` argument.
+The default `NULL` uses the name of the chosen workflow. An error is issued if
+a directory of the same name and path exists already. After this, the user’s R
+session needs to be directed into the resulting rnaseq directory (here with
+setwd).
 
 ```{r generate_workenvir, eval=FALSE}
+library(systemPipeRdata)
 genWorkenvir(workflow="rnaseq", mydirname="rnaseq")
 setwd("rnaseq")
 ```
 
-On Linux and OS X systems the same can be achieved from the command-line of a terminal with the following commands.
+On Linux and OS X systems the same can be achieved from the command-line of a
+terminal with the following commands.
 
 ```{bash generate_workenvir_from_shell, eval=FALSE}
-$ Rscript -e "systemPipeRdata::genWorkenvir(workflow='SPrnaseq', mydirname='rnaseq')"
+$ Rscript -e "systemPipeRdata::genWorkenvir(workflow='rnaseq', mydirname='rnaseq')"
+$ cd rnaseq
 ```
 
-## Build, run and visualize the workflow template
+## Run and visualize workflow 
 
-- Build workflow from RMarkdown file
+For running and working with `systemPipeR` workflows, users want to visit
+[systemPipeR's main
+vignette](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
+The following gives only a very brief preview on how to run workflows and create reports. 
 
-This template provides some common steps for a `RNAseq` workflow. One can add, remove, modify 
-workflow steps by operating on the `sal` object. 
+After a workflow environment (directory) has been created and the corresponding
+R session directed into the resulting directory (here `rnaseq`), the workflow
+can be loaded from the included R Markdown file (here `systemPipeRNAseq.Rmd`).
+This template provides common data analysis steps that are typical for RNA-Seq
+workflows. Users have the options to add, remove, modify workflow steps by
+applying those change to the `sal` workflow management container. 
 
 ```{r project_rnaseq, eval=FALSE}
+library(systemPipeR)
 sal <- SPRproject() 
 sal <- importWF(sal, file_path = "systemPipeRNAseq.Rmd", verbose = FALSE)
 ```
 
-- Running workflow
-
-Next, we can run the entire workflow from R with one command: 
+Once the workflow has been loaded into `sal`, it can be executed from start to finish
+(or partially) with the `runWF` command.
 
 ```{r run_rnaseq, eval=FALSE}
 sal <- runWF(sal)
 ```
-
-- Visualize workflow
-
-_`systemPipeR`_ workflows instances can be visualized with the `plotWF` function.
+Workflows can be visualized as topology graphs using the `plotWF` function.
 
 ```{r plot_rnaseq, eval=FALSE}
 plotWF(sal)
 ```
 
-- Report generation
-
-_`systemPipeR`_ compiles all the workflow execution logs in one central location,
-making it easier to check any standard output (`stdout`) or standard error
-(`stderr`) for any command-line tools used on the workflow or the R code stdout.
+Scientific and technical reports can be generated with the `renderReport` and 
+`renderLogs` functions respectively. Scientific reports can also be generated 
+with the `render` function of the `rmarkdown` package. The technical reports are
+based on log informatation that `systemPipeR` collects during workflow runs.
 
 ```{r report_rnaseq, eval=FALSE}
+# Scietific report
+sal <- renderReport(sal)
+rmarkdown::render("systemPipeRNAseq.Rmd", clean = TRUE, output_format = "BiocStyle::html_document") 
+
+# Technical (log) report
 sal <- renderLogs(sal)
 ```
 
-Also, the technical report can be generated using `renderReport` function.
+# Experimental workflow collection
 
-```{r reporttech_rnaseq, eval=FALSE}
-sal <- renderReport(sal)
-```
-
-# Experiment templates collection
-
-A collection of experimental templates are available, and it is possible to browse the 
-current availability, as follows:
+A collection of experimental workflow templates is available on
+[systemPipeR's GitHub Organization](https://github.com/systemPipeR). From
+within R one can list this collection with the same `availableWF` function
+used before.
 
 ```{r eval=FALSE, tidy=FALSE}
 availableWF(github = TRUE)
@@ -200,61 +193,34 @@ Experimental Workflow Templates in systemPipeR GitHub Organization:
 9    SPscrnaseq    https://github.com/systemPipeR/SPscrnaseq.git
 </pre>
 
-This function returns the list of workflow templates available within the package 
-and [systemPipeR Organization](https://github.com/systemPipeR) on GitHub. 
-
-To the the experiment templates, use `git` or `git-bash.exe` on Windows
-to clone the repository with the
-`Download URL` provided in the table above. 
+To download these packages, users can either use the below GitHub commands, 
+or visit the corresponding GitHub page of a chosen workflow via the provided URLs,
+download is as Zip file and uncompress it. 
 
 ```{bash eval=FALSE}
-git clone <Download URL>
+git clone <Download URL> # Provide under <...> URL of chosen workflow from table above.
 cd <Workflow Name>
 ```
 
 Similarly, then use `systemPipeR::SPRproject()` to start a new project.
 
-# Dynamic generation of workflow template
+# Useful functionalities
 
-It is possible to create a new workflow structure from RStudio 
-menu `File -> New File -> R Markdown -> From Template -> systemPipeR New WorkFlow`.
-This interactive option creates the same environment as demonstrated above.
+## Create workflow templates interactively
+
+It is possible to create a new workflow environment from RStudio. This can be 
+done by selecting `File -> New File -> R Markdown -> From Template -> systemPipeR New WorkFlow`.
+This option creates a template workflow that has the expected directory structure of the
+other templates (see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#3_Directory_structure). 
 
 ![](results/rstudio.png)
-**Figure 1:** Selecting workflow template within RStudio.
+__Figure 2:__ Selecting workflow template within RStudio.
 
-# Directory Structure
-
-The workflow templates generated by _`genWorkenvir`_ contain the following preconfigured directory structure:
-
-* <span style="color:green">_**workflow/**_</span> (*e.g.* *rnaseq/*) 
-    + This is the root directory of the R session running the workflow.
-    + Run script ( *\*.Rmd*) and sample annotation (*targets.txt*) files are located here.
-    + Note, this directory can have any name (*e.g.* <span style="color:green">_**rnaseq**_</span>, <span style="color:green">_**varseq**_</span>). Changing its name does not require any modifications in the run script(s).
-  + **Important subdirectories**: 
-    + <span style="color:green">_**param/**_</span> 
-        + Stores non-CWL parameter files such as: *\*.param*, *\*.tmpl* and *\*.run.sh*. These files are only required for backwards compatibility to run old workflows using the previous custom command-line interface.
-        + <span style="color:green">_**param/cwl/**_</span>: This subdirectory stores all the CWL parameter files. To organize workflows, each can have its own subdirectory, where all `CWL param` and `input.yml` files need to be in the same subdirectory. 
-    + <span style="color:green">_**data/**_ </span>
-        + FASTQ files
-        + FASTA file of reference (*e.g.* reference genome)
-        + Annotation files
-        + etc.
-    + <span style="color:green">_**results/**_</span>
-        + Analysis results are usually written to this directory, including: alignment, variant and peak files (BAM, VCF, BED); tabular result files; and image/plot files
-        + Note, the user has the option to organize results files for a given sample and analysis step in a separate subdirectory.
-
-**Note**: Directory names are indicated in  <span style="color:grey">***green***</span>. 
-Users can change this structure as needed, but need to adjust the code in their workflows
-accordingly. 
-
-<center><img src="results/directory.png"></center>
-
-**Figure 2:** *systemPipeR's* preconfigured directory structure.
 
 ## Return paths to sample data
 
-The location of the sample data provided by _`systemPipeRdata`_ can be returned as a _`list`_.
+The paths to the sample data provided by the `systemPipeRdata` package can be returned with the
+the `pathList` function.
 
 ```{r return_samplepaths, eval=TRUE}
 pathList()[1:2]
