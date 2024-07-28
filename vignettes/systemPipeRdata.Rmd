@@ -55,19 +55,22 @@ software package [@H_Backman2016-bt]. The latter is a Workflow Management
 System (WMS) for designing and running end-to-end analysis workflows with
 automated report generation for a wide range of data analysis applications.
 Support for running external software is provided by a command-line interface
-(CLI) that adopts the Common Workflow Language (CWL). The workflow templates 
-provided by `systemPipeRdata` come equipped with sample data and the necessary
-parameter files required to run a selected workflow. This setup simplifies the
-learning process of using `systemPipeR`, facilitates testing of workflows, and
-serves as a foundation for designing new workflows. The standardized directory
-structure (Figure 1) utilized by the workflow templates and their sample data
-is outlined in the [Directory
+(CLI) that adopts the Common Workflow Language (CWL). How to use `systemPipeR`
+is explained in its main vignette
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
+The workflow templates provided by `systemPipeRdata` come equipped with sample
+data and the necessary parameter files required to run a selected workflow.
+This setup simplifies the learning process of using `systemPipeR`, facilitates
+testing of workflows, and serves as a foundation for designing new workflows.
+The standardized directory structure (Figure 1) utilized by the workflow
+templates and their sample data is outlined in the [Directory
 Structure](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#3_Directory_structure)
 section of `systemPipeR's` main vignette.
 
 <center><img src="results/directory.png"></center>
 
 __Figure 1:__ Directory structure of`systemPipeR's` workflows. For details, see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#3_Directory_structure).
+
 
 # Getting started
 
@@ -93,15 +96,17 @@ vignette("systemPipeRdata") # Opens vignette
 ```
 
 # Overview of workflow templates {#wf-bioc-collection}
-An overview table of workflow templates, included in `systemPipeRdata`, can be 
-returned as shown below. By clicking the URLs in the last column of the below workflow
-list, users can view the `Rmd` source file of a workflow, as well as the final
-`HTML` report generated after running a workflow on the provided test data. 
-Additional workflow templates are available on this project's GitHub
-organization. For details, see [below](#wf-github-collection). To create an
-empty workflow template without any test data included, users want to choose
-the `new` template, which includes only the required directory structure and
-parameter files. 
+An overview table of workflow templates, included in `systemPipeRdata`, can be
+returned as shown below. By clicking the URLs in the last column of the below
+workflow list, users can view the `Rmd` source file of a workflow, as well as
+the final `HTML` report generated after running a workflow on the provided test
+data. A list of the default data analysis steps included in each workflow is
+given [here](#wf-template-steps). Additional workflow templates are available
+on this project's GitHub organization (for details, see
+[below](#wf-github-collection)). To create an empty workflow template without
+any test data included, users want to choose the `new` template, which includes
+only the required directory structure and parameter files.
+
 
 ```{r check_availableWF, eval=FALSE}
 availableWF()
@@ -123,7 +128,7 @@ df %>%
     kableExtra::kable_material(c("striped", "hover", "condensed")) %>%
     kableExtra::scroll_box(width = "80%", height = "500px")
 ```
-
+__Table 1:__ Workflow templates
 
 # Use workflow templates
 
@@ -283,12 +288,35 @@ the `pathList` function.
 pathList()[1:2]
 ```
 
-# Analysis steps in selected workflows
+# Analysis steps in selected workflows {#wf-template-steps}
 
 The following gives an overview of the default data analysis steps used by selected workflow
-templates included in the `systemPipeRdata` package. The workflows hosted on this project's 
-[GitHub Organization](#wf-github-collection) are not considered here.
+templates included in the `systemPipeRdata` package (see [Table 1](#wf-bioc-collection)). 
+The workflows hosted on this project's [GitHub Organization](#wf-github-collection) are 
+not considered here.
 
+Any of the workflows included below can be loaded by assigning their name to
+the `workflow` argument of the `genWorkenvir` function. The workflow names 
+can be looked up under the 'Name' column of [Table 1](#wf-bioc-collection).
+
+```{r generate_workenvir2, eval=FALSE}
+library(systemPipeRdata)
+genWorkenvir(workflow="...")
+```
+
+## Empty template 
+
+This empty workflow (named `new`) is intended to be used as a template for
+creating new workflows from scratch where users can add steps by copying and
+pasting existing R or CL steps as needed, and populate them with their own
+code. In its current form, this mini workflow will export a test dataset to
+multiple files, compress/decompress the exported files, import them back into
+R, and then perform a simple statistical analysis and plot the results.
+
+1. R step: export tabular data to files 
+2. CL step: compress files
+3. CL step: uncompress files 
+4. R step: import files and plot summary statistics
 
 ## RNA-Seq workflow
 
@@ -302,7 +330,6 @@ templates included in the `systemPipeRdata` package. The workflows hosted on thi
 6. Analysis of differentially expressed genes (DEGs)
 7. GO term enrichment analysis
 8. Gene-wise clustering
-
 
 ## ChIP-Seq Workflow
 
