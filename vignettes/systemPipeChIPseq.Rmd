@@ -851,7 +851,7 @@ To check command-line tools used in this workflow, use `listCmdTools`, and use `
 to check if you have a modular system.
 
 The following code will print out tools required in your custom SPR project in the report. 
-In case you are running the workflow for the first and do not have a project yet, or you 
+In case you are running the workflow for the first time and do not have a project yet, or you 
 just want to browser this workflow, following code displays the tools required by default.
 ```{r list_tools}
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
