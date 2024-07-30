@@ -108,26 +108,24 @@ any test data included, users want to choose the `new` template, which includes
 only the required directory structure and parameter files.
 
 
-```{r check_availableWF, eval=FALSE}
-availableWF()
-```
-```{r check_availableWF_table, echo=FALSE, message=FALSE}
-library(magrittr)
-Name <- c("SPblast", "SPcheminfo", "SPscrna", "chipseq", "new", "riboseq", "rnaseq", "varseq")    
-Name_url <- c("SPblast", "SPcheminfo", "SPscrna", "systemPipeChIPseq", "new", "systemPipeRIBOseq", "systemPipeRNAseq", "systemPipeVARseq")    
-Description <- c("BLAST Template", "Cheminformatics Drug Similarity Template", "Basic Single Cell Template", "ChIP-Seq Workflow Template", "Empty Workflow Template", "RIBO-Seq Workflow Template", "RNA-Seq Workflow Template", "VAR-Seq Template")
-rmd <- paste0("https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/", Name_url, ".Rmd")
-rmd <- paste0("<a href=", rmd, ">Rmd</a>")
-html <- paste0("https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/", Name_url, ".html")
-html <- paste0("<a href=", html, ">HTML</a>")
-URL <- paste(rmd, html, sep=", ")
-df <- data.frame(Name=Name, Description=Description, URL=URL)
-df %>%
-   dplyr::arrange(Name) %>% 
-  kableExtra::kable("html", escape = FALSE, col.names = c("Name", "Description", "URL")) %>%
-    kableExtra::kable_material(c("striped", "hover", "condensed")) %>%
-    kableExtra::scroll_box(width = "80%", height = "500px")
-```
+|   WorkFlow    |                   Description                    |                                     Status                                      |                                                                                                              Link                                                                                                              |
+| :-----------: | :----------------------------------------------: | :-----------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|   SPchipseq   |            ChIP-Seq Workflow Template            |       ![Stable](https://img.shields.io/badge/lifecycle-stable-green.svg)        | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeChIPseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" /> |
+|   SPriboseq   |            RIBO-Seq Workflow Template            |       ![Stable](https://img.shields.io/badge/lifecycle-stable-green.svg)        | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRIBOseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" /> |
+|   SPrnaseq    |            RNA-Seq Workflow Template             |       ![Stable](https://img.shields.io/badge/lifecycle-stable-green.svg)        | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRNAseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />  |
+|   SPvarseq    |            VAR-Seq Workflow Template             |       ![Stable](https://img.shields.io/badge/lifecycle-stable-green.svg)        | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeVARseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />  |
+|  SPscrnaseq   |      Single-Cell RNA-Seq Workflow Template       |       ![Stable](https://img.shields.io/badge/lifecycle-stable-green.svg)        |      <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPscrna.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />      |
+|    SPblast    |             BLAST Workflow Template              |       ![Stable](https://img.shields.io/badge/lifecycle-stable-green.svg)        |      <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPblast.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />      |
+|  SPcheminfo   |          Basic drug discovery workflow           |       ![Stable](https://img.shields.io/badge/lifecycle-stable-green.svg)        |    <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPcheminfo.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />     |
+|  SPmethylseq  |           Methyl-Seq Workflow Template           | ![Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg) |  <a href="https://github.com/systemPipeR/SPmethylseq" target="_blank"> <img src="https://raw.githubusercontent.com/systemPipeR/systemPipeR/gh-pages/images/GitHub-Mark-120px-plus.png" align="center" style="width:20px;" />   |
+|   SPdenovo    | De novo transcriptome assembly Workflow Template | ![Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg) |    <a href="https://github.com/systemPipeR/SPdenovo" target="_blank"> <img src="https://raw.githubusercontent.com/systemPipeR/systemPipeR/gh-pages/images/GitHub-Mark-120px-plus.png" align="center" style="width:20px;" />    |
+|   SPclipseq   |            CLIP-Seq Workflow Template            | ![Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg) |   <a href="https://github.com/systemPipeR/SPclipseq" target="_blank"> <img src="https://raw.githubusercontent.com/systemPipeR/systemPipeR/gh-pages/images/GitHub-Mark-120px-plus.png" align="center" style="width:20px;" />    |
+|  SPmetatrans  | Metatranscriptomic Sequencing Workflow Template  | ![Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg) |  <a href="https://github.com/systemPipeR/SPmetatrans" target="_blank"> <img src="https://raw.githubusercontent.com/systemPipeR/systemPipeR/gh-pages/images/GitHub-Mark-120px-plus.png" align="center" style="width:20px;" />   |
+|   SPatacseq   |            ATAC-Seq Workflow Template            | ![Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg) |   <a href="https://github.com/systemPipeR/SPatacseq" target="_blank"> <img src="https://raw.githubusercontent.com/systemPipeR/systemPipeR/gh-pages/images/GitHub-Mark-120px-plus.png" align="center" style="width:20px;" />    |
+| SPpolyriboseq |     Polyribosomal RNA-Seq Workflow Template      | ![Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg) | <a href="https://github.com/systemPipeR/SPpolyriboseq" target="_blank"> <img src="https://raw.githubusercontent.com/systemPipeR/systemPipeR/gh-pages/images/GitHub-Mark-120px-plus.png" align="center" style="width:20px;" />  |
+|     SPhic     |              Hi-C Workflow Template              | ![Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg) |     <a href="https://github.com/systemPipeR/SPhic" target="_blank"> <img src="https://raw.githubusercontent.com/systemPipeR/systemPipeR/gh-pages/images/GitHub-Mark-120px-plus.png" align="center" style="width:20px;" />      |
+|  SPmirnaseq   |          MicroRNA-Seq Workflow Template          | ![Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg) |   <a href="https://github.com/systemPipeR/SPmirnaseq" target="_blank"> <img src="https://raw.githubusercontent.com/systemPipeR/systemPipeR/gh-pages/images/GitHub-Mark-120px-plus.png" align="center" style="width:20px;" />   |
+
 __Table 1:__ Workflow templates
 
 # Use workflow templates
