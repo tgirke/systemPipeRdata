@@ -116,7 +116,8 @@ only the required directory structure and parameter files.
 |   SPvarseq    |            VAR-Seq Workflow Template             | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeVARseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />  |
 |  SPscrnaseq   |      Single-Cell RNA-Seq Workflow Template       | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPscrna.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />           |
 |    SPblast    |             BLAST Workflow Template              | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPblast.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />           |
-|  SPcheminfo   |          Basic drug discovery workflow           | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPcheminfo.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />        |
+|  SPcheminfo   |          Basic Drug Discovery Workflow           | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPcheminfo.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />        |
+|  new          |          Basic Generic Workflow Template         | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/new.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />               |
 
 __Table 1:__ Workflow templates
 
