@@ -107,7 +107,6 @@ on this project's GitHub organization (for details, see
 any test data included, users want to choose the `new` template, which includes
 only the required directory structure and parameter files.
 
-
 ```{r check_availableWF, eval=FALSE}
 availableWF()
 ```
@@ -128,6 +127,19 @@ df %>%
     kableExtra::kable_material(c("striped", "hover", "condensed")) %>%
     kableExtra::scroll_box(width = "80%", height = "500px")
 ```
+__Table 1:__ Workflow templates
+
+|   WorkFlow    |                   Description                    |                                                                                                              Link                                                                                                              |
+| :-----------: | :----------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|   SPchipseq   |            ChIP-Seq Workflow Template            | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeChIPseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" /> |
+|   SPriboseq   |            RIBO-Seq Workflow Template            | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRIBOseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" /> |
+|   SPrnaseq    |            RNA-Seq Workflow Template             | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRNAseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />  |
+|   SPvarseq    |            VAR-Seq Workflow Template             | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeVARseq.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />  |
+|  SPscrnaseq   |      Single-Cell RNA-Seq Workflow Template       | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPscrna.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />           |
+|    SPblast    |             BLAST Workflow Template              | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPblast.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />           |
+|  SPcheminfo   |          Basic Drug Discovery Workflow           | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/SPcheminfo.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />        |
+|  new          |          Basic Generic Workflow Template         | <a href="https://www.bioconductor.org/packages/release/data/experiment/vignettes/systemPipeRdata/inst/doc/new.html" target="_blank"> <img src="bioconductor_logo_rgb.png" align="center" style="width:100px;" />               |
+
 __Table 1:__ Workflow templates
 
 # Use workflow templates
