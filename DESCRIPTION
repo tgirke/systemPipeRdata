@@ -16,7 +16,7 @@ Description: systemPipeRdata complements the systemPipeR workflow management
         of data analysis needs. 
 Depends: R (>= 3.6.0)
 Imports: methods, Biostrings, BiocGenerics, jsonlite, remotes
-Suggests: GenomicFeatures, GenomicRanges, IRanges, Rsamtools, ShortRead, rtracklayer, RUnit, BiocStyle, knitr, rmarkdown, systemPipeR, kableExtra 
+Suggests: GenomicFeatures, GenomicRanges, IRanges, Rsamtools, ShortRead, rtracklayer, RUnit, BiocStyle, knitr, rmarkdown, systemPipeR, kableExtra, magrittr, dplyr  
 VignetteBuilder: knitr
 License: Artistic-2.0
 NeedsCompilation: no

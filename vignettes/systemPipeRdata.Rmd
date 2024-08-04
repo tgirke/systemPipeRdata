@@ -303,7 +303,7 @@ library(systemPipeRdata)
 genWorkenvir(workflow="...")
 ```
 
-## Empty template 
+## Generic template 
 
 This empty workflow (named `new`) is intended to be used as a template for
 creating new workflows from scratch where users can add steps by copying and
