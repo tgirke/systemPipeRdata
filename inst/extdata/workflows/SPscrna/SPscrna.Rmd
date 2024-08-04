@@ -51,7 +51,7 @@ In the actual analysis report, this section is usually **removed**.
 This scRNAseq workflow template is based on the counted 10x scRNA data. It means 
 this workflow expect users have output from cell counting programs, like `cell ranger`. 
 
-This workflow:
+The steps in this workflow include:
 
 1. Read in single cell count data.
 2. Basic stats on input data.

@@ -1,5 +1,5 @@
 ---
-title: "Title" 
+title: "Generic Workflow Template" 
 author: "Author: FirstName LastName"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
