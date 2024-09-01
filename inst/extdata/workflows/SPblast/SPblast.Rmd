@@ -287,7 +287,7 @@ if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     })
 } else {
     cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
-    cat(c("bowtie2/2.4.5", "samtools/1.14", "macs2"), sep = "\n")
+    cat(c("BLAST 2.14.0+"), sep = "\n")
 }
 ```
 
