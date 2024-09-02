@@ -42,38 +42,30 @@ suppressPackageStartupMessages({
 
 # Workflow environment
 
-This is a _Generic_ template for a systemPipeR workflow provided by
-[systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html), 
+This is the _Generic_ workflow template of the 
+[systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html) package, 
 a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt]. 
 Like other workflow templates, it can be loaded with a single command. Once loaded, users have the
 flexibility to utilize the templates as they are or modify them as needed. More
 in-depth information can be found in the main vignette of [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). The
-`Generic` template presented here is special that it provides a workflow
+_Generic_ template presented here is special that it provides a workflow
 skelleton intended to be used as a starting point for building new workflows.
 Basic workflow steps are included to illustrate how to design command-line (CL)
 and R-based workflow steps, as well as R Markdown code chunks that are not part
-of a workflow. The details about contructing workflow steps are explained in 
-`systemPipeR's` main [vignette](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#52_Constructing_workflows).
+of a workflow. __Note__, the details about contructing workflow steps are explained in the 
+[Detailed Tutorial](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5_Detailed_tutorial) section 
+of `systemPipeR's` main vignette that uses the same workflow steps as the _Generic_ workflow template.
 
-The following illustrates how to load the basic workflow steps into 
-a `SAL` workflow container (`SYSargsList`) either one-by-one in interactive mode 
-or with a single load command, and then run the workflow with a another single command. 
-
-This `Generic` workflow template includes the following four data processing steps.
+The `Generic` workflow template includes the following four data processing steps.
 
 1. R step: export tabular data to files 
 2. CL step: compress files
 3. CL step: uncompress files 
 4. R step: import files and plot summary statistics
 
-__Note__, [this
-section](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5_Detailed_tutorial)
-in the main vignette uses the same workflow steps to introduce the basic usage
-of `systemPipeR`.
-
 ## Create workflow environment
 
-The environment of the chosen `Generic` workflow is generated with the `genWorenvir` 
+The environment of the chosen workflow is generated with the `genWorenvir` 
 function. After this, the user’s R session needs to be directed into the resulting directory
 (here `new`).
 
@@ -82,7 +74,7 @@ systemPipeRdata::genWorkenvir(workflow = "new", mydirname = "new")
 setwd("new")
 ```
 
-The `SPRproject` initializes a new workflow project instance. This function
+The `SPRproject` function initializes a new workflow project instance. This function
 call creates a an empty `SAL` workflow container and at the same time a
 linked project log directory (default name `.SPRproject`) that acts as a flat-file 
 database of a workflow. For additional details, please visit this
@@ -94,14 +86,16 @@ library(systemPipeR)
 sal <- SPRproject()
 sal
 ```
-Workflow instances in `systemPipeR` can be constructed stepwise in interactive
-mode by evaluating the code of individual workflow steps in the R console
-one-by-one. Alternatively, one can import all steps of a workflow with a single
-import command at once, either from an R script or an R Markdown workflow file.
-The following introduces first the stepwise approach, and then the
-automated import approach (see [here](#importwf)). 
 
-## Step 1: Load packages 
+## Construct workflow
+
+This section illustrates how to load the following five workflow steps into a
+`SAL` workflow container (`SYSargsList`) first one-by-one in interactive mode
+(see [here](#stepwise)) or with the `importWF` command (see [here](#importwf)),
+and then run the workflow with the `runWF` command. 
+
+
+### Step 1: Load packages {#stepwise}
 
 Next, the `systemPipeR` package needs to be loaded in a workflow. 
 
@@ -120,7 +114,7 @@ After adding the R code, sal contains now one workflow step.
 sal
 ```
 
-## Step 2: Export tabular data to files
+### Step 2: Export tabular data to files
 
 This is the first data processing step. In this case it is an R step that uses the `LineWise` 
 function to define the workflow step, and appends it to the `SAL` workflow container.
@@ -138,7 +132,7 @@ appendStep(sal) <- LineWise(code={
 )
 ```
 
-## Step 3: Compress data
+### Step 3: Compress data
 
 The following adds a CL step that uses the `gzip` software to compress the files that were 
 generated in the previous step.
@@ -155,7 +149,7 @@ appendStep(sal) <- SYSargsList(
 )
 ```
 
-## Step 4: Uncompress data
+### Step 4: Uncompress data
 
 Next, the output files (here compressed `gz` files), that were generated by the
 previous `gzip` step, will be uncompressed in the current step with the `gunzip`
@@ -173,7 +167,7 @@ appendStep(sal) <- SYSargsList(
 )
 ```
 
-## Step 5: Import tabular files and visualize data
+### Step 5: Import tabular files and visualize data
 
 Imports the tabular files from the previous step back into R, performs some summary 
 statistics and plots the results as bar diagrams.
@@ -202,7 +196,7 @@ appendStep(sal) <- LineWise(code={
 )
 ```
 
-## Version Information
+### Version Information
 
 ```{r sessionInfo, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -224,24 +218,25 @@ the `importWF` function from the associated `Rmd` workflow script (here `new.Rmd
 workflow instances with this automated approach is usually preferred since it is much more convenient 
 and reliable compared to the manual approach described earlier. 
 
-__Note:__ To demonstrate the standard automation routines, the first line below uses the
-`overwrite=TRUE` option of the `SPRproject` function. 
+__Note:__ To demonstrate the 'systemPipeR's' automation routines without regenerating a new workflow 
+environment from scratch, the first line below uses the `overwrite=TRUE` option of the `SPRproject` function. 
 This option is generally discouraged as it erases the existing workflow project and `sal` container. 
-It is used here for brevity. For information on resuming and restarting workflow runs, consult the 
-relevant section of the main vignette (see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#10_Restarting_and_resetting_workflows).)
+For information on resuming and restarting workflow runs, users want to consult the relevant section of 
+the main vignette (see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#10_Restarting_and_resetting_workflows).)
 
 ```{r , import_run_routine, eval=FALSE, spr=TRUE}
 sal <- SPRproject(overwrite = TRUE) # Avoid 'overwrite=TRUE' in real runs.
-sal <- importWF(sal, file_path = "new.Rmd") #
-sal <- runWF(sal)
-sal <- renderReport(sal)
-sal <- renderLogs(sal)
+sal <- importWF(sal, file_path = "new.Rmd") # Imports above steps from new.Rmd.
+sal <- runWF(sal) # Runs workflow.
+sal <- renderReport(sal) # Renders scientific report.
+sal <- renderLogs(sal) # Renders technical report from log files.
 ```
 
 ## CL tools used 
 The `listCmdTools` (and `listCmdModules`) return the CL tools that 
 are used by a workflow. To include a CL tool list in a workflow report, 
-one can use the following code.
+one can use the following code. Additional details on this topic 
+can be found in the main vignette [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#111_Accessor_methods).
 
 ```{r list_tools}
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
