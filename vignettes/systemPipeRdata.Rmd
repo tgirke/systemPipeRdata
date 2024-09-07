@@ -112,9 +112,9 @@ availableWF()
 ```
 ```{r check_availableWF_table, echo=FALSE, message=FALSE}
 library(magrittr)
-Name <- c("SPblast", "SPcheminfo", "SPscrna", "SPchipseq", "Generic", "SPriboseq", "SPrnaseq", "SPvarseq")    
-Name_url <- c("SPblast", "SPcheminfo", "SPscrna", "systemPipeChIPseq", "new", "systemPipeRIBOseq", "systemPipeRNAseq", "systemPipeVARseq")    
-Description <- c("BLAST Template", "Cheminformatics Drug Similarity Template", "Basic Single-Cell Template", "ChIP-Seq Workflow Template", "Generic Workflow Template", "RIBO-Seq Workflow Template", "RNA-Seq Workflow Template", "VAR-Seq Template")
+Name <- c("new", "rnaseq", "riboseq", "chipseq", "varseq", "SPblast", "SPcheminfo", "SPscrna") 
+Name_url <- c("new", "systemPipeRNAseq", "systemPipeRIBOseq", "systemPipeChIPseq", "systemPipeVARseq", "SPblast", "SPcheminfo", "SPscrna") 
+Description <- c("Generic Workflow Template", "RNA-Seq Workflow Template", "RIBO-Seq Workflow Template", "ChIP-Seq Workflow Template", "VAR-Seq Workflow Template", "BLAST Workflow Template", "Cheminformatics Drug Similarity Template", "Basic Single-Cell Workflow Template") 
 rmd <- paste0("https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/", Name_url, ".Rmd")
 rmd <- paste0("<a href=", rmd, ">Rmd</a>")
 html <- paste0("https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/", Name_url, ".html")
@@ -122,8 +122,7 @@ html <- paste0("<a href=", html, ">HTML</a>")
 URL <- paste(rmd, html, sep=", ")
 df <- data.frame(Name=Name, Description=Description, URL=URL)
 df %>%
-   dplyr::arrange(Name) %>% 
-  kableExtra::kable("html", escape = FALSE, col.names = c("Name", "Description", "URL")) %>%
+    kableExtra::kable("html", escape = FALSE, col.names = c("Name", "Description", "URL")) %>%
     kableExtra::kable_material(c("striped", "hover", "condensed")) %>%
     kableExtra::scroll_box(width = "80%", height = "500px")
 ```
@@ -145,7 +144,7 @@ table can be loaded the same way.
 
 ```{r generate_workenvir, eval=FALSE}
 library(systemPipeRdata)
-genWorkenvir(workflow="rnaseq", mydirname="rnaseq")
+genWorkenvir(workflow="Generic")
 setwd("rnaseq")
 ```
 
@@ -196,8 +195,11 @@ __Default analysis steps in RNA-Seq Workflow__
 8. Gene-wise clustering
 
 
-Once the workflow has been loaded into `sal`, it can be executed from start to finish
-(or partially) with the `runWF` command.
+Once the workflow has been loaded into `sal`, it can be executed from start to
+finish (or partially) with the `runWF` command. However, running the workflow
+will only be possible if all dependent CL software is installed on a user's
+system. Their names and availability on a system can be listed with
+`listCmdTools(sal, check_path=TRUE)`. 
 
 ```{r run_rnaseq, eval=FALSE}
 sal <- runWF(sal)
