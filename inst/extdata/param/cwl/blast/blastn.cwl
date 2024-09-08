@@ -1,6 +1,10 @@
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: blastp
+baseCommand: blastn
+arguments:
+  - prefix: -out
+    valueFrom: $(inputs.results_path.path)/$(inputs.SampleName)_blast.txt
+    position: 99
 inputs:
   query:
     type: File
@@ -18,12 +22,12 @@ inputs:
     type: int
     inputBinding:
       prefix: -outfmt
-  out:
-    type: File
-    inputBinding:
-      prefix: -out
+  results_path:
+    type: Directory
+  SampleName:
+    type: string
 outputs:
   out:
     type: File
     outputBinding:
-      glob: $(inputs.out)
+      glob: $(inputs.results_path.path)/$(inputs.SampleName)_blast.txt

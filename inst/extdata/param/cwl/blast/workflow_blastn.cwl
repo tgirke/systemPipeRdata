@@ -8,10 +8,10 @@ inputs:
   out: File
 outputs:
   out:
-    outputSource: blastp/out
+    outputSource: blastn/out
     type: File
 steps:
-  blastp:
+  blastn:
     in:
       query: query
       database_name: database_name
@@ -19,4 +19,4 @@ steps:
       outfmt: outfmt
       out: out
     out: '[out]'
-    run: blast/blastp.cwl
+    run: blast/blastn.cwl

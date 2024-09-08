@@ -1,14 +1,12 @@
+SampleName: _SampleName_
 query:
   class: File
-  path: ./data/mouse_select.fasta
+  path: _query_file_
 database_name:
   class: File
-  path: ./data/human.1.protein.faa
+  path: ./data/tair10_blast_db
 evalue: 1e-6
 outfmt: 6
-out:
-  class: File
-  path: ./results/blastp.out
 results_path:
   class: Directory
   path: ./results

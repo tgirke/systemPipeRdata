@@ -48,19 +48,16 @@ This section provides general description and how to use this BLAST workflow.
 In the actual analysis report, this section is usually **removed**. 
 
 This BLAST workflow template is based on the 
-[BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi) based R package [rBLAST](https://github.com/mhahsler/rBLAST).
+[BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi).
 
 - The BLAST software can be downloaded from [NCBI](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/).
   Please make sure it can be run from command-line.
-- rBLAST can be installed with `install.packages('rBLAST', repos = 'https://mhahsler.r-universe.dev')`.
 
-This workflow does:
+This workflow template:
 1. Validate the BLAST installation
-2. BLAST input fasta file with a reference genome. 
-3. BLAST input with a certain database
-4. BLAST sequence with general databases to find out the source organism(s).
+2. Create a BLAST database using input fasta file from a reference genome. 
+3. BLAST query sequences with against the database
 
-All are written in R (`Linewise`) steps, but _BLAST+_ must be installed.
 
 ![](results/plotwf_spblast.jpg)
 
@@ -99,13 +96,9 @@ sal <- importWF(sal, "SPblast.Rmd")
 ## Load packages 
 
 ```{r load_packages, eval=FALSE, spr=TRUE}
-cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
-cat(c("'rBLAST", "readr\n"), sep = "', '")
-###pre-end
 appendStep(sal) <- LineWise(
     code = {
         library(systemPipeR)
-        library(rBLAST)
     }, 
     step_name = "load_packages"
 )
@@ -113,10 +106,7 @@ appendStep(sal) <- LineWise(
 
 ## Test BLAST install
 
-Molecules can be loaded or downloaded. This example dataset has 100 molecules.
-
 ```{r test_blast, eval=FALSE, spr=TRUE}
-# Here, the dataset is downloaded. If you already have the data locally, change URL to local path.
 appendStep(sal) <- LineWise(
     code = {
         # If you have a modular system, use following line
@@ -130,24 +120,6 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-## Load query sequence
-
-Load query sequence from a `fasta` file.
-
-In this template, an example fasta is provided, with 10 sequences from Arabidopsis, 
-Cholera, Human, Mouse, and COVID-19, 2 for each. 
-
-```{r load_query, eval=FALSE, spr=TRUE}
-appendStep(sal) <- LineWise(
-    code = {
-        query <- readDNAStringSet('data/example.fasta')
-    }, 
-    step_name = "load_query",
-    dependency = "test_blast"
-)
-```
-
-
 ## BLAST against reference genome
 
 In this step, we are trying to BLAST the query sequences to a reference genome 
@@ -156,92 +128,65 @@ and see if this genome contains the whole or part of the sequences.
 In this example, a minimized `tair10` genome is used. In the real analysis, 
 please replace it with a full genome `fasta` file. 
 
-```{r build_genome_db, eval=FALSE, spr=TRUE}
+Another option is to use NCBI BLAST databases. There are many databases available,
+but most of them are very large. For example, `nr` database is 100GB. Make 
+sure you have enough storage and memory to download and use them.
 
-appendStep(sal) <- LineWise(
-    code = {
-        reference <- 'data/tair10.fasta'
-        # this command prepare BLAST-able database of genome
-        makeblastdb(reference, dbtype='nucl')
-    }, 
-    step_name = "build_genome_db",
-    dependency = "load_query"
+```{r build_genome_db, eval=FALSE, spr=TRUE}
+appendStep(sal) <- SYSargsList(
+    step_name = "build_genome_db", 
+    dir = FALSE, 
+    targets=NULL, 
+    wf_file = "blast/makeblastdb.cwl", 
+    input_file="blast/makeblastdb.yml",
+    dir_path="param/cwl", 
+    dependency = "test_blast"
 )
 ```
 
-Next BLAST is performed. Since there are only 2 Arabidopsis sequences in the 
-example `fasta`. Only these two sequences are expected to return statistically 
-meaningful BLAST results.
+## Perform BLAST search
+
+Next BLAST is performed. Since the query sequences are directly taken from the reference gnome, they all should two
+return statistically meaningful BLAST results.
 
 ```{r blast_genome, eval=FALSE, spr=TRUE}
-appendStep(sal) <- LineWise(
-    code = {
-        bl_tair10 <- blast(db = reference, type='blastn')
-        cl_tair10 <- predict(bl_tair10, query)
-        readr::write_csv(cl_tair10, "results/blast_tair10.csv")
-    }, 
-    step_name = "blast_genome",
+appendStep(sal) <- SYSargsList(
+    step_name = "blast_genome", 
+    dir = FALSE,
+    targets="targets_blast.txt", 
+    wf_file = "blast/blastn.cwl", 
+    input_file="blast/blastn.yml",
+    inputvars = c(
+        FileName = "_query_file_",
+        SampleName = "_SampleName_"
+    ),
+    dir_path="param/cwl", 
     dependency = "build_genome_db"
 )
 ```
 
 
-## BLAST existing databases
+## Display the top hits
 
-There are plenty of databases on [NCBI](https://ftp.ncbi.nlm.nih.gov/blast/db/) that one could 
-download and run BLAST on. Once the databases are downloaded, unzip all files 
-into one directory. We need to provide the path to the database. 
+This step displays the top hits from the BLAST results. The e_value and bit_score
+are the most important values to consider.
 
-In this example, we want to know if COVID-19 is a beta coronavirus. Then, we can 
-use some COVID sequence to BLAST all other existing beta coronavirus sequences and 
-find the similarity. This resource is downloadable from NCBI. All downloaded 
-`Betacoronavirus.XX.tar.gz` files are unzipped to `/srv/projects/db/ncbi/preformatted/20220131/`. 
-Please change the path according to your project. Then, we can BLAST the last two sequence against
-the database.
-
-
-```{r blast_db, eval=FALSE, spr=TRUE}
+```{r display_hits, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
-        bl_covid <- blast(
-            db = '/srv/projects/db/ncbi/preformatted/20220131/Betacoronavirus', 
-            type='blastn'
+        # get the output file path from a Sysargs step using `getColumn`
+        tbl_tair10 <- read.delim(getColumn(sal, step = "blast_genome")[1], header = FALSE, stringsAsFactors = FALSE)
+        names(tbl_tair10) <- c(
+          "query", "subject", "identity", "alignment_length", "mismatches", 
+          "gap_openings", "q_start", "q_end", "s_start", "s_end", 
+          "e_value", "bit_score"
         )
-        cl_covid <- predict(bl_covid, query[9:10])
-        readr::write_csv(cl_covid, "results/blast_covid.csv")
+        print(head(tbl_tair10, n = 20))
     }, 
-    step_name = "blast_db",
-    dependency = "load_query"
+    step_name = "display_hits",
+    dependency = "blast_genome"
 )
 ```
-
-## BLAST to general databases
-Sometimes we do not know the origin of a sequence, for example, a sequence comes 
-from a contaminated sample, and we want to know the source. In such cases, we 
-would need to BLAST the sequence to a more generic database. The most generic 
-nucleotide BLAST database is the `nt` database. 
-
-This database is extremely big and requires giant RAM and CPU cores to run. 
-Please do not run the following example unless your system admin has provided 
-you such store space and computational power. A better way for average the user 
-is to use the website https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi/ . 
-The engine over there is optimized and can quickly
-search for the species information. 
-
-
-```{r blast_nt, eval=FALSE, spr=TRUE}
-appendStep(sal) <- LineWise(
-    code = {
-        bl_nt <- blast(db = '/srv/projects/db/ncbi/preformatted/20220131/nt', type='blastn')
-        cl_nt <- predict(bl_nt, query[5])
-        readr::write_csv(cl_nt, "results/blast_nt.csv")
-    }, 
-    step_name = "blast_nt",
-    dependency = "load_query",
-    run_step = "optional"
-)
-```
-
 
 ## Workflow session
 
@@ -251,7 +196,7 @@ appendStep(sal) <- LineWise(
         sessionInfo()
     }, 
     step_name = "wf_session", 
-    dependency = "blast_db")
+    dependency = "display_hits")
 ```
 
 # Manage the workflow
@@ -261,7 +206,7 @@ the workflow container. The execution will be on a single machine without
 submitting to a queuing system of a computer cluster. 
 
 ```{r runWF, eval=FALSE}
-sal <- runWF(sal, run_step = "mandatory") # remove `run_step` to run all steps to include optional steps
+sal <- runWF(sal) 
 ```
 
 - To use complex workflow control options, such as parallelization, subsetting samples, selecting steps, read the [documents](https://systempipe.org/sp/spr/sp_run/step_run/) on our website. 
@@ -287,7 +232,7 @@ if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     })
 } else {
     cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
-    cat(c("BLAST 2.14.0+"), sep = "\n")
+    cat(c("BLAST 2.16.0+"), sep = "\n")
 }
 ```
 
