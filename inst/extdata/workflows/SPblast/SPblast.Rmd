@@ -1,5 +1,5 @@
 ---
-title: "NCBI BLAST" 
+title: "BLAST Workflow Template" 
 author: "Author: FirstName LastName"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
@@ -43,42 +43,52 @@ suppressPackageStartupMessages({
 })
 ```
 
-# About the template
-This section provides general description and how to use this BLAST workflow. 
-In the actual analysis report, this section is usually **removed**. 
+# About this template
+This is the BLAST workflow template of the [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html) 
+package, a companion
+package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt]. Like other workflow
+templates, it can be loaded with a single command. Users have the
+flexibility to utilize the template as is or modify it as needed. More in-depth
+information can be found in the main vignette of [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). The BLAST
+workflow template serves as a starting point for conducting sequence similarity
+search routines. It employs [NCBI’s BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi) software as an illustrative example,
+enabling users to search a sequence database for entries that share sequence
+similarity to one or multiple query sequences. The search results can be
+presented in a concise tabular summary format, or the corresponding pairwise
+alignments can be included. To utilize this workflow, users must download and
+install the BLAST software from NCBI’s website [here](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) and ensure it is added to
+their system’s PATH environment variable.
 
-This BLAST workflow template is based on the 
-[BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi).
+The following data analysis steps are included in this workflow template:
 
-- The BLAST software can be downloaded from [NCBI](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/).
-  Please make sure it can be run from command-line.
+1. Validation of the BLAST installation 
+2. Creation of an indexed sequence database that can be searched with BLAST 
+3. BLAST search of indexed database with query sequence 
 
-This workflow template:
-1. Validate the BLAST installation
-2. Create a BLAST database using input fasta file from a reference genome. 
-3. BLAST query sequences with against the database
+The topology graph of the BLAST workflow is shown in Figure 1.
 
-
-![](results/plotwf_spblast.jpg)
-
-# Introduction
-
-Users want to provide here background information about the design of their
-BLAST project.
-
-This report describes the analysis of a BLAST project studying ...
-
-## Experimental design
-
-Typically, users want to specify here all information relevant for the
-analysis of their BLAST study. This includes detailed descriptions of
-files, experimental design, reference genome, gene annotations,
-etc.
+```{r spblast-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Topology graph of BLAST workflow.", warning=FALSE}
+knitr::include_graphics("results/plotwf_spblast.jpg")
+```
 
 # Workflow environment
 
-To create a Workflow within _`systemPipeR`_, we can start by defining an empty
-container and checking the directory structure:
+The environment of the chosen workflow is generated with the `genWorenvir`
+function. After this, the user’s R session needs to be directed into the
+resulting directory (here `SPblast`).
+
+
+```{r gen_spblast_wf, eval=FALSE}
+systemPipeRdata::genWorkenvir(workflow = "SPblast", mydirname = "SPblast")
+setwd("SPblast")
+```
+
+The `SPRproject` function initializes a new workflow project instance. This
+function call creates an empty `SAL` workflow container and at the same time a
+linked project log directory (default name `.SPRproject`) that acts as a
+flat-file database of a workflow. For additional details, please visit this
+[section](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5_Detailed_tutorial) 
+in `systemPipeR's` main vignette.
 
 ```{r create_workflow, message=FALSE, eval=FALSE}
 library(systemPipeR)
@@ -86,14 +96,20 @@ sal <- SPRproject()
 sal
 ```
 
-To load the entire workflow with default settings, run
+The below workflow steps can be imported from the source `Rmd` file of this
+vignette all at once into a `SAL` (`SYSargsList`) workflow container using the
+`importWF` function. After this the entire workflow can be run from start to
+finish with the `runWF` function. Details on this are provided in the next
+section [here](#importwf)
 
 ```{r load_workflow_default, eval=FALSE}
 sal <- importWF(sal, "SPblast.Rmd")
+sal <- runWF(sal)
 ```
 
+## Step 1: Load packages 
 
-## Load packages 
+Next, the `systemPipeR` package needs to be loaded in a workflow.
 
 ```{r load_packages, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -104,14 +120,15 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-## Test BLAST install
+## Step 2: Test BLAST install
+
+The following step is optional. It tests the availability of the BLAST software on the user’s system.
 
 ```{r test_blast, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
-        # If you have a modular system, use following line
-        moduleload("ncbi-blast") 
-        # If not, comment out line above you need to install BLAST and configure the PATH. 
+        # If you have a modular system, then enable the following line
+        # moduleload("ncbi-blast") 
         blast_check <- tryCMD("blastn", silent = TRUE)
         if(blast_check  == "error") stop("Check your BLAST installation path.")
     }, 
@@ -120,17 +137,13 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-## BLAST against reference genome
+## Step 3: BLASTable database
 
-In this step, we are trying to BLAST the query sequences to a reference genome 
-and see if this genome contains the whole or part of the sequences.
+This step creates an indexed sequence database that can be searched with BLAST.
+The sample sequences used for creating the databases are stored in a file named 
+`tair10.fasta` under the `data` directory of the workflow environment. The exact command-line (CL)
+call used for creating the indexed database can be returned with `cmdlist(sal, step=3)`.
 
-In this example, a minimized `tair10` genome is used. In the real analysis, 
-please replace it with a full genome `fasta` file. 
-
-Another option is to use NCBI BLAST databases. There are many databases available,
-but most of them are very large. For example, `nr` database is 100GB. Make 
-sure you have enough storage and memory to download and use them.
 
 ```{r build_genome_db, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
@@ -144,10 +157,11 @@ appendStep(sal) <- SYSargsList(
 )
 ```
 
-## Perform BLAST search
+## Step 4: BLAST search
 
-Next BLAST is performed. Since the query sequences are directly taken from the reference gnome, they all should two
-return statistically meaningful BLAST results.
+Next, the BLASTable database is searched with a set of query sequences to find sequences in the 
+database that share sequence similarity with the queries. As above, the exact CL 
+call used in this step can be returned with `cmdlist(sal, step=4)`.
 
 ```{r blast_genome, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
@@ -165,11 +179,10 @@ appendStep(sal) <- SYSargsList(
 )
 ```
 
+## Step 5: View top hits
 
-## Display the top hits
-
-This step displays the top hits from the BLAST results. The e_value and bit_score
-are the most important values to consider.
+This step displays the top hits identified by the BLAST search in the previous step. 
+The `e_value` and `bit_score` columns allow to rank the BLAST results by sequence similarity.
 
 ```{r display_hits, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -188,7 +201,7 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-## Workflow session
+## Version Information
 
 ```{r wf_session, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -199,30 +212,35 @@ appendStep(sal) <- LineWise(
     dependency = "display_hits")
 ```
 
-# Manage the workflow
+# Automated routine {#importwf}
 
-To run the workflow, use `runWF` function. It executes all the steps store in 
-the workflow container. The execution will be on a single machine without 
-submitting to a queuing system of a computer cluster. 
+Once the above workflow steps have been loaded into `sal` from the source `Rmd`
+file of this vignette, the workflow can be executed from start to finish (or
+partially) with the `runWF` command. Subsequently, scientific and technical
+workflow reports can be generated with the `renderReport`  and `renderLogs`
+functions, respectively.
 
-```{r runWF, eval=FALSE}
-sal <- runWF(sal) 
+__Note:__ To demonstrate 'systemPipeR's' automation routines without regenerating a new workflow 
+environment from scratch, the first line below uses the `overwrite=TRUE` option of the `SPRproject` function. 
+This option is generally discouraged as it erases the existing workflow project and `sal` container. 
+For information on resuming and restarting workflow runs, users want to consult the relevant section of 
+the main vignette (see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#10_Restarting_and_resetting_workflows).)
+
+```{r , import_run_routine, eval=FALSE}
+sal <- SPRproject(overwrite = TRUE) # Avoid 'overwrite=TRUE' in real runs.
+sal <- importWF(sal, file_path = "../SPblast.Rmd") # Imports above steps from new.Rmd.
+sal <- runWF(sal) # Runs ggworkflow.
+plotWF(sal) # Plot toplogy graph of workflow
+sal <- renderReport(sal) # Renders scientific report.
+sal <- renderLogs(sal) # Renders technical report from log files.
 ```
 
-- To use complex workflow control options, such as parallelization, subsetting samples, selecting steps, read the [documents](https://systempipe.org/sp/spr/sp_run/step_run/) on our website. 
-- Explore [other details of the workflow object](https://systempipe.org/sp/spr/sp_run/sal_explore/).
-- Create [logs and reports](https://systempipe.org/sp/spr/sp_run/step_reports/).
-- [Visualize the workflow](https://systempipe.org/sp/spr/sp_run/step_vis/).
+## CL tools used 
+The `listCmdTools` (and `listCmdModules`) return the CL tools that 
+are used by a workflow. To include a CL tool list in a workflow report, 
+one can use the following code. Additional details on this topic 
+can be found in the main vignette [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#111_Accessor_methods).
 
-# About the workflow
-## Tools used 
-
-To check command-line tools used in this workflow, use `listCmdTools`, and use `listCmdModules`
-to check if you have a modular system.
-
-The following code will print out tools required in your custom SPR project in the report. 
-In case you are running the workflow for the first time and do not have a project yet, or you 
-just want to browser this workflow, following code displays the tools required by default.
 ```{r list_tools}
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     local({
@@ -236,10 +254,10 @@ if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
 }
 ```
 
-
 ## Session Info
-This is the session information for rendering this report. To access the session information
-of workflow running, check HTML report of `renderLogs`. 
+This is the session information for rendering this R Markdown report. To access the 
+session information for the workflow run, generate the technical HTML report with `renderLogs`. 
+
 ```{r report_session_info, eval=TRUE}
 sessionInfo()
 ```

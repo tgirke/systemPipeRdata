@@ -63,6 +63,12 @@ The `Generic` workflow template includes the following four data processing step
 3. CL step: uncompress files 
 4. R step: import files and plot summary statistics
 
+The topology graph of this workflow template is shown in Figure 1.
+
+```{r spblast-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Topology graph of this workflow template.", warning=FALSE}
+knitr::include_graphics("results/plotwf_new.png")
+```
+
 ## Create workflow environment
 
 The environment of the chosen workflow is generated with the `genWorenvir` 
@@ -224,10 +230,11 @@ This option is generally discouraged as it erases the existing workflow project 
 For information on resuming and restarting workflow runs, users want to consult the relevant section of 
 the main vignette (see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#10_Restarting_and_resetting_workflows).)
 
-```{r , import_run_routine, eval=FALSE, spr=TRUE}
+```{r , import_run_routine, eval=FALSE}
 sal <- SPRproject(overwrite = TRUE) # Avoid 'overwrite=TRUE' in real runs.
 sal <- importWF(sal, file_path = "new.Rmd") # Imports above steps from new.Rmd.
 sal <- runWF(sal) # Runs workflow.
+plotWF(sal) # Plots workflow topology graph
 sal <- renderReport(sal) # Renders scientific report.
 sal <- renderLogs(sal) # Renders technical report from log files.
 ```
