@@ -3,7 +3,7 @@ CHANGES IN THIS VERSION
 
 NEW FEATURES
     
-    o Command-line interfaces uses now Common Workflow Language (CWL)
+    o Command-line interface uses now Common Workflow Language (CWL)
     o Introduction of new SYSargsList control class for managing workflows
     o Seamless processing of R code sections as workflow steps 
     o Added technical reports to scientific reporting infrastructure
