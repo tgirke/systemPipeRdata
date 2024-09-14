@@ -1,5 +1,5 @@
 ---
-title: "Cheminformatics Drug Similarity" 
+title: "Cheminformatics Drug Similarity Template" 
 author: "Author: FirstName LastName"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`" 
 output:
@@ -44,43 +44,47 @@ suppressPackageStartupMessages({
 ```
 
 # About the template
-This section provides general description and how to use this cheminformatics workflow. 
-In the actual analysis report, this section is usually **removed**. 
+This is a cheminformatics workflow template of the [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html) 
+package, a companion
+package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt]. Like other workflow
+templates, it can be loaded with a single command. Users have the
+flexibility to utilize the template as is or modify it as needed. More in-depth
+information on designing workflows can be found in the main vignette of [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). 
+This template serves as a starting point for conducting structure similarity
+searching and clustering of small molecules. Most of its steps use functions
+of the [ChemmineR](https://www.bioconductor.org/packages/release/bioc/vignettes/ChemmineR/inst/doc/ChemmineR.html)
+package from [Bioconductor](https://www.bioconductor.org/packages/release/bioc/html/ChemmineR.html). 
+There are no command-line (CL) software tools required for running this
+workflow in its current form as all steps are based on R functions. 
 
-This cheminformatics workflow template is based on the 
-[ChemmineR](https://www.bioconductor.org/packages/release/bioc/vignettes/ChemmineR/inst/doc/ChemmineR.html)
-package and should be downloaded from 
-[Bioconductor](https://www.bioconductor.org/packages/release/bioc/html/ChemmineR.html)
-before running the workflow. This template is a workflow that:
+The following data analysis routines are included in this workflow template:
 
-1. Loads molecules from SDF format.
-2. Help users visualize specified molecules.
-3. Convert molecules to AP and FP format. 
-4. Compute the similarity and distance between molecules 
-5. Plot the distance matrix. 
-
-There is no other command-line software required in this workflow. 
-All steps are written in R (`Linewise`) steps.
+- Import of small molecules from a structure definition file (SDF)
+- Plotting of small molecule structures
+- Computation of atom pairs and finger prints for structure searching
+- All-against-all structure comparisons of small molecules
+- Heatmap plot of resulting distance matrix
 
 ![](results/plotwf_spcheminfo.jpg)
 
-# Introduction
-
-Users want to provide here background information about the design of their
-cheminformatics project.
-
-This report describes the analysis of a cheminformatics project studying drug ...
-
-## Experimental design
-
-Typically, users want to specify here all information relevant for the
-analysis of their cheminformatics study. This includes detailed descriptions of
-files, experimental design, drugs used, etc.
-
 # Workflow environment
 
-To create a Workflow within _`systemPipeR`_, we can start by defining an empty
-container and checking the directory structure:
+The environment of the chosen workflow is generated with the `genWorenvir`
+function. After this, the user’s R session needs to be directed into the
+resulting directory (here `SPcheminfo`).
+
+
+```{r gen_spblast_wf, eval=FALSE}
+systemPipeRdata::genWorkenvir(workflow = "SPcheminfo", mydirname = "SPcheminfo")
+setwd("SPcheminfo")
+```
+
+The `SPRproject` function initializes a new workflow project instance. This
+function call creates an empty `SAL` workflow container and at the same time a
+linked project log directory (default name `.SPRproject`) that acts as a
+flat-file database of a workflow. For additional details, please visit this
+[section](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5_Detailed_tutorial) 
+in `systemPipeR's` main vignette.
 
 ```{r create_workflow, message=FALSE, eval=FALSE}
 library(systemPipeR)
@@ -88,18 +92,22 @@ sal <- SPRproject()
 sal
 ```
 
-To load the entire workflow with default settings, run
+The `importWF` function allows to import all the workflow steps outlined in
+the source Rmd file of this vignette into a `SAL` (`SYSargsList`) workflow
+container. Once imported, the entire workflow can be executed from start to
+finish using the `runWF` function. More details regarding this process are
+provided in the following section [here](#importwf).
 
 ```{r load_workflow_default, eval=FALSE}
 sal <- importWF(sal, "SPcheminfo.Rmd")
+sal <- runWF(sal)
 ```
 
-## Load packages 
+## Step 1: Load packages 
+
+The first step loads the `systemPipeR` and `ChemmineR` packages.
 
 ```{r load_packages, eval=FALSE, spr=TRUE}
-cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
-cat(c("'ChemmineR", "ggplot2", "tibble", "readr", "ggpubr", "gplots'\n"), sep = "', '")
-###pre-end
 appendStep(sal) <- LineWise(
     code = {
         library(systemPipeR)
@@ -109,25 +117,24 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-## Load SDF dataset
+## Step 2: Import molecule structures
 
-Molecules can be loaded or downloaded. This example dataset has 100 molecules.
+This step imports 100 small molecule structures from an SDF file with the `read.SDFset` function. The structures
+are stored in an `SDFset` object, a class defined by the `ChemmineR` package.
 
 ```{r load_data, eval=FALSE, spr=TRUE}
-# Here, the dataset is downloaded. If you already have the data locally, change URL to local path.
 appendStep(sal) <- LineWise(
     code = {
-        sdfset <- read.SDFset("http://faculty.ucr.edu/~tgirke/Documents/R_BioCond/Samples/sdfsample.sdf") 
-        # rename molecule IDs by IDs in the header. If your molecules' header does not have ID or
-        # not unique, remove following code and use the default IDs
-        cid(sdfset) <- makeUnique(sdfid(sdfset))
+        sdfset <- read.SDFset("https://cluster.hpcc.ucr.edu/~tgirke/Documents/R_BioCond/Samples/sdfsample.sdf") 
     }, 
     step_name = "load_data",
     dependency = "load_packages"
 )
 ```
 
-## Visualize molecules
+## Step 3: Visualize molecule structures
+
+The structures of selected molecules (here first four) are be visualized with the `plot` function.
 
 ```{r vis_mol, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -145,9 +152,12 @@ appendStep(sal) <- LineWise(
 
 ![](results/mols_plot.png)
 
-## Basic molecule inforamtion
+## Step 4: Physicochemical properties
 
-Compute some basic molecule information and store to file, such as atom frequency matrix, molecular weight and formula.
+Basic physicochemical properties are computed for the small molecules stored in `sdfset`. 
+For this example atom frequencies, molecular weight and formula are computed. For more options
+users want to consult the vignette of the [ChemmineR](https://www.bioconductor.org/packages/release/bioc/html/ChemmineR.html) 
+package.
 
 ```{r basic_mol_info, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -161,8 +171,9 @@ appendStep(sal) <- LineWise(
 )
 ```
 
+## Step 5: Box plots of properties
 
-The information can be visualized, for example, a boxplot of atom frequency.
+In this example, the extracted property data is visualized using a box plot.
 
 ```{r mol_info_plot, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -179,18 +190,17 @@ appendStep(sal) <- LineWise(
 
 ![](results/atom_req.png)
 
-## Convert SDF to AP/FP
+## Step 6: Structural descriptors
 
-Tanimoto similarity requires molecules to be converted into searchable format. 
-In this workflow, either atom pair (AP) or fingerprint (FP) should be used as input. 
-This step convert SDF molecules to these formats. 
+For structural comparisons and searching, atom pairs and fingerprints are computed for
+the imported small molecules. 
 
 ```{r apfp_convert, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
          apset <- sdf2ap(sdfset)
          fpset <- desc2fp(apset, descnames=1024, type="FPset") 
-         # save them to a file so they can be loaded directly next time
+         # The atom pairs and fingerprints can be saved to files.
          readr::write_rds(apset, "results/apset.rds")
          readr::write_rds(fpset, "results/fpset.rds")
     }, 
@@ -200,14 +210,9 @@ appendStep(sal) <- LineWise(
 ```
 
 
-## Remove duplicates 
+## Step 7: Removal of identical fingerprint sets
 
-When molecules are converted to AP/FP, there is chance some very similar molecules 
-end up with idenitical AP/FP, for example some stereoisomers. This is the 
-shortness of these standardization methods. For the downstream clustering part, 
-we need to remove the AP/FP duplicated ones. In this workflow, FPset is used for 
-similarity and clustering computation, FP deduplication is demonstrated here. 
-It will be very similar for AP.
+Small molecules yielding identical fingerprints are removed in this step. 
 
 ```{r fp_dedup, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -220,15 +225,13 @@ appendStep(sal) <- LineWise(
 ```
 
 
-## Similarity compute
+## Step 8: Similarity compute
 
-In this step, the pairwise similarity is computed. 
+All-against-all similarity scores (here Tanimoto coefficients) are computed and stored in a similarity matrix. 
 
 ```{r fp_similarity, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
-          # If your set is very large, compute a small portion is a better idea, e.g. 
-          # sapply(cid(fpset)[1:10], ...
           simMAfp <- sapply(cid(fpset), function(x) fpSim(x=fpset[x], fpset, sorted=FALSE)) 
     }, 
     step_name = "fp_similarity", 
@@ -236,10 +239,13 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-## Hierarchical clustering
+## Step 9: Hierarchical clustering
 
-After the similarity computation, we can do clustering. 
-In this step, hierarchical clustering (hclust) is performed. 
+The similarity matrix from the previous step can be used for clustering the
+small molecules by structural similarities. In the given example, hierarchical 
+cluster is performed with the `hclust` function. Since this functions expects
+a distance matrix, the similarity matrix needs to be converted to a distance matrix
+using `1-simMAfp`. 
 
 ```{r hclust, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -264,15 +270,15 @@ appendStep(sal) <- LineWise(
 
 ![](results/hclust.png)
 
-With the group information, directly plotting the `hclust` does not look nice.
-We can use other methods to visulize the grouping. Here, PCA is used. 
+## Step 10: PCA
+
+Alternatively, PCA can be used to visualize the structural similarities among molecules. 
 
 ```{r PCA, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
         library(magrittr)
         library(ggplot2)
-        # simMAfp is already 0-1 value, no need to normalize again 
         mol_pca <- princomp(simMAfp)
         # find the variance 
         mol_pca_var <- mol_pca$sdev[1:2]^2 / sum(mol_pca$sdev^2)
@@ -283,8 +289,7 @@ appendStep(sal) <- LineWise(
               PC2 = mol_pca$loadings[, 2],
               group_id = as.factor(grouping$group_id)
           ) %>% 
-            # here only group labels are used to color, if you have experimental conditions
-            # or drug types, the coloring or shaping will be more meaningful.
+            # The following colors the by group labels.
             ggplot(aes(x = PC1, y = PC2, color = group_id)) + 
             geom_point(size = 2) +
             stat_ellipse() +
@@ -304,9 +309,10 @@ appendStep(sal) <- LineWise(
 
 ![](results/mol_pca.png)
 
-## Heatmap
+## Step 11: Include heatmap
 
-Alternatively, we can plot a heatmap to see the similarities between molecules.
+This step adds a heatmap to the above hierarchical clustering analysis. Heatmaps
+facilitate the identification of patterns in data, here similarity scores. 
 
 ```{r heatmap, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -326,8 +332,7 @@ appendStep(sal) <- LineWise(
 
 ![](results/mol_heatmap.png)
 
-
-## Workflow session
+## Version information
 
 ```{r wf_session, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -338,30 +343,35 @@ appendStep(sal) <- LineWise(
     dependency = "heatmap")
 ```
 
-# Manage the workflow
+# Automated routine {#importwf}
 
-For running the workflow, `runWF` function will execute all the steps store in 
-the workflow container. The execution will be on a single machine without 
-submitting to a queuing system of a computer cluster. 
+Once the above workflow steps have been loaded into `sal` from the source `Rmd`
+file of this vignette, the workflow can be executed from start to finish (or
+partially) with the `runWF` command. Subsequently, scientific and technical
+workflow reports can be generated with the `renderReport`  and `renderLogs`
+functions, respectively.
 
-```{r runWF, eval=FALSE}
-sal <- runWF(sal)
+__Note:__ To demonstrate 'systemPipeR's' automation routines without regenerating a new workflow 
+environment from scratch, the first line below uses the `overwrite=TRUE` option of the `SPRproject` function. 
+This option is generally discouraged as it erases the existing workflow project and `sal` container. 
+For information on resuming and restarting workflow runs, users want to consult the relevant section of 
+the main vignette (see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#10_Restarting_and_resetting_workflows).)
+
+```{r , import_run_routine, eval=FALSE}
+sal <- SPRproject(overwrite = TRUE) # Avoid 'overwrite=TRUE' in real runs.
+sal <- importWF(sal, file_path = "SPcheminfo.Rmd") # Imports above steps from new.Rmd.
+sal <- runWF(sal) # Runs ggworkflow.
+plotWF(sal) # Plot toplogy graph of workflow
+sal <- renderReport(sal) # Renders scientific report.
+sal <- renderLogs(sal) # Renders technical report from log files.
 ```
 
-- To use complex workflow control options, such as parallelization, subsetting samples, selecting steps, read the [documents](https://systempipe.org/sp/spr/sp_run/step_run/) on our website. 
-- Explore [other details of the workflow object](https://systempipe.org/sp/spr/sp_run/sal_explore/).
-- Create [logs and reports](https://systempipe.org/sp/spr/sp_run/step_reports/).
-- [Visualize the workflow](https://systempipe.org/sp/spr/sp_run/step_vis/).
+## CL tools used 
+The `listCmdTools` (and `listCmdModules`) return the CL tools that 
+are used by a workflow. To include a CL tool list in a workflow report, 
+one can use the following code. Additional details on this topic 
+can be found in the main vignette [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#111_Accessor_methods).
 
-# About the workflow
-## Tools used 
-
-To check command-line tools used in this workflow, use `listCmdTools`, and use `listCmdModules`
-to check if you have a modular system.
-
-The following code will print out tools required in your custom SPR project in the report. 
-In case you are running the workflow for the first time and do not have a project yet, or you 
-just want to browser this workflow, following code displays the tools required by default.
 ```{r list_tools}
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     local({
@@ -371,14 +381,14 @@ if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     })
 } else {
     cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
-    cat(c("No other tool is required"), sep = "\n")
+    cat(c("There are no CL steps in this workflow."), sep = "\n")
 }
 ```
 
-
 ## Session Info
-This is the session information for rendering this report. To access the session information
-of workflow running, check HTML report of `renderLogs`. 
+This is the session information for rendering this R Markdown report. To access the 
+session information for the workflow run, generate the technical HTML report with `renderLogs`. 
+
 ```{r report_session_info, eval=TRUE}
 sessionInfo()
 ```

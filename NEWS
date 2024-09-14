@@ -3,9 +3,9 @@ CHANGES IN THIS VERSION
 
 NEW FEATURES
     
-    o R mardown now default for all workflows
-    o Support for SLURM; is now default scheduler for workflows
-    o Various new *.param files
-    o Fix of Windows path problem
-    o Included precomputed BAM files
-    o Support for both HTML and PDF reports using R Markdown
+    o Command-line interfaces uses now Common Workflow Language (CWL)
+    o Introduction of new SYSargsList control class for managing workflows
+    o Seamless processing of R code sections as workflow steps 
+    o Added technical reports to scientific reporting infrastructure
+    o Auto-generation of CWL files from command-line strings
+    o Plotting of workflow topology graphs

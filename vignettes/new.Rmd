@@ -9,8 +9,8 @@ output:
   BiocStyle::pdf_document: default
 package: systemPipeR
 vignette: |
-  %\VignetteIndexEntry{Basic Generic Template}
   %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{WF: Basic Generic Template}
   %\VignetteEngine{knitr::rmarkdown}
 fontsize: 14pt
 bibliography: bibtex.bib

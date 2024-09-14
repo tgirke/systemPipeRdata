@@ -96,11 +96,11 @@ sal <- SPRproject()
 sal
 ```
 
-The below workflow steps can be imported from the source `Rmd` file of this
-vignette all at once into a `SAL` (`SYSargsList`) workflow container using the
-`importWF` function. After this the entire workflow can be run from start to
-finish with the `runWF` function. Details on this are provided in the next
-section [here](#importwf)
+The `importWF` function allows to import all the workflow steps outlined in
+the source Rmd file of this vignette into a `SAL` (`SYSargsList`) workflow
+container. Once imported, the entire workflow can be executed from start to
+finish using the `runWF` function. More details regarding this process are
+provided in the following section [here](#importwf).
 
 ```{r load_workflow_default, eval=FALSE}
 sal <- importWF(sal, "SPblast.Rmd")
