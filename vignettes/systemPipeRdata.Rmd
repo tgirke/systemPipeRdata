@@ -104,7 +104,7 @@ data. A list of the default data analysis steps included in each workflow is
 given [here](#wf-template-steps). Additional workflow templates are available
 on this project's GitHub organization (for details, see
 [below](#wf-github-collection)). To create an empty workflow template without
-any test data included, users want to choose the `Generic` template, which includes
+any test data included, users want to choose the `new` template, which includes
 only the required directory structure and parameter files.
 
 ```{r check_availableWF, eval=FALSE}
@@ -144,7 +144,7 @@ table can be loaded the same way.
 
 ```{r generate_workenvir, eval=FALSE}
 library(systemPipeRdata)
-genWorkenvir(workflow="Generic")
+genWorkenvir(workflow="rnaseq")
 setwd("rnaseq")
 ```
 

@@ -48,50 +48,107 @@ suppressPackageStartupMessages({
 
 # Introduction
 
-Users want to provide here background information about the design of their RNA-Seq project.
+## Overview
 
-# Samples and environment settings
+This workflow template is for analyzing RNA-Seq data. It is provided by
+`systemPipeRdata`, a companion package to systemPipeR [@H_Backman2016-bt].
+Similar to other `systemPipeR` workflow templates, a single command generates
+the necessary working environment. This includes the expected directory
+structure for executing `systemPipeR` workflows and parameter files for running
+command-line (CL) software utilized in specific analysis steps. For learning
+and testing purposes, a small sample (toy) data set is also included (mainly
+FASTQ and reference genome files). This enables users to seamlessly run the
+numerous analysis steps of this workflow from start to finish without the
+requirement of providing custom data. After testing the workflow, users have
+the flexibility to employ the template as is with their own data or modify it
+to suit their specific needs. For more comprehensive information on designing
+and executing workflows, users want to refer to the main vignettes of
+[systemPipeR](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html)
+and
+[systemPipeRdata](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). 
 
-## Environment settings and input data
+The `Rmd` file associated with this vignette serves a dual purpose. It acts
+both as a template for executing the workflow and as a template for generating
+a reproducible scientific analysis report. Thus, users want to customize the text
+(and/or code) of this vignette to describe their experimental design and
+analysis results. This typically involves deleting the instructions how to work
+with this workflow, and customizing the text describing experimental designs,
+other metadata and analysis results.
 
-[*systemPipeRdata*](http://bioconductor.org/packages/release/data/experiment/html/systemPipeRdata.html) package is a helper package to generate a fully populated [*systemPipeR*](http://bioconductor.org/packages/release/bioc/html/systemPipeR.html)
-workflow environment in the current working directory with a single command. 
-All the instruction for generating the workflow are provide in the *systemPipeRdata* vignette [here](http://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html#1_Introduction). 
+## Experimental design
 
-```{r genNew_wf, eval=FALSE}
-systemPipeRdata::genWorkenvir(workflow = "rnaseq", mydirname = "rnaseq")
+Typically, the user wants to describe here the sources and versions of the
+reference genome sequence along with the corresponding annotations. The standard
+directory structure of `systemPipeR` (see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#3_Directory_structure)), 
+expects the input data in a subdirectory named `data`
+and all results will be written to a separate `results` directory. The Rmd source file 
+for executing the workflow and rendering its report (here `systemPipeRNAseq.Rmd`) is 
+expected to be located in the parent directory. 
+
+The test (toy) data set used by this template ([SRP010938](http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938))
+contains 18 paired-end (PE) read sets from *Arabidposis thaliana*
+[@Howard2013-fq]. To minimize processing time during testing, each FASTQ
+file has been reduced to 90,000-100,000 randomly sampled PE reads that
+map to the first 100,000 nucleotides of each chromosome of the *A.
+thaliana* genome. The corresponding reference genome sequence (FASTA) and
+its GFF annotation files have been reduced to the same genome regions. This way the entire 
+test sample data set is less than 200MB in storage space. A PE read set has been
+chosen here for flexibility, because it can be used for testing both types
+of analysis routines requiring either SE (single end) reads or PE reads.
+
+To use their own RNA-Seq and reference genome data, users want to move or link the
+data to the designated `data` directory and execute the workflow from the parent directory 
+using their customized `Rmd` file. Beginning with this template, users should delete the provided test
+data and move or link their custom data to the designated locations.
+Alternatively, users can create an environment skeleton (named `new` [here](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/new.html)) or
+build one from scratch. To perform an RNA-Seq analysis with new FASTQ files
+from the same reference genome, users only need to provide the FASTQ files and
+an experimental design file called 'targets' file that outlines the experimental 
+design. The structure and utility of targets files is described in `systemPipeR's`
+main vignette [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#4_The_targets_file).
+
+## Workflow steps
+
+The default analysis steps included in this RNA-Seq workflow template are listed below. Users 
+can modify the existing steps, add new ones or remove steps as needed.
+
+__Default analysis steps__
+
+1. Read preprocessing
+    + Quality filtering (trimming)
+    + FASTQ quality report
+2. Alignments: _`HISAT2`_ (or any other RNA-Seq aligner)
+3. Alignment stats 
+4. Read counting 
+5. Sample-wise correlation analysis
+6. Analysis of differentially expressed genes (DEGs)
+7. GO term enrichment analysis
+8. Gene-wise clustering
+
+## Load workflow environment {#load-wf}
+
+The environment for this RNA-Seq workflow is auto-generated below with the 
+`genWorkenvir` function (selected under `workflow="rnaseq"`). It is fully populated 
+with a small test data set, including FASTQ files, reference genome and annotation data. The name of the
+resulting workflow directory can be specified under the `mydirname` argument.
+The default `NULL` uses the name of the chosen workflow. An error is issued if
+a directory of the same name and path exists already. After this, the user’s R
+session needs to be directed into the resulting `rnaseq` directory (here with
+`setwd`). 
+
+```{r generate_workenvir, eval=FALSE}
+library(systemPipeRdata)
+genWorkenvir(workflow = "rnaseq", mydirname = "rnaseq")
 setwd("rnaseq")
 ```
 
-Typically, the user wants to record here the sources and versions of the
-reference genome sequence along with the corresponding annotations. In
-the provided sample data set all data inputs are stored in a `data`
-subdirectory and all results will be written to a separate `results` directory,
-while the `systemPipeRNAseq.Rmd` workflow and the `targets` file are expected to be 
-located in the parent directory. 
+### Input data: `targets` file
 
-The chosen data set used by this report [SRP010938](http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938)
-contains 18 paired-end (PE) read sets from *Arabidposis thaliana*
-[@Howard2013-fq]. To minimize processing time during testing, each FASTQ
-file has been subsetted to 90,000-100,000 randomly sampled PE reads that
-map to the first 100,000 nucleotides of each chromosome of the *A.
-thaliana* genome. The corresponding reference genome sequence (FASTA) and
-its GFF annotation files have been truncated accordingly. This way the entire 
-test sample data set is less than 200MB in storage space. A PE read set has been
-chosen for this test data set for flexibility, because it can be used for testing both types
-of analysis routines requiring either SE (single end) reads or PE reads.
+The `targets` file defines the input files (e.g. FASTQ or BAM) and sample
+comparisons used in a data analysis workflow. It can also store any number of
+additional descriptive information for each sample. The following shows the first
+four lines of the `targets` file used in this workflow template.
 
-To work with real data, users want to organize their own data similarly
-and substitute all test data for their own data. To rerun an established
-workflow on new data, the initial `targets` file along with the corresponding
-FASTQ files are usually the only inputs the user needs to provide.
-
-For more details, please consult the documentation 
-[here](http://www.bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html). More information about the `targets` files from *systemPipeR* can be found [here](http://www.bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#42_Structure_of_initial_targets_data). 
-
-### Experiment definition provided by `targets` file
-
-The `targets` file defines all FASTQ files and sample comparisons of the analysis workflow.
 
 ```{r load_targets_file, eval=TRUE}
 targetspath <- system.file("extdata", "targetsPE.txt", package = "systemPipeR")
@@ -99,37 +156,91 @@ targets <- read.delim(targetspath, comment.char = "#")
 targets[1:4,-c(5,6)]
 ```
 
-To work with custom data, users need to generate a _`targets`_ file containing 
-the paths to their own FASTQ files. 
+To work with custom data, users need to generate a _`targets`_ file containing
+the paths to their own FASTQ files. [Here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#4_The_targets_file) is a detailed description of the structure and 
+utility of `targets` files.
 
-# Workflow environment
+# Quick start {#quick-start}
 
-_`systemPipeR`_ workflows can be designed and built from start to finish with a 
-single command, importing from an R Markdown file or stepwise in interactive 
-mode from the R console. 
+After a workflow environment (directory) has been created and the corresponding
+R session directed into the resulting directory (here `rnaseq`), the workflow
+can be loaded from the R Markdown (`Rmd`) file of this vignette, here named 
+`systemPipeRNAseq.Rmd`. All data analysis steps of the workflow will be stored in 
+a workflow management container called `SYSargsList` or short `SAL` (below `sal`). 
+Additional details about the `SAL` container (S4 class) are available in the main vignette 
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#11_Workflow_control_class).
 
-This tutorial will demonstrate how to build the workflow in an interactive mode, 
-appending each step. The workflow is constructed by connecting each step via 
-`appendStep` method. Each `SYSargsList` instance contains instructions for 
-processing a set of input files with a specific command-line or R software 
-and the paths to the corresponding outfiles generated by a particular command-line 
-software/step.
-
-To create a workflow within _`systemPipeR`_, we can start by defining an empty
-container and checking the directory structure:
-
-```{r create_workflow, message=FALSE, eval=FALSE}
+```{r project_rnaseq, eval=FALSE}
 library(systemPipeR)
-sal <- SPRproject()
-sal
+sal <- SPRproject() 
+sal <- importWF(sal, file_path = "systemPipeRNAseq.Rmd", verbose = FALSE)
 ```
 
-## Required packages and resources
+After loading the workflow  into `sal`, it can be executed from start to finish
+(or partially) with the `runWF` command. Running the workflow will only be
+possible if all dependent CL software is installed on a user's system. Their
+names and availability on a system can be listed with `listCmdTools(sal,
+check_path=TRUE)`. For more information about the `runWF` command, refer to the
+help file and the corresponding section in the main vignette
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#61_Overview). 
 
-The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
+Running workflows in parallel mode on computer clusters is a straightforward
+process in `systemPipeR`. Users can simply append the resource parameters (such
+as the number of CPUs) for a cluster run to the `sal` object after importing
+the workflow steps with `importWF` using the `addResources` function. More
+information about parallelization can be found in the corresponding section at
+the end of this vignette [here](#paralellization) and in the main vignette
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#63_Parallel_evaluation). 
+
+```{r run_rnaseq, eval=FALSE}
+sal <- runWF(sal)
+```
+Workflows can be visualized as topology graphs using the `plotWF` function.
+
+```{r plot_rnaseq, eval=FALSE}
+plotWF(sal)
+```
+
+```{r rnaseq-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Toplogy graph of RNA-Seq workflow.", warning=FALSE}
+knitr::include_graphics("results/plotwf_rnaseq.png")
+```
+
+Scientific and technical reports can be generated with the `renderReport` and 
+`renderLogs` functions, respectively. Scientific reports can also be generated 
+with the `render` function of the `rmarkdown` package. The technical reports are
+based on log information that `systemPipeR` collects during workflow runs.
+
+```{r report_rnaseq, eval=FALSE}
+# Scietific report
+sal <- renderReport(sal)
+rmarkdown::render("systemPipeRNAseq.Rmd", clean = TRUE, output_format = "BiocStyle::html_document") 
+
+# Technical (log) report
+sal <- renderLogs(sal)
+```
+
+The `statusWF` function returns a status summary for each step in a `SAL` workflow instance.
+
+```
+statusWF(sal)
+```
+
+# Workflow steps
+
+The data analysis steps of this workflow are defined by the following workflow code chunks.
+They can be loaded into `SAL` interactively, by executing the code of each step in the 
+R console, or all at once with the `importWF` function used under the Quick start section. 
+R and CL workflow steps are declared in the code chunks of `Rmd` files with the 
+`LineWise` and `SYSargsList` functions, respectively, and then added to the `SAL` workflow 
+container with `appendStep<-`. Their syntax and usage is described 
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#52_Constructing_workflows). 
+
+## Load packages
+
+The first step loads the `systemPipeR` package.
 
 ```{r load_SPR, message=FALSE, eval=FALSE, spr=TRUE}
-cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
+cat(crayon::blue$bold("To use this workflow, the following R packages are required:\n"))
 cat(c("'GenomicFeatures", "BiocParallel", "DESeq2",
        "ape", "edgeR", "biomaRt", "pheatmap","ggplot2'\n"), sep = "', '")
 ###pre-end
@@ -140,18 +251,22 @@ appendStep(sal) <- LineWise(code = {
 
 ## Read preprocessing
 
-### Preprocessing with `preprocessReads` function
+### With `preprocessReads`
 
-The function `preprocessReads` allows to apply predefined or custom
-read preprocessing functions to all FASTQ files referenced in a
-`SYSargsList` container, such as quality filtering or adapter trimming
-routines. Internally, `preprocessReads` uses the `FastqStreamer` function from
-the `ShortRead` package to stream through large FASTQ files in a
-memory-efficient manner. The following example performs adapter trimming with
-the `trimLRPatterns` function from the `Biostrings` package.
-
-Here, we are appending this step to the `SYSargsList` object created previously. 
-All the parameters are defined on the `preprocessReads/preprocessReads-pe.yml` file.
+The `preprocessReads` function allows applying predefined or custom read
+preprocessing functions to all FASTQ files referenced in a SAL container, such
+as quality filtering or adapter trimming routines. Internally, `preprocessReads`
+uses the `FastqStreamer` function from the `ShortRead` package to stream through
+large FASTQ files in a memory-efficient manner. The following example uses
+`preprocessReads` to perform adapter trimming with the `trimLRPatterns` function
+from the `Biostrings` package. In this instance, `preprocessReads` is invoked
+through a CL interface built on `docopt`, that is executed from R with CWL. The
+parameters for running `preprocessReads` are specified in the corresponding
+`cwl/yml` files. It is important to point out that creating and using CL
+interfaces for defining R-based workflow steps is not essential in `systemPipeR`
+since [`LineWise`](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5211_Step_1:_R_step) 
+offers similar capabilities while requiring less specialized
+knowledge from users.
 
 ```{r preprocessing, message=FALSE, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
@@ -168,26 +283,17 @@ appendStep(sal) <- SYSargsList(
     dependency = c("load_SPR"))
 ```
 
-After the preprocessing step, the `outfiles` files can be used to generate the new 
-targets files containing the paths to the trimmed FASTQ files. The new targets 
-information can be used for the next workflow step instance, _e.g._ running the 
-NGS alignments with the trimmed FASTQ files. The `appendStep` function is
-automatically handling this connectivity between steps. Please check the next 
-step for more details.
+The paths to the output files generated by the preprocessing step (here trimmed FASTQ files) 
+are recorded in a new `targets` file that can be used for the next workflow step, 
+_e.g._ running the NGS alignments with the trimmed FASTQ files. 
 
-The following example shows how one can design a custom read _'preprocessReads'_
-function using utilities provided by the `ShortRead` package, and then run it
-in batch mode with the _'preprocessReads'_ function. Here, it is possible to 
-replace the function used on the `preprocessing` step and modify the `sal` object. 
-Because it is a custom function, it is necessary to save the part in the R object, 
-and internally the `preprocessReads.doc.R` is loading the custom function.
-If the R object is saved with a different name (here `"param/customFCT.RData"`),
-please replace that accordingly in the `preprocessReads.doc.R`.
-
-Please, note that this step is not added to the workflow, here just for
-demonstration.
-
-First, we defined the custom function in the workflow:
+The following example demonstrates how to design a custom `preprocessReads`
+function, as well as how to replace parameters in the `sal` object. To apply the
+modifications to the workflow, it needs to be saved to a file, here `param/customFCT.RData` 
+which will be loaded during the workflow run by the `preprocessReads.doc.R` script. 
+Please note, this step is included here solely for demonstration purposes, and thus not 
+part of the workflow run. This is achieved by dropping `spr=TRUE` in the header line of the
+code chunk.
 
 ```{r custom_preprocessing_function, eval=FALSE}
 appendStep(sal) <- LineWise(
@@ -204,7 +310,7 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-After, we can edit the input parameter:
+After defining this step, it can be inspected and modified as follows. 
 
 ```{r editing_preprocessing, message=FALSE, eval=FALSE}
 yamlinput(sal, "preprocessing")$Fct
@@ -213,14 +319,15 @@ yamlinput(sal, "preprocessing")$Fct ## check the new function
 cmdlist(sal, "preprocessing", targets = 1) ## check if the command line was updated with success
 ```
 
-### Read trimming with Trimmomatic
+### With Trimmomatic
 
-[Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) software [@Bolger2014-yr] 
-performs a variety of useful trimming tasks for Illumina paired-end and single
-ended data. Here, an example of how to perform this task using parameters template
-files for trimming FASTQ files.
+For demonstration purposes, this workflow uses the [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) 
+software as an example of an external CL read trimming tool [@Bolger2014-yr]. Trimmomatic 
+offers a range of practical trimming utilities specifically designed for single- and paired-end Illumina reads.
 
-This step is optional.
+It is important to note that while the Trimmomatic trimming step is included in
+this workflow, it's not mandatory. Users can opt to use read trimming results
+generated by the previous `preprocessReads` step if preferred.
 
 ```{r trimming, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
@@ -235,12 +342,16 @@ appendStep(sal) <- SYSargsList(
 
 ### FASTQ quality report
 
-The following `seeFastq` and `seeFastqPlot` functions generate and plot a series of useful 
-quality statistics for a set of FASTQ files, including per cycle quality box
-plots, base proportions, base-level quality trends, relative k-mer
-diversity, length, and occurrence distribution of reads, number of reads
-above quality cutoffs and mean quality distribution. The results are
-written to a png file named `fastqReport.png`.
+The following `seeFastq` and `seeFastqPlot` functions generate and plot a
+series of useful quality statistics for a set of FASTQ files, including per
+cycle quality box plots, base proportions, base-level quality trends, relative
+k-mer diversity, length, and occurrence distribution of reads, number of reads
+above quality cutoffs and mean quality distribution. The results can be
+exported to different graphics formats, such as a PNG file, here named
+`fastqReport.png`. Detailed information about the usage and visual components
+in the quality plots can be found in the corresponding help file (see
+`?seeFastq` or `?seeFastqPlot`).
+
 
 ```{r fastq_report, eval=FALSE, message=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(code = {
@@ -257,12 +368,13 @@ appendStep(sal) <- LineWise(code = {
 
 <div align="center">Figure 1: FASTQ quality report for 18 samples</div></br>
 
-## Alignments
+## Short read alignments
 
 ### Read mapping with `HISAT2`
 
-The following steps will demonstrate how to use the short read aligner `Hisat2`
-[@Kim2015-ve]. First, the `Hisat2` index needs to be created.
+To use the `HISAT2` short read aligner developed by Kim, Langmead, and Salzberg
+[-@Kim2015-ve], it is necessary to index the reference genome. `HISAT2` relies on the
+Burrows-Wheeler index for this process.
 
 ```{r hisat2_index, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
@@ -278,9 +390,11 @@ appendStep(sal) <- SYSargsList(
 
 ### `HISAT2` mapping
 
-The parameter settings of the aligner are defined in the `workflow_hisat2-pe.cwl` 
-and `workflow_hisat2-pe.yml` files. The following shows how to construct the 
-corresponding *SYSargsList* object.
+The parameter settings of the aligner are defined in the `cwl/yml` files used
+in the following code chunk. The following shows how to construct the alignment
+step and append it to the `SAL` workflow container. Please note that the input
+(FASTQ) files used in this step are the output files generated by the
+preprocessing step (see above: `step_name = "preprocessing"`).
 
 ```{r hisat2_mapping, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
@@ -297,16 +411,39 @@ appendStep(sal) <- SYSargsList(
 )
 ```
 
-To double-check the command line for each sample, please use the following:
+The `cmdlist` functions allows to inspect the exact CL call used for each input file (sample), here
+for `HISAT2` alignments. Note, this step also includes the conversion of the alignment files to sorted
+and indexed bam files using functionalities of the `SAMtools` CL suite. 
 
 ```{r bowtie2_alignment, eval=FALSE}
 cmdlist(sal, step="hisat2_mapping", targets=1)
 ```
 
-### Read and alignment stats
+```{r hisat_cl, eval=FALSE}
+$hisat2_mapping
+$hisat2_mapping$M1A
+$hisat2_mapping$M1A$hisat2
+[1] "hisat2 -S ./results/M1A.sam  -x ./data/tair10.fasta  -k 1  --min-intronlen
+30  --max-intronlen 3000  -1 ./results/M1A_1.fastq_trim.gz -2 ./results/M1A_2.fa
+stq_trim.gz --threads 4"
 
-The following provides an overview of the number of reads in each sample
-and how many of them aligned to the reference.
+$hisat2_mapping$M1A$`samtools-view`
+[1] "samtools view -bS -o ./results/M1A.bam  ./results/M1A.sam "
+
+$hisat2_mapping$M1A$`samtools-sort`
+[1] "samtools sort -o ./results/M1A.sorted.bam  ./results/M1A.bam  -@ 4"
+
+$hisat2_mapping$M1A$`samtools-index`
+[1] "samtools index -b results/M1A.sorted.bam  results/M1A.sorted.bam.bai  ./res
+ults/M1A.sorted.bam "
+```
+
+
+### Alignment stats
+
+The following computes an alignment summary file (here `alignStats.xls`), which
+comprises the count of reads in each FASTQ file and the number of reads that
+align with the reference, presented in both total and percentage values.
 
 ```{r align_stats, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -320,7 +457,14 @@ appendStep(sal) <- LineWise(
     dependency = "hisat2_mapping")
 ```
 
-## Create symbolic links for viewing BAM files in IGV
+The resulting `alignStats.xls` file can be included in the report as shown below (here restricted to the 
+first four rows).
+
+```{r align_stats_view, eval=TRUE}
+read.table("results/alignStats.xls", header = TRUE)[1:4,]
+```
+
+## Viewing BAM files in IGV
 
 The `symLink2bam` function creates symbolic links to view the BAM alignment files in a
 genome browser such as IGV without moving these large files to a local
@@ -328,14 +472,21 @@ system. The corresponding URLs are written to a file with a path
 specified under `urlfile`, here `IGVurl.txt`. 
 Please replace the directory and the user name. 
 
+The `symLink2bam` function creates symbolic links to view the BAM alignment files
+in a genome browser such as IGV without moving these large files to a local
+system. The corresponding URLs are written to a file with a path specified
+under `urlfile`, here `IGVurl.txt`. To make the following code work, users need to
+change the directory name (here `<somedir>`), and the url base and user names (here 
+`<base_url>` and `<username>`) to the corresponding names on their system.
+
 ```{r bam_IGV, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
         bampaths <- getColumn(sal, step = "hisat2_mapping", "outfiles", 
                   column = "samtools_sort_bam")
         symLink2bam(
-            sysargs = bampaths, htmldir = c("~/.html/", "somedir/"),
-            urlbase = "http://cluster.hpcc.ucr.edu/~tgirke/",
+            sysargs = bampaths, htmldir = c("~/.html/", "<somedir>/"),
+            urlbase = "<base_url>/~<username>/",
             urlfile = "./results/IGVurl.txt")
     },
     step_name = "bam_IGV",
@@ -348,15 +499,17 @@ appendStep(sal) <- LineWise(
 
 Reads overlapping with annotation ranges of interest are counted for
 each sample using the `summarizeOverlaps` function [@Lawrence2013-kt]. 
-The read counting is preformed for exon gene regions in a non-strand-specific 
-manner while ignoring overlaps among different genes. Subsequently, the expression
-count values are normalized by *reads per kp per million mapped reads*
-(RPKM). The raw read count table (`countDFeByg.xls`) and the corresponding 
-RPKM table (`rpkmDFeByg.xls`) are written to separate files in the directory of 
-this project. Parallelization is achieved with the `BiocParallel` package, 
-here using 4 CPU cores.
+Most often the read counting is preformed for exonic gene regions. This can be
+done in a strand-specific or non-strand-specific manner, while accounting for overlaps 
+among adjacent genes or ignoring them. Subsequently, the expression
+count values can be normalized with different methods. 
 
-### Create a database for gene annotation
+### Gene annotation database 
+
+For efficient handling of annotation ranges obtained from GFF or GTF files,
+they are organized within a `TxDb` object. Subsequently, the object is written 
+to a SQLite database file. It is important to note that this process only needs to 
+be performed once for a specific version of an annotation file.
 
 ```{r create_db, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -369,7 +522,21 @@ appendStep(sal) <- LineWise(
     dependency = "hisat2_mapping")
 ```
 
-### Read counting with `summarizeOverlaps` in parallel mode using multiple cores
+
+### Read counting with `summarizeOverlaps` 
+
+The provided example employs non-strand-specific read counting while
+disregarding overlaps between different genes. As normalization the example uses
+*reads per kilobase per million mapped reads* (RPKM). The raw read count table
+(`countDFeByg.xls`) and the corresponding RPKM table (`rpkmDFeByg.xls`) are written
+to distinct files in the project's results directory. Parallelization across
+multiple CPU cores is achieved with the `BiocParallel` package. When supplying a
+`BamFileList` as illustrated below, `the summarizeOverlaps` method defaults to
+employing `bplapply` and the register interface from `BiocParallel`. The
+`MulticoreParam` will utilize the number of cores returned by
+`parallel::detectCores` if the number of workers is left unspecified. For
+further information, refer to the help documentation by typing
+`help("summarizeOverlaps")`.
 
 ```{r read_counting, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -403,25 +570,25 @@ appendStep(sal) <- LineWise(
     dependency = "create_db")
 ```
 
-When providing a `BamFileList` as in the example above, `summarizeOverlaps` methods
-use by default `bplapply` and use the register interface from BiocParallel package. 
-If the number of workers is not set, `MulticoreParam` will use the number of cores 
-returned by `parallel::detectCores()`. For more information, 
-please check `help("summarizeOverlaps")` documentation.
+Importantly, when conducting statistical differential expression or abundance analysis using
+methods like `edgeR` or `DESeq2`, the raw count values are the expected
+input. RPKM values should be reserved for specialized applications, such as
+manually inspecting expression levels across different genes or features.
 
-Note, for most statistical differential expression or abundance analysis
-methods, such as `edgeR` or `DESeq2`, the raw count values should be used as input. The
-usage of RPKM values should be restricted to specialty applications
-required by some users, *e.g.* manually comparing the expression levels
-among different genes or features.
+Shows first 10 rows of `countDFeByg.xls` table. 
 
-### Sample-wise correlation analysis
+```{r show_counts_table, eval=TRUE}
+read.delim("results/countDFeByg.xls", row.names = 1, check.names = FALSE)[1:10,]
+```
 
-The following computes the sample-wise Spearman correlation coefficients from
-the `rlog` transformed expression values generated with the `DESeq2` package. After
-transformation to a distance matrix, hierarchical clustering is performed with
-the `hclust` function and the result is plotted as a dendrogram
-(also see file `sample_tree.png`).
+### Sample-wise clustering
+
+The sample-wise Spearman correlation coefficients are calculated from the `rlog`
+transformed expression values (`countDF_se`) generated using the `DESeq2` package.
+These values are then converted into a distance matrix, which is subsequently
+used for hierarchical clustering with the `hclust` function. The resulting
+dendrogram is then saved as a PNG file named `sample_tree.png`.
+
 
 ```{r sample_tree, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -459,12 +626,18 @@ appendStep(sal) <- LineWise(
         countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE) 
         cmp <- readComp(stepsWF(sal)[['hisat2_mapping']], format="matrix", delim="-")
         edgeDF <- run_edgeR(countDF=countDF, targets=targetsWF(sal)[['hisat2_mapping']], cmp=cmp[[1]], independent=FALSE, mdsplot="")
+        write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
         }, 
     step_name = "run_edger", 
     dependency = "read_counting")
 ```
 
+Note, to call DEGs with `DESeq2` instead of `edgeR`, users can simply replace in the above code 
+'`run_edgeR`' with '`run_DESeq2`'.
+
 ### Add gene descriptions
+
+This step is optional. It appends functional descriptions obtained from BioMart to the DEG table. 
 
 ```{r custom_annot, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -485,7 +658,11 @@ appendStep(sal) <- LineWise(
 
 Filter and plot DEG results for up and down regulated genes. The
 definition of *up* and *down* is given in the corresponding help
-file. To open it, type `?filterDEGs` in the R console.
+file. To open it, type `?filterDEGs` in the R console. 
+
+Note, due to the small number of genes in the toy dataset, the FDR cutoff in 
+this example is set to an unreasonably large value. With real data sets this cutoff
+should be set to a much smaller value (often 1%, 5% or 10%).
 
 ```{r filter_degs, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -500,6 +677,9 @@ appendStep(sal) <- LineWise(
     dependency = "custom_annot")
 ```
 
+![](./results/DEGcounts.png)
+<div align="center">Figure 3: Up and down regulated DEGs.</div></br>
+
 ### Venn diagrams of DEG sets
 
 The `overLapper` function can compute Venn intersects for large numbers of sample
@@ -507,6 +687,12 @@ sets (up to 20 or more) and plots 2-5 way Venn diagrams. A useful
 feature is the possibility to combine the counts from several Venn
 comparisons with the same number of sample sets in a single Venn diagram
 (here for 4 up and down DEG sets).
+
+The overLapper function can compute Venn intersects for large numbers of sample
+sets (up to 20 or more) and plots 2-5 way Venn diagrams. A useful feature is
+the possibility to combine the counts from several Venn comparisons with the
+same number of sample sets in a single Venn diagram (here for 4 up and down DEG
+sets).
 
 ```{r venn_diagram, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -520,6 +706,9 @@ appendStep(sal) <- LineWise(
     step_name = "venn_diagram", 
     dependency = "filter_degs")
 ```
+
+![](./results/vennplot.png)
+<div align="center">Figure 4: Venn Diagram for 4 Up and Down DEG Sets</div></br>
 
 ## GO term enrichment analysis
 
@@ -563,7 +752,7 @@ Apply the enrichment analysis to the DEG sets obtained the above differential
 expression analysis. Note, in the following example the `FDR` filter is set
 here to an unreasonably high value, simply because of the small size of the toy
 data set used in this vignette. Batch enrichment analysis of many gene sets is
-performed with the function. When `method=all`, it returns all GO terms passing
+performed with the `GOCluster_Report` function. When `method=all`, it returns all GO terms passing
 the p-value cutoff specified under the `cutoff` arguments. When `method=slim`,
 it returns only the GO terms specified under the `myslimv` argument. The given
 example shows how a GO slim vector for a specific organism can be obtained from
@@ -640,7 +829,7 @@ appendStep(sal) <- LineWise(
 ![](results/heatmap1.png)
 <div align="center">Figure 6: Heat Map with Hierarchical Clustering Dendrograms of DEGs</div></br>
 
-## Workflow Information
+## Workflow session information
 
 ```{r sessionInfo, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
@@ -651,91 +840,77 @@ appendStep(sal) <- LineWise(
     dependency = "heatmap")
 ```
 
-# Running workflow
+# Additional details 
 
-## Interactive job submissions in a single machine
+## Running workflows
 
-For running the workflow, `runWF` function will execute all the steps store in 
-the workflow container. The execution will be on a single machine without 
-submitting to a queuing system of a computer cluster. 
+The `runWF` function is the primary tool for executing workflows. It runs the
+code of the workflow steps after loading them into a `SAL` workflow container.
+The workflow steps can be loaded interactively one by one or in batch mode with
+the `importWF` function. The batch mode is more convenient and is the intended
+method for loading workflows. It is part of the standard routine for running
+workflows introduced in the [Quick start](#quick-start) section.
 
-```{r runWF, eval=FALSE}
-sal <- runWF(sal)
-```
+### Parallelization on clusters {#paralellization}
 
-## Parallelization on clusters
+The processing time of computationally expensive steps can be greatly accelerated by
+processing many input files in parallel using several CPUs and/or computer nodes 
+of an HPC or cloud system, where a scheduling system is used for load balancing. 
+To simplify for users the configuration and execution of workflow steps in serial or parallel mode, 
+`systemPipeR` uses for both the same `runWF` function. Parallelization simply 
+requires appending of the parallelization parameters to the settings of the corresponding workflow
+steps each requesting the computing resources specified by the user, such as
+the number of CPU cores, RAM and run time. These resource settings are
+stored in the corresponding workflow step of the `SAL` workflow container.
+After adding the parallelization parameters, `runWF` will execute the chosen steps 
+in parallel mode as instructed. 
 
-Alternatively, the computation can be greatly accelerated by processing many files 
-in parallel using several compute nodes of a cluster, where a scheduling/queuing
-system is used for load balancing. 
+The following example applies to an alignment step of an RNA-Seq workflow. 
+In the chosen alignment example, the parallelization
+parameters are added to the alignment step (here `hisat2_mapping`) of `SAL` via
+a `resources` list. The given parameter settings will run 18 processes (`Njobs`) in
+parallel using for each 4 CPU cores (`ncpus`), thus utilizing a total of 72 CPU
+cores. The `runWF` function can be used with most queueing systems as it is based on
+utilities defined by the `batchtools` package, which supports the use of
+template files (_`*.tmpl`_) for defining the run parameters of different
+schedulers. In the given example below, a `conffile` (see
+_`.batchtools.conf.R`_ samples [here](https://mllg.github.io/batchtools/)) and
+a `template` file (see _`*.tmpl`_ samples
+[here](https://github.com/mllg/batchtools/tree/master/inst/templates)) need to be present
+on the highest level of a user's workflow project. The following example uses the sample
+`conffile` and `template` files for the Slurm scheduler that are both provided by this
+package. 
 
-The `resources` list object provides the number of independent parallel cluster 
-processes defined under the `Njobs` element in the list. The following example 
-will run 18 processes in parallel using each 4 CPU cores. 
-If the resources available on a cluster allow running all 18 processes at the 
-same time, then the shown sample submission will utilize in a total of 72 CPU cores.
-
-Note, `runWF` can be used with most queueing systems as it is based on utilities 
-from the `batchtools` package, which supports the use of template files (_`*.tmpl`_)
-for defining the run parameters of different schedulers. To run the following 
-code, one needs to have both a `conffile` (see _`.batchtools.conf.R`_ samples [here](https://mllg.github.io/batchtools/)) 
-and a `template` file (see _`*.tmpl`_ samples [here](https://github.com/mllg/batchtools/tree/master/inst/templates)) 
-for the queueing available on a system. The following example uses the sample 
-`conffile` and `template` files for the Slurm scheduler provided by this package. 
-
-The resources can be appended when the step is generated, or it is possible to 
-add these resources later, as the following example using the `addResources` 
-function:
+The `resources` list can be added to analysis steps when a workflow is loaded into `SAL`. 
+Alternatively, one can add the resource settings with the `addResources` function 
+to any step of a pre-populated `SAL` container afterwards. For workflow steps with the same resource 
+requirements, one can add them to several steps at once with a single call to `addResources` by 
+specifying multiple step names under the `step` argument.
 
 ```{r runWF_cluster, eval=FALSE}
-# wall time in mins, memory in MB
 resources <- list(conffile=".batchtools.conf.R",
                   template="batchtools.slurm.tmpl", 
                   Njobs=18, 
-                  walltime=120,
+                  walltime=120, ## in minutes
                   ntasks=1,
                   ncpus=4, 
-                  memory=1024,
-                  partition = "short"
+                  memory=1024, ## in Mb
+                  partition = "short"  
                   )
-sal <- addResources(sal, c("hisat2_mapping"), resources = resources)
+sal <- addResources(sal, step=c("hisat2_mapping"), resources = resources)
 sal <- runWF(sal)
 ```
 
-## Visualize workflow
+The above example will submit via `runWF(sal)` the *hisat2_mapping* step
+to a partition (queue) called `short` on an HPC cluster. Users need to adjust this and
+other parameters, that are defined in the `resources` list, to their cluster environment .
 
-_`systemPipeR`_ workflows instances can be visualized with the `plotWF` function.
+## CL tools used 
+The `listCmdTools` (and `listCmdModules`) return the CL tools that 
+are used by a workflow. To include a CL tool list in a workflow report, 
+one can use the following code. Additional details on this topic 
+can be found in the main vignette [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#111_Accessor_methods).
 
-```{r plotWF, eval=FALSE}
-plotWF(sal, rstudio = TRUE)
-```
-
-## Checking workflow status
-
-To check the summary of the workflow, we can use:
-
-```{r statusWF, eval=FALSE}
-sal
-statusWF(sal)
-```
-
-## Accessing logs report
-
-_`systemPipeR`_ compiles all the workflow execution logs in one central location,
-making it easier to check any standard output (`stdout`) or standard error
-(`stderr`) for any command-line tools used on the workflow or the R code stdout.
-
-```{r logsWF, eval=FALSE}
-sal <- renderLogs(sal)
-```
-
-## Tools used 
-To check command-line tools used in this workflow, use `listCmdTools`, and use `listCmdModules`
-to check if you have a modular system.
-
-The following code will print out tools required in your custom SPR project in the report. 
-In case you are running the workflow for the first time and do not have a project yet, or you 
-just want to browser this workflow, following code displays the tools required by default.
 ```{r list_tools}
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     local({
@@ -745,19 +920,21 @@ if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     })
 } else {
     cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
-    cat(c("trimmomatic/0.39", "samtools/1.14", "hisat2/2.1.0"), sep = "\n")
+    cat(c("gzip", "gunzip"), sep = "\n")
 }
 ```
 
-## Report Session Info
-This is the session information for rendering this report. To access the session information
-of workflow running, check HTML report of `renderLogs`. 
+## Session info
+
+This is the session information that will be included when rendering this report. 
+
 ```{r report_session_info, eval=TRUE}
 sessionInfo()
 ```
 
 # Funding
 
-This project is funded by NSF award [ABI-1661152](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1661152). 
+This project is funded by awards from the National Science Foundation ([ABI-1661152](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1661152)], 
+and the National Institute on Aging of the National Institutes of Health ([U19AG023122](https://reporter.nih.gov/project-details/9632486)). 
 
 # References
