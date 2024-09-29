@@ -1,17 +1,11 @@
 ## pre code {
-
 ## white-space: pre !important;
-
 ## overflow-x: scroll !important;
-
 ## word-break: keep-all !important;
-
 ## word-wrap: initial !important;
-
 ## }
 
-
-## ----style, echo = FALSE, results = 'asis'----------------
+## ----style, echo = FALSE, results = 'asis'--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 BiocStyle::markdown()
 options(width = 60, max.print = 1000)
 knitr::opts_chunk$set(
@@ -20,31 +14,53 @@ knitr::opts_chunk$set(
     tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 
 
-## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE----
+## ----setup, echo=FALSE, messages=FALSE, warnings=FALSE--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 suppressPackageStartupMessages({
     library(systemPipeR)
 })
 
 
-## ----genNew_wf, eval=FALSE--------------------------------
-## systemPipeRdata::genWorkenvir(workflow = "rnaseq", mydirname = "rnaseq")
+## ----generate_workenvir, eval=FALSE---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## library(systemPipeRdata)
+## genWorkenvir(workflow = "rnaseq", mydirname = "rnaseq")
 ## setwd("rnaseq")
 
 
-## ----load_targets_file, eval=TRUE-------------------------
+## ----load_targets_file, eval=TRUE-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 targetspath <- system.file("extdata", "targetsPE.txt", package = "systemPipeR")
 targets <- read.delim(targetspath, comment.char = "#")
 targets[1:4,-c(5,6)]
 
 
-## ----create_workflow, message=FALSE, eval=FALSE-----------
+## ----project_rnaseq, eval=FALSE-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## library(systemPipeR)
 ## sal <- SPRproject()
-## sal
+## sal <- importWF(sal, file_path = "systemPipeRNAseq.Rmd", verbose = FALSE)
 
 
-## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE--------
-## cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
+## ----run_rnaseq, eval=FALSE-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## sal <- runWF(sal)
+
+
+## ----plot_rnaseq, eval=FALSE----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## plotWF(sal)
+
+
+## ----rnaseq-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Toplogy graph of RNA-Seq workflow.", warning=FALSE----------------------------------------------------------
+knitr::include_graphics("results/plotwf_rnaseq.png")
+
+
+## ----report_rnaseq, eval=FALSE--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## # Scietific report
+## sal <- renderReport(sal)
+## rmarkdown::render("systemPipeRNAseq.Rmd", clean = TRUE, output_format = "BiocStyle::html_document")
+## 
+## # Technical (log) report
+## sal <- renderLogs(sal)
+
+
+## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## cat(crayon::blue$bold("To use this workflow, the following R packages are required:\n"))
 ## cat(c("'GenomicFeatures", "BiocParallel", "DESeq2",
 ##        "ape", "edgeR", "biomaRt", "pheatmap","ggplot2'\n"), sep = "', '")
 ## ###pre-end
@@ -53,7 +69,7 @@ targets[1:4,-c(5,6)]
 ##                 }, step_name = "load_SPR")
 
 
-## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE----
+## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "preprocessing",
 ##     targets = "targetsPE.txt", dir = TRUE,
@@ -68,7 +84,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = c("load_SPR"))
 
 
-## ----custom_preprocessing_function, eval=FALSE------------
+## ----custom_preprocessing_function, eval=FALSE----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         filterFct <- function(fq, cutoff = 20, Nexceptions = 0) {
@@ -83,14 +99,14 @@ targets[1:4,-c(5,6)]
 ## )
 
 
-## ----editing_preprocessing, message=FALSE, eval=FALSE-----
+## ----editing_preprocessing, message=FALSE, eval=FALSE---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## yamlinput(sal, "preprocessing")$Fct
 ## yamlinput(sal, "preprocessing", "Fct") <- "'filterFct(fq, cutoff=20, Nexceptions=0)'"
 ## yamlinput(sal, "preprocessing")$Fct ## check the new function
 ## cmdlist(sal, "preprocessing", targets = 1) ## check if the command line was updated with success
 
 
-## ----trimming, eval=FALSE, spr=TRUE-----------------------
+## ----trimming, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "trimming",
 ##     targets = "targetsPE.txt",
@@ -101,7 +117,7 @@ targets[1:4,-c(5,6)]
 ##     run_step = "optional")
 
 
-## ----fastq_report, eval=FALSE, message=FALSE, spr=TRUE----
+## ----fastq_report, eval=FALSE, message=FALSE, spr=TRUE--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(code = {
 ##                 fastq <- getColumn(sal, step = "preprocessing", "targetsWF", column = 1)
 ##                 fqlist <- seeFastq(fastq = fastq, batchsize = 10000, klength = 8)
@@ -112,7 +128,7 @@ targets[1:4,-c(5,6)]
 ##                 dependency = "preprocessing")
 
 
-## ----hisat2_index, eval=FALSE, spr=TRUE-------------------
+## ----hisat2_index, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "hisat2_index",
 ##     dir = FALSE,
@@ -124,7 +140,7 @@ targets[1:4,-c(5,6)]
 ## )
 
 
-## ----hisat2_mapping, eval=FALSE, spr=TRUE-----------------
+## ----hisat2_mapping, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- SYSargsList(
 ##     step_name = "hisat2_mapping",
 ##     dir = TRUE,
@@ -139,11 +155,30 @@ targets[1:4,-c(5,6)]
 ## )
 
 
-## ----bowtie2_alignment, eval=FALSE------------------------
+## ----bowtie2_alignment, eval=FALSE----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## cmdlist(sal, step="hisat2_mapping", targets=1)
 
 
-## ----align_stats, eval=FALSE, spr=TRUE--------------------
+## ----hisat_cl, eval=FALSE-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## $hisat2_mapping
+## $hisat2_mapping$M1A
+## $hisat2_mapping$M1A$hisat2
+## [1] "hisat2 -S ./results/M1A.sam  -x ./data/tair10.fasta  -k 1  --min-intronlen
+## 30  --max-intronlen 3000  -1 ./results/M1A_1.fastq_trim.gz -2 ./results/M1A_2.fa
+## stq_trim.gz --threads 4"
+## 
+## $hisat2_mapping$M1A$`samtools-view`
+## [1] "samtools view -bS -o ./results/M1A.bam  ./results/M1A.sam "
+## 
+## $hisat2_mapping$M1A$`samtools-sort`
+## [1] "samtools sort -o ./results/M1A.sorted.bam  ./results/M1A.bam  -@ 4"
+## 
+## $hisat2_mapping$M1A$`samtools-index`
+## [1] "samtools index -b results/M1A.sorted.bam  results/M1A.sorted.bam.bai  ./res
+## ults/M1A.sorted.bam "
+
+
+## ----align_stats, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         fqpaths <- getColumn(sal, step = "preprocessing", "targetsWF", column = "FileName1")
@@ -155,14 +190,18 @@ targets[1:4,-c(5,6)]
 ##     dependency = "hisat2_mapping")
 
 
-## ----bam_IGV, eval=FALSE, spr=TRUE------------------------
+## ----align_stats_view, eval=TRUE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+read.table("results/alignStats.xls", header = TRUE)[1:4,]
+
+
+## ----bam_IGV, eval=FALSE, spr=TRUE----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         bampaths <- getColumn(sal, step = "hisat2_mapping", "outfiles",
 ##                   column = "samtools_sort_bam")
 ##         symLink2bam(
-##             sysargs = bampaths, htmldir = c("~/.html/", "somedir/"),
-##             urlbase = "http://cluster.hpcc.ucr.edu/~tgirke/",
+##             sysargs = bampaths, htmldir = c("~/.html/", "<somedir>/"),
+##             urlbase = "<base_url>/~<username>/",
 ##             urlfile = "./results/IGVurl.txt")
 ##     },
 ##     step_name = "bam_IGV",
@@ -171,7 +210,7 @@ targets[1:4,-c(5,6)]
 ## )
 
 
-## ----create_db, eval=FALSE, spr=TRUE----------------------
+## ----create_db, eval=FALSE, spr=TRUE--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library(GenomicFeatures)
@@ -182,7 +221,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = "hisat2_mapping")
 
 
-## ----read_counting, eval=FALSE, spr=TRUE------------------
+## ----read_counting, eval=FALSE, spr=TRUE----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library(GenomicFeatures); library(BiocParallel)
@@ -214,7 +253,11 @@ targets[1:4,-c(5,6)]
 ##     dependency = "create_db")
 
 
-## ----sample_tree, eval=FALSE, spr=TRUE--------------------
+## ----show_counts_table, eval=TRUE-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+read.delim("results/countDFeByg.xls", row.names = 1, check.names = FALSE)[1:10,]
+
+
+## ----sample_tree, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library(DESeq2, quietly=TRUE); library(ape, warn.conflicts=FALSE)
@@ -231,19 +274,20 @@ targets[1:4,-c(5,6)]
 ##     dependency = "read_counting")
 
 
-## ----run_edger, eval=FALSE, spr=TRUE----------------------
+## ----run_edger, eval=FALSE, spr=TRUE--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library(edgeR)
 ##         countDF <- read.delim("results/countDFeByg.xls", row.names=1, check.names=FALSE)
 ##         cmp <- readComp(stepsWF(sal)[['hisat2_mapping']], format="matrix", delim="-")
 ##         edgeDF <- run_edgeR(countDF=countDF, targets=targetsWF(sal)[['hisat2_mapping']], cmp=cmp[[1]], independent=FALSE, mdsplot="")
+##         write.table(edgeDF, "./results/edgeRglm_allcomp.xls", quote=FALSE, sep="\t", col.names = NA)
 ##         },
 ##     step_name = "run_edger",
 ##     dependency = "read_counting")
 
 
-## ----custom_annot, eval=FALSE, spr=TRUE-------------------
+## ----custom_annot, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library("biomaRt")
@@ -258,7 +302,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = "run_edger")
 
 
-## ----filter_degs, eval=FALSE, spr=TRUE--------------------
+## ----filter_degs, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         edgeDF <- read.delim("results/edgeRglm_allcomp.xls", row.names=1, check.names=FALSE)
@@ -271,7 +315,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = "custom_annot")
 
 
-## ----venn_diagram, eval=FALSE, spr=TRUE-------------------
+## ----venn_diagram, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         vennsetup <- overLapper(DEG_list$Up[6:9], type="vennsets")
@@ -284,7 +328,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = "filter_degs")
 
 
-## ----get_go_annot, eval=FALSE, spr=TRUE-------------------
+## ----get_go_annot, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library("biomaRt")
@@ -307,7 +351,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = "filter_degs")
 
 
-## ----go_enrich, eval=FALSE, spr=TRUE----------------------
+## ----go_enrich, eval=FALSE, spr=TRUE--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library("biomaRt")
@@ -328,7 +372,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = "get_go_annot")
 
 
-## ----go_plot, eval=FALSE, spr=TRUE------------------------
+## ----go_plot, eval=FALSE, spr=TRUE----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         gos <- BatchResultslim[grep("M6-V6_up_down", BatchResultslim$CLID), ]
@@ -343,7 +387,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = "go_enrich")
 
 
-## ----heatmap, eval=FALSE, spr=TRUE------------------------
+## ----heatmap, eval=FALSE, spr=TRUE----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         library(pheatmap)
@@ -357,7 +401,7 @@ targets[1:4,-c(5,6)]
 ##     dependency = "go_enrich")
 
 
-## ----sessionInfo, eval=FALSE, spr=TRUE--------------------
+## ----sessionInfo, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## appendStep(sal) <- LineWise(
 ##     code = {
 ##         sessionInfo()
@@ -366,39 +410,21 @@ targets[1:4,-c(5,6)]
 ##     dependency = "heatmap")
 
 
-## ----runWF, eval=FALSE------------------------------------
-## sal <- runWF(sal)
-
-
-## ----runWF_cluster, eval=FALSE----------------------------
-## # wall time in mins, memory in MB
+## ----runWF_cluster, eval=FALSE--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## resources <- list(conffile=".batchtools.conf.R",
 ##                   template="batchtools.slurm.tmpl",
 ##                   Njobs=18,
-##                   walltime=120,
+##                   walltime=120, ## in minutes
 ##                   ntasks=1,
 ##                   ncpus=4,
-##                   memory=1024,
+##                   memory=1024, ## in Mb
 ##                   partition = "short"
 ##                   )
-## sal <- addResources(sal, c("hisat2_mapping"), resources = resources)
+## sal <- addResources(sal, step=c("hisat2_mapping"), resources = resources)
 ## sal <- runWF(sal)
 
 
-## ----plotWF, eval=FALSE-----------------------------------
-## plotWF(sal, rstudio = TRUE)
-
-
-## ----statusWF, eval=FALSE---------------------------------
-## sal
-## statusWF(sal)
-
-
-## ----logsWF, eval=FALSE-----------------------------------
-## sal <- renderLogs(sal)
-
-
-## ----list_tools-------------------------------------------
+## ----list_tools-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     local({
         sal <- systemPipeR::SPRproject(resume = TRUE)
@@ -407,10 +433,10 @@ if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     })
 } else {
     cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
-    cat(c("trimmomatic/0.39", "samtools/1.14", "hisat2/2.1.0"), sep = "\n")
+    cat(c("gzip", "gunzip"), sep = "\n")
 }
 
 
-## ----report_session_info, eval=TRUE-----------------------
+## ----report_session_info, eval=TRUE---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 sessionInfo()
 
