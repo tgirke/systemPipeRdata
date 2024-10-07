@@ -164,7 +164,7 @@ utility of `targets` files.
 # Quick start {#quick-start}
 
 After a workflow environment has been created with the above `genWorkenvir` 
-function call and the corresponding R session directed into the resulting directory (here `chipseq`), 
+function call and the corresponding R session directed into the resulting directory (here `rnaseq`), 
 the `SPRproject` function is used to initialize a new workflow project instance. The latter 
 creates an empty `SAL` workflow container (below `sal`) and at the same time a
 linked project log directory (default name `.SPRproject`) that acts as a
