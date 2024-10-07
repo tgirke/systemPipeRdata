@@ -1931,7 +1931,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">BLAST Workflow Template</h1>
 <p class="author-name">Author: FirstName LastName</p>
-<h4 class="date">Last update: 12 September, 2024</h4>
+<h4 class="date">Last update: 05 October, 2024</h4>
 <h4 class="package">Package</h4>
 <p>systemPipeR 2.10.0</p>
 
@@ -1975,6 +1975,13 @@ presented in a concise tabular summary format, or the corresponding pairwise
 alignments can be included. To utilize this workflow, users must download and
 install the BLAST software from NCBI’s website <a href="https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/">here</a> and ensure it is added to
 their system’s PATH environment variable.</p>
+<p>The <code>Rmd</code> file (<code>SPblast.Rmd</code>) associated with this vignette serves a dual purpose.
+It acts both as a template for executing the workflow and as a template for
+generating a reproducible scientific analysis report. Thus, users want to
+customize the text (and/or code) of this or other <code>systemPipeR</code> workflow vignettes to describe their
+experimental design and analysis results. This typically involves deleting the
+instructions how to work with this workflow, and customizing the text
+describing experimental designs, other metadata and analysis results.</p>
 <p>The following data analysis steps are included in this workflow template:</p>
 <ol style="list-style-type: decimal">
 <li>Validation of the BLAST installation</li>
@@ -2005,11 +2012,11 @@ in <code>systemPipeR&#39;s</code> main vignette.</p>
 <pre class="r"><code>library(systemPipeR)
 sal &lt;- SPRproject()
 sal</code></pre>
-<p>The below workflow steps can be imported from the source <code>Rmd</code> file of this
-vignette all at once into a <code>SAL</code> (<code>SYSargsList</code>) workflow container using the
-<code>importWF</code> function. After this the entire workflow can be run from start to
-finish with the <code>runWF</code> function. Details on this are provided in the next
-section <a href="#importwf">here</a></p>
+<p>The <code>importWF</code> function allows to import all the workflow steps outlined in
+the source Rmd file of this vignette into a <code>SAL</code> (<code>SYSargsList</code>) workflow
+container. Once imported, the entire workflow can be executed from start to
+finish using the <code>runWF</code> function. More details regarding this process are
+provided in the following section <a href="#importwf">here</a>.</p>
 <pre class="r"><code>sal &lt;- importWF(sal, &quot;SPblast.Rmd&quot;)
 sal &lt;- runWF(sal)</code></pre>
 <div id="step-1-load-packages" class="section level2" number="2.1">
@@ -2087,7 +2094,7 @@ This option is generally discouraged as it erases the existing workflow project 
 For information on resuming and restarting workflow runs, users want to consult the relevant section of
 the main vignette (see <a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#10_Restarting_and_resetting_workflows">here</a>.)</p>
 <pre class="r"><code>sal &lt;- SPRproject(overwrite = TRUE)  # Avoid &#39;overwrite=TRUE&#39; in real runs.
-sal &lt;- importWF(sal, file_path = &quot;../SPblast.Rmd&quot;)  # Imports above steps from new.Rmd.
+sal &lt;- importWF(sal, file_path = &quot;SPblast.Rmd&quot;)  # Imports above steps from new.Rmd.
 sal &lt;- runWF(sal)  # Runs ggworkflow.
 plotWF(sal)  # Plot toplogy graph of workflow
 sal &lt;- renderReport(sal)  # Renders scientific report.

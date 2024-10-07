@@ -1931,7 +1931,7 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">RNA-Seq Workflow Template</h1>
 <p class="author-name">Author: First Last Name</p>
-<h4 class="date">Last update: 29 September, 2024</h4>
+<h4 class="date">Last update: 06 October, 2024</h4>
 <h4 class="package">Package</h4>
 <p>systemPipeR 2.10.0</p>
 
@@ -1968,7 +1968,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="overview" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Overview</h2>
 <p>This workflow template is for analyzing RNA-Seq data. It is provided by
-<code>systemPipeRdata</code>, a companion package to systemPipeR <span class="citation">(H Backman and Girke <a href="#ref-H_Backman2016-bt" role="doc-biblioref">2016</a>)</span>.
+<a href="https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html">systemPipeRdata</a>,
+a companion package to <a href="https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html">systemPipeR</a> <span class="citation">(H Backman and Girke <a href="#ref-H_Backman2016-bt" role="doc-biblioref">2016</a>)</span>.
 Similar to other <code>systemPipeR</code> workflow templates, a single command generates
 the necessary working environment. This includes the expected directory
 structure for executing <code>systemPipeR</code> workflows and parameter files for running
@@ -1983,7 +1984,7 @@ and executing workflows, users want to refer to the main vignettes of
 <a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html">systemPipeR</a>
 and
 <a href="https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html">systemPipeRdata</a>.</p>
-<p>The <code>Rmd</code> file associated with this vignette serves a dual purpose. It acts
+<p>The <code>Rmd</code> file (<code>systemPipeRNAseq.Rmd</code>) associated with this vignette serves a dual purpose. It acts
 both as a template for executing the workflow and as a template for generating
 a reproducible scientific analysis report. Thus, users want to customize the text
 (and/or code) of this vignette to describe their experimental design and
@@ -2081,16 +2082,23 @@ utility of <code>targets</code> files.</p>
 </div>
 <div id="quick-start" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Quick start</h1>
-<p>After a workflow environment (directory) has been created and the corresponding
-R session directed into the resulting directory (here <code>rnaseq</code>), the workflow
-can be loaded from the R Markdown (<code>Rmd</code>) file of this vignette, here named
-<code>systemPipeRNAseq.Rmd</code>. All data analysis steps of the workflow will be stored in
-a workflow management container called <code>SYSargsList</code> or short <code>SAL</code> (below <code>sal</code>).
-Additional details about the <code>SAL</code> container (S4 class) are available in the main vignette
-<a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#11_Workflow_control_class">here</a>.</p>
+<p>After a workflow environment has been created with the above <code>genWorkenvir</code>
+function call and the corresponding R session directed into the resulting directory (here <code>chipseq</code>),
+the <code>SPRproject</code> function is used to initialize a new workflow project instance. The latter
+creates an empty <code>SAL</code> workflow container (below <code>sal</code>) and at the same time a
+linked project log directory (default name <code>.SPRproject</code>) that acts as a
+flat-file database of a workflow. Additional details about this process and
+the SAL workflow control class are provided in <code>systemPipeR&#39;s</code> main vignette
+<a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#11_Workflow_control_class">here</a>
+and <a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5_Detailed_tutorial">here</a>.</p>
+<p>Next, the <code>importWF</code> function imports all the workflow steps outlined in the
+source Rmd file of this vignette (here <code>systemPipeRNAseq.Rmd</code>) into the <code>SAL</code> workflow container.
+An overview of the workflow steps and their status information can be returned
+at any stage of the loading or run process by typing <code>sal</code>.</p>
 <pre class="r"><code>library(systemPipeR)
 sal &lt;- SPRproject()
-sal &lt;- importWF(sal, file_path = &quot;systemPipeRNAseq.Rmd&quot;, verbose = FALSE)</code></pre>
+sal &lt;- importWF(sal, file_path = &quot;systemPipeRNAseq.Rmd&quot;, verbose = FALSE)
+sal</code></pre>
 <p>After loading the workflow into <code>sal</code>, it can be executed from start to finish
 (or partially) with the <code>runWF</code> command. Running the workflow will only be
 possible if all dependent CL software is installed on a user’s system. Their
@@ -2117,14 +2125,14 @@ Figure 1: <span class="caption-title">Toplogy graph of RNA-Seq workflow</span><b
 <code>renderLogs</code> functions, respectively. Scientific reports can also be generated
 with the <code>render</code> function of the <code>rmarkdown</code> package. The technical reports are
 based on log information that <code>systemPipeR</code> collects during workflow runs.</p>
-<pre class="r"><code># Scietific report
+<pre class="r"><code># Scientific report
 sal &lt;- renderReport(sal)
 rmarkdown::render(&quot;systemPipeRNAseq.Rmd&quot;, clean = TRUE, output_format = &quot;BiocStyle::html_document&quot;)
 
 # Technical (log) report
 sal &lt;- renderLogs(sal)</code></pre>
 <p>The <code>statusWF</code> function returns a status summary for each step in a <code>SAL</code> workflow instance.</p>
-<pre><code>statusWF(sal)</code></pre>
+<pre class="r"><code>statusWF(sal)</code></pre>
 </div>
 <div id="workflow-steps-1" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Workflow steps</h1>

@@ -178,7 +178,7 @@ sal <- SPRproject()
 sal <- importWF(sal, file_path = "systemPipeRNAseq.Rmd", verbose = FALSE)
 ```
 
-The default analysis steps of the imported RNA-Seq worflow are listed below. Users 
+The default analysis steps of the imported RNA-Seq workflow are listed below. Users 
 can modify the existing steps, add new ones or remove steps as needed.
 
 __Default analysis steps in RNA-Seq Workflow__
@@ -217,7 +217,7 @@ knitr::include_graphics("results/plotwf_rnaseq.png")
 Scientific and technical reports can be generated with the `renderReport` and 
 `renderLogs` functions, respectively. Scientific reports can also be generated 
 with the `render` function of the `rmarkdown` package. The technical reports are
-based on log informatation that `systemPipeR` collects during workflow runs.
+based on log information that `systemPipeR` collects during workflow runs.
 
 ```{r report_rnaseq, eval=FALSE}
 # Scietific report
@@ -307,7 +307,9 @@ genWorkenvir(workflow="...")
 
 ## Generic template 
 
-This empty workflow (named `new`) is intended to be used as a template for
+[ [Vignette](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/new.html) ] 
+
+This _Generic_  workflow (named `new`) is intended to be used as a template for
 creating new workflows from scratch where users can add steps by copying and
 pasting existing R or CL steps as needed, and populate them with their own
 code. In its current form, this mini workflow will export a test dataset to
@@ -320,6 +322,8 @@ R, and then perform a simple statistical analysis and plot the results.
 4. R step: import files and plot summary statistics
 
 ## RNA-Seq workflow
+
+[ [Vignette](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRNAseq.html) ] 
 
 1. Read preprocessing
     + Quality filtering (trimming)
@@ -334,6 +338,8 @@ R, and then perform a simple statistical analysis and plot the results.
 
 ## ChIP-Seq Workflow
 
+[ [Vignette](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeChIPseq.html) ] 
+
 1. Read preprocessing
     + Quality filtering (trimming)
     + FASTQ quality report
@@ -347,6 +353,8 @@ R, and then perform a simple statistical analysis and plot the results.
 
 ## VAR-Seq Workflow 
 
+[ [Vignette](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeVARseq.html) ] 
+
 1. Read preprocessing
     +Quality filtering (trimming)
     +FASTQ quality report
@@ -358,6 +366,8 @@ R, and then perform a simple statistical analysis and plot the results.
 7. Summary statistics of samp
 
 ## Ribo-Seq Workflow
+
+[ [Vignette](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRIBOseq.html) ] 
 
 1. Read preprocessing
     + Adaptor trimming and quality filtering
@@ -376,6 +386,8 @@ R, and then perform a simple statistical analysis and plot the results.
 
 ## scRNA-Seq Workflow
 
+[ [Vignette](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/SPscrna.html) ] 
+
 1. Import of single cell read count data
 2. Basic stats on input data
 3. QC of cell count data
@@ -390,11 +402,15 @@ R, and then perform a simple statistical analysis and plot the results.
 
 ## BLAST Workflow
 
+[ [Vignette](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/SPblast.html) ] 
+
 1. Load query sequences
 2. Select and prepare BLASTable databases
 3. Run BLAST against different databases
 
 ## Cheminformatics Workflow
+
+[ [Vignette](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/SPcheminfo.html) ] 
 
 1. Import small molecules stored in SDF file
 2. Visualize small molecule structures

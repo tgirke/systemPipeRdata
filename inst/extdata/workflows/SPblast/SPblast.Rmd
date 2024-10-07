@@ -59,6 +59,14 @@ alignments can be included. To utilize this workflow, users must download and
 install the BLAST software from NCBI’s website [here](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) and ensure it is added to
 their system’s PATH environment variable.
 
+The `Rmd` file (`SPblast.Rmd`) associated with this vignette serves a dual purpose.
+It acts both as a template for executing the workflow and as a template for
+generating a reproducible scientific analysis report. Thus, users want to
+customize the text (and/or code) of this or other `systemPipeR` workflow vignettes to describe their
+experimental design and analysis results. This typically involves deleting the
+instructions how to work with this workflow, and customizing the text
+describing experimental designs, other metadata and analysis results.
+
 The following data analysis steps are included in this workflow template:
 
 1. Validation of the BLAST installation 
@@ -96,11 +104,11 @@ sal <- SPRproject()
 sal
 ```
 
-The below workflow steps can be imported from the source `Rmd` file of this
-vignette all at once into a `SAL` (`SYSargsList`) workflow container using the
-`importWF` function. After this the entire workflow can be run from start to
-finish with the `runWF` function. Details on this are provided in the next
-section [here](#importwf)
+The `importWF` function allows to import all the workflow steps outlined in
+the source Rmd file of this vignette into a `SAL` (`SYSargsList`) workflow
+container. Once imported, the entire workflow can be executed from start to
+finish using the `runWF` function. More details regarding this process are
+provided in the following section [here](#importwf).
 
 ```{r load_workflow_default, eval=FALSE}
 sal <- importWF(sal, "SPblast.Rmd")
@@ -228,7 +236,7 @@ the main vignette (see [here](https://www.bioconductor.org/packages/devel/bioc/v
 
 ```{r , import_run_routine, eval=FALSE}
 sal <- SPRproject(overwrite = TRUE) # Avoid 'overwrite=TRUE' in real runs.
-sal <- importWF(sal, file_path = "../SPblast.Rmd") # Imports above steps from new.Rmd.
+sal <- importWF(sal, file_path = "SPblast.Rmd") # Imports above steps from new.Rmd.
 sal <- runWF(sal) # Runs ggworkflow.
 plotWF(sal) # Plot toplogy graph of workflow
 sal <- renderReport(sal) # Renders scientific report.

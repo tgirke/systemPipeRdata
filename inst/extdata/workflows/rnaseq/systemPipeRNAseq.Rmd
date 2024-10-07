@@ -51,7 +51,8 @@ suppressPackageStartupMessages({
 ## Overview
 
 This workflow template is for analyzing RNA-Seq data. It is provided by
-`systemPipeRdata`, a companion package to systemPipeR [@H_Backman2016-bt].
+[systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html), 
+a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt].
 Similar to other `systemPipeR` workflow templates, a single command generates
 the necessary working environment. This includes the expected directory
 structure for executing `systemPipeR` workflows and parameter files for running
@@ -67,7 +68,7 @@ and executing workflows, users want to refer to the main vignettes of
 and
 [systemPipeRdata](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). 
 
-The `Rmd` file associated with this vignette serves a dual purpose. It acts
+The `Rmd` file (`systemPipeRNAseq.Rmd`) associated with this vignette serves a dual purpose. It acts
 both as a template for executing the workflow and as a template for generating
 a reproducible scientific analysis report. Thus, users want to customize the text
 (and/or code) of this vignette to describe their experimental design and
@@ -162,18 +163,26 @@ utility of `targets` files.
 
 # Quick start {#quick-start}
 
-After a workflow environment (directory) has been created and the corresponding
-R session directed into the resulting directory (here `rnaseq`), the workflow
-can be loaded from the R Markdown (`Rmd`) file of this vignette, here named 
-`systemPipeRNAseq.Rmd`. All data analysis steps of the workflow will be stored in 
-a workflow management container called `SYSargsList` or short `SAL` (below `sal`). 
-Additional details about the `SAL` container (S4 class) are available in the main vignette 
-[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#11_Workflow_control_class).
+After a workflow environment has been created with the above `genWorkenvir` 
+function call and the corresponding R session directed into the resulting directory (here `chipseq`), 
+the `SPRproject` function is used to initialize a new workflow project instance. The latter 
+creates an empty `SAL` workflow container (below `sal`) and at the same time a
+linked project log directory (default name `.SPRproject`) that acts as a
+flat-file database of a workflow. Additional details about this process and 
+the SAL workflow control class are provided in `systemPipeR's` main vignette 
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#11_Workflow_control_class)
+and [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5_Detailed_tutorial).
+
+Next, the `importWF` function imports all the workflow steps outlined in the
+source Rmd file of this vignette (here `systemPipeRNAseq.Rmd`) into the `SAL` workflow container.
+An overview of the workflow steps and their status information can be returned
+at any stage of the loading or run process by typing `sal`.
 
 ```{r project_rnaseq, eval=FALSE}
 library(systemPipeR)
 sal <- SPRproject() 
 sal <- importWF(sal, file_path = "systemPipeRNAseq.Rmd", verbose = FALSE)
+sal
 ```
 
 After loading the workflow  into `sal`, it can be executed from start to finish
@@ -211,7 +220,7 @@ with the `render` function of the `rmarkdown` package. The technical reports are
 based on log information that `systemPipeR` collects during workflow runs.
 
 ```{r report_rnaseq, eval=FALSE}
-# Scietific report
+# Scientific report
 sal <- renderReport(sal)
 rmarkdown::render("systemPipeRNAseq.Rmd", clean = TRUE, output_format = "BiocStyle::html_document") 
 
@@ -221,7 +230,7 @@ sal <- renderLogs(sal)
 
 The `statusWF` function returns a status summary for each step in a `SAL` workflow instance.
 
-```
+```{r status_rnaseq, eval=FALSE}
 statusWF(sal)
 ```
 

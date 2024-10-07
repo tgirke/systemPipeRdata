@@ -42,19 +42,34 @@ suppressPackageStartupMessages({
 
 # Workflow environment
 
-This is the _Generic_ workflow template of the 
-[systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html) package, 
-a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt]. 
-Like other workflow templates, it can be loaded with a single command. Once loaded, users have the
-flexibility to utilize the templates as they are or modify them as needed. More
-in-depth information can be found in the main vignette of [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). The
-_Generic_ template presented here is special that it provides a workflow
+This is a _Generic_ workflow template for building new workflows. It is provided by
+[systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html), 
+a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt].
+Similar to other `systemPipeR` workflow templates, a single command generates
+the necessary working environment. This includes the expected [directory structure](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#3_Directory_structure) 
+for executing `systemPipeR` workflows and parameter files for running
+command-line (CL) software utilized in specific analysis steps. 
+In-depth information can be found in the main vignette of [systemPipeRdata](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). 
+The _Generic_ template presented here is special that it provides a workflow
 skelleton intended to be used as a starting point for building new workflows.
 Basic workflow steps are included to illustrate how to design command-line (CL)
 and R-based workflow steps, as well as R Markdown code chunks that are not part
-of a workflow. __Note__, the details about contructing workflow steps are explained in the 
+of a workflow. For more comprehensive information on designing
+and executing workflows, users want to refer to the main vignettes of
+[systemPipeR](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html)
+and
+[systemPipeRdata](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). 
+The details about contructing workflow steps are explained in the 
 [Detailed Tutorial](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5_Detailed_tutorial) section 
 of `systemPipeR's` main vignette that uses the same workflow steps as the _Generic_ workflow template.
+
+The `Rmd` file (`new.Rmd`) associated with this vignette serves a dual purpose.
+It acts both as a template for executing the workflow and as a template for
+generating a reproducible scientific analysis report. Thus, users want to
+customize the text (and/or code) of this or other `systemPipeR` workflow vignettes to describe their
+experimental design and analysis results. This typically involves deleting the
+instructions how to work with this workflow, and customizing the text
+describing experimental designs, other metadata and analysis results.
 
 The `Generic` workflow template includes the following four data processing steps.
 

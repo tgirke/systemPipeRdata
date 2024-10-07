@@ -59,6 +59,14 @@ alignments can be included. To utilize this workflow, users must download and
 install the BLAST software from NCBI’s website [here](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) and ensure it is added to
 their system’s PATH environment variable.
 
+The `Rmd` file (`SPblast.Rmd`) associated with this vignette serves a dual purpose.
+It acts both as a template for executing the workflow and as a template for
+generating a reproducible scientific analysis report. Thus, users want to
+customize the text (and/or code) of this or other `systemPipeR` workflow vignettes to describe their
+experimental design and analysis results. This typically involves deleting the
+instructions how to work with this workflow, and customizing the text
+describing experimental designs, other metadata and analysis results.
+
 The following data analysis steps are included in this workflow template:
 
 1. Validation of the BLAST installation 

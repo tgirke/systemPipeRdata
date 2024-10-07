@@ -57,6 +57,14 @@ package from [Bioconductor](https://www.bioconductor.org/packages/release/bioc/h
 There are no command-line (CL) software tools required for running this
 workflow in its current form as all steps are based on R functions. 
 
+The `Rmd` file (`SPcheminfo.Rmd`) associated with this vignette serves a dual purpose. It acts
+both as a template for executing the workflow and as a template for generating
+a reproducible scientific analysis report. Thus, users want to customize the text
+(and/or code) of this vignette to describe their experimental design and
+analysis results. This typically involves deleting the instructions how to work
+with this workflow, and customizing the text describing experimental designs,
+other metadata and analysis results.
+
 The following data analysis routines are included in this workflow template:
 
 - Import of small molecules from a structure definition file (SDF)
