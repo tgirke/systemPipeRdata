@@ -45,6 +45,8 @@ suppressPackageStartupMessages({
 })
 ```
 
+# Introduction
+
 ## Overview
 
 This workflow template is for analyzing VAR-Seq data. It is provided by
@@ -105,7 +107,7 @@ an experimental design file called 'targets' file that outlines the experimental
 design. The structure and utility of targets files is described in `systemPipeR's`
 main vignette [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#4_The_targets_file).
 
-# Workflow steps
+## Workflow steps
 
 The default analysis steps included in this VAR-Seq workflow template are listed below. Users 
 can modify the existing steps, add new ones or remove steps as needed.
