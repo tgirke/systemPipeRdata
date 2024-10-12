@@ -43,15 +43,72 @@ suppressPackageStartupMessages({
 })
 ```
 
-# About the template
+# Introduction
 
-This section provides general description and how to use this single cell RNAseq (scRNAseq) workflow. 
-In the actual analysis report, this section is usually **removed**. 
+## Overview
 
-This scRNAseq workflow template is based on the counted 10x scRNA data. It means 
-this workflow expect users have output from cell counting programs, like `cell ranger`. 
+This workflow template is for analyzing single cell RNA-seq (scRNA-seq) data. It is provided by
+[systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html), 
+a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt].
+The content of this workflow steps are provided by this [Seurat Tutorial](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html).
+Similar to other `systemPipeR` workflow templates, a single command generates
+the necessary working environment. This includes the expected directory
+structure for executing `systemPipeR` workflows and parameter files for running
+command-line (CL) software utilized in specific analysis steps. For learning
+and testing purposes, a small sample (toy) data set is also included (mainly
+FASTQ and reference genome files). This enables users to seamlessly run the
+numerous analysis steps of this workflow from start to finish without the
+requirement of providing custom data. After testing the workflow, users have
+the flexibility to employ the template as is with their own data or modify it
+to suit their specific needs. For more comprehensive information on designing
+and executing workflows, users want to refer to the main vignettes of
+[systemPipeR](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html)
+and
+[systemPipeRdata](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). 
 
-The steps in this workflow include:
+The `Rmd` file (`SPscrna.Rmd`) associated with this vignette serves a dual purpose. It acts
+both as a template for executing the workflow and as a template for generating
+a reproducible scientific analysis report. Thus, users want to customize the text
+(and/or code) of this vignette to describe their experimental design and
+analysis results. This typically involves deleting the instructions how to work
+with this workflow, and customizing the text describing experimental designs,
+other metadata and analysis results.
+
+## Experimental design
+
+Typically, the user wants to describe here the sources and versions of the
+reference genome sequence along with the corresponding annotations. The standard
+directory structure of `systemPipeR` (see [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#3_Directory_structure)), 
+expects the input data in a subdirectory named `data`
+and all results will be written to a separate `results` directory. The Rmd source file 
+for executing the workflow and rendering its report (here `SPscrna.Rmd`) is 
+expected to be located in the parent directory. 
+
+In this template, a toy single cell dataset is preprocessed/filtered by [10X](https://www.10xgenomics.com/).
+Samples taken from peripheral blood mononuclear cells (PBMCs), about 3000 cells. 
+
+This dataset will be downloaded on-the-fly as one of the workflow steps in this template.
+Users can also manually download the [dataset](https://cf.10xgenomics.com/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz)
+and unzip into the `data` directory.
+
+To use their own scRNA-Seq and reference genome data, users want to move or link the
+data to the designated `data` directory and execute the workflow from the parent directory 
+using their customized `Rmd` file. Beginning with this template, users should delete the provided test
+data and move or link their custom data to the designated locations.
+Alternatively, users can create an environment skeleton (named `new` [here](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/new.html)) or
+build one from scratch. 
+<!-- To perform a scRNA-Seq analysis with new FASTQ files -->
+<!-- from the same reference genome, users only need to provide the FASTQ files and -->
+<!-- an experimental design file called 'targets' file that outlines the experimental  -->
+<!-- design. The structure and utility of targets files is described in `systemPipeR's` -->
+<!-- main vignette [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#4_The_targets_file). -->
+
+## Workflow steps
+
+The default analysis steps included in this scRNA-Seq workflow template are listed below. Users 
+can modify the existing steps, add new ones or remove steps as needed.
+
+__Default analysis steps__
 
 1. Read in single cell count data.
 2. Basic stats on input data.
@@ -65,42 +122,136 @@ The steps in this workflow include:
 10. Find cell types. 
 11. Visualize cell types and clustering together.
 
-This template is modified from [Seurat Tutorial](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html).
+## Load workflow environment {#load-wf}
 
-![](results/plotwf_scrna.jpg)
+The environment for this scRNA-Seq workflow is auto-generated below with the 
+`genWorkenvir` function (selected under `workflow="scrnaseq"`). 
+<!-- It is fully populated  -->
+<!-- with a small test data set, including FASTQ files, reference genome and annotation data.  -->
+The name of the
+resulting workflow directory can be specified under the `mydirname` argument.
+The default `NULL` uses the name of the chosen workflow. An error is issued if
+a directory of the same name and path exists already. After this, the user’s R
+session needs to be directed into the resulting `SPscrna` directory (here with
+`setwd`). 
 
-# Introduction
+```{r generate_workenvir, eval=FALSE}
+library(systemPipeRdata)
+genWorkenvir(workflow = "SPscrna", mydirname = "SPscrna")
+setwd("SPscrna")
+```
 
-Users want to provide here background information about the design of their
-scRNAseq project.
+### Input data: `targets` file
 
-This report describes the analysis of a scRNAseq project studying ...
+Typically for systemPipeR workflows, there is a `targets` file defines the input files (e.g. FASTQ or BAM) and sample
+information that will be called in command-line tools. However, this workflow does not require a targets file.
 
-## Experimental design
+For users who are interested in learning more about targets file,
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#4_The_targets_file) 
+is a detailed description of the structure and utility of `targets` files.
 
-Typically, users want to specify here all information relevant for the
-analysis of their scRNAseq study. This includes detailed descriptions of
-files, experimental design, reference genome, gene annotations,
-etc.
+<!-- The `targets` file defines the input files (e.g. FASTQ or BAM) and sample -->
+<!-- comparisons used in a data analysis workflow. It can also store any number of -->
+<!-- additional descriptive information for each sample. The following shows the first -->
+<!-- four lines of the `targets` file used in this workflow template. -->
 
-# Workflow environment
 
-To create a Workflow within _`systemPipeR`_, we can start by defining an empty
-container and checking the directory structure:
+<!-- ```{r load_targets_file, eval=TRUE} -->
+<!-- targetspath <- system.file("extdata", "targetsPE.txt", package = "systemPipeR") -->
+<!-- targets <- read.delim(targetspath, comment.char = "#") -->
+<!-- targets[1:4,-c(5,6)] -->
+<!-- ``` -->
 
-```{r create_workflow, message=FALSE, eval=FALSE}
+<!-- To work with custom data, users need to generate a _`targets`_ file containing -->
+<!-- the paths to their own FASTQ files. [Here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#4_The_targets_file) is a detailed description of the structure and -->
+<!-- utility of `targets` files. -->
+
+# Quick start {#quick-start}
+
+After a workflow environment has been created with the above `genWorkenvir` 
+function call and the corresponding R session directed into the resulting directory (here `SPscrna`), 
+the `SPRproject` function is used to initialize a new workflow project instance. The latter 
+creates an empty `SAL` workflow container (below `sal`) and at the same time a
+linked project log directory (default name `.SPRproject`) that acts as a
+flat-file database of a workflow. Additional details about this process and 
+the SAL workflow control class are provided in `systemPipeR's` main vignette 
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#11_Workflow_control_class)
+and [here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#5_Detailed_tutorial).
+
+Next, the `importWF` function imports all the workflow steps outlined in the
+source Rmd file of this vignette (here `SPscrna.Rmd`) into the `SAL` workflow container.
+An overview of the workflow steps and their status information can be returned
+at any stage of the loading or run process by typing `sal`.
+
+```{r project_scrnaseq, eval=FALSE}
 library(systemPipeR)
-sal <- SPRproject()
+sal <- SPRproject() 
+sal <- importWF(sal, file_path = "SPscrna.Rmd", verbose = FALSE)
 sal
 ```
 
-To load the entire workflow with default settings, run
+After loading the workflow  into `sal`, it can be executed from start to finish
+(or partially) with the `runWF` command. Running the workflow will only be
+possible if all dependent CL software is installed on a user's system. Their
+names and availability on a system can be listed with `listCmdTools(sal,
+check_path=TRUE)`. For more information about the `runWF` command, refer to the
+help file and the corresponding section in the main vignette
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#61_Overview). 
 
-```{r load_workflow_default, eval=FALSE}
-sal <- importWF(sal, "SPscrna.Rmd")
+Running workflows in parallel mode on computer clusters is a straightforward
+process in `systemPipeR`. Users can simply append the resource parameters (such
+as the number of CPUs) for a cluster run to the `sal` object after importing
+the workflow steps with `importWF` using the `addResources` function. More
+information about parallelization can be found in the corresponding section at
+the end of this vignette [here](#paralellization) and in the main vignette
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#63_Parallel_evaluation). 
+
+```{r run_scrnaseq, eval=FALSE}
+sal <- runWF(sal)
+```
+Workflows can be visualized as topology graphs using the `plotWF` function.
+
+```{r plot_scrnaseq, eval=FALSE}
+plotWF(sal)
 ```
 
+```{r scrnaseq-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Toplogy graph of scRNA-Seq workflow.", warning=FALSE}
+knitr::include_graphics("results/plotwf_scrna.jpg")
+```
+
+Scientific and technical reports can be generated with the `renderReport` and 
+`renderLogs` functions, respectively. Scientific reports can also be generated 
+with the `render` function of the `rmarkdown` package. The technical reports are
+based on log information that `systemPipeR` collects during workflow runs.
+
+```{r report_scrnaseq, eval=FALSE}
+# Scientific report
+sal <- renderReport(sal)
+rmarkdown::render("SPscrna.Rmd", clean = TRUE, output_format = "BiocStyle::html_document") 
+
+# Technical (log) report
+sal <- renderLogs(sal)
+```
+
+The `statusWF` function returns a status summary for each step in a `SAL` workflow instance.
+
+```{r status_scrnaseq, eval=FALSE}
+statusWF(sal)
+```
+
+# Workflow steps
+
+The data analysis steps of this workflow are defined by the following workflow code chunks.
+They can be loaded into `SAL` interactively, by executing the code of each step in the 
+R console, or all at once with the `importWF` function used under the Quick start section. 
+R and CL workflow steps are declared in the code chunks of `Rmd` files with the 
+`LineWise` and `SYSargsList` functions, respectively, and then added to the `SAL` workflow 
+container with `appendStep<-`. Their syntax and usage is described 
+[here](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html#52_Constructing_workflows). 
+
 ## Load packages 
+
+The first step loads the required packages.
 
 ```{r load_packages, eval=FALSE, spr=TRUE}
 cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
