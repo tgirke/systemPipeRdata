@@ -1,7 +1,7 @@
 Package: systemPipeRdata
 Title: systemPipeRdata: Workflow templates and sample data
-Version: 2.12.0
-Date: 2024-10-19
+Version: 2.12.1
+Date: 2025-05-24
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
 biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq,
@@ -20,4 +20,4 @@ Suggests: GenomicFeatures, GenomicRanges, IRanges, Rsamtools, ShortRead, rtrackl
 VignetteBuilder: knitr
 License: Artistic-2.0
 NeedsCompilation: no
-URL: https://github.com/tgirke/systemPipeRdata, https://systempipe.org/
+URL: https://github.com/tgirke/systemPipeRdata 
