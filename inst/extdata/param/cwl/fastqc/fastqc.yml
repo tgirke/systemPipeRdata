@@ -12,4 +12,4 @@ results_path:
   class: Directory
   path: ./results
 ModulesToLoad:
-  module1: fastqc/0.11.9
+  module1: fastqc/0.12.1
