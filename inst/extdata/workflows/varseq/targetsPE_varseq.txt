@@ -1,12 +1,12 @@
-# Project ID: Arabidopsis - Pseudomonas alternative splicing study (SRA: SRP010938; PMID: 24098335)
+# Project ID: Human variant study (1000 Genome Project)
 # The following line(s) allow to specify the contrasts needed for comparative analyses, such as DEG identification. All possible comparisons can be specified with 'CMPset: ALL'.
 # <CMP> CMPset1: ALL
-FileName1	FileName2	SampleName	Factor	SampleLong	Experiment	Date
-./data/SRR446027_1.fastq.gz	./data/SRR446027_2.fastq.gz	M1A	M1	Mock.1h.A	1	23-Mar-2012
-./data/SRR446029_1.fastq.gz	./data/SRR446029_2.fastq.gz	A1A	A1	Avr.1h.A	1	23-Mar-2012
-./data/SRR446033_1.fastq.gz	./data/SRR446033_2.fastq.gz	M6A	M6	Mock.6h.A	1	23-Mar-2012
-./data/SRR446034_1.fastq.gz	./data/SRR446034_2.fastq.gz	M6B	M6	Mock.6h.B	1	23-Mar-2012
-./data/SRR446036_1.fastq.gz	./data/SRR446036_2.fastq.gz	A6B	A6	Avr.6h.B	1	23-Mar-2012
-./data/SRR446038_1.fastq.gz	./data/SRR446038_2.fastq.gz	V6B	V6	Vir.6h.B	1	23-Mar-2012
-./data/SRR446040_1.fastq.gz	./data/SRR446040_2.fastq.gz	M12B	M12	Mock.12h.B	1	23-Mar-2012
-./data/SRR446044_1.fastq.gz	./data/SRR446044_2.fastq.gz	V12B	V12	Vir.12h.B	1	23-Mar-2012
+FileName1	FileName2	SampleName	Factor	SampleLong	Experiment	Date	url
+./data/SRR769545_1.fastq.gz	./data/SRR769545_2.fastq.gz	HG00152	male	HG00152.male	1	25-Oct-2025	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR769/SRR769545/
+./data/SRR768527_1.fastq.gz	./data/SRR768527_2.fastq.gz	HG00234	male	HG00234.male	1	25-Oct-2025	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR768/SRR768527/
+./data/SRR070795_1.fastq.gz	./data/SRR070795_2.fastq.gz	HG00188	male	HG00188.male	1	25-Oct-2025	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR070/SRR070795/
+./data/SRR070790_1.fastq.gz	./data/SRR070790_2.fastq.gz	HG00190	male	HG00190.male	1	25-Oct-2025	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR070/SRR070790/
+./data/SRR070534_1.fastq.gz	./data/SRR070534_2.fastq.gz	HG00183	female	HG00183.female	1	25-Oct-2025	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR070/SRR070534/
+./data/SRR765993_1.fastq.gz	./data/SRR765993_2.fastq.gz	HG00099	female	HG00099.female	1	25-Oct-2025	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR765/SRR765993/
+./data/SRR081224_1.fastq.gz	./data/SRR081224_2.fastq.gz	HG00102	female	HG00102.female	1	25-Oct-2025	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR081/SRR081224/
+./data/SRR769548_1.fastq.gz	./data/SRR769548_2.fastq.gz	HG00359	female	HG00359.female	1	25-Oct-2025	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR769/SRR769548/

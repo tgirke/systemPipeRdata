@@ -56,13 +56,16 @@ Similar to other `systemPipeR` workflow templates, a single command generates
 the necessary working environment. This includes the expected directory
 structure for executing `systemPipeR` workflows and parameter files for running
 command-line (CL) software utilized in specific analysis steps. For learning
-and testing purposes, a small sample (toy) data set is also included (mainly
-FASTQ and reference genome files). This enables users to seamlessly run the
-numerous analysis steps of this workflow from start to finish without the
-requirement of providing custom data. After testing the workflow, users have
-the flexibility to employ the template as is with their own data or modify it
-to suit their specific needs. For more comprehensive information on designing
-and executing workflows, users want to refer to the main vignettes of
+and testing purposes, the template now ships with eight paired-end human
+whole-exome FASTQ files curated from the 1000 Genomes Project (HG00152,
+HG00234, HG00188, HG00190, HG00183, HG00099, HG00102, HG00359) together with
+the hg38 reference sequence and annotations.
+This enables users to seamlessly run the numerous analysis steps of
+this workflow from start to finish if all required data is downloaded.
+After testing the workflow, users have the flexibility to employ the
+template as is with their own data or modify it to suit their specific needs.
+For more comprehensive information on designing and executing workflows, users
+want to refer to the main vignettes of
 [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html)
 and
 [systemPipeRdata](https://www.bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). 
@@ -85,16 +88,48 @@ and all results will be written to a separate `results` directory. The Rmd sourc
 for executing the workflow and rendering its report (here `systemPipeVARseq.Rmd`) is 
 expected to be located in the parent directory. 
 
-The test (toy) data set used by this template ([SRP010938](http://www.ncbi.nlm.nih.gov/sra/?term=SRP010938))
-contains 18 paired-end (PE) read sets from *Arabidposis thaliana*
-[@Howard2013-fq]. To minimize processing time during testing, each FASTQ
-file has been reduced to 90,000-100,000 randomly sampled PE reads that
-map to the first 100,000 nucleotides of each chromosome of the *A.
-thaliana* genome. The corresponding reference genome sequence (FASTA) and
-its GFF annotation files have been reduced to the same genome regions. This way the entire 
-test sample data set is less than 200MB in storage space. A PE read set has been
-chosen here for flexibility, because it can be used for testing both types
-of analysis routines requiring either SE (single end) reads or PE reads.
+Data and resources can be downloaded following commands. 
+
+This part read in the targets file and translate it into executable 
+bash commands. Run the following R code chunk to and copy the
+outputted commands into your terminal to download the data files.
+
+```{r download_commands, eval=TRUE}
+targets <- read.delim("targetsPE_varseq.txt", comment.char = "#")
+
+build_wget <- function(url_base, file_path) {
+    url_clean <- sub("/+$$", "", url_base)
+    src <- paste0(url_clean, "/", basename(file_path))
+    dest <- file_path
+    sprintf("wget %s -O %s", src, dest)
+}
+
+commands <- unlist(Map(function(url, f1, f2) {
+    c(build_wget(url, f1), build_wget(url, f2))
+}, targets$url, targets$FileName1, targets$FileName2))
+
+cat(paste0(paste0(commands, " &\n", collapse = ""), "wait\n"))
+```
+
+Some additional commands to download resources. Directly run in terminal:
+
+```{bash eval=FALSE}
+# hg38 reference gnome 
+wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+gunzip hg38.fa.gz
+
+# Download SnpEff
+wget https://snpeff.odsp.astrazeneca.com/versions/snpEff_latest_core.zip
+unzip snpEff_latest_core.zip
+rm snpEff_latest_core.zip
+# the tool path can be used with `java -jar snpEff/snpEff.jar`
+```
+
+The dataset used by this template is derived from the 1000 Genomes Project
+(Phase 3) and contains eight paired-end human whole-exome libraries (four
+male and four female samples). Using paired-end reads
+maintains flexibility because the same files can exercise both single- and
+paired-end analysis routines.
 
 To use their own VAR-Seq and reference genome data, users want to move or link the
 data to the designated `data` directory and execute the workflow from the parent directory 
@@ -115,8 +150,7 @@ can modify the existing steps, add new ones or remove steps as needed.
 __Default analysis steps__
 
 1. Read preprocessing
-    + Quality filtering (trimming)
-    + FASTQ quality report
+    + FastQC report
 2. Alignments: _`BWA`_ (or any other DNA aligner)
 3. Alignment stats 
 4. Variant calling 
@@ -125,11 +159,12 @@ __Default analysis steps__
 5. Filter variants
     + Filter variants called by `GATK` 
     + Filter variants called by `BCFtools` 
-6. Annotate filtered variants
+6. Annotate filtered variants with `SnpEff`
 7. Combine annotation results among samples
 8. Calculate Summary statistics of variants
-9. Plot Venn diagram of variants
-10. Plot variants of interests
+9. Plot variant statistics
+10. Plot variants in group comparisons
+11. Plot Venn diagram of variants
 
 ## Load workflow environment {#load-wf}
 
@@ -157,9 +192,9 @@ four lines of the `targets` file used in this workflow template.
 
 
 ```{r load_targets_file, eval=TRUE}
-targetspath <- system.file("extdata", "targetsPE.txt", package = "systemPipeR")
+targetspath <- system.file("extdata", "workflows", "varseq", "targetsPE_varseq.txt", package = "systemPipeRdata")
 targets <- read.delim(targetspath, comment.char = "#")
-targets[1:4,-c(5,6)]
+targets[1:4, -(5:8)]
 ```
 
 To work with custom data, users need to generate a _`targets`_ file containing
@@ -254,15 +289,8 @@ container with `appendStep<-`. Their syntax and usage is described
 The first step loads the `systemPipeR` package.
 
 ```{r load_SPR, message=FALSE, eval=FALSE, spr=TRUE}
-# Some samples in the test dataset do not work well in VARseq, and VARseq workflow 
-# takes long time to process each sample. To better test and speed up the test workflow,
-# sample set is reduced to the first 13 samples.
-# Please REMOVE the next two lines in your real analysis
-cat(crayon::red$bold("Some samples in targets are removed for test workflow. Please change the template to disable this in your real analysis.\n"))
-writeLines(readLines("targetsPE.txt")[1:13], "targetsPE.txt")
-
 cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
-cat(c("'GenomicFeatures", "VariantAnnotation", "GenomicFeatures", "ggbio", "ggplot2'\n"), sep = "', '")
+cat(c("'ggplot2', 'dplyr'\n"), sep = "', '")
 ###pre-end
 appendStep(sal) <- LineWise(
     code = {
@@ -274,39 +302,32 @@ appendStep(sal) <- LineWise(
 
 ## FASTQ quality report
 
-The following `seeFastq` and `seeFastqPlot` functions generate and plot a series of useful 
-quality statistics for a set of FASTQ files including per cycle quality box
-plots, base proportions, base-level quality trends, relative k-mer
-diversity, length, and occurrence distribution of reads, number of reads
-above quality cutoffs and mean quality distribution. The results are
-written to a png file named `fastqReport.png`.
+### Read-level summaries with FastQC
 
-This is the pre-trimming fastq report. Another post-trimming fastq report step 
-is not included in the default. It is recommended to run this step first to
-decide whether the trimming is needed.
+`systemPipeR` supports wrapping the canonical [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+command-line utility so the familiar per-sample HTML and ZIP outputs are generated
+alongside the R-based plots. Running FastQC captures quality diagnostics (adapter content, sequence
+duplication, over-represented sequences) of the reads.
 
-Please note that initial targets files are being used here. In this case, 
-it has been added to the first step, and later, we used the function `getColumn` 
-to extract a named vector. 
-
-```{r fastq_report_pre, eval=FALSE, message=FALSE, spr=TRUE}
-appendStep(sal) <- LineWise(
-    code = {
-        targets <- read.delim("targetsPE.txt", comment.char = "#")
-        updateColumn(sal, step = "load_SPR", position = "targetsWF") <- targets
-        fq_files <- getColumn(sal, "load_SPR", "targetsWF", column = 1)
-        fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-        png("./results/fastqReport.png", height = 162, width = 288 * length(fqlist))
-        seeFastqPlot(fqlist)
-        dev.off()
-    },
-    step_name = "fastq_report_pre",
+```{r fastqc, eval=FALSE, spr=TRUE}
+appendStep(sal) <- SYSargsList(
+    step_name = "fastqc",
+    targets = "targetsPE_varseq.txt",
+    wf_file = "fastqc/workflow_fastqc.cwl",
+    input_file = "fastqc/fastqc.yml",
+    dir_path = "param/cwl",
+    inputvars = c(
+        FileName1  = "_FASTQ_PATH1_",
+        FileName2  = "_FASTQ_PATH2_"
+    ),
     dependency = "load_SPR"
 )
 ```
 
-![](results/fastqReport.png)
-<div align="center">Figure 1: FASTQ quality report for 18 samples</div></br>
+FastQC writes one HTML and one zipped report per input FASTQ into
+`results/fastqc` (configurable in `fastqc.yml`). Review these outputs together
+with the `seeFastq` plots to decide whether adapter trimming or additional
+filtering is required.
 
 ## Read preprocessing
 
@@ -321,12 +342,12 @@ and append to `sal` object. For more details of all the features and utilities,
 please consult the [main vignette](http://www.bioconductor.org/packages/release/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
 
 If GATK (default) is used for variant calling, any type of fastq trimming is 
-strongly depreciated. GATK have internal function to handle low quality posistions.
+strongly **depreciated**. GATK have internal function to handle low quality posistions.
 
 ```{r trimmomatic, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
     step_name = "trimmomatic",
-    targets = "targetsPE.txt",
+    targets = "targetsPE_varseq.txt",
     wf_file = "trimmomatic/trimmomatic-pe.cwl",
     input_file = "trimmomatic/trimmomatic-pe.yml",
     dir_path = "param/cwl",
@@ -335,7 +356,7 @@ appendStep(sal) <- SYSargsList(
         FileName2 = "_FASTQ_PATH2_",
         SampleName = "_SampleName_"
     ),
-    dependency = c("fastq_report_pre"),
+    dependency = c("load_SPR"),
     run_step = "optional"
 )
 ```
@@ -356,7 +377,7 @@ All the parameters are defined on the _`preprocessReads/preprocessReads-pe.yml`_
 ```{r preprocessing, message=FALSE, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
     step_name = "preprocessing",
-    targets = "targetsPE.txt", dir = TRUE,
+    targets = "targetsPE_varseq.txt", dir = TRUE,
     wf_file = "preprocessReads/preprocessReads-pe.cwl",
     input_file = "preprocessReads/preprocessReads-pe.yml",
     dir_path = "param/cwl",
@@ -365,7 +386,7 @@ appendStep(sal) <- SYSargsList(
         FileName2 = "_FASTQ_PATH2_",
         SampleName = "_SampleName_"
     ),
-    dependency = c("fastq_report_pre"),
+    dependency = c("load_SPR"),
     run_step = "optional"
 )
 ```
@@ -411,27 +432,6 @@ yamlinput(sal, "preprocessing", "Fct") <- "'filterFct(fq, cutoff=20, Nexceptions
 yamlinput(sal, "preprocessing")$Fct ## check the new function
 cmdlist(sal, "preprocessing", targets = 1) ## check if the command line was updated with success
 ```
-
-## FASTQ quality after Trimming
-
-This is the post-trimming fastq quality report. If the trimming step is included, it is 
-recommended to add this step to compare trimming of fastq before and after.
-
-```{r fastq_report_pos, eval=FALSE, message=FALSE, spr=TRUE}
-appendStep(sal) <- LineWise(
-    code = {
-        fq_files <- getColumn(sal, "preprocessing", "outfiles", column = 1) ## get outfiles path
-        fqlist <- seeFastq(fastq = fq_files, batchsize = 10000, klength = 8)
-        png("./results/fastqReport_pos.png", height = 18, width = 4 * length(fqlist))
-        seeFastqPlot(fqlist)
-        dev.off()
-    },
-    step_name = "fastq_report_pos",
-    dependency = "trimmomatic",
-    run_step = "optional"
-)
-```
-
 
 ## Read mapping with `BWA-MEM` 
 
@@ -490,7 +490,7 @@ appendStep(sal) <- SYSargsList(
 ```{r bwa_alignment, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
     step_name = "bwa_alignment",
-    targets = "targetsPE.txt",
+    targets = "targetsPE_varseq.txt",
     wf_file = "gatk/workflow_bwa-pe.cwl",
     input_file = "gatk/gatk.yaml",
     dir_path = "param/cwl",
@@ -577,7 +577,7 @@ is needed for the variant caller in later steps to correct calling parameters.
 ```{r fastq2ubam, eval=FALSE, spr=TRUE}
 appendStep(sal) <- SYSargsList(
     step_name = "fastq2ubam",
-    targets = "targetsPE.txt",
+    targets = "targetsPE_varseq.txt",
     wf_file = "gatk/workflow_gatk_fastq2ubam.cwl",
     input_file = "gatk/gatk.yaml",
     dir_path = "param/cwl",
@@ -815,7 +815,7 @@ inspect individual sample's raw variants.
 ```{r inspect_vcf, eval=FALSE}
 library(VariantAnnotation)
 vcf_raw <- getColumn(sal, "create_vcf")
-vcf <- readVcf(vcf_raw[1], "A. thaliana")
+vcf <- readVcf(vcf_raw[1], "Homo sapiens")
 vcf
 vr <- as(vcf, "VRanges")
 vr
@@ -836,31 +836,23 @@ subsetting syntax for two dimensional objects such as: `vr[filter, ]`.
 The below example filters for variants that are supported by `>=x`
 reads and >=80% of them support the called variants. In addition, all
 variants need to pass `>=x` of the soft filters recorded in the VCF
-files generated by GATK. Since the toy data used for this workflow is
-very small, the chosen settings are unreasonabley relaxed. A more
-reasonable filter setting is given in the line below (here commented
-out).
+files generated by GATK. 
 
 There is already some cohort filtering in GATK step 10. Some additional hard 
 filtering is provided here. This step is included here, but in a real analysis,
 you may skip this step.
-
-For real samples, use following filters:
-`filter <- "totalDepth(vr) >= 20 & (altDepth(vr) / totalDepth(vr) >= 0.8)"`
 
 ```{r filter_vcf, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
         vcf_raw <- getColumn(sal, "create_vcf")
         library(VariantAnnotation)
-        filter <- "totalDepth(vr) >= 2 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
-        vcf_filter <- suppressWarnings(filterVars(vcf_raw, filter, organism = "A. thaliana", out_dir = "results/vcf_filter"))
-        # dump the filtered path variable to running enviornment so 
-        # other sysArg steps can get its values
-        updateColumn(sal, 'create_vcf', "outfiles") <- data.frame(vcf_filter=vcf_filter)
+        filter <- "totalDepth(vr) >= 20 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
+        vcf_filter <- suppressWarnings(filterVars(vcf_raw, filter, organism = "Homo sapiens", out_dir = "results/vcf_filter"))
     },
     step_name = "filter_vcf",
-    dependency = "create_vcf"
+    dependency = "create_vcf",
+    run_step = "optional"
 )
 ```
 
@@ -878,7 +870,7 @@ appendStep(sal) <- LineWise(
                              position = "outfiles", column = "bcftools_call")
         library(VariantAnnotation)
         filter <- "rowSums(vr) >= 2 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
-        vcf_filter_bcf <- suppressWarnings(filterVars(vcf_raw, filter, organism = "A. thaliana", out_dir = "results/vcf_filter_BCFtools", varcaller = "bcftools"))
+        vcf_filter_bcf <- suppressWarnings(filterVars(vcf_raw, filter, organism = "Homo sapiens", out_dir = "results/vcf_filter_BCFtools", varcaller = "bcftools"))
         
         updateColumn(sal, 'create_vcf', "outfiles") <- data.frame(vcf_filter_bcf=vcf_filter_bcf)
     },
@@ -897,80 +889,94 @@ done, since it is an optional step.
 ```{r check_filter, eval=FALSE}
 copyEnvir(sal, "vcf_raw", globalenv())
 copyEnvir(sal, "vcf_filter", globalenv())
-length(as(readVcf(vcf_raw[1], genome = "Ath"), "VRanges")[, 1])
-length(as(readVcf(vcf_filter[1], genome = "Ath"), "VRanges")[, 1])
+length(as(readVcf(vcf_raw[1], genome = "Homo sapiens"), "VRanges")[, 1])
+length(as(readVcf(vcf_filter[1], genome = "Homo sapiens"), "VRanges")[, 1])
 ```
+
+### Filter statistics
+
+**Optional** but included in the default
+
+After variant filtering, raw variants and filtered variants can be compared.
+This step uses the filtered variants from GATK step 9 to generate summary statistics.
+
+```{r summary_filter, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+          # read in the cohort VCF file
+          vcf_all <- suppressWarnings(VariantAnnotation::readVcf("./results/samples_filter.vcf.gz", "Homo sapiens"))
+  
+          filter_values <- VariantAnnotation::filt(vcf_all)
+          filter_values[is.na(filter_values)] <- "" # ensure character comparisons work
+          overall_counts <- table(filter_values) |>
+             dplyr::as_tibble() |>
+             dplyr::arrange(dplyr::desc(n))
+          
+          vcf_all_ft <- VariantAnnotation::geno(vcf_all)$FT
+          passes_per_sample <- apply(vcf_all_ft, 2, function(x) sum(x == "PASS", na.rm = TRUE))
+          fails_per_sample <- apply(vcf_all_ft, 2, function(x) sum(x != "PASS", na.rm = TRUE))
+          sample_filter_summary <- dplyr::tibble(
+              sample = names(passes_per_sample),
+              passed = passes_per_sample,
+              filtered = fails_per_sample
+          )
+  
+          write.table(overall_counts, file = "results/summary_filter_overall.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
+          write.table(sample_filter_summary, file = "results/summary_filter_per_sample.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
+
+          p_filter <- ggplot2::ggplot(sample_filter_summary, ggplot2::aes(x = sample)) +
+            ggplot2::geom_bar(ggplot2::aes(y = passed, fill = "Passed"), stat = "identity") +
+            ggplot2::geom_bar(ggplot2::aes(y = -filtered, fill = "Filtered"), stat = "identity") +
+            ggplot2::coord_flip() +
+            ggplot2::labs(y = "Number of Variants", fill = "Variant Status", title = "Variant Filtering Summary per Sample") +
+            ggplot2::theme_minimal() +
+            ggplot2::scale_fill_manual(values = c("Passed" = "steelblue", "Filtered" = "salmon")) +
+            ggplot2::theme(
+                plot.title = ggplot2::element_text(hjust = 0.5),
+                axis.text.y = ggplot2::element_text(size = 8)
+            )
+          png("results/summary_filter_plot.png", width = 800, height = 600)
+          print(p_filter)
+          dev.off()
+          
+          # clean up RAM
+          try(rm(vcf_all, vcf_all_ft, filter_values, passes_per_sample, fails_per_sample), silent = TRUE)
+          invisible(gc())
+
+    },
+    step_name = "summary_filter",
+    dependency = "filter"
+)
+```
+
+![Variant Filtering Summary per Sample](results/summary_filter_plot.png)
+<div align="center">Figure 2: Variant Filtering Summary per Sample</div></br>
 
 ## Annotate filtered variants
 
-The function `variantReport` generates a variant report using
-utilities provided by the `VariantAnnotation` package. The report for
-each sample is written to a tabular file containing genomic context annotations
-(_e.g._ coding or non-coding SNPs, amino acid changes, IDs of affected
-genes, etc.) along with confidence statistics for each variant. The CWL
-file `param/cwl/varseq_downstream/annotate.cwl` defines the paths to the input 
-and output files which are stored in a `SYSargs2` instance. 
-
-### Basics of annotating variants
-
-This step can be run after running the default workflow, not included in the default. 
-
-Variants overlapping with common annotation features can be identified with `locateVariants`.
-
-```{r annotate_basics, eval=FALSE}
-library("GenomicFeatures")
-# comment the next line if optional step "filter_vcf" is included
-vcf_filter <- getColumn(sal, "create_vcf")
-# uncomment the next line if optional step "filter_vcf" is included
-# copyEnvir(sal, "vcf_filter", globalenv())
-txdb <- loadDb("./data/tair10.sqlite")
-vcf <- readVcf(vcf_filter[1], "A. thaliana")
-locateVariants(vcf, txdb, CodingVariants())
-```
-
-Synonymous/non-synonymous variants of coding sequences are computed by the 
-`predictCoding` function for variants overlapping with coding regions.
-
-```{r annotate_basics_non-synon, eval=FALSE}
-fa <- FaFile("data/tair10.fasta")
-predictCoding(vcf, txdb, seqSource = fa)
-```
-
 ### Annotate filtered variants `GATK` or `BCFtools`
+
+In this step, we use _SnpEff_ to annotate the filtered variants. This tool 
+provides a powerful way to predict the effects of genetic variants on genes and proteins.
 
 **required**
 
 ```{r annotate_vcf, eval=FALSE, spr=TRUE}
-appendStep(sal) <- LineWise(
-    code = {
-        # get the filtered vcf path from R running environment
-        copyEnvir(sal, "vcf_filter", globalenv())  
-        library("GenomicFeatures")
-        txdb <- loadDb("./data/tair10.sqlite")
-        fa <- FaFile("data/tair10.fasta")
-        vcf_anno <- suppressMessages(suppressWarnings(variantReport(vcf_filter, txdb = txdb, fa = fa, organism = "A. thaliana", out_dir = "results/vcf_anno")))
-    },
-    step_name = "annotate_vcf",
-    dependency = "filter_vcf"
+appendStep(sal) <- SYSargsList(
+  step_name = "annotate_vcf",
+  targets = "create_vcf", dir = TRUE,
+  wf_file = "gatk/snpeff.cwl",
+  input_file = "gatk/gatk.yaml",
+  dir_path = "param/cwl",
+  inputvars = c(SampleName = "_SampleName_", vcf_raw = "_vcf_raw_"),
+  dependency = c("create_vcf")
 )
-```
-
-View annotation result for single sample
-```{r view_annotation, eval=FALSE}
-copyEnvir(sal, "vcf_anno", globalenv())
-read.delim(vcf_anno[1])[38:40, ]
 ```
 
 ## Combine annotation results among samples
 
-To simplify comparisons among samples, the `combineVarReports`
-function combines all variant annotation reports referenced in a
-`SYSargs2` instance (here `args`). At the same time the function
-allows to consider only certain feature types of interest. For instance, the
-below setting `filtercol=c(Consequence="nonsynonymous")` will include
-only nonsysynonymous variances listed in the `Consequence` column of
-the annotation reports. To omit filtering, one can use the setting
-`filtercol="All"`.
+When the annotation is done on each vcf file, next, all annotated vcfs 
+can be imported as single lists with large vranges. 
 
 ### Combine results 
 
@@ -978,19 +984,48 @@ the annotation reports. To omit filtering, one can use the setting
 
 ```{r combine_var, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
-    code = {
-        combineDF <- combineVarReports(vcf_anno, filtercol = c(Consequence = "nonsynonymous"))
-        write.table(combineDF, "./results/combineDF_nonsyn.tsv", quote = FALSE, row.names = FALSE, sep = "\t")
-    },
-    step_name = "combine_var",
-    dependency = "annotate_vcf"
+  code = {
+    vcf_anno <- getColumn(sal, "annotate_vcf", position = "outfiles", column = "ann_vcf")
+    
+    clean_vcf_file <- function(path) {
+      lines <- readLines(path, warn = FALSE)
+      if (!length(lines)) return(path)
+      header_start <- which(grepl("^##fileformat=", lines, perl = TRUE))[1]
+      if (is.na(header_start) || header_start <= 1) return(path)
+      writeLines(lines[header_start:length(lines)], path)
+      path
+    }
+    
+    vcf_anno <- vapply(vcf_anno, clean_vcf_file, FUN.VALUE = character(1))
+    vr_from_vcf <- function(path) {
+      message("Importing annotated VCF: ", path)
+      vcf <- suppressWarnings(VariantAnnotation::readVcf(path, "Homo sapiens"))
+      
+      ft <- VariantAnnotation::geno(vcf)$FT
+      if (!is.null(ft) && !isTRUE(is.character(ft))) {
+        ft_vec <- as.character(ft)
+        ft_clean <- matrix(ft_vec, ncol = 1)
+        if (!is.null(dim(ft))) {
+          ft_clean <- matrix(ft_vec, nrow = nrow(ft), dimnames = dimnames(ft))
+        }
+        VariantAnnotation::geno(vcf)$FT <- ft_clean
+      }
+      suppressWarnings(as(vcf, "VRanges"))
+    }
+    
+    vcf_vranges <- lapply(vcf_anno, vr_from_vcf)
+  },
+  step_name = "combine_var",
+  dependency = "annotate_vcf"
 )
 ```
 
 ## Summary statistics of variants
 
-The `varSummary` function counts the number of variants for each feature type
-included in the annotation reports.
+To clean up the vranges objects into more human-readable summaries, 
+we extract key annotation fields along with other key variant information
+into a long format table, where each row corresponds to a single variant annotation
+of a sample.
 
 ## Summary of variants
 
@@ -999,12 +1034,177 @@ included in the annotation reports.
 ```{r summary_var, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
-        write.table(varSummary(vcf_anno), "./results/variantStats.tsv", quote = FALSE, col.names = NA, sep = "\t")
+        ann_cols <- c(
+            "allele", "consequence", "effect", "gene", "gene_id", "feature_type",
+            "feature_id", "transcript_biotype", "rank", "hgvs_c", "hgvs_p",
+            "cdna", "cds", "aa", "distance", "warnings"
+        )
+
+        extract_ann_strings <- function(ann_obj, n) {
+            if (is.null(ann_obj)) {
+                return(rep(NA_character_, n))
+            }
+            if (inherits(ann_obj, "CompressedList") || is.list(ann_obj)) {
+                ann_list <- as.list(ann_obj)
+                return(vapply(ann_list, function(x) {
+                    if (length(x)) x[1] else NA_character_
+                }, character(1)))
+            }
+            if (is.character(ann_obj)) {
+                return(vapply(ann_obj, function(x) {
+                    if (is.na(x) || !nzchar(x)) return(NA_character_)
+                    strsplit(x, ",", fixed = TRUE)[[1]][1]
+                }, character(1)))
+            }
+            rep(NA_character_, n)
+        }
+
+        expand_ann_fields <- function(strings) {
+            if (!length(strings)) {
+                return(matrix(NA_character_, nrow = 0, ncol = length(ann_cols), dimnames = list(NULL, ann_cols)))
+            }
+            mats <- lapply(strings, function(entry) {
+                row <- rep(NA_character_, length(ann_cols))
+                if (!is.na(entry) && nzchar(entry)) {
+                    tokens <- strsplit(entry, "\\|", fixed = FALSE)[[1]]
+                    row[seq_len(min(length(tokens), length(ann_cols)))] <- tokens[seq_len(min(length(tokens), length(ann_cols)))]
+                }
+                row
+            })
+            mat <- do.call(rbind, mats)
+            colnames(mat) <- ann_cols
+            mat
+        }
+
+        summarize_sample <- function(sample_id, vr) {
+            if (!length(vr)) return(NULL)
+            ann_vec <- extract_ann_strings(S4Vectors::mcols(vr)$ANN, length(vr))
+            ann_df <- as.data.frame(expand_ann_fields(ann_vec), stringsAsFactors = FALSE)
+            if (!nrow(ann_df)) return(NULL)
+            data.frame(
+                sample = sample_id,
+                seqnames = as.character(GenomicRanges::seqnames(vr)),
+                start = BiocGenerics::start(vr),
+                end = BiocGenerics::end(vr),
+                ref = as.character(VariantAnnotation::ref(vr)),
+                alt = as.character(VariantAnnotation::alt(vr)),
+                gene = ann_df$gene,
+                consequence = ann_df$consequence,
+                effect = ann_df$effect,
+                stringsAsFactors = FALSE
+            )
+        }
+
+        variant_tables <- Map(summarize_sample, names(vcf_vranges), vcf_vranges)
+        variant_tables <- Filter(function(x) !is.null(x) && nrow(x), variant_tables)
+
+        summary_var <- dplyr::bind_rows(variant_tables) |>
+          dplyr::as_tibble() |>
+          dplyr::mutate(location = paste0(seqnames, ":", start)) |>
+          dplyr::relocate(location, .after = "sample")
+        utils::write.table(summary_var, file = "results/variant_summary_long.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
     },
     step_name = "summary_var",
     dependency = "combine_var"
 )
 ```
+
+## Plot variants stats
+
+**Optional** but included in the default
+
+After the summary table is created, we can plot some statistics of the variants.
+Here this step plots the number of _nonsynonymous_ and _HIGH_ impact variants
+for each sample.
+
+```{r plot_var_stats, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        library(ggplot2)
+        plot_summary_data <- summary_var |>
+          dplyr::filter(
+            consequence %in% c(
+              "nonsynonymous_variant", "stop_gained", "frameshift_variant", 
+              "splice_acceptor_variant", "splice_donor_variant",
+              "start_lost", "stop_lost"
+            ),
+            effect == "HIGH"
+          ) |>
+          dplyr::mutate(
+            sample = factor(sample, levels = getColumn(sal, step = "annotate_vcf", position = "targetsWF", column = "SampleName")),
+            sex = getColumn(sal, step = "annotate_vcf", position = "targetsWF", column = "Factor")[sample]
+          )
+                assign("plot_summary_data", plot_summary_data, envir = .GlobalEnv)
+        
+        png("./results/var_summary.png")
+        p_var_summary <- ggplot(plot_summary_data) +
+          geom_bar(aes(x = sample, fill = sex), alpha = 0.75) +
+          scale_fill_brewer(palette = "Set2") +
+          theme_minimal()
+        print(p_var_summary)
+        dev.off()
+    },
+    step_name = "plot_var_stats",
+    dependency = "summary_var"
+)
+```
+
+![](results/var_summary.png)
+<div align="center">Figure 3: high impact variant summary</div></br>
+
+
+## Compare high-impact variants by sex
+
+**Optional** but included in the default
+
+To visualize whether male and female samples carry different burdens of
+high-impact variants, the following step reuses the `plot_summary_data`
+object, produces a simple boxplot across the two groups, and overlays a
+Wilcoxon rank-sum p-value for a quick statistical comparison.
+
+```{r plot_var_boxplot, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        if (!exists("plot_summary_data", inherits = FALSE)) {
+            stop("'plot_summary_data' not found. Please run 'plot_var_stats' first.")
+        }
+        library(ggplot2)
+        boxplot_data <- plot_summary_data |>
+            dplyr::count(sample, sex, name = "n_variants")
+
+        p_label <- tryCatch({
+            if (dplyr::n_distinct(boxplot_data$sex) < 2) return("Wilcoxon test not applicable")
+            p_val <- stats::wilcox.test(n_variants ~ sex, data = boxplot_data)$p.value
+            paste0("Wilcoxon p = ", signif(p_val, 3))
+        }, error = function(...) "Wilcoxon test failed")
+
+        label_y <- max(boxplot_data$n_variants, na.rm = TRUE) * 1.1
+
+        png("./results/var_summary_boxplot.png")
+        p_summary_boxplot <- ggplot(boxplot_data, aes(x = sex, y = n_variants, fill = sex)) +
+            geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+            geom_jitter(width = 0.15, size = 2, alpha = 0.8) +
+            labs(
+                title = "High-impact variants by sex",
+                x = "Sex",
+                y = "Variant count"
+            ) +
+            scale_fill_brewer(palette = "Set2", guide = "none") +
+            annotate("text", x = 1.5, y = label_y, label = p_label, fontface = "bold") +
+            theme_minimal() +
+            expand_limits(y = label_y * 1.05)
+        print(p_summary_boxplot)
+        dev.off()
+    },
+    step_name = "plot_var_boxplot",
+    dependency = "plot_var_stats"
+)
+```
+
+![](results/var_summary_boxplot.png)
+<div align="center">Figure 4: distribution of high-impact variants per sex.</div></br>
+
+
 
 ## Venn diagram of variants
 
@@ -1013,25 +1213,35 @@ appendStep(sal) <- LineWise(
 The venn diagram utilities defined by the `systemPipeR` package can be used to
 identify common and unique variants reported for different samples
 and/or variant callers. The below generates a 3-way venn diagram
-comparing 3 samples for each of the two variant callers.
+comparing 3 samples.
 
 ```{r venn_diagram, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
-        ## make a list of first three samples
-        varlist <- sapply(names(vcf_anno[1:3]), function(x) as.character(read.delim(vcf_anno[x])$VARID))
-        vennset <- overLapper(varlist, type = "vennsets")
+        top_n <- min(3, length(variant_tables))
+        selected_tables <- variant_tables[seq_len(top_n)]
+        if (is.null(names(selected_tables)) || any(!nzchar(names(selected_tables)))) {
+            names(selected_tables) <- paste0("Sample_", seq_along(selected_tables))
+        }
+
+        variant_sets <- lapply(selected_tables, function(df) {
+            if (!nrow(df)) return(character(0))
+            unique(paste0(df$seqnames, ":", df$start, "_", df$ref, "/", df$alt))
+        })
+
+        vennset <- overLapper(variant_sets, type = "vennsets")
         png("./results/vennplot_var.png")
-        vennPlot(list(vennset), mymain = "Venn Plot of First 3 Samples", mysub = "", colmode = 2, ccol = c("red", "blue"))
+        vennPlot(vennset, mymain = "Venn Plot of First 3 Samples", mysub = "", colmode = 2, ccol = c("red", "blue"))
         dev.off()
     },
     step_name = "venn_diagram",
-    dependency = "annotate_vcf"
+    dependency = "summary_var"
 )
 ```
 
 ![](results/vennplot_var.png)
-<div align="center">Figure 2: Venn Diagram for 3 samples from GATK and BCFtools</div></br>
+<div align="center">Figure 5: Venn Diagram for 3 samples</div></br>
+
 
 ## Plot variants programmatically 
 
@@ -1041,37 +1251,81 @@ The following plots a selected variant with `ggbio`.
 
 In this example, the input `BAM` file is from the `GATK` step 5, analysis ready bam. 
 You can use other aligned `BAMs` as well, but make sure they are indexed. The `VCF` 
-file is taken from `Inspect VCF file ` section or you can load your own vcf.
+file is taken from `create_vcf` step or you can load your own vcf.
 
 ```{r plot_variant, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
-        # get the filtered vcf path from R running environment
-        copyEnvir(sal, "vcf_filter", globalenv())  
+        
+        first_high <- summary_var |>
+          dplyr::filter(effect == "HIGH") |>
+          head(n = 1)
+        
         library(ggbio)
         library(VariantAnnotation)
-        mychr <- "ChrM"
-        mystart <- 19000
-        myend <- 21000
-        bams <- getColumn(sal, "fix_tag")
-        vcf <- suppressWarnings(readVcf(vcf_filter["M6B"], "A. thaliana"))
-        ga <- readGAlignments(bams["M6B"], use.names = TRUE, param = ScanBamParam(which = GRanges(mychr, IRanges(mystart, myend))))
+        mychr <- as.character(first_high$seqnames)
+        mystart <- as.numeric(first_high$start) - 500
+        myend <- as.numeric(first_high$end) + 500
+        bam_path <- getColumn(sal, "fix_tag")[first_high$sample]
+        vcf_path <- getColumn(sal, step = "create_vcf")[first_high$sample]
+        
+        vcf <- suppressWarnings(readVcf(vcf_path, "Homo sapiens"))
+        ga <- readGAlignments(bam_path, use.names = TRUE, param = ScanBamParam(which = GRanges(mychr, IRanges(mystart, myend))))
+        simplify_info <- function(vcf_obj) {
+            # Drop list-like INFO fields so VRanges coercion receives plain vectors
+            info_df <- VariantAnnotation::info(vcf_obj)
+            if (!ncol(info_df)) return(vcf_obj)
+            keep_idx <- vapply(as.list(info_df), function(col) is.atomic(col) && !is.list(col), logical(1))
+            if (any(keep_idx)) {
+                info(vcf_obj) <- info_df[, keep_idx, drop = FALSE]
+            } else {
+                info(vcf_obj) <- S4Vectors::DataFrame()
+            }
+            vcf_obj
+        }
+        normalize_ft <- function(vcf_obj) {
+            # Ensure genotype FT matrix stores plain character strings per sample
+            ft <- VariantAnnotation::geno(vcf_obj)$FT
+            if (is.null(ft) || !length(ft)) return(vcf_obj)
+            ft_vec <- as.character(ft)
+            dims <- dim(ft)
+            if (is.null(dims)) {
+                ft_mat <- matrix(ft_vec, ncol = 1)
+                colnames(ft_mat) <- colnames(vcf_obj)
+            } else {
+                ft_mat <- matrix(ft_vec, nrow = dims[1], dimnames = dimnames(ft))
+            }
+            VariantAnnotation::geno(vcf_obj)$FT <- ft_mat
+            vcf_obj
+        }
+        vcf_chr <- normalize_ft(simplify_info(vcf[seqnames(vcf) == mychr]))
+        vr <- suppressWarnings(as(vcf_chr, "VRanges"))
+        vr_region <- vr[start(vr) >= mystart & end(vr) <= myend]
+        if (!length(vr_region)) {
+            vr_region <- vr
+        }
         p1 <- autoplot(ga, geom = "rect")
         p2 <- autoplot(ga, geom = "line", stat = "coverage")
-        p3 <- autoplot(vcf[seqnames(vcf) == mychr], type = "fixed") +
+        p3 <- autoplot(vr_region, type = "fixed") +
             xlim(mystart, myend) +
             theme(legend.position = "none", axis.text.y = element_blank(), axis.ticks.y = element_blank())
-        p4 <- autoplot(loadDb("./data/tair10.sqlite"), which = GRanges(mychr, IRanges(mystart, myend)), names.expr = "gene_id")
-        p1_4 <- tracks(Reads = p1, Coverage = p2, Variant = p3, Transcripts = p4, heights = c(0.3, 0.2, 0.1, 0.35)) + ylab("")
-        ggbio::ggsave(p1_4, filename = "./results/plot_variant.png", units = "in")
+        p1_3 <- tracks(
+            place_holder = ggplot2::ggplot(),
+            Reads = p1,
+            Coverage = p2,
+            Variant = p3,
+            heights = c(0, 0.3, 0.2, 0.1)
+        ) + ylab("")
+        ggbio::ggsave(p1_3, filename = "./results/plot_variant.png", units = "in")
     },
     step_name = "plot_variant",
-    dependency = "filter_vcf"
+    dependency = "summary_var"
 )
 ```
 
 ![](results/plot_variant.png)
-<div align="center">Figure 3: Plot variants with programmatically.</div></br>
+<div align="center">Figure 6: Variant plot for selected region</div></br>
+
 
 ## Workflow Information
 
@@ -1104,9 +1358,9 @@ system is used for load balancing.
 
 The `resources` list object provides the number of independent parallel cluster 
 processes defined under the `Njobs` element in the list. The following example 
-will run 18 processes in parallel using each 4 CPU cores. 
-If the resources available on a cluster allow running all 18 processes at the 
-same time, then the shown sample submission will utilize in a total of 72 CPU cores.
+will run 8 processes in parallel using 4 CPU cores per sample. 
+If the resources available on a cluster allow running all 8 processes at the 
+same time, then the shown sample submission will utilize a total of 32 CPU cores.
 
 Note, `runWF` can be used with most queueing systems as it is based on utilities 
 from the `batchtools` package, which supports the use of template files (_`*.tmpl`_)
@@ -1124,7 +1378,7 @@ function:
 # wall time in mins, memory in MB
 resources <- list(conffile=".batchtools.conf.R",
                   template="batchtools.slurm.tmpl", 
-                  Njobs=18, 
+                  Njobs=8, 
                   walltime=120,
                   ntasks=1,
                   ncpus=4, 
@@ -1169,7 +1423,7 @@ to check if you have a modular system.
 The following code will print out tools required in your custom SPR project in the report. 
 In case you are running the workflow for the first time and do not have a project yet, or you 
 just want to browser this workflow, following code displays the tools required by default.
-```{r list_tools}
+```{r list_tools, eval=FALSE}
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     local({
         sal <- systemPipeR::SPRproject(resume = TRUE)
@@ -1179,7 +1433,7 @@ if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
 } else {
     cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
     cat(c("trimmomatic/0.39", "samtools/1.14", "gatk/4.2.0.0", "bcftools/1.15", 
-          "bwa/0.7.17"), sep = "\n")
+          "bwa/0.7.17", "snpEff/5.3"), sep = "\n")
 }
 ```
 
