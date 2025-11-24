@@ -949,7 +949,7 @@ appendStep(sal) <- LineWise(
 )
 ```
 
-![Variant Filtering Summary per Sample](results/summary_filter_plot.png)
+![](results/summary_filter_plot.png)
 <div align="center">Figure 2: Variant Filtering Summary per Sample</div></br>
 
 ## Annotate filtered variants
@@ -1423,7 +1423,7 @@ to check if you have a modular system.
 The following code will print out tools required in your custom SPR project in the report. 
 In case you are running the workflow for the first time and do not have a project yet, or you 
 just want to browser this workflow, following code displays the tools required by default.
-```{r list_tools, eval=FALSE}
+```{r list_tools, eval=TRUE}
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     local({
         sal <- systemPipeR::SPRproject(resume = TRUE)
