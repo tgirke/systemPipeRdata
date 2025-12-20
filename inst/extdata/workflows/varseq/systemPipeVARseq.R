@@ -21,32 +21,12 @@ suppressPackageStartupMessages({
 })
 
 
-## ----download_commands, eval=TRUE-----------------------------------------------------------------------------------------------------------------------
-targets <- read.delim("targetsPE_varseq.txt", comment.char = "#")
+## ----download_commands, eval=FALSE----------------------------------------------------------------------------------------------------------------------
+# source(system.file("extdata", "workflows", "varseq", "VARseq_helper.R", package = "systemPipeRdata"))
+# 
+# varseq_example_dataset_download_cmd()
+# 
 
-build_wget <- function(url_base, file_path) {
-    url_clean <- sub("/+$$", "", url_base)
-    src <- paste0(url_clean, "/", basename(file_path))
-    dest <- file_path
-    sprintf("wget %s -O %s", src, dest)
-}
-
-commands <- unlist(Map(function(url, f1, f2) {
-    c(build_wget(url, f1), build_wget(url, f2))
-}, targets$url, targets$FileName1, targets$FileName2))
-
-cat(paste0(paste0(commands, " &\n", collapse = ""), "wait\n"))
-
-
-## # hg38 reference gnome
-## wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
-## gunzip hg38.fa.gz
-## 
-## # Download SnpEff
-## wget https://snpeff.odsp.astrazeneca.com/versions/snpEff_latest_core.zip
-## unzip snpEff_latest_core.zip
-## rm snpEff_latest_core.zip
-## # the tool path can be used with `java -jar snpEff/snpEff.jar`
 
 ## ----generate_workenvir, eval=FALSE---------------------------------------------------------------------------------------------------------------------
 # library(systemPipeRdata)
@@ -117,6 +97,19 @@ knitr::include_graphics("results/plotwf_varseq.png")
 #     ),
 #     dependency = "load_SPR"
 # )
+
+
+## ----fastq_report, eval=FALSE, message=FALSE, spr=TRUE--------------------------------------------------------------------------------------------------
+# appendStep(sal) <- LineWise(code = {
+#   fastq1 <- getColumn(sal, step = "fastqc", "targetsWF", column = 1)
+#   fastq2 <- getColumn(sal, step = "fastqc", "targetsWF", column = 2)
+#   fastq <- setNames(c(rbind(fastq1, fastq2)), c(rbind(names(fastq1), names(fastq2))))
+#   fqlist <- seeFastq(fastq = fastq, batchsize = 1000, klength = 8)
+#   png("./results/fastqReport_varseq.png", height = 650, width = 288 * length(fqlist))
+#   seeFastqPlot(fqlist)
+#   dev.off()
+# }, step_name = "fastq_report",
+# dependency = "fastqc")
 
 
 ## ----trimmomatic, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
@@ -388,20 +381,6 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----create_vcf_BCFtool, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------
-# appendStep(sal) <- SYSargsList(
-#     step_name = "create_vcf_BCFtool",
-#     targets = "bwa_alignment", dir = TRUE,
-#     wf_file = "workflow-bcftools/workflow_bcftools.cwl",
-#     input_file = "workflow-bcftools/bcftools.yml",
-#     dir_path = "param/cwl",
-#     inputvars = c(bwa_men_sam = "_bwasam_", SampleName = "_SampleName_"),
-#     rm_targets_col = c("preprocessReads_1", "preprocessReads_2"),
-#     dependency = "bwa_alignment",
-#     run_step = "optional"
-# )
-
-
 ## ----inspect_vcf, eval=FALSE----------------------------------------------------------------------------------------------------------------------------
 # library(VariantAnnotation)
 # vcf_raw <- getColumn(sal, "create_vcf")
@@ -425,23 +404,6 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----filter_vcf_BCFtools, eval=FALSE, spr=TRUE----------------------------------------------------------------------------------------------------------
-# appendStep(sal) <- LineWise(
-#     code = {
-#         vcf_raw <- getColumn(sal, step = "create_vcf_BCFtool",
-#                              position = "outfiles", column = "bcftools_call")
-#         library(VariantAnnotation)
-#         filter <- "rowSums(vr) >= 2 & (rowSums(vr[,3:4])/rowSums(vr[,1:4]) >= 0.8)"
-#         vcf_filter_bcf <- suppressWarnings(filterVars(vcf_raw, filter, organism = "Homo sapiens", out_dir = "results/vcf_filter_BCFtools", varcaller = "bcftools"))
-# 
-#         updateColumn(sal, 'create_vcf', "outfiles") <- data.frame(vcf_filter_bcf=vcf_filter_bcf)
-#     },
-#     step_name = "filter_vcf_BCFtools",
-#     dependency = "create_vcf_BCFtool",
-#     run_step = "optional"
-# )
-
-
 ## ----check_filter, eval=FALSE---------------------------------------------------------------------------------------------------------------------------
 # copyEnvir(sal, "vcf_raw", globalenv())
 # copyEnvir(sal, "vcf_filter", globalenv())
@@ -452,6 +414,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 ## ----summary_filter, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------------
 # appendStep(sal) <- LineWise(
 #     code = {
+# 
 #           # read in the cohort VCF file
 #           vcf_all <- suppressWarnings(VariantAnnotation::readVcf("./results/samples_filter.vcf.gz", "Homo sapiens"))
 # 
@@ -473,18 +436,10 @@ knitr::include_graphics("results/plotwf_varseq.png")
 #           write.table(overall_counts, file = "results/summary_filter_overall.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
 #           write.table(sample_filter_summary, file = "results/summary_filter_per_sample.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
 # 
-#           p_filter <- ggplot2::ggplot(sample_filter_summary, ggplot2::aes(x = sample)) +
-#             ggplot2::geom_bar(ggplot2::aes(y = passed, fill = "Passed"), stat = "identity") +
-#             ggplot2::geom_bar(ggplot2::aes(y = -filtered, fill = "Filtered"), stat = "identity") +
-#             ggplot2::coord_flip() +
-#             ggplot2::labs(y = "Number of Variants", fill = "Variant Status", title = "Variant Filtering Summary per Sample") +
-#             ggplot2::theme_minimal() +
-#             ggplot2::scale_fill_manual(values = c("Passed" = "steelblue", "Filtered" = "salmon")) +
-#             ggplot2::theme(
-#                 plot.title = ggplot2::element_text(hjust = 0.5),
-#                 axis.text.y = ggplot2::element_text(size = 8)
-#             )
+#           library(ggplot2)
+#           source("VARseq_help.R")
 #           png("results/summary_filter_plot.png", width = 800, height = 600)
+#           p_filter <- plot_summary_filter_plot(sample_filter_summary)
 #           print(p_filter)
 #           dev.off()
 # 
@@ -500,13 +455,13 @@ knitr::include_graphics("results/plotwf_varseq.png")
 
 ## ----annotate_vcf, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------
 # appendStep(sal) <- SYSargsList(
-#   step_name = "annotate_vcf",
-#   targets = "create_vcf", dir = TRUE,
-#   wf_file = "gatk/snpeff.cwl",
-#   input_file = "gatk/gatk.yaml",
-#   dir_path = "param/cwl",
-#   inputvars = c(SampleName = "_SampleName_", vcf_raw = "_vcf_raw_"),
-#   dependency = c("create_vcf")
+#     step_name = "annotate_vcf",
+#     targets = "create_vcf", dir = TRUE,
+#     wf_file = "gatk/snpeff.cwl",
+#     input_file = "gatk/gatk.yaml",
+#     dir_path = "param/cwl",
+#     inputvars = c(SampleName = "_SampleName_", vcf_raw = "_vcf_raw_"),
+#     dependency = c("create_vcf")
 # )
 
 
@@ -551,78 +506,35 @@ knitr::include_graphics("results/plotwf_varseq.png")
 ## ----summary_var, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
 # appendStep(sal) <- LineWise(
 #     code = {
-#         ann_cols <- c(
-#             "allele", "consequence", "effect", "gene", "gene_id", "feature_type",
-#             "feature_id", "transcript_biotype", "rank", "hgvs_c", "hgvs_p",
-#             "cdna", "cds", "aa", "distance", "warnings"
-#         )
-# 
-#         extract_ann_strings <- function(ann_obj, n) {
-#             if (is.null(ann_obj)) {
-#                 return(rep(NA_character_, n))
-#             }
-#             if (inherits(ann_obj, "CompressedList") || is.list(ann_obj)) {
-#                 ann_list <- as.list(ann_obj)
-#                 return(vapply(ann_list, function(x) {
-#                     if (length(x)) x[1] else NA_character_
-#                 }, character(1)))
-#             }
-#             if (is.character(ann_obj)) {
-#                 return(vapply(ann_obj, function(x) {
-#                     if (is.na(x) || !nzchar(x)) return(NA_character_)
-#                     strsplit(x, ",", fixed = TRUE)[[1]][1]
-#                 }, character(1)))
-#             }
-#             rep(NA_character_, n)
-#         }
-# 
-#         expand_ann_fields <- function(strings) {
-#             if (!length(strings)) {
-#                 return(matrix(NA_character_, nrow = 0, ncol = length(ann_cols), dimnames = list(NULL, ann_cols)))
-#             }
-#             mats <- lapply(strings, function(entry) {
-#                 row <- rep(NA_character_, length(ann_cols))
-#                 if (!is.na(entry) && nzchar(entry)) {
-#                     tokens <- strsplit(entry, "\\|", fixed = FALSE)[[1]]
-#                     row[seq_len(min(length(tokens), length(ann_cols)))] <- tokens[seq_len(min(length(tokens), length(ann_cols)))]
-#                 }
-#                 row
-#             })
-#             mat <- do.call(rbind, mats)
-#             colnames(mat) <- ann_cols
-#             mat
-#         }
-# 
-#         summarize_sample <- function(sample_id, vr) {
-#             if (!length(vr)) return(NULL)
-#             ann_vec <- extract_ann_strings(S4Vectors::mcols(vr)$ANN, length(vr))
-#             ann_df <- as.data.frame(expand_ann_fields(ann_vec), stringsAsFactors = FALSE)
-#             if (!nrow(ann_df)) return(NULL)
-#             data.frame(
-#                 sample = sample_id,
-#                 seqnames = as.character(GenomicRanges::seqnames(vr)),
-#                 start = BiocGenerics::start(vr),
-#                 end = BiocGenerics::end(vr),
-#                 ref = as.character(VariantAnnotation::ref(vr)),
-#                 alt = as.character(VariantAnnotation::alt(vr)),
-#                 gene = ann_df$gene,
-#                 consequence = ann_df$consequence,
-#                 effect = ann_df$effect,
-#                 stringsAsFactors = FALSE
-#             )
-#         }
-# 
-#         variant_tables <- Map(summarize_sample, names(vcf_vranges), vcf_vranges)
-#         variant_tables <- Filter(function(x) !is.null(x) && nrow(x), variant_tables)
-# 
-#         summary_var <- dplyr::bind_rows(variant_tables) |>
-#           dplyr::as_tibble() |>
-#           dplyr::mutate(location = paste0(seqnames, ":", start)) |>
-#           dplyr::relocate(location, .after = "sample")
+#         source("VARseq_help.R")
+#         summary_var <- extract_var_table(vcf_vranges)
 #         utils::write.table(summary_var, file = "results/variant_summary_long.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
 #     },
 #     step_name = "summary_var",
 #     dependency = "combine_var"
+# )
+
+
+## ----plot_var_consequence, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------
+# appendStep(sal) <- LineWise(
+#     code = {
+#         library(ggplot2)
+#         effect_counts <- summary_var |>
+#           dplyr::count(sample, effect, name = "n")
+# 
+#         png("./results/var_consequence_log.png", width = 1000, height = 600)
+#         p_var_consequence_log <- ggplot(effect_counts, aes(sample, n, fill = effect)) +
+#         geom_col(position = "dodge", alpha = 0.8) +
+#         geom_text(aes(label = scales::comma(n)), position = position_dodge(width = 0.9), vjust = -0.2, size = 3) +
+#         scale_y_continuous(trans = "log10", labels = scales::comma_format()) +
+#         labs(y = "Variant count (log10 scale)", title = "Variant consequences (log scale)") +
+#         theme_minimal() +
+#         theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#         print(p_var_consequence_log)
+#         dev.off()
+#     },
+#     step_name = "plot_var_consequence",
+#     dependency = "summary_var"
 # )
 
 
@@ -643,7 +555,6 @@ knitr::include_graphics("results/plotwf_varseq.png")
 #             sample = factor(sample, levels = getColumn(sal, step = "annotate_vcf", position = "targetsWF", column = "SampleName")),
 #             sex = getColumn(sal, step = "annotate_vcf", position = "targetsWF", column = "Factor")[sample]
 #           )
-#                 assign("plot_summary_data", plot_summary_data, envir = .GlobalEnv)
 # 
 #         png("./results/var_summary.png")
 #         p_var_summary <- ggplot(plot_summary_data) +
@@ -661,34 +572,11 @@ knitr::include_graphics("results/plotwf_varseq.png")
 ## ----plot_var_boxplot, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------------------
 # appendStep(sal) <- LineWise(
 #     code = {
-#         if (!exists("plot_summary_data", inherits = FALSE)) {
-#             stop("'plot_summary_data' not found. Please run 'plot_var_stats' first.")
-#         }
+#         source("VARseq_help.R")
+#         # change the sample and group columns as needed
+#         p_summary_boxplot <- plot_summary_boxplot(plot_summary_data, sample_col = "sample", group_col = "sex")
 #         library(ggplot2)
-#         boxplot_data <- plot_summary_data |>
-#             dplyr::count(sample, sex, name = "n_variants")
-# 
-#         p_label <- tryCatch({
-#             if (dplyr::n_distinct(boxplot_data$sex) < 2) return("Wilcoxon test not applicable")
-#             p_val <- stats::wilcox.test(n_variants ~ sex, data = boxplot_data)$p.value
-#             paste0("Wilcoxon p = ", signif(p_val, 3))
-#         }, error = function(...) "Wilcoxon test failed")
-# 
-#         label_y <- max(boxplot_data$n_variants, na.rm = TRUE) * 1.1
-# 
 #         png("./results/var_summary_boxplot.png")
-#         p_summary_boxplot <- ggplot(boxplot_data, aes(x = sex, y = n_variants, fill = sex)) +
-#             geom_boxplot(alpha = 0.6, outlier.shape = NA) +
-#             geom_jitter(width = 0.15, size = 2, alpha = 0.8) +
-#             labs(
-#                 title = "High-impact variants by sex",
-#                 x = "Sex",
-#                 y = "Variant count"
-#             ) +
-#             scale_fill_brewer(palette = "Set2", guide = "none") +
-#             annotate("text", x = 1.5, y = label_y, label = p_label, fontface = "bold") +
-#             theme_minimal() +
-#             expand_limits(y = label_y * 1.05)
 #         print(p_summary_boxplot)
 #         dev.off()
 #     },
@@ -724,11 +612,10 @@ knitr::include_graphics("results/plotwf_varseq.png")
 ## ----plot_variant, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------
 # appendStep(sal) <- LineWise(
 #     code = {
-# 
+#         source("VARseq_help.R")
 #         first_high <- summary_var |>
 #           dplyr::filter(effect == "HIGH") |>
 #           head(n = 1)
-# 
 #         library(ggbio)
 #         library(VariantAnnotation)
 #         mychr <- as.character(first_high$seqnames)
@@ -739,33 +626,6 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # 
 #         vcf <- suppressWarnings(readVcf(vcf_path, "Homo sapiens"))
 #         ga <- readGAlignments(bam_path, use.names = TRUE, param = ScanBamParam(which = GRanges(mychr, IRanges(mystart, myend))))
-#         simplify_info <- function(vcf_obj) {
-#             # Drop list-like INFO fields so VRanges coercion receives plain vectors
-#             info_df <- VariantAnnotation::info(vcf_obj)
-#             if (!ncol(info_df)) return(vcf_obj)
-#             keep_idx <- vapply(as.list(info_df), function(col) is.atomic(col) && !is.list(col), logical(1))
-#             if (any(keep_idx)) {
-#                 info(vcf_obj) <- info_df[, keep_idx, drop = FALSE]
-#             } else {
-#                 info(vcf_obj) <- S4Vectors::DataFrame()
-#             }
-#             vcf_obj
-#         }
-#         normalize_ft <- function(vcf_obj) {
-#             # Ensure genotype FT matrix stores plain character strings per sample
-#             ft <- VariantAnnotation::geno(vcf_obj)$FT
-#             if (is.null(ft) || !length(ft)) return(vcf_obj)
-#             ft_vec <- as.character(ft)
-#             dims <- dim(ft)
-#             if (is.null(dims)) {
-#                 ft_mat <- matrix(ft_vec, ncol = 1)
-#                 colnames(ft_mat) <- colnames(vcf_obj)
-#             } else {
-#                 ft_mat <- matrix(ft_vec, nrow = dims[1], dimnames = dimnames(ft))
-#             }
-#             VariantAnnotation::geno(vcf_obj)$FT <- ft_mat
-#             vcf_obj
-#         }
 #         vcf_chr <- normalize_ft(simplify_info(vcf[seqnames(vcf) == mychr]))
 #         vr <- suppressWarnings(as(vcf_chr, "VRanges"))
 #         vr_region <- vr[start(vr) >= mystart & end(vr) <= myend]
@@ -832,18 +692,18 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # sal <- renderLogs(sal)
 
 
-## ----list_tools, eval=FALSE-----------------------------------------------------------------------------------------------------------------------------
-# if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
-#     local({
-#         sal <- systemPipeR::SPRproject(resume = TRUE)
-#         systemPipeR::listCmdTools(sal)
-#         systemPipeR::listCmdModules(sal)
-#     })
-# } else {
-#     cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
-#     cat(c("trimmomatic/0.39", "samtools/1.14", "gatk/4.2.0.0", "bcftools/1.15",
-#           "bwa/0.7.17", "snpEff/5.3"), sep = "\n")
-# }
+## ----list_tools, eval=TRUE------------------------------------------------------------------------------------------------------------------------------
+if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
+    local({
+        sal <- systemPipeR::SPRproject(resume = TRUE)
+        systemPipeR::listCmdTools(sal)
+        systemPipeR::listCmdModules(sal)
+    })
+} else {
+    cat(crayon::blue$bold("Tools and modules required by this workflow are:\n"))
+    cat(c("trimmomatic/0.39", "samtools/1.14", "gatk/4.2.0.0", "bcftools/1.15", 
+          "bwa/0.7.17", "snpEff/5.3"), sep = "\n")
+}
 
 
 ## ----report_session_info, eval=TRUE---------------------------------------------------------------------------------------------------------------------
