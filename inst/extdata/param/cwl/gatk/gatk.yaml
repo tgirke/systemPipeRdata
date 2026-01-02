@@ -4,7 +4,9 @@
 
 SampleName: _SampleName_
 
-ref_name: "tair10.fasta"
+genome_name: "hg38"
+
+ref_name: "hg38.fa"
 
 fq1:
   class: File
@@ -32,8 +34,8 @@ scripts_path:
   class: Directory
   path: param/cwl/gatk
 
-bwa_threads: 4
-thread: 4
+bwa_threads: 8
+thread: 8
 ## Step2
 ubam:
   class: File
@@ -70,6 +72,10 @@ raw_vcf:
 cohort_filtered_vcf:
   class: File
   path: results/samples_filter.vcf.gz
+## Step annotation
+filtered_vcf:
+  class: File
+  path: _vcf_raw_
 
 ################################################################
 ##                       Advanced Settings                    ##
@@ -79,4 +85,4 @@ cohort_filtered_vcf:
 ## e.g. gatk_java_options: "-Xmx4g -Xms2g"
 ## change the 3 single qoute to a single double qoute when run with cwltool
 
-gatk_java_options: '''-Xmx4g -Xms2g -Djava.io.tmpdir=/tmp'''
+gatk_java_options: '''-Xmx30g -Xms16g -Djava.io.tmpdir=/tmp'''
