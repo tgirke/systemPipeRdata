@@ -1,23 +1,43 @@
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: fastqc
+label: ""
+doc: |
+    written by Le Zhang
+        11/2025
+hints:
+  SoftwareRequirement:
+    packages:
+    - package: fastqc
+      version: [ 0.12.1 ]
+      
+baseCommand: [ fastqc ]
+
+arguments:
+  - prefix: 
+    valueFrom: $(inputs.fq1)
+    position: 1
+  
+  - prefix: 
+    valueFrom: $(inputs.fq2)
+    position: 1
+  
+  - prefix: "--outdir"
+    valueFrom: $(inputs.outdir)
+    position: 3
+    
+  - prefix: "--threads"
+    valueFrom: $(inputs.threads)
+    position: 4
+    
 inputs:
   fq1:
     type: File
-    inputBinding:
-      prefix: ~
   fq2:
     type: File
-    inputBinding:
-      prefix: ~
   outdir:
     type: string
-    inputBinding:
-      prefix: --outdir
   threads:
     type: string
-    inputBinding:
-      prefix: --threads
   results_path:
     label: "Path to the results directory"
     type: Directory
