@@ -1,41 +1,45 @@
-varseq_example_dataset_download_cmd <- function() {
-    targets <- read.delim(
-        system.file("extdata", "workflows", "varseq", "targetsPE_varseq.txt", package = "systemPipeRdata"),
-        comment.char = "#"
-    )
+###########################################
+## Helper Functions for VAR-Seq Workflow ##
+###########################################
+## Author: Le Zhang (w. some mods by Thomas Girke)
+## Last update: Dec 2025
+
+## Download example FASTQ files specified in targets file (e.g. targetsPE_varseq.txt)
+varseq_example_fastq <- function(targets) {
 	build_wget <- function(url_base, file_path) {
 		url_clean <- sub("/+$$", "", url_base)
 		src <- paste0(url_clean, "/", basename(file_path))
-		sprintf("wget %s -O %s", src, file_path)
+		sprintf("download.file('%s', '%s')", src, file_path)
 	}
-
 	download_pairs <- Map(function(url, f1, f2) {
 		c(build_wget(url, f1), build_wget(url, f2))
 	}, targets$url, targets$FileName1, targets$FileName2)
-
 	commands <- unlist(download_pairs, use.names = FALSE)
-	dynamic_block <- if (length(commands)) {
-		c(paste0(commands, " &"), "wait")
+    return(commands)
+}
+
+## Download reference genome
+download_ref <- function(ref="hg38.fa.gz") {
+	# Download hg38 reference genome
+	if(ref=="hg38.fa.gz") {
+	    download.file("https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz", "./data/hg38.fa.gz")
+	    R.utils::gunzip("./data/hg38.fa.gz")
 	} else {
-		"wait"
-	}
+        stop("Unsupported ref value.")
+    }
+}
 
-	static_block <- c(
-		"",
-		"# hg38 reference genome",
-		"wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz",
-		"gunzip hg38.fa.gz",
-		"",
-		"# Download SnpEff",
-		"wget https://snpeff.odsp.astrazeneca.com/versions/snpEff_latest_core.zip",
-		"unzip snpEff_latest_core.zip",
-		"rm snpEff_latest_core.zip",
-		"# the tool path can be used with `java -jar snpEff/snpEff.jar`"
-	)
-
-	script_lines <- c(dynamic_block, static_block)
-	paste(script_lines, collapse = "\n") |>
-	    cat(sep = "\n")
+## Download software (here snpEff)
+download_tool <- function(tool="snpEff_latest") {
+    # Download SnpEff
+	# the tool path can be used with `java -jar snpEff/snpEff.jar`"
+	if(tool=="snpEff_latest") {
+		download.file("https://snpeff.odsp.astrazeneca.com/versions/snpEff_latest_core.zip", "snpEff_latest_core.zip")
+		unzip("snpEff_latest_core.zip")
+		unlink("snpEff_latest_core.zip")
+    } else {
+        stop("Unsupported tool value.")
+    }
 }
 
 extract_var_table <- function(vcf_vranges) {
@@ -176,3 +180,4 @@ normalize_ft <- function(vcf_obj) {
 	VariantAnnotation::geno(vcf_obj)$FT <- ft_mat
 	vcf_obj
 }
+
