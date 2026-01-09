@@ -857,7 +857,7 @@ vr
 
 ### Filter variants in R
 
-The `filterVars` function facilitates flexible, post-hoc filtering of VCF files
+The `filter_vars` function facilitates flexible, post-hoc filtering of VCF files
 based on user-defined quality parameters. This utility sequentially imports
 each VCF file into the R environment, converts the data into an internal
 `VRanges` object, applies the specified filtering logic, and exports the
@@ -881,10 +881,11 @@ re-execute the command-line workflow.
 ```{r filter_vcf, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
+        source("VARseq_helper.R")
         vcf_raw <- getColumn(sal, "create_vcf")
         library(VariantAnnotation)
         filter <- "totalDepth(vr) >= 20 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
-        vcf_filter <- suppressWarnings(filterVars(vcf_raw, filter, organism = "Homo sapiens", out_dir = "results/vcf_filter"))
+        vcf_filter <- suppressWarnings(filter_vars(vcf_raw, filter, organism = "Homo sapiens", out_dir = "results/vcf_filter"))
     },
     step_name = "filter_vcf",
     dependency = "create_vcf",
@@ -1160,17 +1161,20 @@ comparing 3 samples.
 ```{r venn_diagram, eval=FALSE, spr=TRUE}
 appendStep(sal) <- LineWise(
     code = {
-        top_n <- min(3, length(variant_tables))
-        selected_tables <- variant_tables[seq_len(top_n)]
-        if (is.null(names(selected_tables)) || any(!nzchar(names(selected_tables)))) {
-            names(selected_tables) <- paste0("Sample_", seq_along(selected_tables))
+        unique_samples <- summary_var |> dplyr::distinct(sample) |> dplyr::pull(sample)
+        if (!length(unique_samples)) {
+            stop("No samples available in `summary_var`; cannot draw Venn diagram.")
         }
 
-        variant_sets <- lapply(selected_tables, function(df) {
-            if (!nrow(df)) return(character(0))
-            unique(paste0(df$seqnames, ":", df$start, "_", df$ref, "/", df$alt))
-        })
+        top_n <- min(3, length(unique_samples))
+        selected_samples <- unique_samples[seq_len(top_n)]
 
+        variant_df <- summary_var |>
+            dplyr::filter(sample %in% selected_samples) |>
+            dplyr::distinct(sample, seqnames, start, ref, alt) |>
+            dplyr::mutate(variant_id = paste0(seqnames, ":", start, "_", ref, "/", alt))
+
+        variant_sets <- split(variant_df$variant_id, variant_df$sample)
         vennset <- overLapper(variant_sets, type = "vennsets")
         png("./results/vennplot_var.png")
         vennPlot(vennset, mymain = "Venn Plot of First 3 Samples", mysub = "", colmode = 2, ccol = c("red", "blue"))
