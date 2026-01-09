@@ -181,3 +181,58 @@ normalize_ft <- function(vcf_obj) {
 	vcf_obj
 }
 
+
+filter_vars <- function (files, filter, varcaller = "gatk", organism, out_dir = "results") {
+  stopifnot(is.character(files))
+  stopifnot(is.character(filter) && length(filter) == 1)
+  stopifnot(is.character(organism) && length(organism) == 1)
+  stopifnot(is.character(out_dir) && length(out_dir) == 1)
+  if (!dir.exists(out_dir)) 
+    dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+  if (!dir.exists(out_dir)) 
+    stop("Cannot create output directory", out_dir)
+  if (!all(check_files <- file.exists(files))) 
+    stop("Some files are missing:\n", paste0(files[!check_files], 
+                                             collapse = ",\n"))
+  if (!all(check_ext <- stringr::str_detect(files, "\\.vcf$"))) 
+    stop("filterVars: All files need to end with .vcf\n", 
+         paste0(files[!check_ext], collapse = ",\n"))
+  outfiles <- file.path(out_dir, basename(gsub("\\.vcf", "_filter.vcf", 
+                                               files)))
+  for (i in seq(along = files)) {
+    vcf <- VariantAnnotation::readVcf(files[i], organism)
+    ft <- VariantAnnotation::geno(vcf)$FT
+    if (!is.null(ft) && !isTRUE(is.character(ft))) {
+      ft_vec <- as.character(ft)  # flattens list-like storage
+      ft_clean <- matrix(
+        ft_vec,
+        nrow = nrow(ft),
+        dimnames = dimnames(ft)
+      )
+      VariantAnnotation::geno(vcf)$FT <- ft_clean
+    }
+    vr <- as(vcf, "VRanges")
+    
+    if (varcaller == "gatk") {
+      vrfilt <- vr[eval(parse(text = filter)), ]
+    }
+    if (varcaller == "bcftools") {
+      vrsambcf <- vr
+      vr <- unlist(values(vr)$DP4)
+      vr <- matrix(vr, ncol = 4, byrow = TRUE)
+      VariantAnnotation::totalDepth(vrsambcf) <- as.integer(values(vrsambcf)$DP)
+      VariantAnnotation::refDepth(vrsambcf) <- rowSums(vr[, 
+                                                          1:2])
+      VariantAnnotation::altDepth(vrsambcf) <- rowSums(vr[, 
+                                                          3:4])
+      vrfilt <- vrsambcf[eval(parse(text = filter)), ]
+    }
+    vcffilt <- VariantAnnotation::asVCF(vrfilt)
+    VariantAnnotation::writeVcf(vcffilt, outfiles[i], index = TRUE)
+    print(paste("Generated file", i, gsub(".*/", "", paste0(outfiles[i], 
+                                                            ".bgz"))))
+  }
+  out_paths <- paste0(outfiles, ".bgz")
+  names(out_paths) <- names(files)
+  out_paths
+}
