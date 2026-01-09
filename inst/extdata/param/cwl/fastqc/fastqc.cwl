@@ -12,6 +12,10 @@ hints:
       
 baseCommand: [ fastqc ]
 
+requirements:
+  InitialWorkDirRequirement:
+    listing: [ $(inputs.outdir) ]
+
 arguments:
   - prefix: 
     valueFrom: $(inputs.fq1)
@@ -35,7 +39,7 @@ inputs:
   fq2:
     type: File
   outdir:
-    type: string
+    type: Directory
   threads:
     type: string
   results_path:
