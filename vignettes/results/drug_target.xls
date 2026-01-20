@@ -1,0 +1,14 @@
+GeneName	UniProt_ID	Target_Desc	Drug_Name	CHEMBL_CMP_ID	MOA	Mesh_Indication
+MUC16	Q8WXI7	Mucin-16	ABAGOVOMAB	CHEMBL1742981	Mucin-16 other	D010051: Ovarian Neoplasms
+MUC16	Q8WXI7	Mucin-16	OREGOVOMAB	CHEMBL2107917	Mucin-16 other	D005185: Fallopian Tube Neoplasms,D010051: Ovarian Neoplasms,D010534: Peritoneal Neoplasms
+MUC16	Q8WXI7	Mucin-16	IGOVOMAB	CHEMBL2109036	Mucin-16 binding agent	NA
+MUC16	Q8WXI7	Mucin-16	SOFITUZUMAB VEDOTIN	CHEMBL3545372	Mucin-16 binding agent	NA
+MUC5B, MUC5AC	P98088	Mucin-5AC	ENSITUXIMAB	CHEMBL1743013	Mucin-5AC other	D010190: Pancreatic Neoplasms
+MUC5B, MUC5AC	P98088	Mucin-5AC	YTTRIUM Y 90 CLIVATUZUMAB TETRAXETAN	CHEMBL2108708	Mucin-5AC binding agent	D010190: Pancreatic Neoplasms
+MUC5B, MUC5AC	P98088	Mucin-5AC	CLIVATUZUMAB TETRAXETAN	CHEMBL3301586	Mucin-5AC binding agent	D010190: Pancreatic Neoplasms
+NOTCH3	Q9UM47	Neurogenic locus notch homolog protein 3	TAREXTUMAB	CHEMBL3301588	Neurogenic locus notch homolog protein 3 inhibitor	D009369: Neoplasms,D010190: Pancreatic Neoplasms,D055752: Small Cell Lung Carcinoma
+SDC1	P18827	Syndecan-1	INDATUXIMAB RAVTANSINE	CHEMBL1743031	Syndecan-1 binding agent	D009101: Multiple Myeloma
+SI, GAA	P14410	Sucrase-isomaltase, intestinal	VOGLIBOSE	CHEMBL476960	Alpha glucosidase inhibitor	D003920: Diabetes Mellitus,D003924: Diabetes Mellitus, Type 2
+SI, GAA	P10253	Lysosomal alpha-glucosidase	MIGLITOL	CHEMBL1561	Lysosomal alpha-glucosidase inhibitor	D003920: Diabetes Mellitus,D003922: Diabetes Mellitus, Type 1,D003924: Diabetes Mellitus, Type 2
+SI, GAA	P10253	Lysosomal alpha-glucosidase	DUVOGLUSTAT HYDROCHLORIDE	CHEMBL460785	Lysosomal alpha-glucosidase stabiliser	D006009: Glycogen Storage Disease Type II
+SI, GAA	P10253	Lysosomal alpha-glucosidase	VOGLIBOSE	CHEMBL476960	Alpha glucosidase inhibitor	D003920: Diabetes Mellitus,D003924: Diabetes Mellitus, Type 2

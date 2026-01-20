@@ -5,7 +5,7 @@
 ## word-wrap: initial !important;
 ## }
 
-## ----style, echo = FALSE, results = 'asis'--------------------------------------------------------------------------------------------------------------
+## ----style, echo = FALSE, results = 'asis'----------------
 BiocStyle::markdown()
 options(width = 60, max.print = 1000)
 knitr::opts_chunk$set(
@@ -15,51 +15,55 @@ knitr::opts_chunk$set(
 )
 
 
-## ----setup, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE-----------------------------------------------------------------------------------------
+## ----setup, echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE----
 suppressPackageStartupMessages({
     library(systemPipeR)
 })
 
 
-## ----download_commands, eval=FALSE----------------------------------------------------------------------------------------------------------------------
-# source(system.file("extdata", "workflows", "varseq", "VARseq_helper.R", package = "systemPipeRdata"))
-# 
-# varseq_example_dataset_download_cmd()
-# 
-
-
-## ----generate_workenvir, eval=FALSE---------------------------------------------------------------------------------------------------------------------
+## ----generate_workenvir, eval=FALSE-----------------------
 # library(systemPipeRdata)
 # genWorkenvir(workflow = "varseq", mydirname = "varseq")
 # setwd("varseq")
 
 
-## ----load_targets_file, eval=TRUE-----------------------------------------------------------------------------------------------------------------------
+## ----download_commands, eval=FALSE------------------------
+# targets <- read.delim(system.file("extdata", "workflows", "varseq", "targetsPE_varseq.txt", package = "systemPipeRdata"), comment.char = "#")
+# source("VARseq_helper.R") # defines helper functions
+# options(timeout = 3600) # increase time limit for downloads
+# commands <- varseq_example_fastq(targets)
+# for (cmd in commands) eval(parse(text = cmd))
+# download_ref(ref="hg38.fa.gz")
+# download_tool(tool="snpEff_latest")
+
+
+## ----load_targets_file, eval=TRUE-------------------------
 targetspath <- system.file("extdata", "workflows", "varseq", "targetsPE_varseq.txt", package = "systemPipeRdata")
 targets <- read.delim(targetspath, comment.char = "#")
 targets[1:4, -(5:8)]
 
 
-## ----project_varseq, eval=FALSE-------------------------------------------------------------------------------------------------------------------------
+## ----project_varseq, eval=FALSE---------------------------
 # library(systemPipeR)
 # sal <- SPRproject()
+# # sal <- SPRproject(resume=TRUE, load.envir=TRUE) # to resume workflow if needed
 # sal <- importWF(sal, file_path = "systemPipeVARseq.Rmd", verbose = FALSE)
 # sal
 
 
-## ----run_varseq, eval=FALSE-----------------------------------------------------------------------------------------------------------------------------
+## ----run_varseq, eval=FALSE-------------------------------
 # sal <- runWF(sal)
 
 
-## ----plot_varseq, eval=FALSE----------------------------------------------------------------------------------------------------------------------------
+## ----plot_varseq, eval=FALSE------------------------------
 # plotWF(sal)
 
 
-## ----varseq-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Toplogy graph of VAR-Seq workflow.", warning=FALSE----
+## ----varseq-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Topology graph of VAR-Seq workflow.", warning=FALSE----
 knitr::include_graphics("results/plotwf_varseq.png")
 
 
-## ----report_varseq, eval=FALSE--------------------------------------------------------------------------------------------------------------------------
+## ----report_varseq, eval=FALSE----------------------------
 # # Scientific report
 # sal <- renderReport(sal)
 # rmarkdown::render("systemPipeVARseq.Rmd", clean = TRUE, output_format = "BiocStyle::html_document")
@@ -68,11 +72,15 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # sal <- renderLogs(sal)
 
 
-## ----status_varseq, eval=FALSE--------------------------------------------------------------------------------------------------------------------------
+## ----status_varseq, eval=FALSE----------------------------
 # statusWF(sal)
 
 
-## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------
+## ----save_sal, eval=FALSE---------------------------------
+# # sal <- write_SYSargsList(sal)
+
+
+## ----load_SPR, message=FALSE, eval=FALSE, spr=TRUE--------
 # cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
 # cat(c("'ggplot2', 'dplyr'\n"), sep = "', '")
 # ###pre-end
@@ -84,7 +92,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----fastqc, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------------
+## ----fastqc, eval=FALSE, spr=TRUE-------------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "fastqc",
 #     targets = "targetsPE_varseq.txt",
@@ -99,7 +107,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----fastq_report, eval=FALSE, message=FALSE, spr=TRUE--------------------------------------------------------------------------------------------------
+## ----fastq_report, eval=FALSE, message=FALSE, spr=TRUE----
 # appendStep(sal) <- LineWise(code = {
 #   fastq1 <- getColumn(sal, step = "fastqc", "targetsWF", column = 1)
 #   fastq2 <- getColumn(sal, step = "fastqc", "targetsWF", column = 2)
@@ -112,7 +120,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # dependency = "fastqc")
 
 
-## ----trimmomatic, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
+## ----trimmomatic, eval=FALSE, spr=TRUE--------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "trimmomatic",
 #     targets = "targetsPE_varseq.txt",
@@ -129,7 +137,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------
+## ----preprocessing, message=FALSE, eval=FALSE, spr=TRUE----
 # appendStep(sal) <- SYSargsList(
 #     step_name = "preprocessing",
 #     targets = "targetsPE_varseq.txt", dir = TRUE,
@@ -146,29 +154,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----custom_preprocessing_function, eval=FALSE----------------------------------------------------------------------------------------------------------
-# appendStep(sal) <- LineWise(
-#     code = {
-#         filterFct <- function(fq, cutoff = 20, Nexceptions = 0) {
-#             qcount <- rowSums(as(quality(fq), "matrix") <= cutoff, na.rm = TRUE)
-#             # Retains reads where Phred scores are >= cutoff with N exceptions
-#             fq[qcount <= Nexceptions]
-#         }
-#         save(list = ls(), file = "param/customFCT.RData")
-#     },
-#     step_name = "custom_preprocessing_function",
-#     dependency = "preprocessing"
-# )
-
-
-## ----editing_preprocessing, message=FALSE, eval=FALSE---------------------------------------------------------------------------------------------------
-# yamlinput(sal, "preprocessing")$Fct
-# yamlinput(sal, "preprocessing", "Fct") <- "'filterFct(fq, cutoff=20, Nexceptions=0)'"
-# yamlinput(sal, "preprocessing")$Fct ## check the new function
-# cmdlist(sal, "preprocessing", targets = 1) ## check if the command line was updated with success
-
-
-## ----bwa_index, eval=FALSE, spr=TRUE--------------------------------------------------------------------------------------------------------------------
+## ----bwa_index, eval=FALSE, spr=TRUE----------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "bwa_index",
 #     dir = FALSE, targets = NULL,
@@ -179,7 +165,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----fasta_index, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
+## ----fasta_index, eval=FALSE, spr=TRUE--------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "fasta_index",
 #     dir = FALSE, targets = NULL,
@@ -190,7 +176,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----faidx_index, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
+## ----faidx_index, eval=FALSE, spr=TRUE--------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "faidx_index",
 #     dir = FALSE, targets = NULL,
@@ -201,7 +187,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----bwa_alignment, eval=FALSE, spr=TRUE----------------------------------------------------------------------------------------------------------------
+## ----bwa_alignment, eval=FALSE, spr=TRUE------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "bwa_alignment",
 #     targets = "targetsPE_varseq.txt",
@@ -217,13 +203,13 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----align_stats, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
+## ----align_stats, eval=FALSE, spr=TRUE--------------------
 # appendStep(sal) <- LineWise(
 #     code = {
 #         bampaths <- getColumn(sal, step = "bwa_alignment", "outfiles", column = "samtools_sort_bam")
 #         fqpaths <- getColumn(sal, step = "bwa_alignment", "targetsWF", column = "FileName1")
 #         read_statsDF <- alignStats(args = bampaths, fqpaths = fqpaths, pairEnd = TRUE)
-#         write.table(read_statsDF, "results/alignStats.xls", row.names = FALSE, quote = FALSE, sep = "\t")
+#         write.table(read_statsDF, "results/alignStats_varseq.xls", row.names = FALSE, quote = FALSE, sep = "\t")
 #     },
 #     step_name = "align_stats",
 #     dependency = "bwa_alignment",
@@ -231,13 +217,17 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----bam_urls, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------------------
+## ----align_stats_view, eval=TRUE--------------------------
+read.table("results/alignStats_varseq.xls", header = TRUE)[1:4,]
+
+
+## ----bam_urls, eval=FALSE, spr=TRUE-----------------------
 # appendStep(sal) <- LineWise(
 #     code = {
 #         bampaths <- getColumn(sal, step = "bwa_alignment", "outfiles", column = "samtools_sort_bam")
 #         symLink2bam(
-#             sysargs = bampaths, htmldir = c("~/.html/", "somedir/"),
-#             urlbase = "http://cluster.hpcc.ucr.edu/~tgirke/",
+#             sysargs = bampaths, htmldir = c("~/.html/", "<somedir>/"),
+#             urlbase = "<base_url>/~<username>/",
 #             urlfile = "./results/IGVurl.txt"
 #         )
 #     },
@@ -247,7 +237,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----fastq2ubam, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------------------------
+## ----fastq2ubam, eval=FALSE, spr=TRUE---------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "fastq2ubam",
 #     targets = "targetsPE_varseq.txt",
@@ -263,7 +253,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----merge_bam, eval=FALSE, spr=TRUE--------------------------------------------------------------------------------------------------------------------
+## ----merge_bam, eval=FALSE, spr=TRUE----------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "merge_bam",
 #     targets = c("bwa_alignment", "fastq2ubam"),
@@ -280,7 +270,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----sort, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------------------------------
+## ----sort, eval=FALSE, spr=TRUE---------------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "sort",
 #     targets = "merge_bam",
@@ -297,7 +287,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----mark_dup, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------------------
+## ----mark_dup, eval=FALSE, spr=TRUE-----------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "mark_dup",
 #     targets = "sort",
@@ -310,7 +300,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----fix_tag, eval=FALSE, spr=TRUE----------------------------------------------------------------------------------------------------------------------
+## ----fix_tag, eval=FALSE, spr=TRUE------------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "fix_tag",
 #     targets = "mark_dup",
@@ -323,7 +313,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----hap_caller, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------------------------
+## ----hap_caller, eval=FALSE, spr=TRUE---------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "hap_caller",
 #     targets = "fix_tag",
@@ -336,7 +326,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----import, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------------
+## ----import, eval=FALSE, spr=TRUE-------------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "import",
 #     targets = NULL, dir = FALSE,
@@ -347,7 +337,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----call_variants, eval=FALSE, spr=TRUE----------------------------------------------------------------------------------------------------------------
+## ----call_variants, eval=FALSE, spr=TRUE------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "call_variants",
 #     targets = NULL, dir = FALSE,
@@ -358,7 +348,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----filter, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------------
+## ----filter, eval=FALSE, spr=TRUE-------------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "filter",
 #     targets = NULL, dir = FALSE,
@@ -369,7 +359,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----create_vcf, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------------------------
+## ----create_vcf, eval=FALSE, spr=TRUE---------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "create_vcf",
 #     targets = "hap_caller",
@@ -381,7 +371,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----inspect_vcf, eval=FALSE----------------------------------------------------------------------------------------------------------------------------
+## ----inspect_vcf, eval=FALSE------------------------------
 # library(VariantAnnotation)
 # vcf_raw <- getColumn(sal, "create_vcf")
 # vcf <- readVcf(vcf_raw[1], "Homo sapiens")
@@ -390,13 +380,14 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # vr
 
 
-## ----filter_vcf, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------------------------
+## ----filter_vcf, eval=FALSE, spr=TRUE---------------------
 # appendStep(sal) <- LineWise(
 #     code = {
+#         source("VARseq_helper.R")
 #         vcf_raw <- getColumn(sal, "create_vcf")
 #         library(VariantAnnotation)
 #         filter <- "totalDepth(vr) >= 20 & (altDepth(vr) / totalDepth(vr) >= 0.8)"
-#         vcf_filter <- suppressWarnings(filterVars(vcf_raw, filter, organism = "Homo sapiens", out_dir = "results/vcf_filter"))
+#         vcf_filter <- suppressWarnings(filter_vars(vcf_raw, filter, organism = "Homo sapiens", out_dir = "results/vcf_filter"))
 #     },
 #     step_name = "filter_vcf",
 #     dependency = "create_vcf",
@@ -404,14 +395,14 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----check_filter, eval=FALSE---------------------------------------------------------------------------------------------------------------------------
+## ----check_filter, eval=FALSE-----------------------------
 # copyEnvir(sal, "vcf_raw", globalenv())
 # copyEnvir(sal, "vcf_filter", globalenv())
 # length(as(readVcf(vcf_raw[1], genome = "Homo sapiens"), "VRanges")[, 1])
 # length(as(readVcf(vcf_filter[1], genome = "Homo sapiens"), "VRanges")[, 1])
 
 
-## ----summary_filter, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------------
+## ----summary_filter, eval=FALSE, spr=TRUE-----------------
 # appendStep(sal) <- LineWise(
 #     code = {
 # 
@@ -437,7 +428,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 #           write.table(sample_filter_summary, file = "results/summary_filter_per_sample.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
 # 
 #           library(ggplot2)
-#           source("VARseq_help.R")
+#           source("VARseq_helper.R")
 #           png("results/summary_filter_plot.png", width = 800, height = 600)
 #           p_filter <- plot_summary_filter_plot(sample_filter_summary)
 #           print(p_filter)
@@ -453,7 +444,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----annotate_vcf, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------
+## ----annotate_vcf, eval=FALSE, spr=TRUE-------------------
 # appendStep(sal) <- SYSargsList(
 #     step_name = "annotate_vcf",
 #     targets = "create_vcf", dir = TRUE,
@@ -465,7 +456,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----combine_var, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
+## ----combine_var, eval=FALSE, spr=TRUE--------------------
 # appendStep(sal) <- LineWise(
 #   code = {
 #     vcf_anno <- getColumn(sal, "annotate_vcf", position = "outfiles", column = "ann_vcf")
@@ -503,10 +494,10 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----summary_var, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
+## ----summary_var, eval=FALSE, spr=TRUE--------------------
 # appendStep(sal) <- LineWise(
 #     code = {
-#         source("VARseq_help.R")
+#         source("VARseq_helper.R")
 #         summary_var <- extract_var_table(vcf_vranges)
 #         utils::write.table(summary_var, file = "results/variant_summary_long.tsv", sep = "\t", quote = FALSE, row.names = FALSE)
 #     },
@@ -515,7 +506,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----plot_var_consequence, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------
+## ----plot_var_consequence, eval=FALSE, spr=TRUE-----------
 # appendStep(sal) <- LineWise(
 #     code = {
 #         library(ggplot2)
@@ -538,7 +529,7 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----plot_var_stats, eval=FALSE, spr=TRUE---------------------------------------------------------------------------------------------------------------
+## ----plot_var_stats, eval=FALSE, spr=TRUE-----------------
 # appendStep(sal) <- LineWise(
 #     code = {
 #         library(ggplot2)
@@ -569,10 +560,10 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----plot_var_boxplot, eval=FALSE, spr=TRUE-------------------------------------------------------------------------------------------------------------
+## ----plot_var_boxplot, eval=FALSE, spr=TRUE---------------
 # appendStep(sal) <- LineWise(
 #     code = {
-#         source("VARseq_help.R")
+#         source("VARseq_helper.R")
 #         # change the sample and group columns as needed
 #         p_summary_boxplot <- plot_summary_boxplot(plot_summary_data, sample_col = "sample", group_col = "sex")
 #         library(ggplot2)
@@ -585,20 +576,23 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----venn_diagram, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------
+## ----venn_diagram, eval=FALSE, spr=TRUE-------------------
 # appendStep(sal) <- LineWise(
 #     code = {
-#         top_n <- min(3, length(variant_tables))
-#         selected_tables <- variant_tables[seq_len(top_n)]
-#         if (is.null(names(selected_tables)) || any(!nzchar(names(selected_tables)))) {
-#             names(selected_tables) <- paste0("Sample_", seq_along(selected_tables))
+#         unique_samples <- summary_var |> dplyr::distinct(sample) |> dplyr::pull(sample)
+#         if (!length(unique_samples)) {
+#             stop("No samples available in `summary_var`; cannot draw Venn diagram.")
 #         }
 # 
-#         variant_sets <- lapply(selected_tables, function(df) {
-#             if (!nrow(df)) return(character(0))
-#             unique(paste0(df$seqnames, ":", df$start, "_", df$ref, "/", df$alt))
-#         })
+#         top_n <- min(3, length(unique_samples))
+#         selected_samples <- unique_samples[seq_len(top_n)]
 # 
+#         variant_df <- summary_var |>
+#             dplyr::filter(sample %in% selected_samples) |>
+#             dplyr::distinct(sample, seqnames, start, ref, alt) |>
+#             dplyr::mutate(variant_id = paste0(seqnames, ":", start, "_", ref, "/", alt))
+# 
+#         variant_sets <- split(variant_df$variant_id, variant_df$sample)
 #         vennset <- overLapper(variant_sets, type = "vennsets")
 #         png("./results/vennplot_var.png")
 #         vennPlot(vennset, mymain = "Venn Plot of First 3 Samples", mysub = "", colmode = 2, ccol = c("red", "blue"))
@@ -609,10 +603,10 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----plot_variant, eval=FALSE, spr=TRUE-----------------------------------------------------------------------------------------------------------------
+## ----plot_variant, eval=FALSE, spr=TRUE-------------------
 # appendStep(sal) <- LineWise(
 #     code = {
-#         source("VARseq_help.R")
+#         source("VARseq_helper.R")
 #         first_high <- summary_var |>
 #           dplyr::filter(effect == "HIGH") |>
 #           head(n = 1)
@@ -651,20 +645,87 @@ knitr::include_graphics("results/plotwf_varseq.png")
 # )
 
 
-## ----sessionInfo, eval=FALSE, spr=TRUE------------------------------------------------------------------------------------------------------------------
+## ----non_syn_vars, eval=FALSE, spr=TRUE-------------------
+# appendStep(sal) <- LineWise(
+#     code = {
+#         vardf <- read.delim("results/variant_summary_long.tsv")
+#         source("VARseq_helper.R")
+#         common_nonsyn_entrez <- filterNonSyn(df=vardf)
+#         writeLines(common_nonsyn_entrez, "results/common_nonsyn_entrez")
+#     },
+#     step_name = "non_syn_vars",
+#     dependency = "plot_var_consequence"
+# )
+
+
+## ----pathenrich, eval=FALSE, spr=TRUE---------------------
+# appendStep(sal) <- LineWise(
+#     code = {
+#         common_nonsyn_entrez <- readLines("results/common_nonsyn_entrez")
+#         source("VARseq_helper.R")
+#         reacdb <- load_reacList(org="R-HSA")
+# 
+#         library(fgsea); library(data.table); library(ggplot2)
+#         foraRes <- fora(genes=common_nonsyn_entrez, universe=unique(unlist(reacdb)), pathways=reacdb)
+#         if (!dir.exists("results/fea")) dir.create("results/fea", recursive = TRUE)
+#         foraRes$overlapGenes <- vapply(foraRes$overlapGenes, toString, FUN.VALUE = character(1))
+#         write.table(foraRes, file = "results/fea/foraRes.xls", row.names = FALSE, sep = "\t", quote = FALSE)
+#         foraRes$pathway <- gsub("\\(.*\\) ", "", foraRes$pathway)
+#         foraRes$pathway <- factor(foraRes$pathway, levels = rev(foraRes$pathway))
+#         png("./results/fea/pathenrich.png", width = 680)
+#         ggplot(head(foraRes, 15), aes(pathway, overlap, fill = padj)) +
+#             geom_bar(position="dodge", stat="identity") + coord_flip() +
+#             scale_fill_distiller(palette = "RdBu", direction=-1, limits = range(head(foraRes$padj, 15))) +
+#             theme(axis.text=element_text(angle=0, hjust=1, size=12), axis.title = element_text(size = 14))
+#         dev.off()
+#     },
+#     step_name = "pathenrich",
+#     dependency = "non_syn_vars"
+# )
+
+
+## ----drug_target_analysis, eval=FALSE, spr=TRUE-----------
+# appendStep(sal) <- LineWise(
+#     code = {
+#         ## Configure paths for drugTargetInteractions. Under chembldb provide path to chembl_xx.db on your system
+#         # chembldb <- system.file("extdata", "chembl_sample.db", package="drugTargetInteractions")
+#         resultsPath <- "results/drug_target/"
+#         config <- drugTargetInteractions::genConfig(chemblDbPath=chembldb, resultsPath=resultsPath)
+#         downloadUniChem(config=config)
+#         cmpIdMapping(config=config)
+#         foraRes <- read.delim("results/fea/foraRes.xls")
+#         entrez_ids <- unlist(strsplit(foraRes[13,7], ", ")) # select here pathway of interest
+#         source("VARseq_helper.R")
+#         drugMap <- runGeneTargetDrug(entrez=entrez_ids)[[1]]
+#         drugMap <- drugMap[!grepl("Query_", drugMap$GeneName), c("GeneName", "UniProt_ID", "Target_Desc", "Drug_Name", "CHEMBL_CMP_ID", "MOA", "Mesh_Indication")]
+#         drugMap <- drugMap[!is.na(drugMap$CHEMBL_CMP_ID),]
+#         if (!dir.exists("results/drug_target")) dir.create("results/drug_target", recursive = TRUE)
+#         write.table(drugMap, file="results/drug_target/drug_target.xls", row.names=FALSE, sep="\t", quote=FALSE)
+#     },
+#     step_name = "drug_target",
+#     dependency = "pathenrich"
+# )
+
+
+## ----read_drug_table, eval=TRUE---------------------------
+drugMap <- read.delim("results/drug_target.xls")
+DT::datatable(drugMap)
+
+
+## ----sessionInfo, eval=FALSE, spr=TRUE--------------------
 # appendStep(sal) <- LineWise(
 #     code = {
 #         sessionInfo()
 #         },
 #     step_name = "sessionInfo",
-#     dependency = "plot_variant")
+#     dependency = "drug_target")
 
 
-## ----runWF, eval=FALSE----------------------------------------------------------------------------------------------------------------------------------
+## ----runWF, eval=FALSE------------------------------------
 # sal <- runWF(sal)
 
 
-## ----runWF_cluster, eval=FALSE--------------------------------------------------------------------------------------------------------------------------
+## ----runWF_cluster, eval=FALSE----------------------------
 # # wall time in mins, memory in MB
 # resources <- list(conffile=".batchtools.conf.R",
 #                   template="batchtools.slurm.tmpl",
@@ -675,24 +736,24 @@ knitr::include_graphics("results/plotwf_varseq.png")
 #                   memory=1024,
 #                   partition = "short"
 #                   )
-# sal <- addResources(sal, c("hisat2_mapping"), resources = resources)
+# sal <- addResources(sal, c("bwa_alignment"), resources = resources)
 # sal <- runWF(sal)
 
 
-## ----plotWF, eval=FALSE---------------------------------------------------------------------------------------------------------------------------------
+## ----plotWF, eval=FALSE-----------------------------------
 # plotWF(sal, rstudio = TRUE)
 
 
-## ----statusWF, eval=FALSE-------------------------------------------------------------------------------------------------------------------------------
+## ----statusWF, eval=FALSE---------------------------------
 # sal
 # statusWF(sal)
 
 
-## ----logsWF, eval=FALSE---------------------------------------------------------------------------------------------------------------------------------
+## ----logsWF, eval=FALSE-----------------------------------
 # sal <- renderLogs(sal)
 
 
-## ----list_tools, eval=TRUE------------------------------------------------------------------------------------------------------------------------------
+## ----list_tools, eval=TRUE--------------------------------
 if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
     local({
         sal <- systemPipeR::SPRproject(resume = TRUE)
@@ -706,6 +767,6 @@ if(file.exists(file.path(".SPRproject", "SYSargsList.yml"))) {
 }
 
 
-## ----report_session_info, eval=TRUE---------------------------------------------------------------------------------------------------------------------
+## ----report_session_info, eval=TRUE-----------------------
 sessionInfo()
 

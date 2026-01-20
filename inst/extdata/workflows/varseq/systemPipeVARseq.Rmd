@@ -17,7 +17,7 @@ bibliography: bibtex.bib
 
 <!--
 # Compile from command-line
-Rscript -e "rmarkdown::render('systemPipeVARseq.Rmd', c('BiocStyle::html_document'), clean=FALSE); knitr::knit('systemPipeVARseq.Rmd', tangle=TRUE)""
+Rscript -e "rmarkdown::render('systemPipeVARseq.Rmd', c('BiocStyle::html_document'), clean=FALSE); knitr::knit('systemPipeVARseq.Rmd', tangle=TRUE)"
 -->
 
 ```{css, echo=FALSE}
@@ -128,8 +128,10 @@ __Default analysis steps__
     + Filter variants called by `GATK` 
 6. Annotate filtered variants with `SnpEff`
 7. Combine annotation results among samples
-8. Calculate Summary statistics of variants
+8. Calculate summary statistics of variants
 9. Various plots for variant statistics
+10. Pathway enrichment analysis
+11. Drug-target interaction analysis
 
 ## Load workflow environment {#load-wf}
 
@@ -156,7 +158,7 @@ integrated into the actual workflow if required.
 
 ```{r download_commands, eval=FALSE}
 targets <- read.delim(system.file("extdata", "workflows", "varseq", "targetsPE_varseq.txt", package = "systemPipeRdata"), comment.char = "#")
-source("VARseq_helper.R") # temp file
+source("VARseq_helper.R") # defines helper functions
 options(timeout = 3600) # increase time limit for downloads
 commands <- varseq_example_fastq(targets)
 for (cmd in commands) eval(parse(text = cmd))
@@ -236,7 +238,7 @@ This creates an interactive plot with run status information for each step.
 plotWF(sal)
 ```
 
-```{r varseq-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Toplogy graph of VAR-Seq workflow.", warning=FALSE}
+```{r varseq-toplogy, eval=TRUE, warning= FALSE, echo=FALSE, out.width="100%", fig.align = "center", fig.cap= "Topology graph of VAR-Seq workflow.", warning=FALSE}
 knitr::include_graphics("results/plotwf_varseq.png")
 ```
 
@@ -359,7 +361,7 @@ dependency = "fastqc")
 
 ![](results/fastqReport_varseq.png)
 
-<div align="center">Figure 1: FASTQ quality report for all samples</div></br>
+<div align="center">Figure 2: FASTQ quality report for all samples</div></br>
 
 ## Read preprocessing
 
@@ -367,8 +369,8 @@ The read preprocessing steps in this section are included primarily to demonstra
 various preprocessing tools can be integrated into the workflow. However, it
 is important to note that the resulting trimmed reads are not utilized in the
 subsequent analysis steps of this workflow demonstration. For pipelines 
-involving GATK, while adapter trimming may be beneficial, __quality trimming 
-is explicitly discouraged__. This is because GATK possesses internal trimming utilities and utilizes the
+involving GATK, while adapter trimming may be beneficial, quality trimming 
+is explicitly discouraged. This is because GATK possesses internal trimming utilities and utilizes the
 original low-quality base information to improve the accuracy of its
 probabilistic models.
 
@@ -1188,7 +1190,6 @@ appendStep(sal) <- LineWise(
 ![](results/vennplot_var.png)
 <div align="center">Figure 6: Venn Diagram for 3 samples</div></br>
 
-
 ## Plot variants programmatically 
 
 This section demonstrates how to visualize specific genomic variants in a
@@ -1243,6 +1244,105 @@ appendStep(sal) <- LineWise(
 ![](results/plot_variant.png)
 <div align="center">Figure 7: Variant plot for selected region</div></br>
 
+## Non-Synonymous Variants
+
+This step filters the `variant_summary_long.tsv` table to isolate genes affected
+specifically by non-synonymous variants. By focusing on these protein-altering
+changes, the workflow identifies functionally relevant candidates. The
+corresponding Entrez IDs for these genes are extracted and written to a file 
+(`common_nonsyn_entrez`), serving as the input for downstream pathway analysis.
+
+```{r non_syn_vars, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        vardf <- read.delim("results/variant_summary_long.tsv")
+        source("VARseq_helper.R")
+        common_nonsyn_entrez <- filterNonSyn(df=vardf)
+        writeLines(common_nonsyn_entrez, "results/common_nonsyn_entrez")
+    },
+    step_name = "non_syn_vars",
+    dependency = "plot_var_consequence"
+)
+```
+
+## Pathway Enrichment
+
+Reactome pathway enrichment analysis is performed on the gene set identified in
+the previous step (genes harboring non-synonymous changes). This step utilizes
+the `fora` function (overrepresentation analysis) from the `fgsea` package to
+identify statistically significant biological pathways. The results, including
+enrichment scores and p-values, are exported to a tabular file (`foraRes.xls`).
+
+```{r pathenrich, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        common_nonsyn_entrez <- readLines("results/common_nonsyn_entrez")
+        source("VARseq_helper.R")
+        reacdb <- load_reacList(org="R-HSA")
+
+        library(fgsea); library(data.table); library(ggplot2)
+        foraRes <- fora(genes=common_nonsyn_entrez, universe=unique(unlist(reacdb)), pathways=reacdb)
+        if (!dir.exists("results/fea")) dir.create("results/fea", recursive = TRUE) 
+        foraRes$overlapGenes <- vapply(foraRes$overlapGenes, toString, FUN.VALUE = character(1))
+        write.table(foraRes, file = "results/fea/foraRes.xls", row.names = FALSE, sep = "\t", quote = FALSE)
+        foraRes$pathway <- gsub("\\(.*\\) ", "", foraRes$pathway)
+        foraRes$pathway <- factor(foraRes$pathway, levels = rev(foraRes$pathway))
+        png("./results/fea/pathenrich.png", width = 680)
+        ggplot(head(foraRes, 15), aes(pathway, overlap, fill = padj)) +
+            geom_bar(position="dodge", stat="identity") + coord_flip() +
+            scale_fill_distiller(palette = "RdBu", direction=-1, limits = range(head(foraRes$padj, 15))) +
+            theme(axis.text=element_text(angle=0, hjust=1, size=12), axis.title = element_text(size = 14)) 
+        dev.off()
+    },
+    step_name = "pathenrich",
+    dependency = "non_syn_vars"
+)
+```
+
+![](results/pathenrich.png)
+<div align="center">Figure 8: Enrichment result of top 15 pathways. </div></br>
+
+## Drug-Target Analysis
+
+This step utilizes the `drugTargetInteractions` package to identify drugs that
+target the proteins affected by non-synonymous changes (identified above).
+While the tool supports high-throughput batch analysis of large protein sets,
+this specific analysis focuses on a biologically relevant subset: proteins
+mapping to the "Diseases of metabolism" pathway. This pathway was selected
+based on its high enrichment ranking in the previous Reactome analysis and the
+high frequency with which its proteins serve as established therapeutic targets
+for genetic diseases. 
+
+```{r drug_target_analysis, eval=FALSE, spr=TRUE}
+appendStep(sal) <- LineWise(
+    code = {
+        ## Configure paths for drugTargetInteractions. Under chembldb provide path to chembl_xx.db on your system
+        # chembldb <- system.file("extdata", "chembl_sample.db", package="drugTargetInteractions")
+        resultsPath <- "results/drug_target/" 
+        config <- drugTargetInteractions::genConfig(chemblDbPath=chembldb, resultsPath=resultsPath)
+        downloadUniChem(config=config)
+        cmpIdMapping(config=config)
+        foraRes <- read.delim("results/fea/foraRes.xls")
+        entrez_ids <- unlist(strsplit(foraRes[13,7], ", ")) # select here pathway of interest
+        source("VARseq_helper.R")
+        drugMap <- runGeneTargetDrug(entrez=entrez_ids)[[1]]
+        drugMap <- drugMap[!grepl("Query_", drugMap$GeneName), c("GeneName", "UniProt_ID", "Target_Desc", "Drug_Name", "CHEMBL_CMP_ID", "MOA", "Mesh_Indication")]
+        drugMap <- drugMap[!is.na(drugMap$CHEMBL_CMP_ID),]
+        if (!dir.exists("results/drug_target")) dir.create("results/drug_target", recursive = TRUE)
+        write.table(drugMap, file="results/drug_target/drug_target.xls", row.names=FALSE, sep="\t", quote=FALSE)
+    },
+    step_name = "drug_target",
+    dependency = "pathenrich"
+)
+```
+
+The resulting table below lists the identifiers, names, and mechanisms of
+action for drugs known to target these specific metabolic proteins.
+
+```{r read_drug_table, eval=TRUE}
+drugMap <- read.delim("results/drug_target.xls")
+DT::datatable(drugMap)
+```
 
 ## Version information
 
@@ -1252,7 +1352,7 @@ appendStep(sal) <- LineWise(
         sessionInfo()
         }, 
     step_name = "sessionInfo", 
-    dependency = "plot_variant")
+    dependency = "drug_target")
 ```
 
 # Additional details

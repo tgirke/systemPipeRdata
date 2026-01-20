@@ -236,3 +236,60 @@ filter_vars <- function (files, filter, varcaller = "gatk", organism, out_dir = 
   names(out_paths) <- names(files)
   out_paths
 }
+
+####################################
+## Filter non-synonymous variants ##
+####################################
+filterNonSyn <- function(df=vardf) {
+    df <- df[grepl("missense_variant", df$consequence),]
+    vardfl <- vapply(X = unique(df$sample), FUN = function(x) list(unique(df[df$sample == x, ][["gene"]])), FUN.VALUE = list(1))
+    ol <- systemPipeR::overLapper(vardfl, type="intersects")
+    common_nonsyn <- tail(intersectlist(ol),1)[[1]]
+    entrez_ids <- AnnotationDbi::mapIds(x = org.Hs.eg.db::org.Hs.eg.db, keys = common_nonsyn, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
+    common_nonsyn_entrez <- unique(entrez_ids[!is.na(entrez_ids)])
+    return(common_nonsyn_entrez)
+}
+## Usage:
+# vardf <- read.delim("results/variant_summary_long.tsv")
+# common_nonsyn_entrez <- filterNonSyn(df=vardf)
+
+########################################################
+## Define function to create Reactome pathway list db ##
+########################################################
+# The following load_reacList function returns the pathway annotations from the
+# reactome.db package for a species selected under the org argument (e.g. R-HSA,
+# R-CEL, ...). The resulting list object can be used for various ORA or GSEA methods, 
+# e.g. by fgsea.
+
+load_reacList <- function(org="R-HSA") {
+    reac_gene_list <- as.list(reactome.db::reactomePATHID2EXTID) # All organisms in reactome
+    reac_gene_list <- reac_gene_list[grepl(org, names(reac_gene_list))] # Only human
+    reac_name_list <- unlist(as.list(reactome.db::reactomePATHID2NAME)) # All organisms in reactome
+    reac_name_list <- reac_name_list[names(reac_gene_list)]
+    names(reac_gene_list) <- paste0(names(reac_gene_list), " (", names(reac_name_list), ") - ", gsub("^.*: ", "", reac_name_list))
+    return(reac_gene_list)
+}
+## Usage: 
+# common_nonsyn_entrez <- readLines("results/common_nonsyn_entrez")
+# reacdb <- load_reacList(org="R-HSA")
+
+################################
+## Run drugTargetInteractions ##
+################################
+runGeneTargetDrug <- function(entrez) {
+    # gene_name <- c("CA7", "CFTR")
+    gene_name <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = entrez_ids, column = "SYMBOL", keytype = "ENTREZID", multiVals = "first")
+    gene_name <- unlist(gene_name)
+    idMap <- suppressWarnings(drugTargetInteractions::getSymEnsUp(EnsDb="EnsDb.Hsapiens.v86", ids=gene_name, idtype="GENE_NAME"))
+    ens_gene_id <- idMap$ens_gene_id
+    queryBy <- list(molType="gene", idType="ensembl_gene_id", ids=names(ens_gene_id))
+    res_list <- drugTargetInteractions::getParalogs(queryBy)
+    drug_target_list <- drugTargetInteractions::runDrugTarget_Annot_Bioassay(res_list=res_list, up_col_id="ID_up_sp", ens_gene_id, config=config)
+    return(drug_target_list)
+}
+## Usage:
+# foraRes <- read.delim("results/fea/foraRes.xls")
+# entrez_ids <- unlist(strsplit(foraRes[13,7], ", "))
+# drugMap <- runGeneTargetDrug(entrez=entrez_ids)[[1]]
+
+
