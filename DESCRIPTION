@@ -1,7 +1,7 @@
 Package: systemPipeRdata
 Title: systemPipeRdata: Workflow templates and sample data
-Version: 2.14.2
-Date: 2026-01-08
+Version: 2.14.3
+Date: 2026-01-19
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
 biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq,

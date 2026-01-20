@@ -181,3 +181,115 @@ normalize_ft <- function(vcf_obj) {
 	vcf_obj
 }
 
+
+filter_vars <- function (files, filter, varcaller = "gatk", organism, out_dir = "results") {
+  stopifnot(is.character(files))
+  stopifnot(is.character(filter) && length(filter) == 1)
+  stopifnot(is.character(organism) && length(organism) == 1)
+  stopifnot(is.character(out_dir) && length(out_dir) == 1)
+  if (!dir.exists(out_dir)) 
+    dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+  if (!dir.exists(out_dir)) 
+    stop("Cannot create output directory", out_dir)
+  if (!all(check_files <- file.exists(files))) 
+    stop("Some files are missing:\n", paste0(files[!check_files], 
+                                             collapse = ",\n"))
+  if (!all(check_ext <- stringr::str_detect(files, "\\.vcf$"))) 
+    stop("filterVars: All files need to end with .vcf\n", 
+         paste0(files[!check_ext], collapse = ",\n"))
+  outfiles <- file.path(out_dir, basename(gsub("\\.vcf", "_filter.vcf", 
+                                               files)))
+  for (i in seq(along = files)) {
+    vcf <- VariantAnnotation::readVcf(files[i], organism)
+    ft <- VariantAnnotation::geno(vcf)$FT
+    if (!is.null(ft) && !isTRUE(is.character(ft))) {
+      ft_vec <- as.character(ft)  # flattens list-like storage
+      ft_clean <- matrix(
+        ft_vec,
+        nrow = nrow(ft),
+        dimnames = dimnames(ft)
+      )
+      VariantAnnotation::geno(vcf)$FT <- ft_clean
+    }
+    vr <- as(vcf, "VRanges")
+    
+    if (varcaller == "gatk") {
+      vrfilt <- vr[eval(parse(text = filter)), ]
+    }
+    if (varcaller == "bcftools") {
+      vrsambcf <- vr
+      vr <- unlist(values(vr)$DP4)
+      vr <- matrix(vr, ncol = 4, byrow = TRUE)
+      VariantAnnotation::totalDepth(vrsambcf) <- as.integer(values(vrsambcf)$DP)
+      VariantAnnotation::refDepth(vrsambcf) <- rowSums(vr[, 
+                                                          1:2])
+      VariantAnnotation::altDepth(vrsambcf) <- rowSums(vr[, 
+                                                          3:4])
+      vrfilt <- vrsambcf[eval(parse(text = filter)), ]
+    }
+    vcffilt <- VariantAnnotation::asVCF(vrfilt)
+    VariantAnnotation::writeVcf(vcffilt, outfiles[i], index = TRUE)
+    print(paste("Generated file", i, gsub(".*/", "", paste0(outfiles[i], 
+                                                            ".bgz"))))
+  }
+  out_paths <- paste0(outfiles, ".bgz")
+  names(out_paths) <- names(files)
+  out_paths
+}
+
+####################################
+## Filter non-synonymous variants ##
+####################################
+filterNonSyn <- function(df=vardf) {
+    df <- df[grepl("missense_variant", df$consequence),]
+    vardfl <- vapply(X = unique(df$sample), FUN = function(x) list(unique(df[df$sample == x, ][["gene"]])), FUN.VALUE = list(1))
+    ol <- systemPipeR::overLapper(vardfl, type="intersects")
+    common_nonsyn <- tail(intersectlist(ol),1)[[1]]
+    entrez_ids <- AnnotationDbi::mapIds(x = org.Hs.eg.db::org.Hs.eg.db, keys = common_nonsyn, column = "ENTREZID", keytype = "SYMBOL", multiVals = "first")
+    common_nonsyn_entrez <- unique(entrez_ids[!is.na(entrez_ids)])
+    return(common_nonsyn_entrez)
+}
+## Usage:
+# vardf <- read.delim("results/variant_summary_long.tsv")
+# common_nonsyn_entrez <- filterNonSyn(df=vardf)
+
+########################################################
+## Define function to create Reactome pathway list db ##
+########################################################
+# The following load_reacList function returns the pathway annotations from the
+# reactome.db package for a species selected under the org argument (e.g. R-HSA,
+# R-CEL, ...). The resulting list object can be used for various ORA or GSEA methods, 
+# e.g. by fgsea.
+
+load_reacList <- function(org="R-HSA") {
+    reac_gene_list <- as.list(reactome.db::reactomePATHID2EXTID) # All organisms in reactome
+    reac_gene_list <- reac_gene_list[grepl(org, names(reac_gene_list))] # Only human
+    reac_name_list <- unlist(as.list(reactome.db::reactomePATHID2NAME)) # All organisms in reactome
+    reac_name_list <- reac_name_list[names(reac_gene_list)]
+    names(reac_gene_list) <- paste0(names(reac_gene_list), " (", names(reac_name_list), ") - ", gsub("^.*: ", "", reac_name_list))
+    return(reac_gene_list)
+}
+## Usage: 
+# common_nonsyn_entrez <- readLines("results/common_nonsyn_entrez")
+# reacdb <- load_reacList(org="R-HSA")
+
+################################
+## Run drugTargetInteractions ##
+################################
+runGeneTargetDrug <- function(entrez) {
+    # gene_name <- c("CA7", "CFTR")
+    gene_name <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = entrez_ids, column = "SYMBOL", keytype = "ENTREZID", multiVals = "first")
+    gene_name <- unlist(gene_name)
+    idMap <- suppressWarnings(drugTargetInteractions::getSymEnsUp(EnsDb="EnsDb.Hsapiens.v86", ids=gene_name, idtype="GENE_NAME"))
+    ens_gene_id <- idMap$ens_gene_id
+    queryBy <- list(molType="gene", idType="ensembl_gene_id", ids=names(ens_gene_id))
+    res_list <- drugTargetInteractions::getParalogs(queryBy)
+    drug_target_list <- drugTargetInteractions::runDrugTarget_Annot_Bioassay(res_list=res_list, up_col_id="ID_up_sp", ens_gene_id, config=config)
+    return(drug_target_list)
+}
+## Usage:
+# foraRes <- read.delim("results/fea/foraRes.xls")
+# entrez_ids <- unlist(strsplit(foraRes[13,7], ", "))
+# drugMap <- runGeneTargetDrug(entrez=entrez_ids)[[1]]
+
+
