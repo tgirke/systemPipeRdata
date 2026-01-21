@@ -428,7 +428,7 @@ and indexed bam files using functionalities of the `SAMtools` CL suite.
 cmdlist(sal, step="hisat2_mapping", targets=1)
 ```
 
-```{r hisat_cl, eval=FALSE}
+```{r hisat_cl, eval=FALSE, tidy=FALSE}
 $hisat2_mapping
 $hisat2_mapping$M1A
 $hisat2_mapping$M1A$hisat2
@@ -900,10 +900,10 @@ specifying multiple step names under the `step` argument.
 resources <- list(conffile=".batchtools.conf.R",
                   template="batchtools.slurm.tmpl", 
                   Njobs=18, 
-                  walltime=120, ## in minutes
+                  walltime=120,
                   ntasks=1,
                   ncpus=4, 
-                  memory=1024, ## in Mb
+                  memory=1024,
                   partition = "short"  
                   )
 sal <- addResources(sal, step=c("hisat2_mapping"), resources = resources)
