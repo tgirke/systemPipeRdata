@@ -25,7 +25,7 @@ getSubsetReads <- function(args,
   outpaths <- systemPipeR::subsetWF(args, slot = "output", subset = 1, index = 1)
   ## Create `txdb` for annontation
   if (!is.null(geneList)) {
-    suppressWarnings(txdb <- GenomicFeatures::makeTxDbFromGFF(file = annotation))
+    suppressWarnings(txdb <- txdbmaker::makeTxDbFromGFF(file = annotation))
     eByg <- GenomicFeatures::exonsBy(txdb, by = "gene")
     gr_shortlist <- eByg[names(eByg) %in% geneList]
     gr <- BiocGenerics::unlist(range(gr_shortlist)) # filter by names first before unlist
