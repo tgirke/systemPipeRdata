@@ -1,7 +1,7 @@
 Package: systemPipeRdata
 Title: systemPipeRdata: Workflow templates and sample data
-Version: 2.15.4
-Date: 2026-01-20
+Version: 2.15.5
+Date: 2026-02-16
 Author: Thomas Girke
 Maintainer: Thomas Girke <thomas.girke@ucr.edu>
 biocViews: Genetics, Infrastructure, DataImport, Sequencing, RNASeq,
@@ -16,8 +16,9 @@ Description: systemPipeRdata complements the systemPipeR workflow management
         of data analysis needs. 
 Depends: R (>= 3.6.0)
 Imports: methods, Biostrings, BiocGenerics, jsonlite, remotes
-Suggests: GenomicFeatures, DT, txdbmaker, GenomicRanges, IRanges, Rsamtools, ShortRead, rtracklayer, RUnit, BiocStyle, knitr, rmarkdown, systemPipeR, kableExtra, magrittr, dplyr  
+Suggests: GenomicFeatures, DT, txdbmaker, GenomicRanges, IRanges, Rsamtools, ShortRead, rtracklayer, RUnit, BiocStyle, knitr, rmarkdown, systemPipeR, kableExtra, magrittr, dplyr, gert  
 VignetteBuilder: knitr
 License: Artistic-2.0
 NeedsCompilation: no
 URL: https://github.com/tgirke/systemPipeRdata 
+RoxygenNote: 7.3.3
