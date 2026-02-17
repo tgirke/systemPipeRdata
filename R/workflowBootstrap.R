@@ -22,6 +22,9 @@
 #'
 #' @param url GitHub HTTPS URL of the workflow repository to clone.
 #' @param mydirname Target directory to clone into.
+#' @param force_min_version Logical; if \code{FALSE} (default) enforce \code{bioc_min}
+#'   requirements in \code{manifest.yml} and stop on version mismatch. If \code{TRUE},
+#'   continue with a warning (at your own risk). Missing packages always stop.
 #' @param ... Additional arguments passed to \code{gert::git_clone()}.
 #'
 #' @return Invisibly returns the normalized path of the cloned repository.
@@ -35,13 +38,25 @@
 #' genWorkenvir_gh("https://github.com/systemPipeR/sprwf-new.git", "sprwf-new")
 #' }
 
-genWorkenvir_gh <- function(url, mydirname, ...) {
+genWorkenvir_gh <- function(url, mydirname, force_min_version = FALSE, ...) {
   .ensure_pkg("gert")
   if (dir.exists(mydirname) && length(list.files(mydirname, all.files = TRUE, no.. = TRUE)) > 0) {
     stop(sprintf("Target mydirname '%s' exists and is not empty.", mydirname), call. = FALSE)
   }
+
   gert::git_clone(url = url, path = mydirname, ...)
-  invisible(normalizePath(mydirname, winslash = "/", mustWork = TRUE))
+  repo_path <- normalizePath(mydirname, winslash = "/", mustWork = TRUE)
+
+  manifest <- file.path(repo_path, "manifest.yml")
+  mins <- .read_bioc_min_from_manifest(manifest = manifest,
+                                       pkgs = c("systemPipeR", "systemPipeRdata"))
+
+  .check_min_pkg_versions(mins,
+                          context = sprintf("'%s'", manifest),
+                          force = force_min_version,
+                          quiet = FALSE)
+
+  invisible(repo_path)
 }
 
 #################################################
@@ -562,6 +577,85 @@ choose_gh_tag <- function(repo, default = 1) {
   tags[i]
 }
 
+#' @keywords internal
+.read_yaml_block_lines <- function(key, x) {
+  # returns the indented lines belonging to a top-level key block:  key:
+  i0 <- grep(sprintf("^\\s*%s\\s*:\\s*$", key), x)
+  if (!length(i0)) return(character())
+  i0 <- i0[1]
+
+  i1 <- i0
+  if (i0 < length(x)) {
+    for (i in (i0 + 1):length(x)) {
+      if (grepl("^\\S", x[i])) break   # next top-level key
+      i1 <- i
+    }
+  }
+  if (i1 >= i0 + 1) x[(i0 + 1):i1] else character()
+}
+
+#' @keywords internal
+.read_bioc_min_from_manifest <- function(manifest = "manifest.yml",
+                                        pkgs = c("systemPipeR", "systemPipeRdata")) {
+  if (!file.exists(manifest)) return(setNames(rep(NA_character_, length(pkgs)), pkgs))
+
+  x <- readLines(manifest, warn = FALSE)
+  out <- setNames(rep(NA_character_, length(pkgs)), pkgs)
+
+  for (pkg in pkgs) {
+    block <- .read_yaml_block_lines(pkg, x)
+    if (!length(block)) next
+    m <- grep("^\\s+bioc_min\\s*:\\s*", block)
+    if (!length(m)) next
+
+    val <- sub("^\\s+bioc_min\\s*:\\s*", "", block[m[1]])
+    val <- sub("\\s+#.*$", "", val)
+    val <- trimws(val)
+    val <- sub('^"(.*)"$', "\\1", val)
+    val <- sub("^'(.*)'$", "\\1", val)
+    if (nzchar(val)) out[pkg] <- val
+  }
+
+  out
+}
+
+#' @keywords internal
+.check_min_pkg_versions <- function(min_versions,
+                                    context = "manifest.yml",
+                                    force = FALSE,
+                                    quiet = FALSE) {
+  say <- function(...) if (!quiet) message(...)
+
+  pkgs <- names(min_versions)
+  for (pkg in pkgs) {
+    req <- min_versions[[pkg]]
+    if (is.na(req) || !nzchar(req)) next
+
+    # Missing package is always a hard stop
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      stop(sprintf(
+        "Package '%s' is required (>= %s) per %s, but is not installed.\nInstall/update via BiocManager::install('%s').",
+        pkg, req, context, pkg
+      ), call. = FALSE)
+    }
+
+    cur <- utils::packageVersion(pkg)
+    reqv <- as.package_version(req)
+
+    if (cur < reqv) {
+      msg <- sprintf(
+        "Package '%s' version %s is installed, but version >= %s is required per %s.\nPlease update via BiocManager::install('%s'). Alternatively, proceed at your own risk by setting force_min_version=TRUE",
+        pkg, as.character(cur), req, context, pkg
+      )
+      if (!isTRUE(force)) stop(msg, call. = FALSE)
+
+      say("WARNING: ", msg)
+      say("Proceeding anyway because force_min_version=TRUE (at your own risk).")
+    }
+  }
+
+  invisible(TRUE)
+}
 
 
 

@@ -4,12 +4,16 @@
 \alias{genWorkenvir_gh}
 \title{Clone a workflow repository using gert}
 \usage{
-genWorkenvir_gh(url, mydirname, ...)
+genWorkenvir_gh(url, mydirname, force_min_version = FALSE, ...)
 }
 \arguments{
 \item{url}{GitHub HTTPS URL of the workflow repository to clone.}
 
 \item{mydirname}{Target directory to clone into.}
+
+\item{force_min_version}{Logical; if \code{FALSE} (default) enforce \code{bioc_min}
+requirements in \code{manifest.yml} and stop on version mismatch. If \code{TRUE},
+continue with a warning (at your own risk). Missing packages always stop.}
 
 \item{...}{Additional arguments passed to \code{gert::git_clone()}.}
 }
