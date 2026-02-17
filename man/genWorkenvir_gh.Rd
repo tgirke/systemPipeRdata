@@ -2,18 +2,28 @@
 % Please edit documentation in R/workflowBootstrap.R
 \name{genWorkenvir_gh}
 \alias{genWorkenvir_gh}
-\title{Clone a workflow repository using gert}
+\title{Clone a workflow repository using gert and enforce version requirements}
 \usage{
-genWorkenvir_gh(url, mydirname, force_min_version = FALSE, ...)
+genWorkenvir_gh(
+  url,
+  mydirname,
+  force_min_version = FALSE,
+  cleanup_on_fail = TRUE,
+  ...
+)
 }
 \arguments{
 \item{url}{GitHub HTTPS URL of the workflow repository to clone.}
 
 \item{mydirname}{Target directory to clone into.}
 
-\item{force_min_version}{Logical; if \code{FALSE} (default) enforce \code{bioc_min}
-requirements in \code{manifest.yml} and stop on version mismatch. If \code{TRUE},
-continue with a warning (at your own risk). Missing packages always stop.}
+\item{force_min_version}{Logical; if \code{FALSE} (default), enforce
+\code{bioc_min} requirements and stop on version mismatch. If \code{TRUE},
+continue with a warning (at your own risk). Missing required packages
+always cause an error.}
+
+\item{cleanup_on_fail}{Logical; if \code{TRUE} (default) and a strict
+version check fails, remove the cloned directory before stopping.}
 
 \item{...}{Additional arguments passed to \code{gert::git_clone()}.}
 }
@@ -21,15 +31,39 @@ continue with a warning (at your own risk). Missing packages always stop.}
 Invisibly returns the normalized path of the cloned repository.
 }
 \description{
-Convenience wrapper around \code{gert::git_clone()} that can be used from R/RStudio
-without requiring the Git command-line client. Requires the \pkg{gert} package.
+Convenience wrapper around \code{gert::git_clone()} that clones a workflow
+repository and enforces minimum package version requirements specified in
+the workflow's \code{manifest.yml} file.
 }
 \details{
-This function checks that \code{mydirname} does not already exist as a non-empty directory.
-If \pkg{gert} is not installed, an error is thrown with installation instructions.
+If \code{manifest.yml} contains a block like:
+
+\preformatted{
+systemPipeR:
+  bioc_min: "2.17.1"
+
+systemPipeRdata:
+  bioc_min: "2.15.4"
+}
+
+then the installed versions of the corresponding packages are checked.
+
+By default, version mismatches cause an error and the cloned directory
+is removed to avoid leaving a partially initialized workflow.
 }
 \examples{
 \dontrun{
-genWorkenvir_gh("https://github.com/systemPipeR/sprwf-new.git", "sprwf-new")
+## Strict (default)
+genWorkenvir_gh(
+  "https://github.com/systemPipeR/sprwf-new.git",
+  "sprwf-new"
+)
+
+## Allow version mismatch (not recommended)
+genWorkenvir_gh(
+  "https://github.com/systemPipeR/sprwf-new.git",
+  "sprwf-new",
+  force_min_version = TRUE
+)
 }
 }

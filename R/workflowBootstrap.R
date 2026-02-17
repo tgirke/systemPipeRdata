@@ -15,46 +15,102 @@
   }
 }
 
-#' Clone a workflow repository using gert
+#' Clone a workflow repository using gert and enforce version requirements
 #'
-#' Convenience wrapper around \code{gert::git_clone()} that can be used from R/RStudio
-#' without requiring the Git command-line client. Requires the \pkg{gert} package.
+#' Convenience wrapper around \code{gert::git_clone()} that clones a workflow
+#' repository and enforces minimum package version requirements specified in
+#' the workflow's \code{manifest.yml} file.
+#'
+#' If \code{manifest.yml} contains a block like:
+#'
+#' \preformatted{
+#' systemPipeR:
+#'   bioc_min: "2.17.1"
+#'
+#' systemPipeRdata:
+#'   bioc_min: "2.15.4"
+#' }
+#'
+#' then the installed versions of the corresponding packages are checked.
+#'
+#' By default, version mismatches cause an error and the cloned directory
+#' is removed to avoid leaving a partially initialized workflow.
 #'
 #' @param url GitHub HTTPS URL of the workflow repository to clone.
 #' @param mydirname Target directory to clone into.
-#' @param force_min_version Logical; if \code{FALSE} (default) enforce \code{bioc_min}
-#'   requirements in \code{manifest.yml} and stop on version mismatch. If \code{TRUE},
-#'   continue with a warning (at your own risk). Missing packages always stop.
+#' @param force_min_version Logical; if \code{FALSE} (default), enforce
+#'   \code{bioc_min} requirements and stop on version mismatch. If \code{TRUE},
+#'   continue with a warning (at your own risk). Missing required packages
+#'   always cause an error.
+#' @param cleanup_on_fail Logical; if \code{TRUE} (default) and a strict
+#'   version check fails, remove the cloned directory before stopping.
 #' @param ... Additional arguments passed to \code{gert::git_clone()}.
 #'
 #' @return Invisibly returns the normalized path of the cloned repository.
 #'
-#' @details
-#' This function checks that \code{mydirname} does not already exist as a non-empty directory.
-#' If \pkg{gert} is not installed, an error is thrown with installation instructions.
-#'
 #' @examples
 #' \dontrun{
-#' genWorkenvir_gh("https://github.com/systemPipeR/sprwf-new.git", "sprwf-new")
+#' ## Strict (default)
+#' genWorkenvir_gh(
+#'   "https://github.com/systemPipeR/sprwf-new.git",
+#'   "sprwf-new"
+#' )
+#'
+#' ## Allow version mismatch (not recommended)
+#' genWorkenvir_gh(
+#'   "https://github.com/systemPipeR/sprwf-new.git",
+#'   "sprwf-new",
+#'   force_min_version = TRUE
+#' )
 #' }
+genWorkenvir_gh <- function(url,
+                            mydirname,
+                            force_min_version = FALSE,
+                            cleanup_on_fail = TRUE,
+                            ...) {
 
-genWorkenvir_gh <- function(url, mydirname, force_min_version = FALSE, ...) {
   .ensure_pkg("gert")
-  if (dir.exists(mydirname) && length(list.files(mydirname, all.files = TRUE, no.. = TRUE)) > 0) {
-    stop(sprintf("Target mydirname '%s' exists and is not empty.", mydirname), call. = FALSE)
+
+  if (dir.exists(mydirname) &&
+      length(list.files(mydirname, all.files = TRUE, no.. = TRUE)) > 0) {
+    stop(sprintf("Target mydirname '%s' exists and is not empty.",
+                 mydirname),
+         call. = FALSE)
   }
 
+  # Clone first
   gert::git_clone(url = url, path = mydirname, ...)
   repo_path <- normalizePath(mydirname, winslash = "/", mustWork = TRUE)
 
+  # Now enforce min versions transactionally
   manifest <- file.path(repo_path, "manifest.yml")
-  mins <- .read_bioc_min_from_manifest(manifest = manifest,
-                                       pkgs = c("systemPipeR", "systemPipeRdata"))
 
-  .check_min_pkg_versions(mins,
-                          context = sprintf("'%s'", manifest),
-                          force = force_min_version,
-                          quiet = FALSE)
+  result <- tryCatch({
+
+    mins <- .read_bioc_min_from_manifest(
+      manifest = manifest,
+      pkgs = c("systemPipeR", "systemPipeRdata")
+    )
+
+    .check_min_pkg_versions(
+      mins,
+      context = sprintf("'%s'", manifest),
+      force = force_min_version,
+      quiet = FALSE
+    )
+
+    TRUE  # success flag
+
+  }, error = function(e) {
+
+    if (!isTRUE(force_min_version) && isTRUE(cleanup_on_fail)) {
+      message("Version requirement failed - removing cloned directory: ", repo_path)
+      try(unlink(repo_path, recursive = TRUE, force = TRUE),
+          silent = TRUE)
+    }
+
+    stop(e$message, call. = FALSE)
+  })
 
   invisible(repo_path)
 }
