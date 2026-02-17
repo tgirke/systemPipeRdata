@@ -9,5 +9,6 @@ importFrom("remotes", "install_github")
 importFrom("utils", "download.file", "install.packages", "relist")
 ## Functions
 export(
-    "pathList", "genWorkenvir", "availableWF", "getSubsetReads"
+    "pathList", "genWorkenvir", "availableWF", "getSubsetReads",
+    "genWorkenvir_gh", "getParam_gh", "getData_gh"
 )
