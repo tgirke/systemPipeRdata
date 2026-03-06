@@ -99,11 +99,12 @@ vignette("systemPipeRdata") # Opens vignette
 An overview table of workflow templates, included in `systemPipeRdata`, can be
 returned as shown below. By clicking the URLs in the last column of the below
 workflow list, users can view the `Rmd` source file of a workflow, as well as
-the final `HTML` report generated after running a workflow on the provided test
+the corresponding `HTML` report generated after running a workflow on the provided test
 data. A list of the default data analysis steps included in each workflow is
-given [here](#wf-template-steps). Additional workflow templates are available
-on this project's GitHub organization (for details, see
-[below](#wf-github-collection)). To create an empty workflow template without
+given [here](#wf-template-steps). Similar and additional workflow templates are also 
+available from GitHub (see [below](#wf-github-collection) and [here](https://systempipe.org/about/project/#core-packages)), 
+which can be retrieved directly from their repositories.
+To create an empty workflow template without
 any test data included, users want to choose the `new` template, which includes
 only the required directory structure and parameter files.
 
@@ -155,6 +156,10 @@ terminal with the following commands.
 $ Rscript -e "systemPipeRdata::genWorkenvir(workflow='rnaseq', mydirname='rnaseq')"
 $ cd rnaseq
 ```
+
+In addition to the templates distributed through `systemPipeRdata`, similar workflow
+templates can also be retrieved directly from GitHub repositories using the
+`genWorkenvir_gh` function. Details on this are provided [below](#wf-github-collection).
 
 ## Run and visualize workflow {#run-wf}
 
@@ -228,44 +233,31 @@ rmarkdown::render("systemPipeRNAseq.Rmd", clean = TRUE, output_format = "BiocSty
 sal <- renderLogs(sal)
 ```
 
-# Additional workflow templates {#wf-github-collection}
+# Additional workflow templates on GitHub {#wf-github-collection}
 
-The project's [GitHub Organization](https://github.com/systemPipeR) hosts a repository of workflow templates,
-containing both well-established and experimental workflows. Within the R
-environment, the same `availableWF` function mentioned [earlier](#load-wf) can be utilized to
-retrieve a list of the workflows in this collection.
+In addition to the workflow templates distributed with the `systemPipeRdata`
+package, similar templates are available as standalone repositories
+on GitHub. These workflows include both well-established and experimental
+analysis pipelines that extend the range of supported applications.
+A curated list of available workflow repositories is maintained on the
+systemPipe project website [here](https://systempipe.org/about/project/).
+Each repository contains a complete workflow environment including parameter
+files, example input data (when available), and documentation describing the
+workflow structure and usage.
 
-```{r eval=FALSE, tidy=FALSE}
-availableWF(github = TRUE)
-```
-<pre>
-Additional Workflow Templates in systemPipeR GitHub Organization:
-       Workflow                                     Download URL
-1     SPatacseq    https://github.com/systemPipeR/SPatacseq.git
-2     SPclipseq    https://github.com/systemPipeR/SPclipseq.git
-3      SPdenovo    https://github.com/systemPipeR/SPdenovo.git
-4         SPhic    https://github.com/systemPipeR/SPhic.git
-5   SPmetatrans    https://github.com/systemPipeR/SPmetatrans.git
-6   SPmethylseq    https://github.com/systemPipeR/SPmethylseq.git
-7    SPmirnaseq    https://github.com/systemPipeR/SPmirnaseq.git
-8 SPpolyriboseq    https://github.com/systemPipeR/SPpolyriboseq.git
-9    SPscrnaseq    https://github.com/systemPipeR/SPscrnaseq.git
-</pre>
+Workflow environments hosted on GitHub can be initialized directly from within
+R using the `genWorkenvir_gh()` function. For example:
 
-To download these workflow templates, users can either run the below `git
-clone` command from a terminal, or visit the corresponding GitHub page of a
-chosen workflow via the provided URLs, and then download it as a Zip file and
-uncompress it. Note, the following lines of code need to be run from
-a terminal (not R console, _e.g._ terminal in RStudio) on a system where
-the `git` software is installed.
-
-```{bash eval=FALSE}
-$ git clone <...> # Provide under <...> URL of chosen workflow from table above.
-$ cd <Workflow Name>
+```{r genworkenvirgh, eval=FALSE}
+genWorkenvir_gh(url = "https://github.com/systemPipeR/sprwf-rnaseq.git", mydirname = "sprwf-rnaseq")
 ```
 
-After a workflow template has been downloaded, one can run it the same way as 
-outlined [above](#run-wf). 
+This command downloads the workflow repository and creates a local workflow
+environment that can be executed or customized by the user. After
+initialization, the R session should be directed to the resulting project
+directory, and the `param` and `data` directories loaded with the 
+`getParam_gh` and `getData_gh` functions. Detailed instructions and documentation 
+for each workflow are provided within the corresponding GitHub repositories.
 
 # Useful functionalities
 
@@ -293,8 +285,6 @@ pathList()[1:2]
 
 The following gives an overview of the default data analysis steps used by selected workflow
 templates included in the `systemPipeRdata` package (see [Table 1](#wf-bioc-collection)). 
-The workflows hosted on this project's [GitHub Organization](#wf-github-collection) are 
-not considered here.
 
 Any of the workflows included below can be loaded by assigning their name to
 the `workflow` argument of the `genWorkenvir` function. The workflow names 
