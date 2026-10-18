@@ -52,6 +52,13 @@ By default, version mismatches cause an error and the cloned directory
 is removed to avoid leaving a partially initialized workflow.
 }
 \examples{
+## Clone the small 'sprwf-new' workflow template into a temporary directory
+wfdir <- genWorkenvir_gh(
+  "https://github.com/systemPipeR/sprwf-new.git",
+  file.path(tempdir(), "sprwf-new")
+)
+list.files(wfdir)
+
 \dontrun{
 ## Strict (default)
 genWorkenvir_gh(

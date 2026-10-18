@@ -25,13 +25,15 @@ Downloaded archives are managed by \pkg{BiocFileCache}. Extracted
 resources are stored in a versioned systemPipeRdata cache directory.
 }
 \examples{
-\dontrun{
-paths <- getSPRdata()
-paths$fastqdir
-paths$annotationdir
+## The first call downloads ~175MB (~260MB with bam = TRUE) from Zenodo;
+## later calls use the BiocFileCache copy.
+if (interactive()) {
+    paths <- getSPRdata()
+    paths$fastqdir
+    paths$annotationdir
 
-paths <- getSPRdata(bam = TRUE)
-paths$bamdir
+    paths <- getSPRdata(bam = TRUE)
+    paths$bamdir
 }
 
 }

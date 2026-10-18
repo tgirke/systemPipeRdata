@@ -65,6 +65,10 @@ Users can override the tag without editing the manifest via the environment vari
 \code{PARAM_TAG} (or \code{DATA_TAG} for sample data).
 }
 \examples{
+## Without a manifest.yml 'data:' entry nothing is downloaded and NULL is
+## returned (the sample data of most workflows is large)
+getData_gh()
+
 \dontrun{
 ## Run from inside a workflow repo that has manifest.yml:
 getData_gh()

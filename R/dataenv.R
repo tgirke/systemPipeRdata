@@ -148,8 +148,6 @@ genWorkdata <- function(path=getwd(), data=TRUE, param=TRUE){
     print(paste("Installing package", pkg_name))
     for(i in which(pkg_req)){
       if (pkg_install == "1"){
-        if (!requireNamespace("remotes", quietly=TRUE))
-          install.packages("remotes", quiet = TRUE)
         remotes::install_github(repo=package_repo, ref=ref, subdir=subdir, quiet = TRUE, upgrade = "ask", build_vignettes=TRUE, dependencies=TRUE)
       } else if (pkg_install == 2)
         stop (paste("The", pkg_name, "package is required, you can install the package and come back later!"))
