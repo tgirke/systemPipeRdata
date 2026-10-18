@@ -1,6 +1,6 @@
 Package: systemPipeRdata
 Title: systemPipeRdata: Workflow templates and sample data
-Version: 2.17.1
+Version: 2.17.2
 Date: 2026-09-26
 Authors@R: person("Thomas", "Girke", email = "thomas.girke@ucr.edu",
         role = c("aut", "cre"))
