@@ -15,3 +15,11 @@ to conduct end-to-end analysis for diverse data analysis needs.
 
 For additional information, please visit the project site [here](https://systempipe.org/about/project/#core-packages).
 
+### Citation
+
+To cite systemPipeRdata in publications, please cite the systemPipeR publication:
+
+- Zhang L, Cassol D, Gongol B, Girke T (2026). systemPipeR: a multipurpose workflow management system for reproducible data analysis. *NAR Genomics and Bioinformatics*, 8(2), lqag032. [doi:10.1093/nargab/lqag032](https://doi.org/10.1093/nargab/lqag032)
+
+Or run `citation("systemPipeRdata")` in R.
+

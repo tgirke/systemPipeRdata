@@ -125,7 +125,7 @@ experimental design, reference genome, gene annotations, etc.
 ## Load packages and sample data
 
 The `systemPipeR` package needs to be loaded to perform the analysis 
-steps shown in this report [@H_Backman2016-bt]. The package allows users
+steps shown in this report [@Zhang2026-sp; @H_Backman2016-bt]. The package allows users
 to run the entire analysis workflow interactively or with a single command 
 while also generating the corresponding analysis report. For details
 see `systemPipeR's` main [vignette](http://www.bioconductor.org/packages/devel/bioc/vignettes/systemPipeR/inst/doc/systemPipeR.html).
@@ -193,7 +193,7 @@ sal
 
 ## Required packages and resources
 
-The `systemPipeR` package needs to be loaded [@H_Backman2016-bt].
+The `systemPipeR` package needs to be loaded [@Zhang2026-sp; @H_Backman2016-bt].
 
 ```{r load_SPR, message=FALSE, eval=FALSE, spr=TRUE}
 cat(crayon::blue$bold("To use this workflow, following R packages are expected:\n"))
