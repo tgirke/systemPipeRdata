@@ -51,7 +51,7 @@ suppressPackageStartupMessages({
 [`systemPipeRdata`](https://www.bioconductor.org/packages/release/data/experiment/html/systemPipeRdata.html)
 provides data analysis workflow templates compatible with the
 [`systemPipeR`](https://www.bioconductor.org/packages/release/bioc/html/systemPipeR.html)
-software package [@H_Backman2016-bt]. The latter is a Workflow Management
+software package [@Zhang2026-sp; @H_Backman2016-bt]. The latter is a Workflow Management
 System (WMS) for designing and running end-to-end analysis workflows with
 automated report generation for a wide range of data analysis applications.
 Support for running external software is provided by a command-line interface

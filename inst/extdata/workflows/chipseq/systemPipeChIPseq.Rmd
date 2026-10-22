@@ -52,7 +52,7 @@ suppressPackageStartupMessages({
 
 This workflow template is for analyzing ChIP-Seq data. It is provided by
 [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html), 
-a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt].
+a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@Zhang2026-sp; @H_Backman2016-bt].
 Similar to other `systemPipeR` workflow templates, a single command generates
 the necessary working environment. This includes the expected directory
 structure for executing `systemPipeR` workflows and parameter files for running

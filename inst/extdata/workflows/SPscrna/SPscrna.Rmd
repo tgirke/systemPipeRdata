@@ -49,7 +49,7 @@ suppressPackageStartupMessages({
 
 This workflow template is for analyzing single cell RNA-seq (scRNA-seq) data. It is provided by
 [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html), 
-a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt].
+a companion package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@Zhang2026-sp; @H_Backman2016-bt].
 The content of this workflow steps are provided by this [Seurat Tutorial](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html).
 Similar to other `systemPipeR` workflow templates, a single command generates
 the necessary working environment. This includes the expected directory

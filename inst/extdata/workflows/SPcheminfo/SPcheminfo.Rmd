@@ -46,7 +46,7 @@ suppressPackageStartupMessages({
 # About the template
 This is a cheminformatics workflow template of the [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/html/systemPipeRdata.html) 
 package, a companion
-package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@H_Backman2016-bt]. Like other workflow
+package to [systemPipeR](https://www.bioconductor.org/packages/devel/bioc/html/systemPipeR.html) [@Zhang2026-sp; @H_Backman2016-bt]. Like other workflow
 templates, it can be loaded with a single command. Users have the
 flexibility to utilize the template as is or modify it as needed. More in-depth
 information on designing workflows can be found in the main vignette of [systemPipeRdata](https://bioconductor.org/packages/devel/data/experiment/vignettes/systemPipeRdata/inst/doc/systemPipeRdata.html). 
